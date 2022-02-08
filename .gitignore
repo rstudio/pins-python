@@ -1,3 +1,9 @@
+# Mac specific
+.DS_Store
+
+# Vim swapfiles
+*.sw[op]
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -8,6 +8,12 @@ python -m pip install git+https://github.com/machow/pins-python
 
 ## Develop
 
+### Install pins with dev dependencies
+
+```shell
+python -m pip install -e .[dev]
+```
+
 ### Install pre-commit hooks
 
 This project uses [pre-commit](https://pre-commit.com/) to check and format each commit.
@@ -35,4 +41,10 @@ In order to see the version number being used for the current commit, run:
 
 ```
 python -m setuptools_scm
+```
+
+## Test
+
+```shell
+pytest pins
 ```

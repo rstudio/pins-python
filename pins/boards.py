@@ -3,7 +3,7 @@ from io import IOBase
 from typing import Protocol, Sequence
 from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaLoader
-from .errors import PinError
+from .errors import PinsError
 
 
 class IFileSystem(Protocol):
@@ -48,7 +48,7 @@ class BaseBoard:
 
     def pin_versions(self, name: str, as_df: bool = True) -> Sequence[VersionRaw]:
         if not self.pin_exists(name):
-            raise PinError("Cannot check version, since pin %s does not exist" % name)
+            raise PinsError("Cannot check version, since pin %s does not exist" % name)
 
         versions_raw = self.fs.ls(self.path_to_pin(name))
 

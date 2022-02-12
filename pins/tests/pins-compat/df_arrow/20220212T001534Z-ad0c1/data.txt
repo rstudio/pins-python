@@ -1,0 +1,8 @@
+file: df_arrow.arrow
+file_size: 1282
+pin_hash: ad0c1a5a64ad7ca7
+type: arrow
+title: 'df_arrow: a pinned 2 x 2 data frame'
+description: ~
+created: 20220212T001534Z
+api_version: 1.0

@@ -1,0 +1,8 @@
+file: df_rds.rds
+file_size: 116
+pin_hash: 35b1570263448755
+type: rds
+title: 'df_rds: a pinned 2 x 2 data frame'
+description: ~
+created: 20220212T001534Z
+api_version: 1.0

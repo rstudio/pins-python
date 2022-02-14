@@ -30,7 +30,7 @@ class Version(VersionRaw):
     @staticmethod
     def version_name(created, hash) -> str:
         date_part = created.strftime(VERSION_TIME_FORMAT)
-        hash_part = hash[-5:]
+        hash_part = hash[:5]
         return f"{date_part}-{hash_part}"
 
     @staticmethod

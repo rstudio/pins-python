@@ -4,7 +4,7 @@ df <- data.frame(x = 1:2, y = c("a", "b"))
 df_v2 <- data.frame(x = 1:2, y = c("a", "b"), z = 3:4)
 
 #board <- board_s3("ci-pins", prefix = "r-pins-test")
-board <- board_folder("pins/tests/pins-compat")
+board <- board_folder("pins/tests/pins-compat", versioned=TRUE)
 
 all_pins <- board %>% pin_list()
 board %>% pin_delete(all_pins)

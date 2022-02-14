@@ -4,5 +4,5 @@ pin_hash: 9bfad6d1a322a904
 type: csv
 title: 'df_csv: a pinned 2 x 3 data frame'
 description: ~
-created: 20220212T001534Z
+created: 20220214T163720Z
 api_version: 1.0

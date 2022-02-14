@@ -66,18 +66,29 @@ class BaseBoard:
 
         return all_versions
 
-    def pin_meta(self, name, version=None):
+    def pin_meta(self, name, version: str = None):
+
+        # determine pin version ----
         if version is not None:
-            raise NotImplementedError("TODO: support pulling meta for specific version")
+            # ensure pin and version exist
+            if not self.fs.exists(self.construct_path([self.board, name, version])):
+                raise PinsError(
+                    f"Pin {name} either does not exist, "
+                    f"or is missing version: {version}."
+                )
 
-        versions = self.pin_versions(name, as_df=False)
+            selected_version = version
+        else:
+            # otherwise, get the last pin version
+            versions = self.pin_versions(name, as_df=False)
 
-        if not len(versions):
-            raise NotImplementedError("TODO: sanity check when no versions")
+            if not len(versions):
+                raise NotImplementedError("TODO: sanity check when no versions")
 
-        last_version = versions[-1].version
+            # select last version ----
+            selected_version = versions[-1].version
 
-        components = [self.board, name, last_version]
+        components = [self.board, name, selected_version]
         meta_name = self.meta_loader.get_meta_name(*components)
 
         path_version = self.construct_path([*components, meta_name])

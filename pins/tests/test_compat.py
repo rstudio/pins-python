@@ -3,8 +3,10 @@ import pytest
 import datetime
 
 import importlib_resources as resources
+
 from pins.boards import BaseBoard
 from pins.errors import PinsError
+
 
 NOT_A_PIN = "not_a_pin_abcdefg"
 PIN_CSV = "df_csv"
@@ -19,9 +21,13 @@ def create_compat_board():
     return board
 
 
-@pytest.fixture
-def board():
-    return create_compat_board()
+@pytest.fixture(scope="session")
+def board(backend):
+    board = backend.create_tmp_board(str(path_to_board.absolute()))
+
+    yield board
+
+    backend.teardown_board(board)
 
 
 # pin_list --------------------------------------------------------------------

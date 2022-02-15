@@ -95,5 +95,13 @@ def test_compat_pin_meta_version_arg_error(board):
     assert bad_version in msg
 
 
+# pin_read ----
+
+
 def test_compat_pin_read(board):
     board.pin_read("df_csv")
+
+
+def test_compat_pin_read_supported(board):
+    with pytest.raises(NotImplementedError):
+        board.pin_read("df_rds")

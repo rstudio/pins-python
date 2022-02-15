@@ -32,9 +32,6 @@ class Meta:
     def to_dict(self) -> Mapping:
         return asdict(self)
 
-    def get_version_name(self):
-        return self.version.version
-
     def to_yaml(self, f: IOBase):
         data = self.to_dict()
         del data["version"]

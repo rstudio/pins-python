@@ -1,0 +1,8 @@
+file: df_csv.csv
+file_size: 20
+pin_hash: eceac651f7d06360
+type: csv
+title: 'df_csv: a pinned 2 x 2 data frame'
+description: ~
+created: 20220214T163718Z
+api_version: 1.0

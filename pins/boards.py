@@ -1,25 +1,26 @@
 from io import IOBase
 
-from typing import Protocol, Sequence
+from typing import Protocol, Sequence, Optional
 from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaLoader
 from .errors import PinsError
+from .drivers import load_data
 
 
 class IFileSystem(Protocol):
-    def ls(self) -> Sequence[str]:
+    def ls(self, path: str) -> Sequence[str]:
         ...
 
     def put(self) -> None:
         ...
 
-    def open(self) -> IOBase:
+    def open(self, path: str, mode: str, *args, **kwargs) -> IOBase:
         ...
 
     def get(self) -> None:
         ...
 
-    def exists(self) -> bool:
+    def exists(self, path: str, **kwargs) -> bool:
         ...
 
 
@@ -98,6 +99,28 @@ class BaseBoard:
     def pin_list(self):
         full_paths = self.fs.ls(self.board)
         return list(map(self.keep_final_path_component, full_paths))
+
+    def pin_fetch(self, name: str, version: Optional[str] = None) -> Meta:
+        meta = self.pin_meta(name, version)
+
+        # TODO: sanity check caching (since R pins does a cache touch here)
+        # path = self.construct_path([self.board, name, version])
+        # self.fs.get(...)
+
+        # TODO: pin_fetch R lib uses this chance to cache the files
+        #       need to ensure user can have a readable cache
+        #       so they could pin_fetch and then examine the result, a la pin_download
+        return meta
+
+    def pin_read(self, name, version: Optional[str] = None, hash: Optional[str] = None):
+        meta = self.pin_fetch(name, version)
+
+        if hash is not None:
+            raise NotImplementedError("TODO: validate hash")
+
+        return load_data(
+            meta, self.fs, self.construct_path([self.board, name, meta.version_name])
+        )
 
     def pin_write(
         self,

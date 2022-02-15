@@ -75,8 +75,8 @@ def test_compat_pin_meta_pin_missing(board):
 
 def test_compat_pin_meta_version_arg(board):
     meta = board.pin_meta(PIN_CSV, "20220214T163718Z-eceac")
-    meta.version_name == "20220214T163720Z-9bfad"
-    meta.pin_hash == "eceac651f7d06360"
+    assert meta.version_name == "20220214T163718Z-eceac"
+    assert meta.pin_hash == "eceac651f7d06360"
 
 
 def test_compat_pin_meta_version_arg_error(board):
@@ -87,3 +87,7 @@ def test_compat_pin_meta_version_arg_error(board):
     msg = exc_info.value.args[0]
     assert PIN_CSV in msg
     assert bad_version in msg
+
+
+def test_compat_pin_read(board):
+    board.pin_read("df_csv")

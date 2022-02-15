@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = "pins"
-copyright = "2022, Michael Chow"
+copyright = "2022, RStudio"
 author = "Michael Chow"
 
 

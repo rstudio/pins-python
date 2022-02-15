@@ -23,6 +23,9 @@ class IFileSystem(Protocol):
     def exists(self, path: str, **kwargs) -> bool:
         ...
 
+    def mkdirs(self, path, create_parents=True, **kwargs) -> None:
+        ...
+
 
 class BaseBoard:
     def __init__(

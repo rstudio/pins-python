@@ -3,8 +3,10 @@ import pytest
 import datetime
 
 import importlib_resources as resources
+
 from pins.boards import BaseBoard
 from pins.errors import PinsError
+
 
 NOT_A_PIN = "not_a_pin_abcdefg"
 PIN_CSV = "df_csv"
@@ -19,9 +21,13 @@ def create_compat_board():
     return board
 
 
-@pytest.fixture
-def board():
-    return create_compat_board()
+@pytest.fixture(scope="session")
+def board(backend):
+    board = backend.create_tmp_board(str(path_to_board.absolute()))
+
+    yield board
+
+    backend.teardown_board(board)
 
 
 # pin_list --------------------------------------------------------------------
@@ -89,5 +95,13 @@ def test_compat_pin_meta_version_arg_error(board):
     assert bad_version in msg
 
 
+# pin_read ----
+
+
 def test_compat_pin_read(board):
     board.pin_read("df_csv")
+
+
+def test_compat_pin_read_supported(board):
+    with pytest.raises(NotImplementedError):
+        board.pin_read("df_rds")

@@ -10,6 +10,8 @@ Welcome to pins's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   api/index
+
 
 
 Indices and tables

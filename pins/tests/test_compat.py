@@ -59,11 +59,11 @@ def test_compat_pin_meta(board):
 
     assert meta.title == "df_csv: a pinned 2 x 3 data frame"
     assert meta.description is None
-    assert meta.version_name == "20220214T163720Z-9bfad"
-    assert meta.created == datetime.datetime(2022, 2, 14, 16, 37, 20)
+    assert meta.version.version == "20220214T163720Z-9bfad"
+    assert meta.version.created == datetime.datetime(2022, 2, 14, 16, 37, 20)
     assert meta.file == "df_csv.csv"
     assert meta.file_size == 28
-    assert meta.pin_hash == "9bfad6d1a322a904"
+    assert meta.version.hash == "9bfad6d1a322a904"
     assert meta.type == "csv"
 
     # TODO(question): coding api_version as a yaml float intentional?
@@ -81,8 +81,8 @@ def test_compat_pin_meta_pin_missing(board):
 
 def test_compat_pin_meta_version_arg(board):
     meta = board.pin_meta(PIN_CSV, "20220214T163718Z-eceac")
-    assert meta.version_name == "20220214T163718Z-eceac"
-    assert meta.pin_hash == "eceac651f7d06360"
+    assert meta.version.version == "20220214T163718Z-eceac"
+    assert meta.version.hash == "eceac651f7d06360"
 
 
 def test_compat_pin_meta_version_arg_error(board):
@@ -105,3 +105,22 @@ def test_compat_pin_read(board):
 def test_compat_pin_read_supported(board):
     with pytest.raises(NotImplementedError):
         board.pin_read("df_rds")
+
+
+# pin_write ----
+
+
+def test_compat_pin_write(backend):
+    import pandas as pd
+
+    df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
+    board = backend.create_tmp_board()
+
+    assert not board.pin_exists("df_csv")
+
+    board.pin_write(df, "df_csv", type="csv")
+
+    assert board.pin_exists("df_csv")
+
+    loaded_df = board.pin_read("df_csv")
+    assert loaded_df.equals(df)

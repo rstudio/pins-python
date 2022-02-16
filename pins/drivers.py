@@ -5,6 +5,7 @@ from .meta import Meta
 
 
 def load_data(meta: Meta, fs, path_to_version):
+    # TODO: extandable loading with deferred importing
     if meta.type == "csv":
         import pandas as pd
 
@@ -14,6 +15,25 @@ def load_data(meta: Meta, fs, path_to_version):
 
         target_fname = fnames[0]
         path_to_file = f"{path_to_version}/{target_fname}"
-        return pd.read_csv(fs.open(path_to_file))
+        return pd.read_csv(fs.open(path_to_file), index_col=0)
 
     raise NotImplementedError(f"No driver for type {meta.type}")
+
+
+def save_data(obj, fname, type=None):
+    # TODO: extensible saving with deferred importing
+    # TODO: how to encode arguments to saving / loading drivers?
+    #       e.g. pandas index options
+    # TODO: would be useful to have singledispatch func for a "default saver"
+    #       as argument to board, and then type dispatchers for explicit cases
+    #       of saving / loading objects different ways.
+    if type == "csv":
+        import pandas as pd
+
+        if not isinstance(obj, pd.DataFrame):
+            raise NotImplementedError(
+                "Currently only pandas.DataFrame can be saved to a CSV."
+            )
+        obj.to_csv(fname)
+    else:
+        raise NotImplementedError(f"Cannot save type: {type}")

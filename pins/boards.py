@@ -127,8 +127,8 @@ class BaseBoard:
         x,
         name: Optional[str] = None,
         type: Optional[str] = None,
-        title: Optional[str] = "TODO",
-        description: Optional[str] = "TODO",
+        title: Optional[str] = None,
+        description: Optional[str] = None,
         metadata: Optional[Mapping] = None,
         versioned: Optional[bool] = None,
     ):

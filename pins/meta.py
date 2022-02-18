@@ -37,7 +37,7 @@ class Meta:
     """
 
     title: str
-    description: str
+    description: Optional[str]
 
     # TODO(defer): different from R pins, which has a local field
     # created: datetime
@@ -114,15 +114,15 @@ class MetaFactory:
         self,
         files: Sequence[StrOrFile],
         type,
-        name=None,
-        title=None,
+        name,
+        title,
         description=None,
         created=None,
         user=None,
     ) -> Meta:
 
-        if title is None or description is None:
-            raise NotImplementedError("title and description arguments required")
+        if title is None:
+            raise NotImplementedError("title arguments required")
         if isinstance(files, str):
             from pathlib import Path
 

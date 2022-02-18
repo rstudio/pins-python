@@ -6,7 +6,7 @@ from typing import Protocol, Sequence, Optional, Mapping
 from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaFactory
 from .errors import PinsError
-from .drivers import load_data, save_data
+from .drivers import load_data, save_data, default_title
 
 
 class IFileSystem(Protocol):
@@ -140,6 +140,9 @@ class BaseBoard:
 
         if type is None:
             raise NotImplementedError("Type argument is required.")
+
+        if title is None:
+            title = default_title(x, type)
 
         # write object to disk
         with tempfile.NamedTemporaryFile() as tmp_file:

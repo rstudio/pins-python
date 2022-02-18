@@ -2,40 +2,46 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from xxhash import xxh64
 
-from typing import Union, Sequence, Optional, Mapping
-from io import IOBase
+from typing import Union, Sequence, Mapping
 
 from .errors import PinsVersionError
+from ._types import StrOrFile, IOBase
 
 VERSION_TIME_FORMAT = "%Y%m%dT%H%M%SZ"
 
-StrOrFile = Union[str, IOBase]
+
+class _VersionBase:
+    pass
 
 
 @dataclass
-class VersionRaw:
+class VersionRaw(_VersionBase):
     version: str
-    created: Optional[datetime] = None
-    hash: Optional[str] = None
 
     def to_dict(self) -> Mapping:
         return asdict(self)
 
 
-class Version(VersionRaw):
-    version: str
+@dataclass
+class Version(_VersionBase):
     created: datetime
     hash: str
 
-    @staticmethod
-    def version_name(created, hash) -> str:
-        date_part = created.strftime(VERSION_TIME_FORMAT)
-        hash_part = hash[:5]
+    def to_dict(self) -> Mapping:
+        return asdict(self)
+
+    @property
+    def version(self) -> str:
+        date_part = self.created.strftime(VERSION_TIME_FORMAT)
+        hash_part = self.hash[:5]
         return f"{date_part}-{hash_part}"
 
     @staticmethod
     def parse_created(x):
         return datetime.strptime(x, VERSION_TIME_FORMAT)
+
+    def render_created(self):
+        return self.created.strftime(VERSION_TIME_FORMAT)
 
     @staticmethod
     def hash_file(f: IOBase, block_size: int = -1) -> str:
@@ -68,7 +74,15 @@ class Version(VersionRaw):
         except ValueError:
             raise PinsVersionError("Invalid date part of version: " % dt_string)
 
-        return cls(version, created, hash_)
+        obj = cls(created, hash_)
+
+        if obj.version != version:
+            raise ValueError(
+                "Version parsing failed. Received version string {version}, but "
+                "output version is {cls.version}."
+            )
+
+        return obj
 
     @classmethod
     def from_files(
@@ -80,12 +94,17 @@ class Version(VersionRaw):
             hashes.append(hash_)
 
         if created is None:
-            created = datetime.now().strftime(VERSION_TIME_FORMAT)
+            created = datetime.now()
 
         if len(hashes) > 1:
             raise NotImplementedError("Only 1 file may be currently be hashed")
 
-        return cls(cls.version_name(created, hashes), created, hashes[0])
+        return cls(created, hashes[0])
+
+    @classmethod
+    def from_meta_fields(cls, created: str, hash: str):
+        created_dt = cls.parse_created(created)
+        return cls(created_dt, hash)
 
 
 def guess_version(x: str):

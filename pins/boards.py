@@ -1,10 +1,12 @@
+import tempfile
+
 from io import IOBase
 
-from typing import Protocol, Sequence, Optional
+from typing import Protocol, Sequence, Optional, Mapping
 from .versions import VersionRaw, guess_version
-from .meta import Meta, MetaLoader
+from .meta import Meta, MetaFactory
 from .errors import PinsError
-from .drivers import load_data
+from .drivers import load_data, save_data, default_title
 
 
 class IFileSystem(Protocol):
@@ -29,16 +31,11 @@ class IFileSystem(Protocol):
 
 class BaseBoard:
     def __init__(
-        self,
-        board: str,
-        fs: IFileSystem,
-        meta_factory: Meta = Meta,
-        meta_loader=MetaLoader(),
+        self, board: str, fs: IFileSystem, meta_factory=MetaFactory(),
     ):
         self.board = board
         self.fs = fs
         self.meta_factory = meta_factory
-        self.meta_loader = meta_loader
 
     def pin_exists(self, name: str) -> bool:
         """Determine if a pin exists.
@@ -93,11 +90,11 @@ class BaseBoard:
             selected_version = versions[-1].version
 
         components = [self.board, name, selected_version]
-        meta_name = self.meta_loader.get_meta_name(*components)
+        meta_name = self.meta_factory.get_meta_name(*components)
 
         path_version = self.construct_path([*components, meta_name])
         f = self.fs.open(path_version)
-        return self.meta_loader.load(f)
+        return self.meta_factory.read_yaml(f)
 
     def pin_list(self):
         full_paths = self.fs.ls(self.board)
@@ -122,27 +119,63 @@ class BaseBoard:
             raise NotImplementedError("TODO: validate hash")
 
         return load_data(
-            meta, self.fs, self.construct_path([self.board, name, meta.version_name])
+            meta, self.fs, self.construct_path([self.board, name, meta.version.version])
         )
 
     def pin_write(
         self,
         x,
-        name=None,
-        type=None,
-        title=None,
-        description=None,
-        metadata=None,
-        versioned=None,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        metadata: Optional[Mapping] = None,
+        versioned: Optional[bool] = None,
     ):
-        pass
+        if name is None:
+            raise NotImplementedError("Name must be specified.")
+
+        if versioned is False:
+            raise NotImplementedError("Only writing versioned pins supported.")
+
+        if type is None:
+            raise NotImplementedError("Type argument is required.")
+
+        if title is None:
+            title = default_title(x, type)
+
         # write object to disk
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            fname = tmp_file.name
 
-        # hash it
+            # file is saved locally in order to hash
+            save_data(x, fname, type)
 
-        # calc file size
+            meta = self.meta_factory.create(
+                fname,
+                type,
+                title=title,
+                description=description,
+                user=metadata,
+                name=name,
+            )
 
-        # create meta
+            meta_name = self.meta_factory.get_meta_name()
+            dst_dir_path = self.construct_path([self.board, name, meta.version.version])
+            dst_meta_path = self.construct_path([dst_dir_path, meta_name])
+            dst_obj_path = self.construct_path([dst_dir_path, meta.file])
+
+            # move pin to destination ----
+            # create pin version folder
+            self.fs.mkdirs(dst_dir_path)
+
+            # write metadata yaml and object files
+            with self.fs.open(dst_meta_path, "w") as f:
+                meta.to_yaml(f)
+
+            self.fs.put(fname, dst_obj_path)
+
+        return meta
 
     def validate_pin_name(self, name: str) -> bool:
         if "/" in name:

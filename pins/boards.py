@@ -138,6 +138,9 @@ class BaseBoard:
         if versioned is False:
             raise NotImplementedError("Only writing versioned pins supported.")
 
+        if type is None:
+            raise NotImplementedError("Type argument is required.")
+
         # write object to disk
         with tempfile.NamedTemporaryFile() as tmp_file:
             fname = tmp_file.name

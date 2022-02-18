@@ -118,16 +118,28 @@ class MetaFactory:
         title=None,
         description=None,
         created=None,
-        user_meta=None,
+        user=None,
     ) -> Meta:
-        from pathlib import Path
 
         if title is None or description is None:
             raise NotImplementedError("title and description arguments required")
         if isinstance(files, str):
+            from pathlib import Path
+
             version = Version.from_files([files], created)
             p_file = Path(files)
             file_size = p_file.stat().st_size
+        elif isinstance(files, IOBase):
+            # TODO: in theory can calculate size from a file object, but let's
+            # wait until it's clear how calculating file size fits into pins
+            # e.g. in combination with folders, etc..
+
+            # from os import fstat
+            #
+            # version = Version.from_files([files], created)
+            # files_size = fstat(files.fileno()).st_size
+
+            raise NotImplementedError("Cannot create from file object.")
         else:
             raise NotImplementedError("TODO: creating meta from multiple files")
 
@@ -139,7 +151,7 @@ class MetaFactory:
             type=type,
             api_version=DEFAULT_API_VERSION,
             name=name,
-            user=user_meta if user_meta is not None else {},
+            user=user if user is not None else {},
             version=version,
         )
 

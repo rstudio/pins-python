@@ -150,7 +150,7 @@ class BaseBoard:
                 type,
                 title=title,
                 description=description,
-                user_meta=metadata,
+                user=metadata,
                 name=name,
             )
 

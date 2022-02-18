@@ -108,19 +108,3 @@ def test_compat_pin_read_supported(board):
 
 
 # pin_write ----
-
-
-def test_compat_pin_write(backend):
-    import pandas as pd
-
-    df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
-    board = backend.create_tmp_board()
-
-    assert not board.pin_exists("df_csv")
-
-    board.pin_write(df, "df_csv", type="csv")
-
-    assert board.pin_exists("df_csv")
-
-    loaded_df = board.pin_read("df_csv")
-    assert loaded_df.equals(df)

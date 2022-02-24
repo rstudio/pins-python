@@ -45,6 +45,37 @@ python -m setuptools_scm
 
 ## Test
 
+Tests can be run using pytest:
+
 ```shell
 pytest pins
+
+# run all tests except those for Rstudio Connect
+pytest pins -m 'not fs_rsc'
+
+# run only local filesystem backend tests
+pytest pins -m 'fs_file'
+```
+
+There are two important details to note for testing:
+
+* **Backends**. pins can write to backends like s3, azure, and RStudio Connect, so you
+    will need to set credentials to test against them.
+* **Pytest Marks**. You can disable tests over a specific backend through pytest's
+    `-m` flag. For example...
+  - Skip S3: `pytest pins -m 'not fs_s3'`
+  - Test only s3: `pytest pins -m 'fs_s3'`
+  - List all marks: `pytest pins --markers`
+
+### Configuring backends
+
+* Copy `.env.dev` to be `.env`
+* Modify `.env` to file in environment variables (e.g. AWS_ACCESS_KEY_ID)
+* Be careful not to put any sensitive information in `.env.dev`!
+
+### Setting up RStudio Connect tests
+
+```
+# Be sure to set RSC_LICENSE in .env
+make dev
 ```

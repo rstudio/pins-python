@@ -9,6 +9,10 @@ from fsspec import filesystem
 BOARD_CONFIG = {
     "file": {"path": ["PINS_TEST_FILE__PATH", None]},
     "s3": {"path": ["PINS_TEST_S3__PATH", "ci-pins"]},
+    # TODO(question): R pins has the whole server a board
+    # but it's a bit easier to test by (optionally) allowing a user
+    # or something else to be a board
+    # "rsc": {"path": ["PINS_TEST_RSC__PATH", ""]}
 }
 
 

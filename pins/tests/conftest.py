@@ -27,3 +27,6 @@ def pytest_configure(config):
         config.addinivalue_line(
             "markers", f"{mark_name}: mark test to only run on {fs_name} filesystem."
         )
+
+    # TODO: once RStudioConnect backend added, can remove this line
+    config.addinivalue_line("markers", "rsc: mark test to only run on rsc filesystem.")

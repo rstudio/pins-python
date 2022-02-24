@@ -24,8 +24,33 @@ jobs:
           python -m pip install -e .
       - name: Run tests
         run: |
-          pytest pins
+          pytest pins -m 'not rsc'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "us-east-1"
+
+  test-rsconnect:
+    name: "Test RSConnect"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements/dev.txt
+          python -m pip install -e .
+      - name: run RStudio Connect
+        run: |
+          docker-compose up --build -d
+          make dev
+        env:
+          RSC_LICENSE: ${{ secrets.RSC_LICENSE }}
+
+      # NOTE: edited to run checks for python package
+      - name: Run tests
+        run: |
+          pytest pins -m rsc

@@ -43,7 +43,7 @@ def test_rsconnect_api_get_users(rs_admin):
     users = rs_admin.get_users()
     assert len(users) == 3
     # sanity check that it's got details about users
-    assert hasattr(users[0], "guid")
+    assert "guid" in users[0].keys()
 
 
 # RsConnectFs -----------------------------------------------------------------

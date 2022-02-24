@@ -47,10 +47,10 @@ jobs:
         run: |
           docker-compose up --build -d
           make dev
+        env:
+          RSC_LICENSE: ${{ secrets.RSC_LICENSE }}
 
       # NOTE: edited to run checks for python package
       - name: Run tests
         run: |
           pytest pins -m rsc
-        env:
-          RSC_LICENSE: ${{ secrets.RSC_LICENSE }}

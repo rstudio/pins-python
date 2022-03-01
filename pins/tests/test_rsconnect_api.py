@@ -378,3 +378,15 @@ def test_rsconnect_fs_exists_bundle_true(fs_short):
     bund1 = create_content_bundle(fs_short.api, content["guid"])
 
     assert fs_short.exists(f"susan/test-content/{bund1['id']}") is True
+
+
+@pytest.mark.xfail
+def test_rsconnect_fs_get_bundle_rev_data(fs_short):
+    content = fs_short.api.post_content_item("test-content", "acl")
+    bund1 = create_content_bundle(fs_short.api, content["guid"])
+
+    with tempfile.NamedTemporaryFile() as tmp:
+        fs_short.get(f"susan/test-content/{bund1['id']}/index.html", tmp.name)
+
+        # TODO: make more robust
+        assert "yo" in open(tmp.name).read()

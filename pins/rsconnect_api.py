@@ -8,6 +8,8 @@ from pathlib import Path
 from functools import partial
 from io import IOBase
 
+RSC_CODE_OBJECT_DOES_NOT_EXIST = 4
+
 
 def _download_file(response, local_fname):
     """Download a potentially large file. Note that this mutates the response.
@@ -35,6 +37,10 @@ class RsConnectApiRequestError(RsConnectApiError):
 
 
 class RsConnectApiResultError(RsConnectApiError):
+    pass
+
+
+class RsConnectApiMissingContentError(RsConnectApiError):
     pass
 
 
@@ -460,16 +466,24 @@ class RsConnectFs:
 
         pass
 
-    def get(self, rpath, lpath, *args, **kwargs) -> None:
-        """Fetch a bundle from RStudio Connect."""
+    def get(self, rpath, lpath, recursive=False, *args, **kwargs) -> None:
+        """Fetch a bundle or file from RStudio Connect."""
 
+        # figure out what entity the path defines
+
+        # get entity info
+        # entity = self.info(rpath)
         pass
 
     def exists(self, path: str, **kwargs) -> bool:
-        self.info(path)
-        pass
+        try:
+            self.info(path)
+            return True
+        except RsConnectApiMissingContentError:
+            return False
 
     def mkdirs(self, *args, **kwargs) -> None:
+        # TODO: this sounds like it should post_content_item
         pass
 
     def info(self, path, **kwargs):
@@ -517,7 +531,7 @@ class RsConnectFs:
         if len(parts) > 2:
             bundle_id = parts[2]
             content_guid = out["content"]["guid"]
-            out["bundle"] = self.api.get_content_bundle(content_guid, bundle_id)
+            out["bundle"] = self._get_content_bundle(content_guid, bundle_id)
 
         return out
 
@@ -528,10 +542,29 @@ class RsConnectFs:
         # double check to be safe.
         contents = self.api.get_content(user_guid, content_name)
         if len(contents) != 1:
-            raise RsConnectApiResultError(
+            err = (
+                RsConnectApiMissingContentError
+                if len(contents) == 0
+                else RsConnectApiResultError
+            )
+            raise err(
                 f"Expecting 1 content entry, but found {len(contents)}: {contents}"
             )
         return contents[0]
+
+    def _get_content_bundle(self, content_guid, bundle_id):
+        """Fetch a content bundle."""
+
+        try:
+            bundle = self.api.get_content_bundle(content_guid, bundle_id)
+        except RsConnectApiRequestError as e:
+            if e.args[0]["code"] == RSC_CODE_OBJECT_DOES_NOT_EXIST:
+                raise RsConnectApiMissingContentError(
+                    f"No bundle {bundle_id} for content {content_guid}"
+                )
+            raise e
+
+        return bundle
 
     def _get_user_from_name(self, name):
         """Fetch a single user entity from user name."""

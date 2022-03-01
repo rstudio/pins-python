@@ -8,7 +8,7 @@ from pins.rsconnect_api import (
     RsConnectApi,
     RsConnectFs,
     RsConnectApiRequestError,
-    RsConnectApiResultError,
+    RsConnectApiMissingContentError,
     PinBundleManifest,
 )
 
@@ -355,5 +355,26 @@ def test_rsconnect_fs_info(fs_short):
     res_bundle = fs_short.info(f"susan/test-content/{bund1['id']}")
     assert res_bundle == bund1
 
-    with pytest.raises(RsConnectApiResultError):
+    with pytest.raises(RsConnectApiMissingContentError):
         fs_short.info("susan/test-content-does-not-exist")
+
+
+@pytest.mark.parametrize(
+    "path, result",
+    [
+        ("susan/does-not-exist", False),
+        ("susan/test-content", True),
+        ("susan/test-content/99999", False),
+    ],
+)
+def test_rsconnect_fs_exists(fs_short, path, result):
+    fs_short.api.post_content_item("test-content", "acl")
+
+    assert fs_short.exists(path) is result
+
+
+def test_rsconnect_fs_exists_bundle_true(fs_short):
+    content = fs_short.api.post_content_item("test-content", "acl")
+    bund1 = create_content_bundle(fs_short.api, content["guid"])
+
+    assert fs_short.exists(f"susan/test-content/{bund1['id']}") is True

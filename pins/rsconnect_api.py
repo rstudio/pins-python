@@ -7,6 +7,11 @@ from dataclasses import dataclass, asdict, field
 from pathlib import Path
 from functools import partial
 from io import IOBase
+from urllib.parse import urlencode
+
+from collections.abc import Mapping
+from typing import Sequence, TypeVar, Generic
+
 
 RSC_CODE_OBJECT_DOES_NOT_EXIST = 4
 
@@ -28,6 +33,9 @@ def _download_file(response, local_fname):
             shutil.copyfileobj(response.raw, f)
 
 
+# Exceptions ------------------------------------------------------------------
+
+
 class RsConnectApiError(Exception):
     pass
 
@@ -42,6 +50,64 @@ class RsConnectApiResultError(RsConnectApiError):
 
 class RsConnectApiMissingContentError(RsConnectApiError):
     pass
+
+
+# Data ------------------------------------------------------------------------
+
+
+class BaseEntity(Mapping):
+    def __init__(self, d: Mapping):
+        self._d = d
+
+    def __getitem__(self, k):
+        return self._d[k]
+
+    def __iter__(self):
+        return iter(self._d)
+
+    def __len__(self):
+        return len(self._d)
+
+
+class User(BaseEntity):
+    def get_id(self) -> str:
+        return self._d["guid"]
+
+    def get_name(self) -> str:
+        return self._d["username"]
+
+
+class Content(BaseEntity):
+    def get_id(self) -> str:
+        return self._d["guid"]
+
+    def get_name(self) -> str:
+        return self._d["name"]
+
+
+class Bundle(BaseEntity):
+    def get_id(self) -> str:
+        return self._d["id"]
+
+    def get_name(self) -> str:
+        return self._d["id"]
+
+
+# Pagination result container ----
+
+T = TypeVar("T")
+
+
+@dataclass
+class Paginated(Generic[T]):
+    def __init__(self, results: T, cursor: Mapping):
+        # TODO: holding off on defining cursor structure, since
+        # it seems like there are multiple types of cursors
+        self.results = results
+        self.cursor = cursor
+
+
+# API -------------------------------------------------------------------------
 
 
 class RsConnectApi:
@@ -149,11 +215,12 @@ class RsConnectApi:
 
     # users ----
 
-    def get_user(self, guid: str = None):
+    def get_user(self, guid: str = None) -> User:
         if guid is None:
             return self.query_v1("user")
 
-        return self.query_v1(f"user/{guid}")
+        result = self.query_v1(f"user/{guid}")
+        return User(result)
 
     def get_users(
         self,
@@ -164,44 +231,50 @@ class RsConnectApi:
         page_size: "int | None" = None,
         asc_order: "bool | None" = None,
         walk_pages=True,
-    ):
+    ) -> "Sequence[User] | Sequence[dict]":
 
         params = {k: v for k, v in locals().items() if k != "self" if v is not None}
 
         if walk_pages:
-            return self.walk_paginated_offsets(self.query_v1, "users", "GET", params)
+            result = self.walk_paginated_offsets(self.query_v1, "users", "GET", params)
+            return [User(d) for d in result]
         else:
-            return self.query_v1("users", params=params)
+            result = self.query_v1("users", params=params)
+            return result
 
     # content ----
 
-    def get_content(self, owner_guid: str = None, name: str = None):
+    def get_content(
+        self, owner_guid: str = None, name: str = None
+    ) -> Sequence[Content]:
         params = self._get_params(locals())
 
-        return self.query_v1("content", params=params)
+        results = self.query_v1("content", params=params)
+        return [Content(d) for d in results]
 
-    def get_content_item(self, guid: str):
-        return self.query_v1(f"content/{guid}")
+    def get_content_item(self, guid: str) -> Content:
+        result = self.query_v1(f"content/{guid}")
+        return Content(result)
 
     def post_content_item(
         self, name, access_type, title: str = "", description: str = "", **kwargs
-    ):
+    ) -> Content:
         data = self._get_params(locals(), exclude={"kwargs"})
         result = self.query_v1("content", "POST", json={**data, **kwargs})
 
-        return result
+        return Content(result)
 
     def post_content_item_deploy(self, guid: str, bundle_id: "str | None" = None):
         json = {"bundle_id": bundle_id} if bundle_id is not None else {}
         return self.query_v1(f"content/{guid}/deploy", "POST", json=json)
 
-    def patch_content_item(self, guid, **kwargs):
+    def patch_content_item(self, guid, **kwargs) -> Content:
         # see https://docs.rstudio.com/connect/api/#patch-/v1/content/{guid}
         result = self.query_v1(f"content/{guid}", "PATCH", json=kwargs)
 
-        return result
+        return Content(result)
 
-    def delete_content(self, guid: str):
+    def delete_content(self, guid: str) -> None:
         """Delete content.
 
         Note that this method returns None if successful. Otherwise, it raises an error.
@@ -226,14 +299,18 @@ class RsConnectApi:
 
     # bundles ----
 
-    def get_content_bundles(self, guid: str):
-        return self.query_v1(f"content/{guid}/bundles")
+    def get_content_bundles(self, guid: str) -> Sequence[Bundle]:
+        result = self.query_v1(f"content/{guid}/bundles")
+        return [Bundle(d) for d in result]
 
-    def get_content_bundle(self, guid: str, id: int):
+    def get_content_bundle(self, guid: str, id: int) -> Bundle:
         # TODO(question): could combine with get_content_bundles above?
-        return self.query_v1(f"content/{guid}/bundles/{id}")
+        result = self.query_v1(f"content/{guid}/bundles/{id}")
+        return Bundle(result)
 
-    def get_content_bundle_archive(self, guid: str, id: str, f_obj: "str | IOBase"):
+    def get_content_bundle_archive(
+        self, guid: str, id: str, f_obj: "str | IOBase"
+    ) -> None:
 
         r = self.query_v1(
             f"content/{guid}/bundles/{id}/download", stream=True, return_request=True
@@ -241,7 +318,7 @@ class RsConnectApi:
         r.raise_for_status()
         _download_file(r, f_obj)
 
-    def post_content_bundle(self, guid, fname, gzip=True):
+    def post_content_bundle(self, guid, fname, gzip=True) -> Bundle:
         route = f"content/{guid}/bundles"
         f_request = partial(self.query_v1, route, "POST")
 
@@ -258,10 +335,12 @@ class RsConnectApi:
                 tmp.file.close()
 
                 with open(tmp.name, "rb") as f:
-                    return f_request(data=f)
+                    result = f_request(data=f)
         else:
             with open(str(p.absolute()), "rb") as f:
-                return f_request(data=f)
+                result = f_request(data=f)
+
+        return Bundle(result)
 
     # tasks ----
 
@@ -299,9 +378,18 @@ class RsConnectApi:
 
         _download_file(r, f_obj)
 
-    def misc_get_applications(self, filter: str, count: int = 1000):
-        params = self._get_params()
-        return self._raw_query(f"{self.server_url}/applications", params=params)
+    def misc_get_applications(
+        self, filter: str, count: int = 1000
+    ) -> Paginated[Sequence[Content]]:
+        # TODO(question): R pins does not handle pagination, but we could do it here.
+        #       Note that R pins also just gets first 1000 entries
+        raw_params = self._get_params(locals())
+        params = urlencode(raw_params, safe=":+")
+        result = self.query("applications", params=params)
+        return Paginated(
+            result["applications"],
+            {k: v for k, v in result.items() if k != "applications"},
+        )
 
 
 # ported from github.com/rstudio/connectapi
@@ -394,14 +482,55 @@ class PinBundleManifest:
         return asdict(self)
 
 
+# FSSPEC ----------------------------------------------------------------------
+
+
+@dataclass
+class EmptyPath:
+    pass
+
+
+@dataclass
+class UserPath:
+    username: str
+
+
+@dataclass
+class ContentPath(UserPath):
+    content: str
+
+
+@dataclass
+class BundlePath(ContentPath):
+    bundle: str
+
+
+@dataclass
+class BundleFilePath(BundlePath):
+    file_name: str
+
+
+class PinSource:
+    def __init__(self, friendly_name: str):
+        self.friendly_name = friendly_name
+
+    def __repr__(self):
+        repr_args = repr(self.friendly_name)
+        return f"{self.__class__.__name__}({repr_args})"
+
+
 class RsConnectFs:
+    entity_name_fields = {"user": "username", "content": "guid", "bundle": "id"}
+
     def __init__(self, server_url, **kwargs):
         if isinstance(server_url, RsConnectApi):
             self.api = server_url
         else:
             self.api = RsConnectApi(server_url, **kwargs)
 
-    def ls(self, path, details=False, **kwargs):
+    def ls(
+        self, path, details=False, **kwargs
+    ) -> "Sequence[BaseEntity] | Sequence[str]":
         """List contents of Rstudio Connect Server.
 
         Parameters
@@ -411,36 +540,25 @@ class RsConnectFs:
             "<username>" -> user content
             "<username>/<content>" -> user content bundles
         """
-        parts = path.split("/")
-        entities = self._get_entity_info_from_path(path)
 
-        # Case 1: list users  ---
         if path.strip() == "":
-            name_field = "username"
+            # root path specified, so list users
             all_results = self.api.get_users()
 
-        # Case 2: list a user's content ---
-        elif len(parts) == 1:
-            name_field = "name"
+        else:
+            entity = self.info(path)
 
-            # convert username -> guid and fetch content
-            all_results = self.api.get_content(entities["user"]["guid"])
-
-        # Case 3: list a user content's bundles ---
-        elif len(parts) == 2:
-            name_field = "id"
-
-            # user_guid + content name should uniquely identify content, but
-            # double check to be safe.
-            all_results = self.api.get_content_bundles(entities["content"]["guid"])
-
-        if len(parts) > 3:
-            raise ValueError(
-                "path must have form {owner_guid} or {owner_guid}/{content_name}"
-            )
+            if isinstance(entity, User):
+                all_results = self.api.get_content(entity["guid"])
+            elif isinstance(entity, Content):
+                all_results = self.api.get_content_bundles(entity["guid"])
+            else:
+                raise ValueError(
+                    "path must have form {username} or {username}/{content_name}"
+                )
 
         if not details:
-            return [entry[name_field] for entry in all_results]
+            return [entry.get_name() for entry in all_results]
 
         return all_results
 
@@ -448,7 +566,7 @@ class RsConnectFs:
         #    "applications/", filter="content_type:pin", count=1000
         # )
 
-    def put(self, lpath, rpath, *args, **kwargs) -> None:
+    def put(self, lpath, rpath, *args, use_guid=False, **kwargs) -> None:
         """Put a bundle onto Rstudio Connect.
 
         Parameters
@@ -457,6 +575,8 @@ class RsConnectFs:
             A path to the local bundle directory.
         rpath: str
             A path to the content where the bundle is being put.
+        use_guid: bool
+            Whether rpath is a content guid
         """
 
         pass
@@ -486,54 +606,51 @@ class RsConnectFs:
         # TODO: this sounds like it should post_content_item
         pass
 
-    def info(self, path, **kwargs):
+    def info(self, path, **kwargs) -> "User | Content | Bundle":
         # TODO: source of fsspec info uses self._parent to check cache?
         # S3 encodes refresh (for local cache) and version_id arguments
 
-        entity_name = self._path_entity_name(path)
-        entities = self._get_entity_info_from_path(path)
+        return self._get_entity_from_path(path)
 
-        result = entities[entity_name]
-        if result is None:
-            raise RsConnectApiError(f"Could not find entity for path: {path}")
-
-        return result
-
-    def _path_entity_name(self, path):
+    def parse_path(self, path):
         parts = path.split("/")
-        if len(parts) == 1:
-            return "user"
+        if path.strip() == "":
+            return EmptyPath()
+        elif len(parts) == 1:
+            return UserPath(*parts)
         elif len(parts) == 2:
-            return "content"
+            return ContentPath(*parts)
         elif len(parts) == 3:
-            return "bundle"
+            return BundlePath(*parts)
+        elif len(parts) == 4:
+            return BundleFilePath(*parts)
+        else:
+            raise ValueError(f"Unable to parse path: {path}")
 
-    def _get_entity_info_from_path(self, path):
-        parts = path.split("/")
-
-        out = {"user": None, "content": None, "bundle": None}
+    def _get_entity_from_path(self, path):
+        parsed = self.parse_path(path)
 
         # guard against empty paths
-        if not path.strip():
-            return out
+        if isinstance(parsed, EmptyPath):
+            raise ValueError(f"Cannot fetch root path: {path}")
 
-        if len(parts) > 0:
-            out["user"] = self._get_user_from_name(parts[0])
+        # note this sequence of ifs is essentially a case statement going down
+        # a line from parent -> child -> grandchild
+        if isinstance(parsed, UserPath):
+            crnt = user = self._get_user_from_name(parsed.username)
 
-        if len(parts) > 1:
-            user_guid = out["user"]["guid"]
-            content_name = parts[1]
+        if isinstance(parsed, ContentPath):
+            user_guid = user["guid"]
 
             # user_guid + content name should uniquely identify content, but
             # double check to be safe.
-            out["content"] = self._get_content_from_name(user_guid, content_name)
+            crnt = content = self._get_content_from_name(user_guid, parsed.content)
 
-        if len(parts) > 2:
-            bundle_id = parts[2]
-            content_guid = out["content"]["guid"]
-            out["bundle"] = self._get_content_bundle(content_guid, bundle_id)
+        if isinstance(parsed, BundlePath):
+            content_guid = content["guid"]
+            crnt = self._get_content_bundle(content_guid, parsed.bundle)
 
-        return out
+        return crnt
 
     def _get_content_from_name(self, user_guid, content_name):
         """Fetch a single content entity."""

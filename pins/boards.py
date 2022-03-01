@@ -3,6 +3,7 @@ import tempfile
 from io import IOBase
 
 from typing import Protocol, Sequence, Optional, Mapping
+
 from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaFactory
 from .errors import PinsError
@@ -192,3 +193,21 @@ class BaseBoard:
 
     def keep_final_path_component(self, path):
         return path.split("/")[-1]
+
+
+class BoardRsConnect(BaseBoard):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # remove board string, since it's used internally, but this board
+        # always connects to a specific server via fs
+        self.board = ""
+
+    def pin_list(self):
+        # lists all pin content on RStudio Connect server
+        # we can't use fs.ls, because it will list *all content*
+        paged_res = self.fs.api.misc_get_applications("content_type:pin")
+        results = paged_res.results
+
+        names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
+        return names

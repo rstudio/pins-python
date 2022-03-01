@@ -390,3 +390,13 @@ def test_rsconnect_fs_get_bundle_rev_data(fs_short):
 
         # TODO: make more robust
         assert "yo" in open(tmp.name).read()
+
+
+@pytest.mark.skip
+def test_rsconnect_fs_put_bundle(fs_short):
+    # TODO: use pkg_resources to get this
+    path_to_example = "pins/tests/example-bundle"
+    bundle_id = fs_short.put(path_to_example, "susan/test-content")
+
+    f_index = fs_short.open(f"susan/test-content/{bundle_id}/index.html")
+    assert f_index.read() == (Path(path_to_example) / "index.html").read_text()

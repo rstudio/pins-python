@@ -8,6 +8,7 @@ from pins.rsconnect_api import (
     RsConnectApi,
     RsConnectFs,
     RsConnectApiRequestError,
+    RsConnectApiResultError,
     PinBundleManifest,
 )
 
@@ -353,3 +354,6 @@ def test_rsconnect_fs_info(fs_short):
 
     res_bundle = fs_short.info(f"susan/test-content/{bund1['id']}")
     assert res_bundle == bund1
+
+    with pytest.raises(RsConnectApiResultError):
+        fs_short.info("susan/test-content-does-not-exist")

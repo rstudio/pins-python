@@ -34,6 +34,10 @@ class RsConnectApiRequestError(RsConnectApiError):
     pass
 
 
+class RsConnectApiResultError(RsConnectApiError):
+    pass
+
+
 class RsConnectApi:
     api_key: "str | None"
     server_url: "str"
@@ -438,16 +442,31 @@ class RsConnectFs:
         #    "applications/", filter="content_type:pin", count=1000
         # )
 
-    def put(self, *args, **kwargs) -> None:
+    def put(self, lpath, rpath, *args, **kwargs) -> None:
+        """Put a bundle onto Rstudio Connect.
+
+        Parameters
+        ----------
+        lpath: str
+            A path to the local bundle directory.
+        rpath: str
+            A path to the content where the bundle is being put.
+        """
+
         pass
 
     def open(self, path: str, mode: str, *args, **kwargs):
+        """Open a file inside an RStudio Connect bundle."""
+
         pass
 
-    def get(self) -> None:
+    def get(self, rpath, lpath, *args, **kwargs) -> None:
+        """Fetch a bundle from RStudio Connect."""
+
         pass
 
     def exists(self, path: str, **kwargs) -> bool:
+        self.info(path)
         pass
 
     def mkdirs(self, *args, **kwargs) -> None:
@@ -459,7 +478,12 @@ class RsConnectFs:
 
         entity_name = self._path_entity_name(path)
         entities = self._get_entity_info_from_path(path)
-        return entities[entity_name]
+
+        result = entities[entity_name]
+        if result is None:
+            raise RsConnectApiError(f"Could not find entity for path: {path}")
+
+        return result
 
     def _path_entity_name(self, path):
         parts = path.split("/")
@@ -503,8 +527,8 @@ class RsConnectFs:
         # user_guid + content name should uniquely identify content, but
         # double check to be safe.
         contents = self.api.get_content(user_guid, content_name)
-        if len(contents) > 1:
-            raise ValueError(
+        if len(contents) != 1:
+            raise RsConnectApiResultError(
                 f"Expecting 1 content entry, but found {len(contents)}: {contents}"
             )
         return contents[0]

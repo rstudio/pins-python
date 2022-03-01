@@ -337,3 +337,19 @@ def test_rsconnect_fs_ls_user_content_bundles(fs_short):
     res_sorted = sorted(res_detailed, key=lambda x: x["id"])
     assert res_sorted[0] == bund_sorted[0]
     assert res_sorted[1] == bund_sorted[1]
+
+
+def test_rsconnect_fs_info(fs_short):
+    # TODO: copied from above. lots of creating bundles in tests.
+    content = fs_short.api.post_content_item("test-content", "acl")
+    bund1 = create_content_bundle(fs_short.api, content["guid"])
+    create_content_bundle(fs_short.api, content["guid"])
+
+    res_user = fs_short.info("susan")
+    assert res_user["username"] == "susan"
+
+    res_content = fs_short.info("susan/test-content")
+    assert res_content == content
+
+    res_bundle = fs_short.info(f"susan/test-content/{bund1['id']}")
+    assert res_bundle == bund1

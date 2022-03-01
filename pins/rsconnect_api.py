@@ -399,6 +399,7 @@ class RsConnectFs:
             "<username>/<content>" -> user content bundles
         """
         parts = path.split("/")
+        entities = self._get_entity_info_from_path(path)
 
         # Case 1: list users  ---
         if path.strip() == "":
@@ -408,30 +409,17 @@ class RsConnectFs:
         # Case 2: list a user's content ---
         elif len(parts) == 1:
             name_field = "name"
-            name = parts[0]
 
             # convert username -> guid and fetch content
-            user_guid = self._get_user_id_from_name(name)
-            all_results = self.api.get_content(user_guid)
+            all_results = self.api.get_content(entities["user"]["guid"])
 
         # Case 3: list a user content's bundles ---
         elif len(parts) == 2:
             name_field = "id"
-            name, content_name = parts
-
-            user_guid = self._get_user_id_from_name(name)
 
             # user_guid + content name should uniquely identify content, but
             # double check to be safe.
-            content = self.api.get_content(user_guid, content_name)
-            if len(content) > 1:
-                raise ValueError(
-                    f"Expecting 1 content entry, but found {len(content)}: {content}"
-                )
-
-            content_guid = content[0]["guid"]
-
-            all_results = self.api.get_content_bundles(content_guid)
+            all_results = self.api.get_content_bundles(entities["content"]["guid"])
 
         if len(parts) > 3:
             raise ValueError(
@@ -462,10 +450,67 @@ class RsConnectFs:
     def mkdirs(self, *args, **kwargs) -> None:
         pass
 
-    def _get_user_id_from_name(self, name):
+    def info(self, path, **kwargs):
+        # TODO: source of fsspec info uses self._parent to check cache?
+        # S3 encodes refresh (for local cache) and version_id arguments
+
+        entity_name = self._path_entity_name(path)
+        entities = self._get_entity_info_from_path(path)
+        return entities[entity_name]
+
+    def _path_entity_name(self, path):
+        parts = path.split("/")
+        if len(parts) == 1:
+            return "user"
+        elif len(parts) == 2:
+            return "content"
+        elif len(parts) == 3:
+            return "bundle"
+
+    def _get_entity_info_from_path(self, path):
+        parts = path.split("/")
+
+        out = {"user": None, "content": None, "bundle": None}
+
+        # guard against empty paths
+        if not path.strip():
+            return out
+
+        if len(parts) > 0:
+            out["user"] = self._get_user_from_name(parts[0])
+
+        if len(parts) > 1:
+            user_guid = out["user"]["guid"]
+            content_name = parts[1]
+
+            # user_guid + content name should uniquely identify content, but
+            # double check to be safe.
+            out["content"] = self._get_content_from_name(user_guid, content_name)
+
+        if len(parts) > 2:
+            bundle_id = parts[2]
+            content_guid = out["content"]["guid"]
+            out["bundle"] = self.api.get_content_bundle(content_guid, bundle_id)
+
+        return out
+
+    def _get_content_from_name(self, user_guid, content_name):
+        """Fetch a single content entity."""
+
+        # user_guid + content name should uniquely identify content, but
+        # double check to be safe.
+        contents = self.api.get_content(user_guid, content_name)
+        if len(contents) > 1:
+            raise ValueError(
+                f"Expecting 1 content entry, but found {len(contents)}: {contents}"
+            )
+        return contents[0]
+
+    def _get_user_from_name(self, name):
+        """Fetch a single user entity from user name."""
         users = self.api.get_users(prefix=name)
         try:
-            user_guid = next(iter([x["guid"] for x in users if x["username"] == name]))
+            user_guid = next(iter([x for x in users if x["username"] == name]))
             return user_guid
         except StopIteration:
             raise ValueError(f"No user named {name} found.")

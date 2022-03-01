@@ -323,9 +323,12 @@ class _HackyConnect(RsConnectApi):
         return res
 
     def create_first_admin(self, user, password, email, keyname="first-key"):
-        self.query_v1(
-            "users", "POST", json=dict(username=user, password=password, email=email)
-        )
+        # TODO(question): this is run in the R rsconnect, but it returns json
+        # error codes. tests run okay without it...
+        # self.query_v1(
+        #     "users", "POST", json=dict(username=user, password=password, email=email)
+        #
+        # )
 
         res = self.login(user, password)
 

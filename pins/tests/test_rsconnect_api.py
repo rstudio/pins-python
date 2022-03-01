@@ -69,6 +69,11 @@ def fs_admin():
     return RsConnectFs(rsc_from_key("admin"))
 
 
+@pytest.fixture
+def fs_short(rsc_short):
+    return RsConnectFs(rsc_short)
+
+
 # RsConnectApi ----------------------------------------------------------------
 
 # Methods used in fixture teardown ----
@@ -253,6 +258,18 @@ def test_rsconnect_api_get_content_bundle_archive(rsc_short):
 # Tasks ----
 
 
+def test_rsconnect_api_poll_tasks(rsc_short):
+    # TODO: snippet gets repeated a lot
+    content = rsc_short.post_content_item("test-content-bundle", "acl")
+    bundle = create_content_bundle(rsc_short, content["guid"])
+    task = rsc_short.post_content_item_deploy(content["guid"], bundle["id"])
+
+    res = rsc_short.poll_tasks(task["task_id"])
+
+    assert res["finished"]
+    assert res["code"] == 0
+
+
 # Misc ----
 
 
@@ -290,5 +307,33 @@ def test_rsconnect_api_misc_get_content_bundle_file_fail(rsc_short):
 # RsConnectFs -----------------------------------------------------------------
 
 
-def test_rsconnect_fs_ls(fs_admin):
+def test_rsconnect_fs_ls_user(fs_admin):
     assert fs_admin.ls("") == ["admin", "derek", "susan"]
+
+
+def test_rsconnect_fs_ls_user_content(fs_short):
+    content = fs_short.api.post_content_item("test-content", "acl")
+    assert fs_short.ls("susan") == ["test-content"]
+
+    res_detailed = fs_short.ls("susan", details=True)
+    assert len(res_detailed) == 1
+    assert res_detailed[0] == content
+
+
+def test_rsconnect_fs_ls_user_content_bundles(fs_short):
+    content = fs_short.api.post_content_item("test-content", "acl")
+    bund1 = create_content_bundle(fs_short.api, content["guid"])
+    bund2 = create_content_bundle(fs_short.api, content["guid"])
+
+    bund_sorted = sorted([bund1, bund2], key=lambda x: x["id"])
+
+    res = fs_short.ls("susan/test-content")
+    assert len(res) == 2
+    assert sorted(res) == [bund_sorted[0]["id"], bund_sorted[1]["id"]]
+
+    res_detailed = fs_short.ls("susan/test-content", details=True)
+    assert len(res_detailed) == 2
+
+    res_sorted = sorted(res_detailed, key=lambda x: x["id"])
+    assert res_sorted[0] == bund_sorted[0]
+    assert res_sorted[1] == bund_sorted[1]

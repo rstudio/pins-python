@@ -1,7 +1,7 @@
 import os
-import json
 import requests
 import tempfile
+import json
 
 from dataclasses import dataclass, asdict, field
 from pathlib import Path
@@ -105,9 +105,15 @@ class RsConnectApi:
         if return_request:
             return r
         else:
-            data = r.json()
-            self._validate_json_response(data)
-            return data
+            # the API can return http error codes AND codes in a json payload.
+            # to handle this, we prefer the json error codes, but fallback to
+            # checking for an HTTP error is no valid json was given.
+            try:
+                data = r.json()
+                self._validate_json_response(data)
+                return data
+            except json.JSONDecodeError:
+                r.raise_for_status()
 
     def walk_paginated_offsets(self, f_query, endpoint, method, params=None, **kwargs):
         if params is None:
@@ -222,9 +228,8 @@ class RsConnectApi:
         r = self.query_v1(
             f"content/{guid}/bundles/{id}/download", stream=True, return_request=True
         )
-        _download_file(r, f_obj)
         r.raise_for_status()
-        return r
+        _download_file(r, f_obj)
 
     def post_content_bundle(self, guid, fname, gzip=True):
         route = f"content/{guid}/bundles"
@@ -384,27 +389,63 @@ class RsConnectFs:
             self.api = RsConnectApi(server_url, **kwargs)
 
     def ls(self, path, details=False, **kwargs):
+        """List contents of Rstudio Connect Server.
+
+        Parameters
+        ----------
+        path: str
+            "" -> users
+            "<username>" -> user content
+            "<username>/<content>" -> user content bundles
+        """
         parts = path.split("/")
-        if len(parts) > 2:
+
+        # Case 1: list users  ---
+        if path.strip() == "":
+            name_field = "username"
+            all_results = self.api.get_users()
+
+        # Case 2: list a user's content ---
+        elif len(parts) == 1:
+            name_field = "name"
+            name = parts[0]
+
+            # convert username -> guid and fetch content
+            user_guid = self._get_user_id_from_name(name)
+            all_results = self.api.get_content(user_guid)
+
+        # Case 3: list a user content's bundles ---
+        elif len(parts) == 2:
+            name_field = "id"
+            name, content_name = parts
+
+            user_guid = self._get_user_id_from_name(name)
+
+            # user_guid + content name should uniquely identify content, but
+            # double check to be safe.
+            content = self.api.get_content(user_guid, content_name)
+            if len(content) > 1:
+                raise ValueError(
+                    f"Expecting 1 content entry, but found {len(content)}: {content}"
+                )
+
+            content_guid = content[0]["guid"]
+
+            all_results = self.api.get_content_bundles(content_guid)
+
+        if len(parts) > 3:
             raise ValueError(
                 "path must have form {owner_guid} or {owner_guid}/{content_name}"
             )
 
-        elif len(parts) == 1:
-            if parts[0] == "":
-                all_results = self.api.get_users()
-            else:
-                all_results = self.api.get_content(parts[0])
-
-        elif len(parts) == 2:
-            all_results = self.api.query(
-                "applications/", filter="content_type:pin", count=1000
-            )
-
         if not details:
-            return [entry["username"] for entry in all_results]
+            return [entry[name_field] for entry in all_results]
 
         return all_results
+
+        # all_results = self.api.query(
+        #    "applications/", filter="content_type:pin", count=1000
+        # )
 
     def put(self, *args, **kwargs) -> None:
         pass
@@ -420,3 +461,11 @@ class RsConnectFs:
 
     def mkdirs(self, *args, **kwargs) -> None:
         pass
+
+    def _get_user_id_from_name(self, name):
+        users = self.api.get_users(prefix=name)
+        try:
+            user_guid = next(iter([x["guid"] for x in users if x["username"] == name]))
+            return user_guid
+        except StopIteration:
+            raise ValueError(f"No user named {name} found.")

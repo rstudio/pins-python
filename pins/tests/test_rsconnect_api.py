@@ -22,6 +22,8 @@ RSC_KEYS_FNAME = "pins/tests/rsconnect_api_keys.json"
 N_USERS = 3
 ERROR_CODE_BAD_GUID = 3
 
+# TODO: search for everywhere the word 'yo' is used, spruce up bundle data tests
+
 
 def rsc_from_key(name):
     with open(RSC_KEYS_FNAME) as f:
@@ -186,6 +188,12 @@ def create_content_bundle(rsc, guid, target_dir=None):
         (Path(tmp_dir) / "index.html").write_text("<html><body>yo</body></html>")
         PinBundleManifest.add_manifest_to_directory(tmp_dir)
         return rsc.post_content_bundle(guid, tmp_dir)
+
+
+def deploy_content_bundle(rsc, bundle):
+    task = rsc.post_content_item_deploy(bundle["content_guid"], bundle["id"])
+
+    return rsc.poll_tasks(task["task_id"])
 
 
 def test_rsconnect_api_post_content_bundle(rsc_short):
@@ -380,10 +388,19 @@ def test_rsconnect_fs_exists_bundle_true(fs_short):
     assert fs_short.exists(f"susan/test-content/{bund1['id']}") is True
 
 
-@pytest.mark.xfail
-def test_rsconnect_fs_get_bundle_rev_data(fs_short):
+def test_rsconnect_fs_open(fs_short):
     content = fs_short.api.post_content_item("test-content", "acl")
     bund1 = create_content_bundle(fs_short.api, content["guid"])
+    deploy_content_bundle(fs_short.api, bund1)
+
+    f = fs_short.open(f"susan/test-content/{bund1['id']}/index.html")
+    assert "yo" in f.read().decode()
+
+
+def test_rsconnect_fs_get_data(fs_short):
+    content = fs_short.api.post_content_item("test-content", "acl")
+    bund1 = create_content_bundle(fs_short.api, content["guid"])
+    deploy_content_bundle(fs_short.api, bund1)
 
     with tempfile.NamedTemporaryFile() as tmp:
         fs_short.get(f"susan/test-content/{bund1['id']}/index.html", tmp.name)
@@ -392,11 +409,10 @@ def test_rsconnect_fs_get_bundle_rev_data(fs_short):
         assert "yo" in open(tmp.name).read()
 
 
-@pytest.mark.skip
 def test_rsconnect_fs_put_bundle(fs_short):
     # TODO: use pkg_resources to get this
     path_to_example = "pins/tests/example-bundle"
-    bundle_id = fs_short.put(path_to_example, "susan/test-content")
+    res_path = fs_short.put(path_to_example, "susan/test-content")
 
-    f_index = fs_short.open(f"susan/test-content/{bundle_id}/index.html")
-    assert f_index.read() == (Path(path_to_example) / "index.html").read_text()
+    f_index = fs_short.open(f"{res_path}/index.html")
+    assert f_index.read().decode() == (Path(path_to_example) / "index.html").read_text()

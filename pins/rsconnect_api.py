@@ -3,7 +3,7 @@ import requests
 import tempfile
 import json
 
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict, field, fields
 from pathlib import Path
 from functools import partial
 from io import IOBase
@@ -67,6 +67,15 @@ class BaseEntity(Mapping):
 
     def __len__(self):
         return len(self._d)
+
+    def __repr__(self):
+        repr_content = repr(self._d)
+        return f"{self.__class__.__name__}({repr_content})"
+
+    def _repr_pretty_(self, p, cycle=False):
+        p.text(f"{self.__class__.__name__}(")
+        p.pretty(self._d)
+        p.text(")")
 
 
 class User(BaseEntity):
@@ -494,6 +503,11 @@ class EmptyPath:
 class UserPath:
     username: str
 
+    def path_to_field(self, field_name):
+        all_fields = [field.name for field in fields(self)]
+        keep_fields = all_fields[: all_fields.index(field_name) + 1]
+        return "/".join(getattr(self, k) for k in keep_fields)
+
 
 @dataclass
 class ContentPath(UserPath):
@@ -520,8 +534,6 @@ class PinSource:
 
 
 class RsConnectFs:
-    entity_name_fields = {"user": "username", "content": "guid", "bundle": "id"}
-
     def __init__(self, server_url, **kwargs):
         if isinstance(server_url, RsConnectApi):
             self.api = server_url
@@ -566,7 +578,7 @@ class RsConnectFs:
         #    "applications/", filter="content_type:pin", count=1000
         # )
 
-    def put(self, lpath, rpath, *args, use_guid=False, **kwargs) -> None:
+    def put(self, lpath, rpath, *args, deploy=True, **kwargs) -> None:
         """Put a bundle onto Rstudio Connect.
 
         Parameters
@@ -579,21 +591,79 @@ class RsConnectFs:
             Whether rpath is a content guid
         """
 
-        pass
+        parsed = self.parse_path(rpath)
+        if not isinstance(parsed, ContentPath):
+            # TODO: replace all these with a custom PathError
+            raise ValueError("Path must point to content.")
 
-    def open(self, path: str, mode: str, *args, **kwargs):
+        try:
+            content = self.info(rpath)
+        except RsConnectApiMissingContentError:
+            # TODO: this could be seen as analogous to mkdir (which gets
+            # called by pins anyway)
+            # TODO: hard-coded acl bad?
+            content = self.api.post_content_item(parsed.content, "acl")
+
+        bundle = self.api.post_content_bundle(content["guid"], lpath)
+
+        if deploy:
+            task = self.api.post_content_item_deploy(
+                bundle["content_guid"], bundle["id"]
+            )
+
+            task = self.api.poll_tasks(task["task_id"])
+            if task["code"] != 0 or not task["finished"]:
+                raise RsConnectApiError(f"deployment failed for task: {task}")
+
+        return f"{rpath}/{bundle['id']}"
+
+    def open(self, path: str, mode: str = "rb", *args, **kwargs):
         """Open a file inside an RStudio Connect bundle."""
 
-        pass
+        if mode != "rb":
+            raise NotImplementedError()
+
+        parsed = self.parse_path(path)
+
+        if not isinstance(parsed, BundleFilePath):
+            raise ValueError(
+                "Path to a bundle file required. "
+                "e.g. <user_name>/<content_name>/<bundle_id>/<file_name>"
+            )
+
+        bundle = self.info(
+            parsed.path_to_field("bundle")
+        )  # f"{parsed.username}/{parsed.content}/{parsed.bundle}")
+
+        # TODO: do whatever other remote backends do
+        from io import BytesIO
+
+        f = BytesIO()
+
+        self.api.misc_get_content_bundle_file(
+            bundle["content_guid"], bundle["id"], parsed.file_name, f
+        )
+        f.seek(0)
+        return f
 
     def get(self, rpath, lpath, recursive=False, *args, **kwargs) -> None:
         """Fetch a bundle or file from RStudio Connect."""
+        parsed = self.parse_path(rpath)
 
-        # figure out what entity the path defines
+        if recursive:
+            if not isinstance(parsed, BundlePath):
+                raise ValueError("Must receive path to bundle for recursive get.")
 
-        # get entity info
-        # entity = self.info(rpath)
-        pass
+            bundle = self.info(rpath)
+            self.api.get_content_bundle_archive(
+                bundle["content_guid"], bundle["id"], lpath
+            )
+
+        elif isinstance(parsed, BundleFilePath):
+            bundle = self.info(parsed.path_to_field("bundle"))
+            self.api.misc_get_content_bundle_file(
+                bundle["content_guid"], bundle["id"], parsed.file_name, lpath
+            )
 
     def exists(self, path: str, **kwargs) -> bool:
         try:

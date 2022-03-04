@@ -114,6 +114,7 @@ class MetaFactory:
         self,
         files: Sequence[StrOrFile],
         type,
+        # TODO: when files is a string name should be okay as None
         name,
         title,
         description=None,

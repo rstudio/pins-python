@@ -63,13 +63,16 @@ class BaseBoard:
             version = self.keep_final_path_component(full_path)
             all_versions.append(guess_version(version))
 
+        # sort them, with latest last
+        sorted_versions = self.sort_pin_versions(all_versions)
+
         # TODO(defer): this deviates from R pins, which returns a df by default
         if as_df:
             import pandas as pd
 
-            return pd.DataFrame([v.to_dict() for v in all_versions])
+            return pd.DataFrame([v.to_dict() for v in sorted_versions])
 
-        return all_versions
+        return sorted_versions
 
     def pin_meta(self, name, version: str = None):
 
@@ -181,7 +184,7 @@ class BaseBoard:
 
         return meta
 
-    def validate_pin_name(self, name: str) -> bool:
+    def validate_pin_name(self, name: str) -> None:
         if "/" in name:
             raise ValueError(f"Invalid pin name: {name}")
 
@@ -197,14 +200,28 @@ class BaseBoard:
     def keep_final_path_component(self, path):
         return path.split("/")[-1]
 
+    def sort_pin_versions(self, versions):
+        # assume filesystem returned them with most recent last
+        return versions
+
 
 class BoardRsConnect(BaseBoard):
+    # TODO: high-level design considerations
+    #  * Able to round trip catalogue exploration -> data fetching
+    #    (e.g. pin_list -> pin_read, pin_versions -> pin_read)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # remove board string, since it's used internally, but this board
         # always connects to a specific server via fs
         self.board = ""
+
+    # defaults work ----
+
+    # def pin_meta(self):
+    # def pin_versions(self):
+    # def pin_fetch(self):
+    # def pin_exists(self):
 
     def pin_list(self):
         # lists all pin content on RStudio Connect server
@@ -214,3 +231,18 @@ class BoardRsConnect(BaseBoard):
 
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
+
+    # def pin_read(self):
+    #    raise NotImplementedError()
+
+    def pin_write(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def validate_pin_name(self, name) -> None:
+        if name.count("/") > 1:
+            raise ValueError(f"Invalid pin name: {name}")
+
+    def sort_pin_versions(self, versions) -> Sequence[VersionRaw]:
+        # TODO: could alternatively implement a "select_pin_version" method
+        # to be used by pin_meta
+        return sorted(versions, key=lambda v: int(v.version))

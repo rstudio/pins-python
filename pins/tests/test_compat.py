@@ -6,6 +6,7 @@ import importlib_resources as resources
 
 from pins.boards import BaseBoard
 from pins.errors import PinsError
+from pins.tests.helpers import xfail_fs  # noqa
 
 
 NOT_A_PIN = "not_a_pin_abcdefg"

@@ -1,19 +1,74 @@
 import uuid
 import os
+import json
+import pytest
+import shutil
 
 from tempfile import TemporaryDirectory
+from functools import wraps
+from pathlib import Path
 
-from pins.boards import BaseBoard
+from pins.boards import BaseBoard, BoardRsConnect
 from fsspec import filesystem
+
+RSC_SERVER_URL = "http://localhost:3939"
+# TODO: should use pkg_resources for this path?
+RSC_KEYS_FNAME = "pins/tests/rsconnect_api_keys.json"
 
 BOARD_CONFIG = {
     "file": {"path": ["PINS_TEST_FILE__PATH", None]},
     "s3": {"path": ["PINS_TEST_S3__PATH", "ci-pins"]},
+    "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},
     # TODO(question): R pins has the whole server a board
     # but it's a bit easier to test by (optionally) allowing a user
     # or something else to be a board
     # "rsc": {"path": ["PINS_TEST_RSC__PATH", ""]}
 }
+
+# TODO: Backend initialization should be independent of helpers, but these
+#       high-level initializers are super handy.
+#       putting imports inside rsconnect particulars for now
+
+
+def rsc_from_key(name):
+    from pins.rsconnect_api import RsConnectApi
+
+    with open(RSC_KEYS_FNAME) as f:
+        api_key = json.load(f)[name]
+        return RsConnectApi(RSC_SERVER_URL, api_key)
+
+
+def rsc_fs_from_key(name):
+    from pins.rsconnect_api import RsConnectFs
+
+    rsc = rsc_from_key(name)
+
+    return RsConnectFs(rsc)
+
+
+def rsc_delete_user_content(rsc):
+    guid = rsc.get_user()["guid"]
+    content = rsc.get_content(owner_guid=guid)
+    for entry in content:
+        rsc.delete_content_item(entry["guid"])
+
+
+def xfail_fs(*names):
+    def outer(f):
+        @wraps(f)
+        def wrapper(backend, *args, **kwargs):
+            if backend.fs_name in names:
+                pytest.xfail()
+                return f(backend, *args, **kwargs)
+            else:
+                return f(backend, *args, **kwargs)
+
+        return wrapper
+
+    return outer
+
+
+# Board Builders --------------------------------------------------------------
 
 
 class BoardBuilder:
@@ -87,3 +142,50 @@ class BoardBuilder:
         # only delete the base directory if it is explicitly temporary
         if isinstance(self.path, TemporaryDirectory):
             self.path.cleanup()
+
+
+class RscBoardBuilder(BoardBuilder):
+    """A dumb version of a RSConnect board builder.
+
+    This class constructs a board for the same user each time, and deletes that
+    user's content on teardown.
+    """
+
+    # TODO: could loop back once initializing all boards is clear
+
+    def __init__(self, fs_name, path=None, *args, **kwargs):
+        self.fs_name = fs_name
+        self.path = None
+
+    def create_tmp_board(self, src_board=None):
+        from pins.rsconnect_api import PinBundleManifest  # noqa
+
+        board = BoardRsConnect("", rsc_fs_from_key("derek"))
+
+        if src_board is None:
+            return board
+
+        # otherwise, try to copy in existing board ---
+        # we need to add a manifest to each pin, so copy contents into a tmp dir
+        with TemporaryDirectory() as tmp_dir:
+            p_root = tmp_dir / Path(Path(src_board).name)
+            p_user = Path("derek")
+
+            shutil.copytree(src_board, p_root)
+
+            for pin_entry in p_root.glob("*/*"):
+                # username is required when putting content bundles up
+                # e.g. put derek/my-content to create a new bundle
+                rpath = str(p_user / pin_entry.relative_to(p_root))
+
+                # need to create a manifest
+                # TODO: should fs.put just handle this if no manifest exists?
+                board.fs.put(str(pin_entry), rpath)
+
+        return board
+
+    def teardown_board(self, board):
+        rsc_delete_user_content(board.fs.api)
+
+    def teardown(self):
+        self.teardown_board(self.create_tmp_board())

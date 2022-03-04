@@ -1,7 +1,7 @@
 import pytest
 
 from pytest import mark as m
-from pins.tests.helpers import BoardBuilder
+from pins.tests.helpers import BoardBuilder, RscBoardBuilder  # noqa
 
 # Based on https://github.com/machow/siuba/blob/main/siuba/tests/helpers.py
 BACKEND_MARKS = ["fs_s3", "fs_file"]
@@ -10,6 +10,7 @@ BACKEND_MARKS = ["fs_s3", "fs_file"]
 params_backend = [
     pytest.param(lambda: BoardBuilder("file"), id="file", marks=m.fs_file),
     pytest.param(lambda: BoardBuilder("s3"), id="s3", marks=m.fs_s3),
+    # pytest.param(lambda: RscBoardBuilder("rsc"), id="rsc", marks=m.fs_rsc),
 ]
 
 

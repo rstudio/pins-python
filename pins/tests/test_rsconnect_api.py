@@ -1,41 +1,24 @@
 import pytest
-import json
 import tempfile
 
 from pathlib import Path
 from requests.exceptions import HTTPError
 from pins.rsconnect_api import (
-    RsConnectApi,
     RsConnectFs,
     RsConnectApiRequestError,
     RsConnectApiMissingContentError,
     PinBundleManifest,
 )
 
+from pins.tests.helpers import rsc_from_key, rsc_delete_user_content
+
 pytestmark = pytest.mark.rsc  # noqa
 
-
-RSC_SERVER_URL = "http://localhost:3939"
-# TODO: should use pkg_resources for this path?
-RSC_KEYS_FNAME = "pins/tests/rsconnect_api_keys.json"
 
 N_USERS = 3
 ERROR_CODE_BAD_GUID = 3
 
 # TODO: search for everywhere the word 'yo' is used, spruce up bundle data tests
-
-
-def rsc_from_key(name):
-    with open(RSC_KEYS_FNAME) as f:
-        api_key = json.load(f)[name]
-        return RsConnectApi(RSC_SERVER_URL, api_key)
-
-
-def delete_user_content(rsc):
-    guid = rsc.get_user()["guid"]
-    content = rsc.get_content(owner_guid=guid)
-    for entry in content:
-        rsc.delete_content_item(entry["guid"])
 
 
 # The two rsconnect sessions below tear down at different intervals.
@@ -51,7 +34,7 @@ def rsc_admin():
     # possible for the cleanup to fail. we mitigate the risk of this by ordering
     # the cleanup methods before any POST methods below. but we need to create
     # content to test deletion, so hope it works as intended during cleanup.
-    delete_user_content(rsc_admin)
+    rsc_delete_user_content(rsc_admin)
 
 
 @pytest.fixture(scope="function")
@@ -60,11 +43,11 @@ def rsc_short():
     rsc_susan = rsc_from_key("susan")
 
     # delete any content that might already exist
-    delete_user_content(rsc_susan)
+    rsc_delete_user_content(rsc_susan)
 
     yield rsc_susan
 
-    delete_user_content(rsc_susan)
+    rsc_delete_user_content(rsc_susan)
 
 
 @pytest.fixture

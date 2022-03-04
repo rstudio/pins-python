@@ -85,7 +85,7 @@ class BaseBoard:
                     f"or is missing version: {version}."
                 )
 
-            selected_version = version
+            selected_version = guess_version(version)
         else:
             # otherwise, get the last pin version
             versions = self.pin_versions(name, as_df=False)
@@ -94,14 +94,14 @@ class BaseBoard:
                 raise NotImplementedError("TODO: sanity check when no versions")
 
             # select last version ----
-            selected_version = versions[-1].version
+            selected_version = versions[-1]
 
-        components = [self.board, name, selected_version]
+        components = [self.board, name, selected_version.version]
         meta_name = self.meta_factory.get_meta_name(*components)
 
         path_version = self.construct_path([*components, meta_name])
         f = self.fs.open(path_version)
-        return self.meta_factory.read_yaml(f)
+        return self.meta_factory.read_yaml(f, selected_version)
 
     def pin_list(self):
         full_paths = self.fs.ls(self.board)

@@ -64,7 +64,8 @@ def test_compat_pin_meta(board):
     assert meta.version.created == datetime.datetime(2022, 2, 14, 16, 37, 20)
     assert meta.file == "df_csv.csv"
     assert meta.file_size == 28
-    assert meta.version.hash == "9bfad6d1a322a904"
+    assert meta.version.hash == "9bfad"
+    assert meta.pin_hash == "9bfad6d1a322a904"
     assert meta.type == "csv"
 
     # TODO(question): coding api_version as a yaml float intentional?
@@ -83,7 +84,7 @@ def test_compat_pin_meta_pin_missing(board):
 def test_compat_pin_meta_version_arg(board):
     meta = board.pin_meta(PIN_CSV, "20220214T163718Z-eceac")
     assert meta.version.version == "20220214T163718Z-eceac"
-    assert meta.version.hash == "eceac651f7d06360"
+    assert meta.version.hash == "eceac"
 
 
 def test_compat_pin_meta_version_arg_error(board):

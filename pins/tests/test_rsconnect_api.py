@@ -35,7 +35,7 @@ def delete_user_content(rsc):
     guid = rsc.get_user()["guid"]
     content = rsc.get_content(owner_guid=guid)
     for entry in content:
-        rsc.delete_content(entry["guid"])
+        rsc.delete_content_item(entry["guid"])
 
 
 # The two rsconnect sessions below tear down at different intervals.
@@ -161,7 +161,7 @@ def test_rsconnect_get_content_args(rsc_short):
 
 def test_rsconnect_del_content_result(rsc_short):
     post_res = rsc_short.post_content_item("test-content", "acl")
-    res = rsc_short.delete_content(post_res["guid"])
+    res = rsc_short.delete_content_item(post_res["guid"])
     assert res is None
 
 
@@ -169,7 +169,7 @@ def test_rsconnect_del_content_fails(rsc_short):
     rsc_short.post_content_item("test-content", "acl")
 
     with pytest.raises(RsConnectApiRequestError) as exc_info:
-        rsc_short.delete_content("abc")
+        rsc_short.delete_content_item("abc")
 
     err = exc_info.value.args[0]
 
@@ -416,3 +416,28 @@ def test_rsconnect_fs_put_bundle(fs_short):
 
     f_index = fs_short.open(f"{res_path}/index.html")
     assert f_index.read().decode() == (Path(path_to_example) / "index.html").read_text()
+
+
+def test_rsconnect_fs_mkdir(fs_short):
+    fs_short.mkdir("susan/test-content")
+
+
+def test_rsconnect_fs_rm_content(fs_short):
+    fs_short.api.post_content_item("test-content", "acl")
+
+    assert fs_short.exists("susan/test-content") is True
+    fs_short.rm("susan/test-content", recursive=True)
+
+    assert fs_short.exists("susan/test-content") is False
+
+
+def test_rsconnect_fs_rm_bundle(fs_short):
+    # TODO: use pkg_resources to get this
+    path_to_example = "pins/tests/example-bundle"
+
+    # note that you can't delete the active bundle, so we create two, and
+    # delete the first
+    res_path_old = fs_short.put(path_to_example, "susan/test-content")
+    fs_short.put(path_to_example, "susan/test-content")
+
+    fs_short.rm(res_path_old)

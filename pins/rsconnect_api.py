@@ -102,6 +102,14 @@ class Bundle(BaseEntity):
         return self._d["id"]
 
 
+class Task(BaseEntity):
+    def get_id(self) -> str:
+        return self._d["id"]
+
+    def get_name(self) -> str:
+        return self._d["id"]
+
+
 # Pagination result container ----
 
 T = TypeVar("T")
@@ -168,6 +176,20 @@ class RsConnectApi:
         code = data.get("code")
         if code is not None and code != 0:
             raise RsConnectApiRequestError(data)
+
+    def _validate_delete_response(self, r):
+        try:
+            # if we get json back it should always be an api error
+            data = r.json()
+            self._validate_json_response(data)
+
+            # this should never be triggered
+            raise ValueError(
+                "Unknown json returned by delete_content endpoint: %s" % data
+            )
+        except json.JSONDecodeError:
+            # fallback to at least raising status errors
+            r.raise_for_status()
 
     def query_v1(self, route, method="GET", return_request=False, **kwargs):
         endpoint = f"{self.base_v1_url}/{route}"
@@ -283,7 +305,7 @@ class RsConnectApi:
 
         return Content(result)
 
-    def delete_content(self, guid: str) -> None:
+    def delete_content_item(self, guid: str) -> None:
         """Delete content.
 
         Note that this method returns None if successful. Otherwise, it raises an error.
@@ -293,18 +315,12 @@ class RsConnectApi:
         # need to check the response manually.
         r = self.query_v1(f"content/{guid}", "DELETE", return_request=True)
 
-        try:
-            # if we get json back it should always be an api error
-            data = r.json()
-            self._validate_json_response(data)
+        self._validate_delete_response(r)
 
-            # this should never be triggered
-            raise ValueError(
-                "Unknown json returned by delete_content endpoint: %s" % data
-            )
-        except json.JSONDecodeError:
-            # fallback to at least raising status errors
-            r.raise_for_status()
+    def delete_content_bundle(self, guid: str, id: str) -> None:
+        r = self.query_v1(f"content/{guid}/bundles/{id}", "DELETE", return_request=True)
+
+        self._validate_delete_response(r)
 
     # bundles ----
 
@@ -353,13 +369,13 @@ class RsConnectApi:
 
     # tasks ----
 
-    def get_tasks(self, id: str, first: int = None, wait: int = None):
+    def get_tasks(self, id: str, first: int = None, wait: int = None) -> Task:
         params = self._get_params(locals())
         del params["id"]
 
         return self.query_v1(f"tasks/{id}", params=params)
 
-    def poll_tasks(self, id: str, first: int = None, wait: int = 1):
+    def poll_tasks(self, id: str, first: int = None, wait: int = 1) -> Task:
         """Poll a task until complete."""
 
         json = self.get_tasks(id, first, wait)
@@ -396,7 +412,7 @@ class RsConnectApi:
         params = urlencode(raw_params, safe=":+")
         result = self.query("applications", params=params)
         return Paginated(
-            result["applications"],
+            list(map(Content, result["applications"])),
             {k: v for k, v in result.items() if k != "applications"},
         )
 
@@ -524,15 +540,6 @@ class BundleFilePath(BundlePath):
     file_name: str
 
 
-class PinSource:
-    def __init__(self, friendly_name: str):
-        self.friendly_name = friendly_name
-
-    def __repr__(self):
-        repr_args = repr(self.friendly_name)
-        return f"{self.__class__.__name__}({repr_args})"
-
-
 class RsConnectFs:
     def __init__(self, server_url, **kwargs):
         if isinstance(server_url, RsConnectApi):
@@ -615,6 +622,7 @@ class RsConnectFs:
             if task["code"] != 0 or not task["finished"]:
                 raise RsConnectApiError(f"deployment failed for task: {task}")
 
+        # TODO: should return bundle itself?
         return f"{rpath}/{bundle['id']}"
 
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
@@ -672,15 +680,51 @@ class RsConnectFs:
         except RsConnectApiMissingContentError:
             return False
 
-    def mkdirs(self, *args, **kwargs) -> None:
-        # TODO: this sounds like it should post_content_item
-        pass
+    def mkdir(self, path, create_parents=True, **kwargs) -> None:
+        parsed = self.parse_path(path)
+
+        if not isinstance(parsed, ContentPath):
+            raise ValueError(f"Requires path to content, but received: {path}")
+
+        if self.exists(path):
+            raise FileExistsError(path)
+
+        # TODO: could implement and call makedirs, but seems overkill
+        # TODO: hard-coded "acl"?
+        self.api.post_content_item(parsed.content, "acl", **kwargs)
 
     def info(self, path, **kwargs) -> "User | Content | Bundle":
         # TODO: source of fsspec info uses self._parent to check cache?
         # S3 encodes refresh (for local cache) and version_id arguments
 
         return self._get_entity_from_path(path)
+
+    def rm(self, path, recursive=False, maxdepth=None) -> None:
+        parsed = self.parse_path(path)
+
+        # guards ----
+        if maxdepth is not None:
+            raise NotImplementedError("rm maxdepth argument not supported.")
+        if isinstance(parsed, BundleFilePath):
+            raise ValueError("Cannot rm a bundle file.")
+
+        # time to delete things ----
+        entity = self.info(path)
+
+        if isinstance(entity, User):
+            raise ValueError("Cannot rm a user.")
+        if isinstance(entity, Content):
+            if not recursive:
+                raise ValueError("Must set recursive to true if deleting content.")
+
+            self.api.delete_content_item(entity["guid"])
+
+        elif isinstance(entity, Bundle):
+            self.api.delete_content_bundle(entity["content_guid"], entity["id"])
+        else:
+            raise ValueError("Cannot entity: {type(entity)}")
+
+    # Utils ----
 
     def parse_path(self, path):
         parts = path.split("/")

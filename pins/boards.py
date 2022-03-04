@@ -29,6 +29,9 @@ class IFileSystem(Protocol):
     def mkdirs(self, path, create_parents=True, **kwargs) -> None:
         ...
 
+    def rm(self, path, recursive=False, maxdepth=None) -> None:
+        ...
+
 
 class BaseBoard:
     def __init__(

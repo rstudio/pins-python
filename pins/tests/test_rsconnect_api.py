@@ -367,6 +367,14 @@ def test_rsconnect_fs_info(fs_short):
         fs_short.info("susan/test-content-does-not-exist")
 
 
+def test_rsconnect_fs_info_root_ok(fs_short):
+    users = fs_short.ls("/")
+    assert len(users) == N_USERS
+
+    susan = fs_short.info("/susan")
+    assert susan == fs_short.info("susan")
+
+
 @pytest.mark.parametrize(
     "path, result",
     [

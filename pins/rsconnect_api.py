@@ -560,7 +560,7 @@ class RsConnectFs:
             "<username>/<content>" -> user content bundles
         """
 
-        if path.strip() == "":
+        if isinstance(self.parse_path(path), EmptyPath):
             # root path specified, so list users
             all_results = self.api.get_users()
 
@@ -727,6 +727,10 @@ class RsConnectFs:
     # Utils ----
 
     def parse_path(self, path):
+        # root can be indicated by a slash
+        if path.startswith("/"):
+            path = path[1:]
+
         parts = path.split("/")
         if path.strip() == "":
             return EmptyPath()

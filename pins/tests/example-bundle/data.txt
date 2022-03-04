@@ -1,0 +1,10 @@
+api_version: 1
+created: 20220304T153828Z
+description: null
+file: data_frame.csv
+file_size: 15
+name: data_frame.csv
+pin_hash: c65b0e9785abaa60
+title: some title
+type: csv
+user: {}

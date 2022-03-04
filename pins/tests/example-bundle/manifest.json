@@ -1,1 +1,1 @@
-{"version": 1, "local": "en_US", "platform": "3.5.1", "metadata": {"appmode": "static", "primary_rmd": null, "primary_html": "index.html", "content_category": "pin", "has_parameters": false}, "packages": null, "files": ["index.html"], "users": null}
+{"version": 1, "local": "en_US", "platform": "3.5.1", "metadata": {"appmode": "static", "primary_rmd": null, "primary_html": "index.html", "content_category": "pin", "has_parameters": false}, "packages": null, "files": ["index.html", "manifest.json", "data_frame.csv", "data.txt"], "users": null}

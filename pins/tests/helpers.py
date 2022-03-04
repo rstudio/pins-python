@@ -174,12 +174,15 @@ class RscBoardBuilder(BoardBuilder):
             shutil.copytree(src_board, p_root)
 
             for pin_entry in p_root.glob("*/*"):
-                # username is required when putting content bundles up
+                # two key points:
+                #   1. username is required when putting content bundles up
+                #   2. the version must be removed.
                 # e.g. put derek/my-content to create a new bundle
-                rpath = str(p_user / pin_entry.relative_to(p_root))
+                rpath = str(p_user / pin_entry.parent.relative_to(p_root))
 
                 # need to create a manifest
                 # TODO: should fs.put just handle this if no manifest exists?
+                PinBundleManifest.add_manifest_to_directory(str(pin_entry))
                 board.fs.put(str(pin_entry), rpath)
 
         return board

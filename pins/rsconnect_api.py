@@ -118,7 +118,7 @@ T = TypeVar("T")
 @dataclass
 class Paginated(Generic[T]):
     def __init__(self, results: T, cursor: Mapping):
-        # TODO: holding off on defining cursor structure, since
+        # holding off on defining cursor structure, since
         # it seems like there are multiple types of cursors
         self.results = results
         self.cursor = cursor
@@ -329,7 +329,6 @@ class RsConnectApi:
         return [Bundle(d) for d in result]
 
     def get_content_bundle(self, guid: str, id: int) -> Bundle:
-        # TODO(question): could combine with get_content_bundles above?
         result = self.query_v1(f"content/{guid}/bundles/{id}")
         return Bundle(result)
 
@@ -387,7 +386,6 @@ class RsConnectApi:
     # non-api endpointsmisc ----
 
     def misc_ping(self):
-        # TODO: may not be under __api__ route
         return self._raw_query(f"{self.server_url}/__ping__")
 
     def misc_get_content_bundle_file(
@@ -442,7 +440,6 @@ class _HackyConnect(RsConnectApi):
             json={"username": user, "password": password},
         )
         self.xsrf = res.cookies["RSC-XSRF"]
-        # TODO: should return json? What is the result anyway?
         return res
 
     def create_first_admin(self, user, password, email, keyname="first-key"):

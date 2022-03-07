@@ -582,7 +582,16 @@ class RsConnectFs:
         #    "applications/", filter="content_type:pin", count=1000
         # )
 
-    def put(self, lpath, rpath, *args, deploy=True, **kwargs) -> None:
+    def put(
+        self,
+        lpath,
+        rpath,
+        recursive=False,
+        *args,
+        deploy=True,
+        cls_manifest=PinBundleManifest,
+        **kwargs,
+    ) -> None:
         """Put a bundle onto Rstudio Connect.
 
         Parameters
@@ -591,11 +600,19 @@ class RsConnectFs:
             A path to the local bundle directory.
         rpath: str
             A path to the content where the bundle is being put.
-        use_guid: bool
-            Whether rpath is a content guid
+        cls_manifest:
+            If maniest does not exist, a class with an .add_manifest_to_directory()
+            method.
+
         """
 
         parsed = self.parse_path(rpath)
+
+        if recursive is False:
+            raise NotImplementedError(
+                "Must set recursive to True in order to put any RSConnect content."
+            )
+
         if not isinstance(parsed, ContentPath):
             # TODO: replace all these with a custom PathError
             raise ValueError("Path must point to content.")

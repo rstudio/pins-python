@@ -403,7 +403,7 @@ def test_rsconnect_fs_get_data(fs_short):
 def test_rsconnect_fs_put_bundle(fs_short):
     # TODO: use pkg_resources to get this
     path_to_example = "pins/tests/example-bundle"
-    res_path = fs_short.put(path_to_example, "susan/test-content")
+    res_path = fs_short.put(path_to_example, "susan/test-content", recursive=True)
 
     f_index = fs_short.open(f"{res_path}/index.html")
     assert f_index.read().decode() == (Path(path_to_example) / "index.html").read_text()
@@ -428,7 +428,7 @@ def test_rsconnect_fs_rm_bundle(fs_short):
 
     # note that you can't delete the active bundle, so we create two, and
     # delete the first
-    res_path_old = fs_short.put(path_to_example, "susan/test-content")
-    fs_short.put(path_to_example, "susan/test-content")
+    res_path_old = fs_short.put(path_to_example, "susan/test-content", recursive=True)
+    fs_short.put(path_to_example, "susan/test-content", recursive=True)
 
     fs_short.rm(res_path_old)

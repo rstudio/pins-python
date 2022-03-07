@@ -181,9 +181,7 @@ class RscBoardBuilder(BoardBuilder):
                 rpath = str(p_user / pin_entry.parent.relative_to(p_root))
 
                 # need to create a manifest
-                # TODO: should fs.put just handle this if no manifest exists?
-                PinBundleManifest.add_manifest_to_directory(str(pin_entry))
-                board.fs.put(str(pin_entry), rpath)
+                board.fs.put(str(pin_entry), rpath, recursive=True)
 
         return board
 

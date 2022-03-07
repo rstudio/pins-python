@@ -89,6 +89,7 @@ def test_compat_pin_meta_pin_missing(board):
 
 @xfail_fs("rsc")
 def test_compat_pin_meta_version_arg(board):
+    # note that in RSConnect the version is the bundle id
     meta = board.pin_meta(PIN_CSV, "20220214T163718Z-eceac")
     assert meta.version.version == "20220214T163718Z-eceac"
     assert meta.version.hash == "eceac"
@@ -107,12 +108,18 @@ def test_compat_pin_meta_version_arg_error(board):
 # pin_read ----
 
 
-@xfail_fs("rsc")
 def test_compat_pin_read(board):
-    board.pin_read("df_csv")
+    import pandas as pd
+
+    p_data = path_to_board / "df_csv" / "20220214T163720Z-9bfad" / "df_csv.csv"
+
+    src_df = board.pin_read("df_csv")
+    dst_df = pd.read_csv(p_data, index_col=0)
+
+    assert isinstance(src_df, pd.DataFrame)
+    assert src_df.equals(dst_df)
 
 
-@xfail_fs("rsc")
 def test_compat_pin_read_supported(board):
     with pytest.raises(NotImplementedError):
         board.pin_read("df_rds")

@@ -298,6 +298,8 @@ def test_rsconnect_api_misc_get_content_bundle_file_fail(rsc_short):
 
 # RsConnectFs -----------------------------------------------------------------
 
+# fs.ls ----
+
 
 def test_rsconnect_fs_ls_user(fs_admin):
     assert fs_admin.ls("") == ["admin", "derek", "susan"]
@@ -331,6 +333,9 @@ def test_rsconnect_fs_ls_user_content_bundles(fs_short):
     assert res_sorted[1] == bund_sorted[1]
 
 
+# fs.info ----
+
+
 def test_rsconnect_fs_info(fs_short):
     # TODO: copied from above. lots of creating bundles in tests.
     content = fs_short.api.post_content_item("test-content", "acl")
@@ -358,6 +363,9 @@ def test_rsconnect_fs_info_root_ok(fs_short):
     assert susan == fs_short.info("susan")
 
 
+# fs.exists ----
+
+
 @pytest.mark.parametrize(
     "path, result",
     [
@@ -379,6 +387,9 @@ def test_rsconnect_fs_exists_bundle_true(fs_short):
     assert fs_short.exists(f"susan/test-content/{bund1['id']}") is True
 
 
+# fs.open ----
+
+
 def test_rsconnect_fs_open(fs_short):
     content = fs_short.api.post_content_item("test-content", "acl")
     bund1 = create_content_bundle(fs_short.api, content["guid"])
@@ -386,6 +397,9 @@ def test_rsconnect_fs_open(fs_short):
 
     f = fs_short.open(f"susan/test-content/{bund1['id']}/index.html")
     assert "yo" in f.read().decode()
+
+
+# fs.get ----
 
 
 def test_rsconnect_fs_get_data(fs_short):
@@ -400,6 +414,9 @@ def test_rsconnect_fs_get_data(fs_short):
         assert "yo" in open(tmp.name).read()
 
 
+# fs.put ----
+
+
 def test_rsconnect_fs_put_bundle(fs_short):
     # TODO: use pkg_resources to get this
     path_to_example = "pins/tests/example-bundle"
@@ -409,8 +426,16 @@ def test_rsconnect_fs_put_bundle(fs_short):
     assert f_index.read().decode() == (Path(path_to_example) / "index.html").read_text()
 
 
+# fs.mkdir ----
+
+
 def test_rsconnect_fs_mkdir(fs_short):
+    assert fs_short.exists("susan/test-content") is False
     fs_short.mkdir("susan/test-content")
+    assert fs_short.exists("susan/test-content") is True
+
+
+# fs.rm ----
 
 
 def test_rsconnect_fs_rm_content(fs_short):

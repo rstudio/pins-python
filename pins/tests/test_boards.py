@@ -1,15 +1,15 @@
 import pytest
 
-from pins.tests.helpers import BoardBuilder
+from pins.tests.helpers import xfail_fs
 
 
 @pytest.fixture
-def board():
-    bb = BoardBuilder("file")
-    yield bb.create_tmp_board()
-    bb.teardown()
+def board(backend):
+    yield backend.create_tmp_board()
+    backend.teardown()
 
 
+@xfail_fs("rsc")
 def test_board_pin_write_default_title(board):
     import pandas as pd
 
@@ -18,11 +18,11 @@ def test_board_pin_write_default_title(board):
     assert meta.title == "A pinned 3 x 2 CSV"
 
 
-def test_board_pin_write_roundtrip(backend):
+@xfail_fs("rsc")
+def test_board_pin_write_roundtrip(board):
     import pandas as pd
 
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
-    board = backend.create_tmp_board()
 
     assert not board.pin_exists("df_csv")
 
@@ -34,6 +34,7 @@ def test_board_pin_write_roundtrip(backend):
     assert loaded_df.equals(df)
 
 
+@xfail_fs("rsc")
 def test_board_pin_write_type_not_specified_error(board):
     class C:
         pass
@@ -42,6 +43,7 @@ def test_board_pin_write_type_not_specified_error(board):
         board.pin_write(C(), "cool_pin")
 
 
+@xfail_fs("rsc")
 def test_board_pin_write_type_error(board):
     class C:
         pass

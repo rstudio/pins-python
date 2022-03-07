@@ -1,12 +1,13 @@
+import pytest
+
 import uuid
 import os
 import json
-import pytest
 import shutil
 
 from tempfile import TemporaryDirectory
-from functools import wraps
 from pathlib import Path
+from functools import wraps
 
 from pins.boards import BaseBoard, BoardRsConnect
 from fsspec import filesystem
@@ -55,13 +56,14 @@ def rsc_delete_user_content(rsc):
 
 def xfail_fs(*names):
     def outer(f):
+        # Assumes a fixture named board is passed to the test
         @wraps(f)
-        def wrapper(backend, *args, **kwargs):
-            if backend.fs_name in names:
+        def wrapper(board, *args, **kwargs):
+            if board.fs.protocol in names:
                 pytest.xfail()
-                return f(backend, *args, **kwargs)
+                return f(board, *args, **kwargs)
             else:
-                return f(backend, *args, **kwargs)
+                return f(board, *args, **kwargs)
 
         return wrapper
 

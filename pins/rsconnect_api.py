@@ -14,6 +14,7 @@ from typing import Sequence, TypeVar, Generic
 
 
 RSC_CODE_OBJECT_DOES_NOT_EXIST = 4
+RSC_CODE_INVALID_NUMERIC_PATH = 3
 
 
 def _download_file(response, local_fname):
@@ -248,7 +249,7 @@ class RsConnectApi:
 
     def get_user(self, guid: str = None) -> User:
         if guid is None:
-            return self.query_v1("user")
+            return User(self.query_v1("user"))
 
         result = self.query_v1(f"user/{guid}")
         return User(result)
@@ -538,6 +539,8 @@ class BundleFilePath(BundlePath):
 
 
 class RsConnectFs:
+    protocol: str = "rsc"
+
     def __init__(self, server_url, **kwargs):
         if isinstance(server_url, RsConnectApi):
             self.api = server_url
@@ -617,6 +620,8 @@ class RsConnectFs:
             # TODO: replace all these with a custom PathError
             raise ValueError("Path must point to content.")
 
+        # Create content item if missing ----
+
         try:
             content = self.info(rpath)
         except RsConnectApiMissingContentError:
@@ -625,7 +630,16 @@ class RsConnectFs:
             # TODO: hard-coded acl bad?
             content = self.api.post_content_item(parsed.content, "acl")
 
+        # Create bundle (with manifest.json inserted if missing) ----
+
+        if not (Path(lpath) / "manifest.json").exists():
+            # TODO(question): does R pins copy content to tmp directory, or
+            # insert mainfest.json into the source directory?
+            cls_manifest.add_manifest_to_directory(lpath)
+
         bundle = self.api.post_content_bundle(content["guid"], lpath)
+
+        # Deploy bundle ----
 
         if deploy:
             task = self.api.post_content_item_deploy(

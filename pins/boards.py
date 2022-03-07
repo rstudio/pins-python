@@ -1,6 +1,7 @@
 import tempfile
 
 from io import IOBase
+from functools import cached_property
 
 from typing import Protocol, Sequence, Optional, Mapping
 
@@ -75,11 +76,13 @@ class BaseBoard:
         return sorted_versions
 
     def pin_meta(self, name, version: str = None):
+        pin_name = self.path_to_pin(name)
 
-        # determine pin version ----
+        # determine pin version -----------------------------------------------
+
         if version is not None:
             # ensure pin and version exist
-            if not self.fs.exists(self.construct_path([self.board, name, version])):
+            if not self.fs.exists(self.construct_path([pin_name, version])):
                 raise PinsError(
                     f"Pin {name} either does not exist, "
                     f"or is missing version: {version}."
@@ -96,7 +99,9 @@ class BaseBoard:
             # select last version ----
             selected_version = versions[-1]
 
-        components = [self.board, name, selected_version.version]
+        # fetch metadata for version ------------------------------------------
+
+        components = [pin_name, selected_version.version]
         meta_name = self.meta_factory.get_meta_name(*components)
 
         path_version = self.construct_path([*components, meta_name])
@@ -125,8 +130,10 @@ class BaseBoard:
         if hash is not None:
             raise NotImplementedError("TODO: validate hash")
 
+        pin_name = self.path_to_pin(name)
+
         return load_data(
-            meta, self.fs, self.construct_path([self.board, name, meta.version.version])
+            meta, self.fs, self.construct_path([pin_name, meta.version.version])
         )
 
     def pin_write(
@@ -188,7 +195,7 @@ class BaseBoard:
         if "/" in name:
             raise ValueError(f"Invalid pin name: {name}")
 
-    def path_to_pin(self, name: str, safe=True) -> str:
+    def path_to_pin(self, name: str) -> str:
         self.validate_pin_name(name)
 
         return self.construct_path([self.board, name])
@@ -214,7 +221,9 @@ class BoardRsConnect(BaseBoard):
 
         # remove board string, since it's used internally, but this board
         # always connects to a specific server via fs
-        self.board = ""
+        # TODO(compat): currently, board is being set to a user, so that
+        # pin_exists("some_pin") -> fs.info("<user>/some_pin")
+        # self.board = ""
 
     # defaults work ----
 
@@ -246,3 +255,18 @@ class BoardRsConnect(BaseBoard):
         # TODO: could alternatively implement a "select_pin_version" method
         # to be used by pin_meta
         return sorted(versions, key=lambda v: int(v.version))
+
+    def path_to_pin(self, name: str) -> str:
+        self.validate_pin_name(name)
+
+        # pin of form "<user>/<content_name>" is fully specified
+        if "/" in name:
+            return name
+
+        # otherwise, prepend username to pin
+        return self.construct_path([self.user_name, name])
+
+    @cached_property
+    def user_name(self):
+        user = self.fs.api.get_user()
+        return user["username"]

@@ -1,10 +1,8 @@
-import fsspec
 import pytest
 import datetime
 
 import importlib_resources as resources
 
-from pins.boards import BaseBoard
 from pins.errors import PinsError
 from pins.tests.helpers import xfail_fs  # noqa
 
@@ -16,10 +14,6 @@ path_to_board = resources.files("pins") / "tests/pins-compat"
 
 
 # set up board ----
-def create_compat_board():
-    fs = fsspec.filesystem("file")
-    board = BaseBoard(str(path_to_board.absolute()), fs=fs)
-    return board
 
 
 @pytest.fixture(scope="session")

@@ -4,7 +4,7 @@ from pytest import mark as m
 from pins.tests.helpers import BoardBuilder, RscBoardBuilder  # noqa
 
 # Based on https://github.com/machow/siuba/blob/main/siuba/tests/helpers.py
-BACKEND_MARKS = ["fs_s3", "fs_file"]
+BACKEND_MARKS = ["fs_s3", "fs_file", "fs_rsc"]
 
 
 params_backend = [
@@ -28,6 +28,3 @@ def pytest_configure(config):
         config.addinivalue_line(
             "markers", f"{mark_name}: mark test to only run on {fs_name} filesystem."
         )
-
-    # TODO: once RStudioConnect backend added, can remove this line
-    config.addinivalue_line("markers", "rsc: mark test to only run on rsc filesystem.")

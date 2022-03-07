@@ -12,7 +12,7 @@ from pins.rsconnect_api import (
 
 from pins.tests.helpers import rsc_from_key, rsc_delete_user_content
 
-pytestmark = pytest.mark.rsc  # noqa
+pytestmark = pytest.mark.fs_rsc  # noqa
 
 
 N_USERS = 3

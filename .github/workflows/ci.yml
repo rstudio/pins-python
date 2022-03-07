@@ -24,7 +24,7 @@ jobs:
           python -m pip install -e .
       - name: Run tests
         run: |
-          pytest pins -m 'not rsc'
+          pytest pins -m 'not fs_rsc'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -53,4 +53,4 @@ jobs:
       # NOTE: edited to run checks for python package
       - name: Run tests
         run: |
-          pytest pins -m rsc
+          pytest pins -m fs_rsc

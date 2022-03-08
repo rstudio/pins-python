@@ -158,7 +158,10 @@ class BaseBoard:
             dst_pin_path = self.path_to_pin(name)
             dst_version_path = self.path_to_deploy_version(name, meta.version.version)
 
-            self.fs.mkdir(dst_pin_path)
+            try:
+                self.fs.mkdir(dst_pin_path)
+            except FileExistsError:
+                pass
 
             # put tmp pin dir onto backend filesystem
             # TODO: if we allow the rsc backend to fs.exists("<user>/<content>/latest")
@@ -248,17 +251,9 @@ class BaseBoard:
 
 
 class BoardRsConnect(BaseBoard):
-    # TODO: high-level design considerations
-    #  * Able to round trip catalogue exploration -> data fetching
-    #    (e.g. pin_list -> pin_read, pin_versions -> pin_read)
+    # TODO: note that board is unused in this class (e.g. it's not in construct_path())
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # remove board string, since it's used internally, but this board
-        # always connects to a specific server via fs
-        # TODO(compat): currently, board is being set to a user, so that
-        # pin_exists("some_pin") -> fs.info("<user>/some_pin")
-        # self.board = ""
 
     # defaults work ----
 
@@ -299,3 +294,10 @@ class BoardRsConnect(BaseBoard):
     def user_name(self):
         user = self.fs.api.get_user()
         return user["username"]
+
+    def prepare_pin_version(self, pin_dir_path, x, *args, **kwargs):
+        meta = super().prepare_pin_version(pin_dir_path, x, *args, **kwargs)
+
+        # TODO: create an index.html
+
+        return meta

@@ -2,6 +2,7 @@ import tempfile
 
 from io import IOBase
 from functools import cached_property
+from pathlib import Path
 
 from typing import Protocol, Sequence, Optional, Mapping
 
@@ -146,48 +147,31 @@ class BaseBoard:
         metadata: Optional[Mapping] = None,
         versioned: Optional[bool] = None,
     ):
-        if name is None:
-            raise NotImplementedError("Name must be specified.")
-
-        if versioned is False:
-            raise NotImplementedError("Only writing versioned pins supported.")
-
-        if type is None:
-            raise NotImplementedError("Type argument is required.")
-
-        if title is None:
-            title = default_title(x, type)
-
-        # write object to disk
-        with tempfile.NamedTemporaryFile() as tmp_file:
-            fname = tmp_file.name
-
-            # file is saved locally in order to hash
-            save_data(x, fname, type)
-
-            meta = self.meta_factory.create(
-                fname,
-                type,
-                title=title,
-                description=description,
-                user=metadata,
-                name=name,
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            # create all pin data (e.g. data.txt, save object)
+            meta = self.prepare_pin_version(
+                tmp_dir, x, name, type, title, description, metadata, versioned
             )
-
-            meta_name = self.meta_factory.get_meta_name()
-            dst_dir_path = self.construct_path([self.board, name, meta.version.version])
-            dst_meta_path = self.construct_path([dst_dir_path, meta_name])
-            dst_obj_path = self.construct_path([dst_dir_path, meta.file])
 
             # move pin to destination ----
             # create pin version folder
-            self.fs.mkdirs(dst_dir_path)
+            dst_pin_path = self.path_to_pin(name)
+            dst_version_path = self.path_to_deploy_version(name, meta.version.version)
 
-            # write metadata yaml and object files
-            with self.fs.open(dst_meta_path, "w") as f:
-                meta.to_yaml(f)
+            self.fs.mkdir(dst_pin_path)
 
-            self.fs.put(fname, dst_obj_path)
+            # put tmp pin dir onto backend filesystem
+            # TODO: if we allow the rsc backend to fs.exists("<user>/<content>/latest")
+            #       and fs.put latest, then we don't have to check the two paths differ
+            if self.fs.exists(dst_version_path) and dst_version_path != dst_pin_path:
+                # note that we only raise an error if version path is a subdir
+                # of the pin path.
+                raise PinsError(
+                    "Attempting to write pin version to {dst_version_path}, "
+                    "but that directory already exists."
+                )
+
+            self.fs.put(tmp_dir, dst_version_path, recursive=True)
 
         return meta
 
@@ -200,6 +184,9 @@ class BaseBoard:
 
         return self.construct_path([self.board, name])
 
+    def path_to_deploy_version(self, name: str, version: str):
+        return self.construct_path([self.path_to_pin(name), version])
+
     def construct_path(self, elements) -> str:
         # TODO: should be the job of IFileSystem?
         return "/".join(elements)
@@ -210,6 +197,54 @@ class BaseBoard:
     def sort_pin_versions(self, versions):
         # assume filesystem returned them with most recent last
         return versions
+
+    def prepare_pin_version(
+        self,
+        pin_dir_path,
+        x,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        metadata: Optional[Mapping] = None,
+        versioned: Optional[bool] = None,
+    ):
+        if name is None:
+            raise NotImplementedError("Name must be specified.")
+
+        if versioned is False:
+            raise NotImplementedError("Only writing versioned pins supported.")
+
+        if type is None:
+            raise NotImplementedError("Type argument is required.")
+
+        if title is None:
+            title = default_title(x, type)
+
+        # create metadata from object on disk ---------------------------------
+        # save all pin data to a temporary folder (including data.txt), so we
+        # can fs.put it all straight onto the backend filesystem
+
+        p_obj = Path(pin_dir_path) / name
+
+        # file is saved locally in order to hash, calc size
+        save_data(x, str(p_obj), type)
+
+        meta = self.meta_factory.create(
+            str(p_obj),
+            type,
+            title=title,
+            description=description,
+            user=metadata,
+            name=name,
+        )
+
+        # write metadata to tmp pin folder
+        meta_name = self.meta_factory.get_meta_name()
+        src_meta_path = Path(pin_dir_path) / meta_name
+        meta.to_yaml(src_meta_path.open("w"))
+
+        return meta
 
 
 class BoardRsConnect(BaseBoard):
@@ -227,11 +262,6 @@ class BoardRsConnect(BaseBoard):
 
     # defaults work ----
 
-    # def pin_meta(self):
-    # def pin_versions(self):
-    # def pin_fetch(self):
-    # def pin_exists(self):
-
     def pin_list(self):
         # lists all pin content on RStudio Connect server
         # we can't use fs.ls, because it will list *all content*
@@ -240,12 +270,6 @@ class BoardRsConnect(BaseBoard):
 
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
-
-    # def pin_read(self):
-    #    raise NotImplementedError()
-
-    def pin_write(self, *args, **kwargs):
-        raise NotImplementedError()
 
     def validate_pin_name(self, name) -> None:
         if name.count("/") > 1:
@@ -265,6 +289,11 @@ class BoardRsConnect(BaseBoard):
 
         # otherwise, prepend username to pin
         return self.construct_path([self.user_name, name])
+
+    def path_to_deploy_version(self, name: str, version: str):
+        # RSConnect deploys a content bundle for a new version, so we simply need
+        # to fs.put to the <user>/<content_name>.
+        return self.path_to_pin(name)
 
     @cached_property
     def user_name(self):

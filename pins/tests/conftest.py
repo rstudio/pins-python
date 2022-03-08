@@ -1,4 +1,5 @@
 import pytest
+import tempfile
 
 from pytest import mark as m
 from pins.tests.helpers import BoardBuilder, RscBoardBuilder  # noqa
@@ -19,6 +20,15 @@ def backend(request):
     backend = request.param()
     yield backend
     backend.teardown()
+
+
+@pytest.fixture
+def tmp_dir2():
+    # fixture for offering a temporary directory
+    # note that pytest has a built-in fixture tmp_dir, but it uses the lib py.path
+    # which recommends using pathlib, etc..
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        yield tmp_dir
 
 
 def pytest_configure(config):

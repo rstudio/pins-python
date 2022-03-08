@@ -3,6 +3,7 @@ import tempfile
 from io import IOBase
 from functools import cached_property
 from pathlib import Path
+from importlib_resources import files
 
 from typing import Protocol, Sequence, Optional, Mapping
 
@@ -252,6 +253,10 @@ class BaseBoard:
 
 class BoardRsConnect(BaseBoard):
     # TODO: note that board is unused in this class (e.g. it's not in construct_path())
+
+    # TODO: should read template dynamically, not at class def'n time
+    html_template: Path = files("pins") / "rsconnect/html/index.tpl"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -296,8 +301,40 @@ class BoardRsConnect(BaseBoard):
         return user["username"]
 
     def prepare_pin_version(self, pin_dir_path, x, *args, **kwargs):
+        from jinja2 import Environment
+
+        env = Environment()
+        template = env.from_string(self.html_template.read_text())
+
         meta = super().prepare_pin_version(pin_dir_path, x, *args, **kwargs)
 
+        all_files = [meta.file] if isinstance(meta.file, str) else meta.file
+        pin_files = ", ".join(f"""<a href="{x}">{x}</a>""" for x in all_files)
+
         # TODO: create an index.html
+        # TODO: move out data_preview logic? Can we draw some limits here?
+        #       note that the R library uses jsonlite::toJSON
+        context = {
+            "pin_name": "TODO",
+            "pin_files": pin_files,
+            "pin_metadata": meta,
+        }
+
+        import pandas as pd
+        import json
+
+        if isinstance(x, pd.DataFrame):
+            data = json.loads(x.head(100).to_json(orient="records"))
+            columns = [
+                {"name": [col], "label": [col], "align": ["left"], "type": [""]}
+                for col in x
+            ]
+
+            context["data_preview"] = json.dumps({"data": data, "columns": columns})
+        else:
+            context["data_preview"] = {}
+
+        rendered = template.render(context)
+        (Path(pin_dir_path) / "index.html").write_text(rendered)
 
         return meta

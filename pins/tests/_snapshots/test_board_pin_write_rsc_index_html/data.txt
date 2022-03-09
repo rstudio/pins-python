@@ -1,0 +1,10 @@
+api_version: 1
+created: 20200113T235859Z
+description: some description
+file: test_rsc_pin
+file_size: 23
+name: test_rsc_pin
+pin_hash: 60d4c36d7138cb6c
+title: some pin
+type: csv
+user: {}

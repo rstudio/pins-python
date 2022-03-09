@@ -1,4 +1,5 @@
 import tempfile
+import shutil
 
 from io import IOBase
 from functools import cached_property
@@ -260,6 +261,7 @@ class BoardRsConnect(BaseBoard):
     # TODO: note that board is unused in this class (e.g. it's not in construct_path())
 
     # TODO: should read template dynamically, not at class def'n time
+    html_assets_dir: Path = files("pins") / "rsconnect/html"
     html_template: Path = files("pins") / "rsconnect/html/index.tpl"
 
     def __init__(self, *args, **kwargs):
@@ -313,22 +315,39 @@ class BoardRsConnect(BaseBoard):
 
         meta = super().prepare_pin_version(pin_dir_path, x, *args, **kwargs)
 
+        # copy in files needed by index.html ----------------------------------
+        crnt_files = set([meta.file] if isinstance(meta.file, str) else meta.file)
+        to_add = [str(p) for p in self.html_assets_dir.rglob("*")]
+        overlap = set(to_add) & crnt_files
+        if overlap:
+            raise PinsError(
+                f"Generating an index.html would overwrite these files: {overlap}"
+            )
+
+        # recursively copy all assets into prepped pin version dir
+        shutil.copytree(self.html_assets_dir, pin_dir_path, dirs_exist_ok=True)
+
+        # render index.html ------------------------------------------------
+
         all_files = [meta.file] if isinstance(meta.file, str) else meta.file
         pin_files = ", ".join(f"""<a href="{x}">{x}</a>""" for x in all_files)
 
-        # TODO: create an index.html
-        # TODO: move out data_preview logic? Can we draw some limits here?
-        #       note that the R library uses jsonlite::toJSON
         context = {
             "pin_name": "TODO",
             "pin_files": pin_files,
             "pin_metadata": meta,
         }
 
+        # data preview ----
+
+        # TODO: move out data_preview logic? Can we draw some limits here?
+        #       note that the R library uses jsonlite::toJSON
+
         import pandas as pd
         import json
 
         if isinstance(x, pd.DataFrame):
+            # TODO(compat) is 100 hard-coded?
             data = json.loads(x.head(100).to_json(orient="records"))
             columns = [
                 {"name": [col], "label": [col], "align": ["left"], "type": [""]}
@@ -338,7 +357,7 @@ class BoardRsConnect(BaseBoard):
             context["data_preview"] = json.dumps({"data": data, "columns": columns})
         else:
             # TODO(compat): set display none in index.html
-            context["data_preview"] = {}
+            context["data_preview"] = json.dumps({})
 
         rendered = template.render(context)
         (Path(pin_dir_path) / "index.html").write_text(rendered)

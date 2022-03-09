@@ -1,6 +1,6 @@
 import pytest
 
-from pathlib import Path
+from pins.tests.helpers import DEFAULT_CREATION_DATE
 
 
 @pytest.fixture
@@ -20,14 +20,15 @@ def test_board_pin_write_default_title(board):
 def test_board_pin_write_prepare_pin(board, tmp_dir2):
     import pandas as pd
 
-    p_tmp = Path(tmp_dir2)
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
-    meta = board.prepare_pin_version(tmp_dir2, df, "df_csv", title=None, type="csv")
+    meta = board.prepare_pin_version(
+        str(tmp_dir2), df, "df_csv", title=None, type="csv"
+    )
     assert meta.file == "df_csv"
-    assert (p_tmp / "data.txt").exists()
-    assert (p_tmp / "df_csv").exists()
-    assert not (p_tmp / "df_csv").is_dir()
+    assert (tmp_dir2 / "data.txt").exists()
+    assert (tmp_dir2 / "df_csv").exists()
+    assert not (tmp_dir2 / "df_csv").is_dir()
 
 
 def test_board_pin_write_roundtrip(board):
@@ -61,3 +62,26 @@ def test_board_pin_write_type_error(board):
         board.pin_write(C(), "cool_pin", type="MY_TYPE")
 
     assert "MY_TYPE" in exc_info.value.args[0]
+
+
+def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
+    if board.fs.protocol != "rsc":
+        pytest.skip()
+
+    import pandas as pd
+
+    df = pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
+
+    pin_name = "test_rsc_pin"
+
+    board.prepare_pin_version(
+        str(tmp_dir2),
+        df,
+        pin_name,
+        type="csv",
+        title="some pin",
+        description="some description",
+        created=DEFAULT_CREATION_DATE,
+    )
+
+    snapshot.assert_equal_dir(tmp_dir2)

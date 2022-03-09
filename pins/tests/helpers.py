@@ -8,9 +8,13 @@ import shutil
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from functools import wraps
+from datetime import datetime
+from importlib_resources import files
 
 from pins.boards import BaseBoard, BoardRsConnect
 from fsspec import filesystem
+
+DEFAULT_CREATION_DATE = datetime(2020, 1, 13, 23, 58, 59)
 
 RSC_SERVER_URL = "http://localhost:3939"
 # TODO: should use pkg_resources for this path?
@@ -192,3 +196,56 @@ class RscBoardBuilder(BoardBuilder):
 
     def teardown(self):
         self.teardown_board(self.create_tmp_board())
+
+
+# Snapshot ====================================================================
+
+
+class Snapshot:
+    def __init__(self, path: Path, snapshot_update: bool = False):
+        # make sure that it is a subdirectory of the pins package
+        assert str(path.absolute()).startswith(str(files("pins")))
+
+        self.path = path
+        self.snapshot_update = snapshot_update
+
+    def assert_has_same_files(self, dst_dir):
+        if self.snapshot_update:
+            shutil.copytree(dst_dir, self.path, dirs_exist_ok=True)
+
+        else:
+            dst_files = list(p.relative_to(dst_dir) for p in Path(dst_dir).rglob("*"))
+            src_files = list(p.relative_to(self.path) for p in self.path.rglob("*"))
+            src_diff = set(src_files) - set(dst_files)
+            dst_diff = set(dst_files) - set(src_files)
+
+            if src_diff:
+                raise AssertionError(f"Snapshot has etra files: {src_diff}")
+
+            if dst_diff:
+                raise AssertionError(f"Snapshot missing files: {dst_diff}")
+
+            # src_files and dst_files match at this point, so arbitrarily
+            # return one
+            return src_files
+
+    def assert_equal_dir(self, dst_dir):
+        if self.snapshot_update:
+            shutil.copytree(dst_dir, self.path, dirs_exist_ok=True)
+
+        else:
+            p_dst_dir = Path(dst_dir)
+            fnames = self.assert_has_same_files(dst_dir)
+            for fname in fnames:
+                snap_file = self.path / fname
+                dst_file = p_dst_dir / fname
+                if snap_file.is_dir():
+                    assert dst_file.is_dir()
+                else:
+                    assert snap_file.read_text() == dst_file.read_text()
+
+    def assert_equal_file(self, dst_file):
+        if self.snapshot_update:
+            shutil.copy(dst_file, self.path)
+
+        assert self.path.read_text() == Path(dst_file).read_text()

@@ -4,6 +4,7 @@ from io import IOBase
 from functools import cached_property
 from pathlib import Path
 from importlib_resources import files
+from datetime import datetime
 
 from typing import Protocol, Sequence, Optional, Mapping
 
@@ -147,11 +148,13 @@ class BaseBoard:
         description: Optional[str] = None,
         metadata: Optional[Mapping] = None,
         versioned: Optional[bool] = None,
+        created: Optional[datetime] = None,
     ):
+        # TODO(compat): python pins added a created parameter above
         with tempfile.TemporaryDirectory() as tmp_dir:
             # create all pin data (e.g. data.txt, save object)
             meta = self.prepare_pin_version(
-                tmp_dir, x, name, type, title, description, metadata, versioned
+                tmp_dir, x, name, type, title, description, metadata, versioned, created
             )
 
             # move pin to destination ----
@@ -212,6 +215,7 @@ class BaseBoard:
         description: Optional[str] = None,
         metadata: Optional[Mapping] = None,
         versioned: Optional[bool] = None,
+        created: Optional[datetime] = None,
     ):
         if name is None:
             raise NotImplementedError("Name must be specified.")
@@ -241,6 +245,7 @@ class BaseBoard:
             description=description,
             user=metadata,
             name=name,
+            created=created,
         )
 
         # write metadata to tmp pin folder
@@ -332,6 +337,7 @@ class BoardRsConnect(BaseBoard):
 
             context["data_preview"] = json.dumps({"data": data, "columns": columns})
         else:
+            # TODO(compat): set display none in index.html
             context["data_preview"] = {}
 
         rendered = template.render(context)

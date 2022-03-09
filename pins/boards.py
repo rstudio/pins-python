@@ -262,7 +262,7 @@ class BoardRsConnect(BaseBoard):
 
     # TODO: should read template dynamically, not at class def'n time
     html_assets_dir: Path = files("pins") / "rsconnect/html"
-    html_template: Path = files("pins") / "rsconnect/html/index.tpl"
+    html_template: Path = files("pins") / "rsconnect/html/index.html"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

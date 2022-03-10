@@ -4,7 +4,7 @@ import yaml
 
 from typing import Mapping, Union, Sequence, Optional
 
-from .versions import Version
+from .versions import VersionRaw, Version, guess_version
 from ._types import StrOrFile, IOBase
 
 META_FILENAME = "data.txt"
@@ -40,8 +40,8 @@ class Meta:
     description: Optional[str]
 
     # TODO(defer): different from R pins, which has a local field
-    # created: datetime
-    # pin_hash: str
+    created: str
+    pin_hash: str
 
     file: Union[str, Sequence[str]]
     file_size: int
@@ -53,7 +53,7 @@ class Meta:
     # we need a version object in order to render it. You can think of
     # the version here as "the thing that was used to create version_name,
     # pin_hash, created, etc.."
-    version: Version
+    version: VersionRaw
 
     name: Optional[str] = None
     user: Mapping = field(default_factory=dict)
@@ -82,13 +82,14 @@ class Meta:
         return self.to_dict(flat=True, fmt_created=True)
 
     @classmethod
-    def from_pin_dict(cls, data, version_cls) -> "Meta":
-        version_fields = {"created", "pin_hash"}
+    def from_pin_dict(cls, data, version) -> "Meta":
 
-        # get items necessary for re-creating meta data
-        meta_data = {k: v for k, v in data.items() if k not in version_fields}
-        version = version_cls.from_meta_fields(data["created"], data["pin_hash"])
-        return cls(**meta_data, version=version)
+        # version_fields = {"created", "pin_hash"}
+
+        # #get items necessary for re-creating meta data
+        # meta_data = {k: v for k, v in data.items() if k not in version_fields}
+        # version = version_cls.from_meta_fields(data["created"], data["pin_hash"])
+        return cls(**data, version=version)
 
     def to_yaml(self, f: Optional[IOBase] = None) -> "str | None":
         data = self.to_dict(flat=True, fmt_created=True)
@@ -114,6 +115,7 @@ class MetaFactory:
         self,
         files: Sequence[StrOrFile],
         type,
+        # TODO: when files is a string name should be okay as None
         name,
         title,
         description=None,
@@ -148,6 +150,8 @@ class MetaFactory:
             description=description,
             file=name,  # TODO: FINISH
             file_size=file_size,
+            pin_hash=version.hash,
+            created=version.render_created(),
             type=type,
             api_version=DEFAULT_API_VERSION,
             name=name,
@@ -155,8 +159,12 @@ class MetaFactory:
             version=version,
         )
 
-    def read_yaml(self, f: IOBase) -> Meta:
+    def read_yaml(self, f: IOBase, version: "str | VersionRaw") -> Meta:
+        if isinstance(version, str):
+            version_obj = guess_version(version)
+        else:
+            version_obj = version
+
         data = yaml.safe_load(f)
 
-        version_cls = self.get_version_for_meta(data["api_version"])
-        return Meta.from_pin_dict(data, version_cls=version_cls)
+        return Meta.from_pin_dict(data, version=version_obj)

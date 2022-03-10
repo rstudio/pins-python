@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="pagedtable-1.1/pagedtable.css">
+    <script language="javascript" src="pagedtable-1.1/pagedtable.js"></script>
+    <link rel="stylesheet" href="highlight.js-9.15.9/qtcreator_light.css">
+    <script src="highlight.js-9.15.9/highlight.js"></script>
+    <style>
+      body {
+        font-size: 16px;
+        font-family: 'Lato', sans-serif;
+        color: #333;
+      }
+      section {
+        border-left: solid 6px #dddddd;
+        padding: 0.5em 0 0.5em 10px;
+        margin-bottom: 1em;
+      }
+      pre {
+        margin: 0;
+        padding: 1em;
+      }
+      h3 {
+        font-weight: normal;
+        color: #888;
+        margin: 0 0 0.5em 0;
+      }
+    </style>
+  </head>
+  <body>
+
+    <section>
+       <h3>TODO</h3>
+       
+       <p>
+         
+         <b>Format:</b> csv &bull;
+         <b>API:</b> v1
+       </p>
+       <p>some description</p>
+       <p>Download data: <a href="test_rsc_pin">test_rsc_pin</a></p>
+       <details>
+         <summary>Raw metadata</summary>
+         <pre>api_version: 1
+created: 20200113T235859Z
+description: some description
+file: test_rsc_pin
+file_size: 23
+name: test_rsc_pin
+pin_hash: 60d4c36d7138cb6c
+title: some pin
+type: csv
+user: {}
+</pre>
+       </details>
+       
+     </section>
+
+    <section>
+    <h3>Code</h3>
+
+    <!-- TODO: how to handle this?
+
+      <pre id="pin-r" class="pin-code"><code class="r">library(pins)
+board <- 
+pin_read(board, "TODO")</code></pre>
+
+    !-->
+
+    <script type="text/javascript">
+      hljs.registerLanguage("r", highlight_r);
+      hljs.initHighlightingOnLoad();
+    </script>
+    </section>
+
+    <section style="">
+      <h3>Preview <small>(up to 100 rows)</small></h3>
+      <div data-pagedtable style="height: 25em;">
+        <script data-pagedtable-source type="application/json">
+          {"data": [{"x": 1, "y": "a"}, {"x": 2, "y": "b"}, {"x": 3, "y": "c"}], "columns": [{"name": ["x"], "label": ["x"], "align": ["left"], "type": [""]}, {"name": ["y"], "label": ["y"], "align": ["left"], "type": [""]}]}
+        </script>
+      </div>
+    </section>
+  </body>
+</html>

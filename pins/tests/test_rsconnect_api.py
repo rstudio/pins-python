@@ -1,41 +1,24 @@
 import pytest
-import json
 import tempfile
 
 from pathlib import Path
 from requests.exceptions import HTTPError
 from pins.rsconnect_api import (
-    RsConnectApi,
     RsConnectFs,
     RsConnectApiRequestError,
     RsConnectApiMissingContentError,
     PinBundleManifest,
 )
 
-pytestmark = pytest.mark.rsc  # noqa
+from pins.tests.helpers import rsc_from_key, rsc_delete_user_content
 
+pytestmark = pytest.mark.fs_rsc  # noqa
 
-RSC_SERVER_URL = "http://localhost:3939"
-# TODO: should use pkg_resources for this path?
-RSC_KEYS_FNAME = "pins/tests/rsconnect_api_keys.json"
 
 N_USERS = 3
 ERROR_CODE_BAD_GUID = 3
 
 # TODO: search for everywhere the word 'yo' is used, spruce up bundle data tests
-
-
-def rsc_from_key(name):
-    with open(RSC_KEYS_FNAME) as f:
-        api_key = json.load(f)[name]
-        return RsConnectApi(RSC_SERVER_URL, api_key)
-
-
-def delete_user_content(rsc):
-    guid = rsc.get_user()["guid"]
-    content = rsc.get_content(owner_guid=guid)
-    for entry in content:
-        rsc.delete_content_item(entry["guid"])
 
 
 # The two rsconnect sessions below tear down at different intervals.
@@ -51,7 +34,7 @@ def rsc_admin():
     # possible for the cleanup to fail. we mitigate the risk of this by ordering
     # the cleanup methods before any POST methods below. but we need to create
     # content to test deletion, so hope it works as intended during cleanup.
-    delete_user_content(rsc_admin)
+    rsc_delete_user_content(rsc_admin)
 
 
 @pytest.fixture(scope="function")
@@ -60,11 +43,11 @@ def rsc_short():
     rsc_susan = rsc_from_key("susan")
 
     # delete any content that might already exist
-    delete_user_content(rsc_susan)
+    rsc_delete_user_content(rsc_susan)
 
     yield rsc_susan
 
-    delete_user_content(rsc_susan)
+    rsc_delete_user_content(rsc_susan)
 
 
 @pytest.fixture
@@ -315,6 +298,8 @@ def test_rsconnect_api_misc_get_content_bundle_file_fail(rsc_short):
 
 # RsConnectFs -----------------------------------------------------------------
 
+# fs.ls ----
+
 
 def test_rsconnect_fs_ls_user(fs_admin):
     assert fs_admin.ls("") == ["admin", "derek", "susan"]
@@ -348,6 +333,9 @@ def test_rsconnect_fs_ls_user_content_bundles(fs_short):
     assert res_sorted[1] == bund_sorted[1]
 
 
+# fs.info ----
+
+
 def test_rsconnect_fs_info(fs_short):
     # TODO: copied from above. lots of creating bundles in tests.
     content = fs_short.api.post_content_item("test-content", "acl")
@@ -375,6 +363,9 @@ def test_rsconnect_fs_info_root_ok(fs_short):
     assert susan == fs_short.info("susan")
 
 
+# fs.exists ----
+
+
 @pytest.mark.parametrize(
     "path, result",
     [
@@ -396,6 +387,9 @@ def test_rsconnect_fs_exists_bundle_true(fs_short):
     assert fs_short.exists(f"susan/test-content/{bund1['id']}") is True
 
 
+# fs.open ----
+
+
 def test_rsconnect_fs_open(fs_short):
     content = fs_short.api.post_content_item("test-content", "acl")
     bund1 = create_content_bundle(fs_short.api, content["guid"])
@@ -403,6 +397,9 @@ def test_rsconnect_fs_open(fs_short):
 
     f = fs_short.open(f"susan/test-content/{bund1['id']}/index.html")
     assert "yo" in f.read().decode()
+
+
+# fs.get ----
 
 
 def test_rsconnect_fs_get_data(fs_short):
@@ -417,17 +414,28 @@ def test_rsconnect_fs_get_data(fs_short):
         assert "yo" in open(tmp.name).read()
 
 
+# fs.put ----
+
+
 def test_rsconnect_fs_put_bundle(fs_short):
     # TODO: use pkg_resources to get this
     path_to_example = "pins/tests/example-bundle"
-    res_path = fs_short.put(path_to_example, "susan/test-content")
+    res_path = fs_short.put(path_to_example, "susan/test-content", recursive=True)
 
     f_index = fs_short.open(f"{res_path}/index.html")
     assert f_index.read().decode() == (Path(path_to_example) / "index.html").read_text()
 
 
+# fs.mkdir ----
+
+
 def test_rsconnect_fs_mkdir(fs_short):
+    assert fs_short.exists("susan/test-content") is False
     fs_short.mkdir("susan/test-content")
+    assert fs_short.exists("susan/test-content") is True
+
+
+# fs.rm ----
 
 
 def test_rsconnect_fs_rm_content(fs_short):
@@ -445,7 +453,7 @@ def test_rsconnect_fs_rm_bundle(fs_short):
 
     # note that you can't delete the active bundle, so we create two, and
     # delete the first
-    res_path_old = fs_short.put(path_to_example, "susan/test-content")
-    fs_short.put(path_to_example, "susan/test-content")
+    res_path_old = fs_short.put(path_to_example, "susan/test-content", recursive=True)
+    fs_short.put(path_to_example, "susan/test-content", recursive=True)
 
     fs_short.rm(res_path_old)

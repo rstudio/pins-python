@@ -1,11 +1,10 @@
-import fsspec
 import pytest
 import datetime
 
 import importlib_resources as resources
 
-from pins.boards import BaseBoard
 from pins.errors import PinsError
+from pins.tests.helpers import xfail_fs
 
 
 NOT_A_PIN = "not_a_pin_abcdefg"
@@ -15,10 +14,6 @@ path_to_board = resources.files("pins") / "tests/pins-compat"
 
 
 # set up board ----
-def create_compat_board():
-    fs = fsspec.filesystem("file")
-    board = BaseBoard(str(path_to_board.absolute()), fs=fs)
-    return board
 
 
 @pytest.fixture(scope="session")
@@ -35,7 +30,12 @@ def board(backend):
 
 def test_compat_pin_list(board):
     src_sorted = sorted(board.pin_list())
-    dst_sorted = sorted(["df_arrow", "df_csv", "df_rds", "df_unversioned"])
+    dst_sorted = ["df_arrow", "df_csv", "df_rds", "df_unversioned"]
+
+    if board.fs.protocol == "rsc":
+        # rsc backend uses <user_name>/<content_name> for full name
+        dst_sorted = [f"{board.user_name}/{content}" for content in dst_sorted]
+
     assert src_sorted == dst_sorted
 
 
@@ -57,13 +57,21 @@ def test_compat_pin_meta(board):
     # Note that this fetches the latest of 2 versions
     meta = board.pin_meta(PIN_CSV)
 
+    if board.fs.protocol == "rsc":
+        # TODO: afaik the bundle id is largely non-deterministic, so not possible
+        # to test, but should think a bit more about it.
+        pass
+    else:
+        assert meta.version.version == "20220214T163720Z-9bfad"
+        assert meta.version.created == datetime.datetime(2022, 2, 14, 16, 37, 20)
+        assert meta.version.hash == "9bfad"
+
     assert meta.title == "df_csv: a pinned 2 x 3 data frame"
     assert meta.description is None
-    assert meta.version.version == "20220214T163720Z-9bfad"
-    assert meta.version.created == datetime.datetime(2022, 2, 14, 16, 37, 20)
+    assert meta.created == "20220214T163720Z"
     assert meta.file == "df_csv.csv"
     assert meta.file_size == 28
-    assert meta.version.hash == "9bfad6d1a322a904"
+    assert meta.pin_hash == "9bfad6d1a322a904"
     assert meta.type == "csv"
 
     # TODO(question): coding api_version as a yaml float intentional?
@@ -79,14 +87,16 @@ def test_compat_pin_meta_pin_missing(board):
     assert f"{NOT_A_PIN} does not exist" in exc_info.value.args[0]
 
 
+@xfail_fs("rsc")
 def test_compat_pin_meta_version_arg(board):
+    # note that in RSConnect the version is the bundle id
     meta = board.pin_meta(PIN_CSV, "20220214T163718Z-eceac")
     assert meta.version.version == "20220214T163718Z-eceac"
-    assert meta.version.hash == "eceac651f7d06360"
+    assert meta.version.hash == "eceac"
 
 
 def test_compat_pin_meta_version_arg_error(board):
-    bad_version = "20990101T010101Z-abcdef"
+    bad_version = "123"
     with pytest.raises(PinsError) as exc_info:
         board.pin_meta(PIN_CSV, bad_version)
 
@@ -99,7 +109,15 @@ def test_compat_pin_meta_version_arg_error(board):
 
 
 def test_compat_pin_read(board):
-    board.pin_read("df_csv")
+    import pandas as pd
+
+    p_data = path_to_board / "df_csv" / "20220214T163720Z-9bfad" / "df_csv.csv"
+
+    src_df = board.pin_read("df_csv")
+    dst_df = pd.read_csv(p_data, index_col=0)
+
+    assert isinstance(src_df, pd.DataFrame)
+    assert src_df.equals(dst_df)
 
 
 def test_compat_pin_read_supported(board):

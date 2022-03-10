@@ -1,13 +1,12 @@
 import pytest
 
-from pins.tests.helpers import BoardBuilder
+from pins.tests.helpers import DEFAULT_CREATION_DATE
 
 
 @pytest.fixture
-def board():
-    bb = BoardBuilder("file")
-    yield bb.create_tmp_board()
-    bb.teardown()
+def board(backend):
+    yield backend.create_tmp_board()
+    backend.teardown()
 
 
 def test_board_pin_write_default_title(board):
@@ -18,11 +17,24 @@ def test_board_pin_write_default_title(board):
     assert meta.title == "A pinned 3 x 2 CSV"
 
 
-def test_board_pin_write_roundtrip(backend):
+def test_board_pin_write_prepare_pin(board, tmp_dir2):
     import pandas as pd
 
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
-    board = backend.create_tmp_board()
+
+    meta = board.prepare_pin_version(
+        str(tmp_dir2), df, "df_csv", title=None, type="csv"
+    )
+    assert meta.file == "df_csv"
+    assert (tmp_dir2 / "data.txt").exists()
+    assert (tmp_dir2 / "df_csv").exists()
+    assert not (tmp_dir2 / "df_csv").is_dir()
+
+
+def test_board_pin_write_roundtrip(board):
+    import pandas as pd
+
+    df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
     assert not board.pin_exists("df_csv")
 
@@ -50,3 +62,26 @@ def test_board_pin_write_type_error(board):
         board.pin_write(C(), "cool_pin", type="MY_TYPE")
 
     assert "MY_TYPE" in exc_info.value.args[0]
+
+
+def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
+    if board.fs.protocol != "rsc":
+        pytest.skip()
+
+    import pandas as pd
+
+    df = pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
+
+    pin_name = "test_rsc_pin"
+
+    board.prepare_pin_version(
+        str(tmp_dir2),
+        df,
+        pin_name,
+        type="csv",
+        title="some pin",
+        description="some description",
+        created=DEFAULT_CREATION_DATE,
+    )
+
+    snapshot.assert_equal_dir(tmp_dir2)

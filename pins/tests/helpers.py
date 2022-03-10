@@ -36,7 +36,7 @@ BOARD_CONFIG = {
 
 
 def rsc_from_key(name):
-    from pins.rsconnect_api import RsConnectApi
+    from pins.rsconnect.api import RsConnectApi
 
     with open(RSC_KEYS_FNAME) as f:
         api_key = json.load(f)[name]
@@ -44,7 +44,7 @@ def rsc_from_key(name):
 
 
 def rsc_fs_from_key(name):
-    from pins.rsconnect_api import RsConnectFs
+    from pins.rsconnect.api import RsConnectFs
 
     rsc = rsc_from_key(name)
 
@@ -164,7 +164,7 @@ class RscBoardBuilder(BoardBuilder):
         self.path = None
 
     def create_tmp_board(self, src_board=None):
-        from pins.rsconnect_api import PinBundleManifest  # noqa
+        from pins.rsconnect.api import PinBundleManifest  # noqa
 
         board = BoardRsConnect("", rsc_fs_from_key("derek"))
 

@@ -3,7 +3,7 @@ import tempfile
 
 from pathlib import Path
 from requests.exceptions import HTTPError
-from pins.rsconnect_api import (
+from pins.rsconnect.api import (
     RsConnectFs,
     RsConnectApiRequestError,
     RsConnectApiMissingContentError,

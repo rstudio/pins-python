@@ -1,7 +1,7 @@
 import json
 import sys
 
-from pins.rsconnect_api import _HackyConnect
+from pins.rsconnect.api import _HackyConnect
 
 OUT_FILE = sys.argv[1]
 

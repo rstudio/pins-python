@@ -1,7 +1,7 @@
 import pandas as pd
 
 from pathlib import Path
-from pins.rsconnect_api import PinBundleManifest
+from pins.rsconnect.fs import PinBundleManifest
 from pins.meta import MetaFactory
 
 p_root = Path("pins/tests/example-bundle")

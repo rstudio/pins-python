@@ -4,11 +4,11 @@ import tempfile
 from pathlib import Path
 from requests.exceptions import HTTPError
 from pins.rsconnect.api import (
-    RsConnectFs,
     RsConnectApiRequestError,
     RsConnectApiMissingContentError,
-    PinBundleManifest,
 )
+
+from pins.rsconnect.fs import RsConnectFs, PinBundleManifest
 
 from pins.tests.helpers import rsc_from_key, rsc_delete_user_content
 

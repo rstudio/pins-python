@@ -44,7 +44,7 @@ def rsc_from_key(name):
 
 
 def rsc_fs_from_key(name):
-    from pins.rsconnect.api import RsConnectFs
+    from pins.rsconnect.fs import RsConnectFs
 
     rsc = rsc_from_key(name)
 
@@ -164,7 +164,7 @@ class RscBoardBuilder(BoardBuilder):
         self.path = None
 
     def create_tmp_board(self, src_board=None):
-        from pins.rsconnect.api import PinBundleManifest  # noqa
+        from pins.rsconnect.fs import PinBundleManifest  # noqa
 
         board = BoardRsConnect("", rsc_fs_from_key("derek"))
 

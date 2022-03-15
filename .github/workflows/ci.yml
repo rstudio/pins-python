@@ -54,3 +54,21 @@ jobs:
       - name: Run tests
         run: |
           pytest pins -m fs_rsc
+
+  build-docs:
+    name: "Build Docs"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements/dev.txt
+          python -m pip install -e .
+      - name: Build docs
+        run: |
+          make docs-build

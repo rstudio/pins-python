@@ -1,0 +1,6 @@
+﻿pins.boards.IFileSystem.get
+===========================
+
+.. currentmodule:: pins.boards
+
+.. automethod:: IFileSystem.get

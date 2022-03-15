@@ -1,0 +1,6 @@
+﻿pins.boards.IFileSystem.exists
+==============================
+
+.. currentmodule:: pins.boards
+
+.. automethod:: IFileSystem.exists

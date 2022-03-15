@@ -1,16 +1,27 @@
 import pytest
+import pandas as pd
 
 from pins.tests.helpers import DEFAULT_CREATION_DATE
 
+# using pytest cases, so that we can pass in fixtures as parameters
+from pytest_cases import fixture, parametrize
 
-@pytest.fixture
+
+@fixture
 def board(backend):
     yield backend.create_tmp_board()
     backend.teardown()
 
 
+@fixture
+def df():
+    return pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
+
+
+# High level pins functionality -----------------------------------------------
+
+
 def test_board_pin_write_default_title(board):
-    import pandas as pd
 
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
     meta = board.pin_write(df, "df_csv", title=None, type="csv")
@@ -18,7 +29,6 @@ def test_board_pin_write_default_title(board):
 
 
 def test_board_pin_write_prepare_pin(board, tmp_dir2):
-    import pandas as pd
 
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
@@ -32,7 +42,6 @@ def test_board_pin_write_prepare_pin(board, tmp_dir2):
 
 
 def test_board_pin_write_roundtrip(board):
-    import pandas as pd
 
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
@@ -68,8 +77,6 @@ def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
     if board.fs.protocol != "rsc":
         pytest.skip()
 
-    import pandas as pd
-
     df = pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
 
     pin_name = "test_rsc_pin"
@@ -85,3 +92,21 @@ def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
     )
 
     snapshot.assert_equal_dir(tmp_dir2)
+
+
+# pin_write against different types -------------------------------------------
+
+
+@parametrize(
+    "obj, type_", [(df, "csv"), (df, "joblib"), ({"a": 1, "b": [2, 3]}, "joblib")]
+)
+def test_board_pin_write_type(board, obj, type_, request):
+    meta = board.pin_write(obj, "test_pin", type=type_, title="some title")
+    dst_obj = board.pin_read("test_pin")
+
+    assert meta.type == type_
+
+    if isinstance(obj, pd.DataFrame):
+        assert obj.equals(dst_obj)
+
+    obj == dst_obj

@@ -69,6 +69,27 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements/dev.txt
           python -m pip install -e .
+      - uses: r-lib/actions/setup-pandoc@v1
+        with:
+          pandoc-version: '2.17.0.1'
       - name: Build docs
         run: |
           make docs-build
+      - name: Save docs artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs-html
+          path: docs/_build/html/
+
+  publish-docs:
+    name: "Publish Docs"
+    needs: ["build-docs", "tests", "test-rsconnect"]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: docs-html
+          path: docs-html
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs-html

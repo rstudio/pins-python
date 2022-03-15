@@ -31,10 +31,13 @@ class IFileSystem(Protocol):
     def exists(self, path: str, **kwargs) -> bool:
         ...
 
-    def mkdirs(self, path, create_parents=True, **kwargs) -> None:
+    def mkdir(self, path, create_parents=True, **kwargs) -> None:
         ...
 
     def rm(self, path, recursive=False, maxdepth=None) -> None:
+        ...
+
+    def info(self, path):
         ...
 
 
@@ -52,11 +55,20 @@ class BaseBoard:
         Parameters
         ----------
         name : str
+            Pin name.
         """
 
         return self.fs.exists(self.path_to_pin(name))
 
     def pin_versions(self, name: str, as_df: bool = True) -> Sequence[VersionRaw]:
+        """Return available versions of a pin.
+
+        Parameters
+        ----------
+        name:
+            Pin name.
+
+        """
         if not self.pin_exists(name):
             raise PinsError("Cannot check version, since pin %s does not exist" % name)
 
@@ -79,7 +91,22 @@ class BaseBoard:
 
         return sorted_versions
 
-    def pin_meta(self, name, version: str = None):
+    def pin_meta(self, name, version: str = None) -> Meta:
+        """Return metadata about a pin.
+
+        Parameters
+        ----------
+        name:
+            Pin name.
+        version: optional
+            A specific pin version to retrieve.
+
+        See Also
+        --------
+        BaseBoard.pin_versions
+
+        """
+
         pin_name = self.path_to_pin(name)
 
         # determine pin version -----------------------------------------------
@@ -113,6 +140,13 @@ class BaseBoard:
         return self.meta_factory.read_yaml(f, selected_version)
 
     def pin_list(self):
+        """List names of all pins in a board.
+
+        Notes
+        -----
+        This is a low-level function; use pin_search() to get more data about
+        each pin in a convenient form.
+        """
         full_paths = self.fs.ls(self.board)
         return list(map(self.keep_final_path_component, full_paths))
 
@@ -129,6 +163,19 @@ class BaseBoard:
         return meta
 
     def pin_read(self, name, version: Optional[str] = None, hash: Optional[str] = None):
+        """Return the data stored in a pin.
+
+        Parameters
+        ----------
+        name:
+            Pin name.
+        version:
+            A specific pin version to retrieve.
+        hash:
+            A hash used to validate the retrieved pin data. If specified, it is
+            compared against the ``pin_hash`` field retrived by ``pin_meta()``.
+
+        """
         meta = self.pin_fetch(name, version)
 
         if hash is not None:
@@ -150,7 +197,34 @@ class BaseBoard:
         metadata: Optional[Mapping] = None,
         versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
-    ):
+    ) -> Meta:
+        """Write a pin object to the board.
+
+        Parameters
+        ----------
+        x:
+            An object (e.g. a pandas DataFrame) to pin.
+        name:
+            Pin name.
+        type:
+            File type used to save ``x`` to disk.
+        title:
+            A title for the pin; most important for shared boards so that others
+            can understand what the pin contains. If omitted, a brief description
+            of the contents will be automatically generated.
+        description:
+            A detailed description of the pin contents.
+        metadata:
+            A dictionary containing additional metadata to store with the pin.
+            This gets stored on the Meta.user field.
+        versioned:
+            Whether the pin should be versioned.
+        created:
+            A date to store in the Meta.created field. This field may be used as
+            part of the pin version name.
+        """
+        # TODO(docs): describe options for type argument
+        # TODO(docs): elaborate on default behavior for versioned parameter
         # TODO(compat): python pins added a created parameter above
         with tempfile.TemporaryDirectory() as tmp_dir:
             # create all pin data (e.g. data.txt, save object)
@@ -182,6 +256,114 @@ class BaseBoard:
             self.fs.put(tmp_dir, dst_version_path, recursive=True)
 
         return meta
+
+    def pin_download(self, name, version=None, hash=None):
+        """TODO: Download the files contained in a pin.
+
+        This method only downloads the files in a pin. In order to read and load
+        pin data as an object (e.g. a pandas DataFrame), use ``pin_read()``.
+
+        Parameters
+        ----------
+        name:
+            Pin name.
+        version:
+            A specific pin version to retrieve.
+        hash:
+            A hash used to validate the retrieved pin data. If specified, it is
+            compared against the ``pin_hash`` field retrived by ``pin_meta()``.
+
+
+        """
+        raise NotImplementedError()
+
+    def pin_upload(self, paths, name=None, title=None, description=None, metadata=None):
+        """TODO: Write a pin based on paths to one or more files.
+
+        This method simply uploads the files given, so they can be downloaded later
+        using ``pin_download()``.
+        """
+        # TODO(question): why does this method exist? Isn't it equiv to a user
+        # doing this?: pin_write(board, c("filea.txt", "fileb.txt"), type="file")
+        # pin_download makes since, because it will download *regardless of type*
+        raise NotImplementedError()
+
+    def pin_version_delete(self, name: str, version: str):
+        """TODO: Delete a single version of a pin.
+
+        Parameters
+        ----------
+        name:
+            Pin name.
+        version:
+            Version identifier.
+        """
+        raise NotImplementedError()
+
+    def pin_versions_prune(self, name, n=None, days=None):
+        """TODO: Delete old versions of a pin.
+
+        Parameters
+        ----------
+        name:
+            Pin name.
+        n, days:
+            Pick one of n or days to choose how many versions to keep. n = 3 will
+            keep the last three versions, days = 14 will keep all the versions in
+            the last 14 days.
+
+        Notes
+        -----
+        Regardless of what values you set, pin_versions_prune() will never delete
+        the most recent version.
+
+        """
+        raise NotImplementedError()
+
+    def pin_search(self, search=None):
+        """TODO: Search for pins.
+
+        The underlying search method depends on the board implementation, but most
+        will search for text in the pin name and title.
+
+        Parameters
+        ----------
+        search:
+            A string to search for. By default returns all pins.
+
+        """
+        raise NotImplementedError()
+
+    def pin_delete(self, names):
+        """TODO: Delete a pin (or pins), removing it from the board.
+
+        Parameters
+        ----------
+        names:
+            The names of one or more pins to delete.
+        """
+        raise NotImplementedError()
+
+    def pin_browse(self, name, version=None, local=False):
+        """TODO: Navigate to the home of a pin, either on the internet or locally.
+
+        Parameters
+        ----------
+        name:
+            Pin name.
+        version:
+            A specific pin version to retrieve.
+        local:
+            Whether to open the local copy of the pin. Defaults to showing you
+            the home of the pin on the internet.
+
+        See Also
+        --------
+        BaseBoard.pin_versions
+
+        """
+
+        raise NotImplementedError()
 
     def validate_pin_name(self, name: str) -> None:
         if "/" in name:

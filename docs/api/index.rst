@@ -5,3 +5,5 @@ API
    :maxdepth: 2
 
    boards
+   meta
+   filesystem

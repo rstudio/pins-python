@@ -28,3 +28,11 @@ docs-build:
 
 docs-watch:
 	cd docs && sphinx-autobuild . ./_build/html $(SPHINX_BUILDARGS)
+
+docs-clean:
+	rm -rf docs/_build docs/api/api_card
+
+requirements-dev:
+	@# allows you to do this...
+	@# make requirements | tee > requirements/some_file.txt
+	@pip-compile setup.cfg --rebuild --extra dev --output-file=-

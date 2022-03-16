@@ -1,7 +1,8 @@
 import pytest
 import pandas as pd
 
-from pins.tests.helpers import DEFAULT_CREATION_DATE
+from pins.tests.helpers import DEFAULT_CREATION_DATE, xfail_fs
+from time import sleep
 
 # using pytest cases, so that we can pass in fixtures as parameters
 from pytest_cases import fixture, parametrize
@@ -18,7 +19,7 @@ def df():
     return pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
 
 
-# High level pins functionality -----------------------------------------------
+# pin_write ===================================================================
 
 
 def test_board_pin_write_default_title(board):
@@ -110,3 +111,54 @@ def test_board_pin_write_type(board, obj, type_, request):
         assert obj.equals(dst_obj)
 
     obj == dst_obj
+
+
+# pin_delete ==================================================================
+
+
+def test_board_pin_delete(board, df):
+    board.pin_write(df, "df_to_delete", type="csv")
+    sleep(1)
+    board.pin_write(df, "df_to_delete", type="csv")
+
+    assert len(board.pin_versions("df_to_delete")) == 2
+
+    board.pin_delete("df_to_delete")
+
+    assert board.pin_exists("df_to_delete") is False
+
+
+@xfail_fs("rsc")
+def test_board_pin_version_delete_older(board, df):
+    meta_old = board.pin_write(df, "df_version_del", type="csv")
+    sleep(1)
+    meta_new = board.pin_write(df, "df_version_del", type="csv")
+
+    assert len(board.pin_versions("df_version_del")) == 2
+    assert meta_old.version != meta_new.version.version
+
+    board.pin_version_delete("df_version_del", meta_old.version.version)
+
+    df_versions = board.pin_versions("df_version_del")
+
+    # Note that using `in` on a pandas Series checks against the index :/
+    assert meta_old.version.version not in df_versions.version.values
+    assert meta_new.version.version in df_versions.version.values
+
+
+@xfail_fs("rsc")
+def test_board_pin_version_delete_latest(board, df):
+    meta_old = board.pin_write(df, "df_version_del2", type="csv")
+    sleep(1)
+    meta_new = board.pin_write(df, "df_version_del2", type="csv")
+
+    assert len(board.pin_versions("df_version_del2")) == 2
+    assert meta_old.version.version != meta_new.version.version
+
+    board.pin_version_delete("df_version_del2", meta_new.version.version)
+
+    df_versions = board.pin_versions("df_version_del2")
+
+    # Note that using `in` on a pandas Series checks against the index :/
+    assert meta_old.version.version in df_versions.version.values
+    assert meta_new.version.version not in df_versions.version.values

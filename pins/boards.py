@@ -1,11 +1,12 @@
 import tempfile
 import shutil
+import inspect
 
 from io import IOBase
 from functools import cached_property
 from pathlib import Path
 from importlib_resources import files
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from typing import Protocol, Sequence, Optional, Mapping
 
@@ -311,8 +312,10 @@ class BaseBoard:
         pin_version_path = self.construct_path([pin_name, version])
         self.fs.rm(pin_version_path, recursive=True)
 
-    def pin_versions_prune(self, name, n=None, days=None):
-        """TODO: Delete old versions of a pin.
+    def pin_versions_prune(
+        self, name, n: "int | None" = None, days: "int | None" = None
+    ):
+        """Delete old versions of a pin.
 
         Parameters
         ----------
@@ -329,7 +332,33 @@ class BaseBoard:
         the most recent version.
 
         """
-        raise NotImplementedError()
+
+        if n is None and days is None:
+            raise ValueError("Cannot specify both n and days.")
+
+        versions = self.pin_versions(name, as_df=False)
+        if n is not None:
+            if n <= 0:
+                raise ValueError("Argument n is {n}, but must be greater than 0.")
+
+            to_delete = versions[:-n]
+        if days is not None:
+            if n <= 0:
+                raise ValueError("Argument days is {days}, but must be greater than 0.")
+
+            date_cutoff = datetime.today() - timedelta(days=days)
+            to_delete = [v for v in versions if v.created < date_cutoff]
+
+        # message user about deletions ----
+        # TODO(question): how to pin_inform? Log or warning?
+        if to_delete:
+            str_vers = ", ".join([v.version for v in to_delete])
+            print(f"Deleting versions: {str_vers}.")
+        if not to_delete:
+            print("No old versions to delete")
+
+        for version in to_delete:
+            self.pin_version_delete(name, version.version)
 
     def pin_search(self, search=None):
         """TODO: Search for pins.
@@ -479,6 +508,14 @@ class BoardRsConnect(BaseBoard):
 
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
+
+    def pin_versions_prune(self, *args, **kwargs):
+        sig = inspect.signature(super().pin_versions_prune)
+        if sig.bind(*args, **kwargs).arguments.get("days") is not None:
+            raise NotImplementedError(
+                "RStudio Connect board cannot prune versions using days."
+            )
+        super().pin_versions_prune(*args, **kwargs)
 
     def validate_pin_name(self, name) -> None:
         if name.count("/") > 1:

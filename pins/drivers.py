@@ -1,4 +1,7 @@
+import builtins
+
 from .meta import Meta
+
 
 # TODO: move IFileSystem out of boards, to fix circular import
 # from .boards import IFileSystem
@@ -71,7 +74,7 @@ def default_title(obj, type):
             shape_str = " x ".join(map(str, obj.shape))
             return f"A pinned {shape_str} CSV"
         raise NotImplementedError(
-            f"No default csv title support for class: {type(obj)}"
+            f"No default csv title support for class: {builtins.type(obj)}"
         )
 
     raise NotImplementedError(f"Cannot create default title for type: {type}")

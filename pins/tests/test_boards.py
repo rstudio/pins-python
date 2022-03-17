@@ -1,7 +1,9 @@
 import pytest
 import pandas as pd
+import uuid
 
 from pins.tests.helpers import DEFAULT_CREATION_DATE, xfail_fs
+from datetime import datetime, timedelta
 from time import sleep
 
 # using pytest cases, so that we can pass in fixtures as parameters
@@ -116,30 +118,39 @@ def test_board_pin_write_type(board, obj, type_, request):
 # pin_delete ==================================================================
 
 
-def test_board_pin_delete(board, df):
-    board.pin_write(df, "df_to_delete", type="csv")
+def setup_del_pin(board, pin_name, df):
+    meta_old = board.pin_write(df, pin_name, type="csv", title="some title")
     sleep(1)
-    board.pin_write(df, "df_to_delete", type="csv")
+    meta_new = board.pin_write(df, pin_name, type="csv", title="some title")
 
-    assert len(board.pin_versions("df_to_delete")) == 2
+    return meta_old, meta_new
 
-    board.pin_delete("df_to_delete")
 
-    assert board.pin_exists("df_to_delete") is False
+def test_board_pin_delete(board, df):
+    pin_name = "df_to_delete"
+    setup_del_pin(board, pin_name, df)
+
+    assert len(board.pin_versions(pin_name)) == 2
+
+    board.pin_delete(pin_name)
+
+    assert board.pin_exists(pin_name) is False
+
+
+def check_pin_versions(board, pin_name, meta_old, meta_new):
+    assert len(board.pin_versions(pin_name)) == 2
+    assert meta_old.version.version != meta_new.version.version
 
 
 @xfail_fs("rsc")
 def test_board_pin_version_delete_older(board, df):
-    meta_old = board.pin_write(df, "df_version_del", type="csv")
-    sleep(1)
-    meta_new = board.pin_write(df, "df_version_del", type="csv")
+    pin_name = "df_version_del"
+    meta_old, meta_new = setup_del_pin(board, pin_name, df)
 
-    assert len(board.pin_versions("df_version_del")) == 2
-    assert meta_old.version != meta_new.version.version
+    check_pin_versions(board, pin_name, meta_old, meta_new)
 
-    board.pin_version_delete("df_version_del", meta_old.version.version)
-
-    df_versions = board.pin_versions("df_version_del")
+    board.pin_version_delete(pin_name, meta_old.version.version)
+    df_versions = board.pin_versions(pin_name)
 
     # Note that using `in` on a pandas Series checks against the index :/
     assert meta_old.version.version not in df_versions.version.values
@@ -148,17 +159,48 @@ def test_board_pin_version_delete_older(board, df):
 
 @xfail_fs("rsc")
 def test_board_pin_version_delete_latest(board, df):
-    meta_old = board.pin_write(df, "df_version_del2", type="csv")
-    sleep(1)
-    meta_new = board.pin_write(df, "df_version_del2", type="csv")
+    pin_name = "df_version_del2"
+    meta_old, meta_new = setup_del_pin(board, pin_name, df)
 
-    assert len(board.pin_versions("df_version_del2")) == 2
-    assert meta_old.version.version != meta_new.version.version
+    check_pin_versions(board, pin_name, meta_old, meta_new)
 
     board.pin_version_delete("df_version_del2", meta_new.version.version)
-
-    df_versions = board.pin_versions("df_version_del2")
+    df_versions = board.pin_versions(pin_name)
 
     # Note that using `in` on a pandas Series checks against the index :/
     assert meta_old.version.version in df_versions.version.values
     assert meta_new.version.version not in df_versions.version.values
+
+
+@pytest.fixture
+def pin_prune(board, df):
+    pin_name = str(uuid.uuid4())
+
+    today = datetime.now()
+    day_ago = today - timedelta(days=1, minutes=1)
+    two_days_ago = today - timedelta(days=2, minutes=1)
+
+    board.pin_write(df, pin_name, type="csv", title="some title", created=today)
+    board.pin_write(df, pin_name, type="csv", title="some title", created=day_ago)
+    board.pin_write(df, pin_name, type="csv", title="some title", created=two_days_ago)
+
+    versions = board.pin_versions(pin_name, as_df=False)
+    assert len(versions) == 3
+
+    return versions, pin_name
+
+
+@pytest.mark.parametrize("n", [1, 2])
+def test_board_pin_versions_prune_n_1(board, pin_prune, n):
+    versions, pin_name = pin_prune
+
+    board.pin_versions_prune(pin_name, n=n)
+    new_versions = board.pin_versions(pin_name, as_df=False)
+
+    assert len(new_versions) == n
+
+    # TODO(compat): versions are currently reversed from R pins, with latest last
+    # so we need to reverse to check the n latest versions
+    rev_vers = list(reversed(versions))
+    for ii, v in enumerate(reversed(new_versions)):
+        assert rev_vers[ii].version == v.version

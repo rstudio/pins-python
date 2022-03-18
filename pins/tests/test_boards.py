@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import uuid
 
-from pins.tests.helpers import DEFAULT_CREATION_DATE, xfail_fs
+from pins.tests.helpers import DEFAULT_CREATION_DATE
 from pins.errors import PinsError
 
 from datetime import datetime, timedelta
@@ -204,10 +204,16 @@ def test_board_pin_versions_prune_n(board, pin_prune, pin_name, n):
 
 
 @pytest.mark.parametrize("days", [1, 2])
-@xfail_fs("rsc")
 def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
 
+    # RStudio cannot handle days, since it involves pulling metadata
+    if board.fs.protocol == "rsc":
+        with pytest.raises(NotImplementedError):
+            board.pin_versions_prune(pin_name, days=days)
+        return
+
     board.pin_versions_prune(pin_name, days=days)
+
     new_versions = board.pin_versions(pin_name, as_df=False)
 
     # each of the 3 versions adds an 1 more day + 1 min

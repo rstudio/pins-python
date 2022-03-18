@@ -28,7 +28,11 @@ class Version(_VersionBase):
     hash: str
 
     def to_dict(self) -> Mapping:
-        return asdict(self)
+        # properties not automatically added, so need to handle manually
+        res = asdict(self)
+        res["version"] = self.version
+
+        return res
 
     @property
     def version(self) -> str:

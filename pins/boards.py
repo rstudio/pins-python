@@ -1,11 +1,12 @@
 import tempfile
 import shutil
+import inspect
 
 from io import IOBase
 from functools import cached_property
 from pathlib import Path
 from importlib_resources import files
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from typing import Protocol, Sequence, Optional, Mapping
 
@@ -253,7 +254,14 @@ class BaseBoard:
                     "but that directory already exists."
                 )
 
-            self.fs.put(tmp_dir, dst_version_path, recursive=True)
+            res = self.fs.put(tmp_dir, dst_version_path, recursive=True)
+
+        if dst_version_path == dst_pin_path:
+            # TODO(refactor): this is a RSConnect specific hack
+            # since we don't know the bundle id ahead of time, the meta version
+            # object is incorrect. Could fix through the meta_factory
+            bundle_version = VersionRaw(res.split("/")[-1])
+            meta.version = bundle_version
 
         return meta
 
@@ -289,7 +297,7 @@ class BaseBoard:
         raise NotImplementedError()
 
     def pin_version_delete(self, name: str, version: str):
-        """TODO: Delete a single version of a pin.
+        """Delete a single version of a pin.
 
         Parameters
         ----------
@@ -298,10 +306,16 @@ class BaseBoard:
         version:
             Version identifier.
         """
-        raise NotImplementedError()
 
-    def pin_versions_prune(self, name, n=None, days=None):
-        """TODO: Delete old versions of a pin.
+        pin_name = self.path_to_pin(name)
+
+        pin_version_path = self.construct_path([pin_name, version])
+        self.fs.rm(pin_version_path, recursive=True)
+
+    def pin_versions_prune(
+        self, name, n: "int | None" = None, days: "int | None" = None
+    ):
+        """Delete old versions of a pin.
 
         Parameters
         ----------
@@ -318,7 +332,33 @@ class BaseBoard:
         the most recent version.
 
         """
-        raise NotImplementedError()
+
+        if n is None and days is None:
+            raise ValueError("Cannot specify both n and days.")
+
+        versions = self.pin_versions(name, as_df=False)
+        if n is not None:
+            if n <= 0:
+                raise ValueError("Argument n is {n}, but must be greater than 0.")
+
+            to_delete = versions[:-n]
+        if days is not None:
+            if days <= 0:
+                raise ValueError("Argument days is {days}, but must be greater than 0.")
+
+            date_cutoff = datetime.today() - timedelta(days=days)
+            to_delete = [v for v in versions if v.created < date_cutoff]
+
+        # message user about deletions ----
+        # TODO(question): how to pin_inform? Log or warning?
+        if to_delete:
+            str_vers = ", ".join([v.version for v in to_delete])
+            print(f"Deleting versions: {str_vers}.")
+        if not to_delete:
+            print("No old versions to delete")
+
+        for version in to_delete:
+            self.pin_version_delete(name, version.version)
 
     def pin_search(self, search=None):
         """TODO: Search for pins.
@@ -334,7 +374,7 @@ class BaseBoard:
         """
         raise NotImplementedError()
 
-    def pin_delete(self, names):
+    def pin_delete(self, names: "str | Sequence[str]"):
         """TODO: Delete a pin (or pins), removing it from the board.
 
         Parameters
@@ -342,7 +382,16 @@ class BaseBoard:
         names:
             The names of one or more pins to delete.
         """
-        raise NotImplementedError()
+
+        if isinstance(names, str):
+            names = [names]
+
+        for name in names:
+            if not self.pin_exists(name):
+                raise PinsError("Cannot delete pin, since pin %s does not exist" % name)
+
+            pin_name = self.path_to_pin(name)
+            self.fs.rm(pin_name, recursive=True)
 
     def pin_browse(self, name, version=None, local=False):
         """TODO: Navigate to the home of a pin, either on the internet or locally.
@@ -459,6 +508,25 @@ class BoardRsConnect(BaseBoard):
 
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
+
+    def pin_version_delete(self, *args, **kwargs):
+        from pins.rsconnect.api import RsConnectApiRequestError
+
+        try:
+            super().pin_version_delete(*args, **kwargs)
+        except RsConnectApiRequestError as e:
+            if e.args[0]["code"] != 75:
+                raise e
+
+            raise PinsError("RStudio Connect cannot delete the latest pin version.")
+
+    def pin_versions_prune(self, *args, **kwargs):
+        sig = inspect.signature(super().pin_versions_prune)
+        if sig.bind(*args, **kwargs).arguments.get("days") is not None:
+            raise NotImplementedError(
+                "RStudio Connect board cannot prune versions using days."
+            )
+        super().pin_versions_prune(*args, **kwargs)
 
     def validate_pin_name(self, name) -> None:
         if name.count("/") > 1:

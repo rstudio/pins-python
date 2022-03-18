@@ -509,6 +509,17 @@ class BoardRsConnect(BaseBoard):
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
 
+    def pin_version_delete(self, *args, **kwargs):
+        from pins.rsconnect.api import RsConnectApiRequestError
+
+        try:
+            super().pin_version_delete(*args, **kwargs)
+        except RsConnectApiRequestError as e:
+            if e.args[0]["code"] != 75:
+                raise e
+
+            raise PinsError("RStudio Connect cannot delete the latest pin version.")
+
     def pin_versions_prune(self, *args, **kwargs):
         sig = inspect.signature(super().pin_versions_prune)
         if sig.bind(*args, **kwargs).arguments.get("days") is not None:

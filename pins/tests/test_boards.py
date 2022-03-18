@@ -3,6 +3,8 @@ import pandas as pd
 import uuid
 
 from pins.tests.helpers import DEFAULT_CREATION_DATE, xfail_fs
+from pins.errors import PinsError
+
 from datetime import datetime, timedelta
 from time import sleep
 
@@ -157,7 +159,6 @@ def test_board_pin_delete(board, df, pin_name, pin_del):
     assert board.pin_exists(pin_name) is False
 
 
-@xfail_fs("rsc")
 def test_board_pin_version_delete_older(board, pin_name, pin_del):
     meta_old, meta_new = pin_del
 
@@ -169,9 +170,15 @@ def test_board_pin_version_delete_older(board, pin_name, pin_del):
     assert meta_new.version.version in df_versions.version.values
 
 
-@xfail_fs("rsc")
 def test_board_pin_version_delete_latest(board, pin_name, pin_del):
     meta_old, meta_new = pin_del
+
+    if board.fs.protocol == "rsc":
+        with pytest.raises(PinsError) as exc_info:
+            board.pin_version_delete(pin_name, meta_new.version.version)
+
+            "cannot delete the latest pin version" in exc_info.value.args[0]
+        return
 
     board.pin_version_delete(pin_name, meta_new.version.version)
     df_versions = board.pin_versions(pin_name)

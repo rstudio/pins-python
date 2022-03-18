@@ -343,7 +343,7 @@ class BaseBoard:
 
             to_delete = versions[:-n]
         if days is not None:
-            if n <= 0:
+            if days <= 0:
                 raise ValueError("Argument days is {days}, but must be greater than 0.")
 
             date_cutoff = datetime.today() - timedelta(days=days)

@@ -118,64 +118,25 @@ def test_board_pin_write_type(board, obj, type_, request):
 # pin_delete ==================================================================
 
 
-def setup_del_pin(board, pin_name, df):
+@pytest.fixture
+def pin_name():
+    return str(uuid.uuid4())
+
+
+@pytest.fixture
+def pin_del(board, df, pin_name):
     meta_old = board.pin_write(df, pin_name, type="csv", title="some title")
     sleep(1)
     meta_new = board.pin_write(df, pin_name, type="csv", title="some title")
 
-    return meta_old, meta_new
-
-
-def test_board_pin_delete(board, df):
-    pin_name = "df_to_delete"
-    setup_del_pin(board, pin_name, df)
-
-    assert len(board.pin_versions(pin_name)) == 2
-
-    board.pin_delete(pin_name)
-
-    assert board.pin_exists(pin_name) is False
-
-
-def check_pin_versions(board, pin_name, meta_old, meta_new):
     assert len(board.pin_versions(pin_name)) == 2
     assert meta_old.version.version != meta_new.version.version
 
-
-@xfail_fs("rsc")
-def test_board_pin_version_delete_older(board, df):
-    pin_name = "df_version_del"
-    meta_old, meta_new = setup_del_pin(board, pin_name, df)
-
-    check_pin_versions(board, pin_name, meta_old, meta_new)
-
-    board.pin_version_delete(pin_name, meta_old.version.version)
-    df_versions = board.pin_versions(pin_name)
-
-    # Note that using `in` on a pandas Series checks against the index :/
-    assert meta_old.version.version not in df_versions.version.values
-    assert meta_new.version.version in df_versions.version.values
-
-
-@xfail_fs("rsc")
-def test_board_pin_version_delete_latest(board, df):
-    pin_name = "df_version_del2"
-    meta_old, meta_new = setup_del_pin(board, pin_name, df)
-
-    check_pin_versions(board, pin_name, meta_old, meta_new)
-
-    board.pin_version_delete("df_version_del2", meta_new.version.version)
-    df_versions = board.pin_versions(pin_name)
-
-    # Note that using `in` on a pandas Series checks against the index :/
-    assert meta_old.version.version in df_versions.version.values
-    assert meta_new.version.version not in df_versions.version.values
+    return meta_old, meta_new
 
 
 @pytest.fixture
-def pin_prune(board, df):
-    pin_name = str(uuid.uuid4())
-
+def pin_prune(board, df, pin_name):
     today = datetime.now()
     day_ago = today - timedelta(days=1, minutes=1)
     two_days_ago = today - timedelta(days=2, minutes=1)
@@ -187,12 +148,41 @@ def pin_prune(board, df):
     versions = board.pin_versions(pin_name, as_df=False)
     assert len(versions) == 3
 
-    return versions, pin_name
+    return versions
+
+
+def test_board_pin_delete(board, df, pin_name, pin_del):
+    board.pin_delete(pin_name)
+
+    assert board.pin_exists(pin_name) is False
+
+
+@xfail_fs("rsc")
+def test_board_pin_version_delete_older(board, pin_name, pin_del):
+    meta_old, meta_new = pin_del
+
+    board.pin_version_delete(pin_name, meta_old.version.version)
+    df_versions = board.pin_versions(pin_name)
+
+    # Note that using `in` on a pandas Series checks against the index :/
+    assert meta_old.version.version not in df_versions.version.values
+    assert meta_new.version.version in df_versions.version.values
+
+
+@xfail_fs("rsc")
+def test_board_pin_version_delete_latest(board, pin_name, pin_del):
+    meta_old, meta_new = pin_del
+
+    board.pin_version_delete(pin_name, meta_new.version.version)
+    df_versions = board.pin_versions(pin_name)
+
+    # Note that using `in` on a pandas Series checks against the index :/
+    assert meta_old.version.version in df_versions.version.values
+    assert meta_new.version.version not in df_versions.version.values
 
 
 @pytest.mark.parametrize("n", [1, 2])
-def test_board_pin_versions_prune_n_1(board, pin_prune, n):
-    versions, pin_name = pin_prune
+def test_board_pin_versions_prune_n(board, pin_prune, pin_name, n):
 
     board.pin_versions_prune(pin_name, n=n)
     new_versions = board.pin_versions(pin_name, as_df=False)
@@ -201,6 +191,17 @@ def test_board_pin_versions_prune_n_1(board, pin_prune, n):
 
     # TODO(compat): versions are currently reversed from R pins, with latest last
     # so we need to reverse to check the n latest versions
-    rev_vers = list(reversed(versions))
+    rev_vers = list(reversed(pin_prune))
     for ii, v in enumerate(reversed(new_versions)):
         assert rev_vers[ii].version == v.version
+
+
+@pytest.mark.parametrize("days", [1, 2])
+@xfail_fs("rsc")
+def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
+
+    board.pin_versions_prune(pin_name, days=days)
+    new_versions = board.pin_versions(pin_name, as_df=False)
+
+    # each of the 3 versions adds an 1 more day + 1 min
+    assert len(new_versions) == days

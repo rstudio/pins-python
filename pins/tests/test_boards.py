@@ -218,3 +218,31 @@ def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
 
     # each of the 3 versions adds an 1 more day + 1 min
     assert len(new_versions) == days
+
+
+# pin_search ==================================================================
+
+
+@pytest.mark.parametrize(
+    "search, matches",
+    [
+        # beginning character
+        ("x", ["x-pin-1", "x-pin-2"]),
+        # middle of name
+        ("pin", ["x-pin-1", "x-pin-2", "y-pin-1"]),
+        # regex set
+        ("[0-9]", ["x-pin-1", "x-pin-2", "y-pin-1"]),
+        # exists only in title
+        ("the-title", ["x-pin-1", "x-pin-2", "y-pin-1", "y-z"]),
+    ],
+)
+def test_board_pin_search_name(board, df, search, matches):
+    if board.fs.protocol == "rsc":
+        matches = ["derek/" + m for m in matches]
+
+    for name in ["x-pin-1", "x-pin-2", "y-pin-1", "y-z"]:
+        board.pin_write(df, name, type="csv", title="the-title")
+
+    metas = board.pin_search(search, as_df=False)
+    sorted_meta_names = sorted([m.name for m in metas])
+    assert sorted_meta_names == sorted(matches)

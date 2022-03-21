@@ -139,7 +139,7 @@ class BaseBoard:
 
         path_version = self.construct_path([*components, meta_name])
         f = self.fs.open(path_version)
-        return self.meta_factory.read_yaml(f, pin_name, selected_version)
+        return self.meta_factory.read_pin_yaml(f, pin_name, selected_version)
 
     def pin_list(self):
         """List names of all pins in a board.
@@ -524,7 +524,7 @@ class BaseBoard:
         # write metadata to tmp pin folder
         meta_name = self.meta_factory.get_meta_name()
         src_meta_path = Path(pin_dir_path) / meta_name
-        meta.to_yaml(src_meta_path.open("w"))
+        meta.to_pin_yaml(src_meta_path.open("w"))
 
         return meta
 

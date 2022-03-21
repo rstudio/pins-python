@@ -65,9 +65,9 @@ def test_meta_factory_create():
 
 
 def test_meta_factory_read_yaml_roundtrip(meta):
-    pin_yaml = meta.to_yaml()
+    pin_yaml = meta.to_pin_yaml()
 
     mf = MetaFactory()
-    meta2 = mf.read_yaml(StringIO(pin_yaml), meta.name, meta.version)
+    meta2 = mf.read_pin_yaml(StringIO(pin_yaml), meta.name, meta.version)
 
     assert meta == meta2

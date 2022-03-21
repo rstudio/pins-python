@@ -83,7 +83,7 @@ class Meta:
         # version = version_cls.from_meta_fields(data["created"], data["pin_hash"])
         return cls(**data, name=pin_name, version=version)
 
-    def to_yaml(self, f: Optional[IOBase] = None) -> "str | None":
+    def to_pin_yaml(self, f: Optional[IOBase] = None) -> "str | None":
         data = self.to_pin_dict()
 
         return yaml.dump(data, f)
@@ -151,7 +151,9 @@ class MetaFactory:
             version=version,
         )
 
-    def read_yaml(self, f: IOBase, pin_name: str, version: "str | VersionRaw") -> Meta:
+    def read_pin_yaml(
+        self, f: IOBase, pin_name: str, version: "str | VersionRaw"
+    ) -> Meta:
         if isinstance(version, str):
             version_obj = guess_version(version)
         else:

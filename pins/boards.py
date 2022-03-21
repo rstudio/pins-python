@@ -362,7 +362,7 @@ class BaseBoard:
             self.pin_version_delete(name, version.version)
 
     def pin_search(self, search=None, as_df=True):
-        """TODO: Search for pins.
+        """Search for pins.
 
         The underlying search method depends on the board implementation, but most
         will search for text in the pin name and title.

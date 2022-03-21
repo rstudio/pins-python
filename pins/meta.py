@@ -62,13 +62,13 @@ class Meta:
     name: Optional[str] = None
     user: Mapping = field(default_factory=dict)
 
-    def to_dict(self, flat=False, fmt_created=False) -> Mapping:
+    def to_dict(self) -> Mapping:
         data = asdict(self)
 
         return data
 
     def to_pin_dict(self):
-        d = self.to_dict(flat=True, fmt_created=True)
+        d = self.to_dict()
         del d["name"]
         del d["version"]
         return d

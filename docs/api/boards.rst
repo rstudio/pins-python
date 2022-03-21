@@ -26,6 +26,7 @@ Methods (Implemented)
    ~BaseBoard.pin_version_delete
    ~BaseBoard.pin_versions_prune
    ~BaseBoard.pin_delete
+   ~BaseBoard.pin_search
 
 Methods (Planned)
 -----------------
@@ -34,5 +35,4 @@ Methods (Planned)
 
    ~BaseBoard.pin_download
    ~BaseBoard.pin_upload
-   ~BaseBoard.pin_search
    ~BaseBoard.pin_browse

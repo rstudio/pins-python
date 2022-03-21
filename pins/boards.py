@@ -371,6 +371,8 @@ class BaseBoard:
         ----------
         search:
             A string to search for. By default returns all pins.
+        as_df:
+            Whether to return a pandas DataFrame.
 
         """
 
@@ -414,7 +416,7 @@ class BaseBoard:
         return res
 
     def pin_delete(self, names: "str | Sequence[str]"):
-        """TODO: Delete a pin (or pins), removing it from the board.
+        """Delete a pin (or pins), removing it from the board.
 
         Parameters
         ----------

@@ -396,18 +396,12 @@ class BaseBoard:
 
         # extract specific fields out ----
 
-        def pull_fields(meta):
-            keep_fields = ["name", "type", "title", "created", "file_size"]
-            d = {k: getattr(meta, k) for k in keep_fields}
-            d["meta"] = meta
-            return d
-
         if as_df:
             # optionally pull out selected fields into a DataFrame
             import pandas as pd
 
             # TODO(question): was the pulling of specific fields out a v0 thing?
-            extracted = list(map(pull_fields, res))
+            extracted = list(map(self._extract_meta_results, res))
             return pd.DataFrame(extracted)
 
         # TODO(compat): double check on the as_df=True convention
@@ -528,6 +522,13 @@ class BaseBoard:
 
         return meta
 
+    def _extract_search_meta(self, meta):
+        keep_fields = ["name", "type", "title", "created", "file_size"]
+
+        d = {k: getattr(meta, k) for k in keep_fields}
+        d["meta"] = meta
+        return d
+
 
 class BoardRsConnect(BaseBoard):
     # TODO: note that board is unused in this class (e.g. it's not in construct_path())
@@ -549,6 +550,47 @@ class BoardRsConnect(BaseBoard):
 
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
+
+    def pin_search(self, search=None, as_df=True):
+        from pins.rsconnect.api import RsConnectApiRequestError
+
+        paged_res = self.fs.api.misc_get_applications("content_type:pin", search=search)
+        results = paged_res.results
+        names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
+
+        res = []
+        for pin_name in names:
+            try:
+                meta = self.pin_meta(pin_name)
+                res.append(meta)
+
+            except RsConnectApiRequestError as e:
+                # handles the case where admins can search content they can't access
+                # verify code is for inadequate permission to access
+                if e.args[0]["code"] != 19:
+                    raise e
+                # TODO(question): should this be a RawMeta class or something?
+                #                 that fixes our isinstance Meta below.
+                # TODO(compatibility): R pins errors instead, see #27
+                res.append({"name": pin_name, "meta": None})
+
+        # extract specific fields out ----
+
+        if as_df:
+            # optionally pull out selected fields into a DataFrame
+            import pandas as pd
+
+            extract = []
+            for entry in res:
+                extract.append(
+                    self._extract_search_meta(entry)
+                    if isinstance(entry, Meta)
+                    else entry
+                )
+
+            return pd.DataFrame(extract)
+
+        return res
 
     def pin_version_delete(self, *args, **kwargs):
         from pins.rsconnect.api import RsConnectApiRequestError

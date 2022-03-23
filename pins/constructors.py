@@ -3,7 +3,7 @@ import fsspec
 import os
 import tempfile
 
-from .boards import BaseBoard, BoardRsConnect
+from .boards import BaseBoard, BoardRsConnect, BoardManual
 
 
 # Board constructors ==========================================================
@@ -91,6 +91,28 @@ def board_github(path, versioned=True, org=None, repo=None):
     """
 
     return board("github", path, versioned, {"org": org, "repo": repo})
+
+
+def board_urls(path: str, pin_paths: dict):
+    """
+
+    Example
+    -------
+
+    >>> github_raw = "https://raw.githubusercontent.com/"
+    >>> pin_paths = {
+    ...     "df_csv": "df_csv/20220214T163720Z-9bfad",
+    ...     "df_arrow": "df_arrow/20220214T163720Z-ad0c1",
+    ... }
+    >>> board = board_urls(github_raw, pin_paths)
+    >>> board.pin_list()
+    ['df_csv', 'df_arrow']
+    """
+
+    # TODO(question): R pins' version is named board_url (no s)
+
+    fs = fsspec.filesystem("http")
+    return BoardManual(path, fs, pin_paths=pin_paths)
 
 
 def board_rsconnect(versioned=True, server_url=None, api_key=None):

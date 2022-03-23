@@ -17,7 +17,7 @@
       ~Meta.from_pin_dict
       ~Meta.to_dict
       ~Meta.to_pin_dict
-      ~Meta.to_yaml
+      ~Meta.to_pin_yaml
    
    
 

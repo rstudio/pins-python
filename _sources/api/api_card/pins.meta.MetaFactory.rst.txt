@@ -17,7 +17,7 @@
       ~MetaFactory.create
       ~MetaFactory.get_meta_name
       ~MetaFactory.get_version_for_meta
-      ~MetaFactory.read_yaml
+      ~MetaFactory.read_pin_yaml
    
    
 

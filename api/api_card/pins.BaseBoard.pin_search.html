@@ -35,8 +35,8 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="pins.BaseBoard.pin_browse" href="pins.BaseBoard.pin_browse.html" />
-    <link rel="prev" title="pins.BaseBoard.pin_upload" href="pins.BaseBoard.pin_upload.html" />
+    <link rel="next" title="pins.BaseBoard.pin_download" href="pins.BaseBoard.pin_download.html" />
+    <link rel="prev" title="pins.BaseBoard.pin_delete" href="pins.BaseBoard.pin_delete.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -180,6 +180,11 @@
      pins.BaseBoard.pin_delete
     </a>
    </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     pins.BaseBoard.pin_search
+    </a>
+   </li>
    <li class="toctree-l2">
     <a class="reference internal" href="pins.BaseBoard.pin_download.html">
      pins.BaseBoard.pin_download
@@ -188,11 +193,6 @@
    <li class="toctree-l2">
     <a class="reference internal" href="pins.BaseBoard.pin_upload.html">
      pins.BaseBoard.pin_upload
-    </a>
-   </li>
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
-     pins.BaseBoard.pin_search
     </a>
    </li>
    <li class="toctree-l2">
@@ -334,13 +334,16 @@
 <h1>pins.BaseBoard.pin_search<a class="headerlink" href="#pins-baseboard-pin-search" title="Permalink to this headline">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="pins.BaseBoard.pin_search">
-<span class="sig-prename descclassname"><span class="pre">BaseBoard.</span></span><span class="sig-name descname"><span class="pre">pin_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.BaseBoard.pin_search" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO: Search for pins.</p>
+<span class="sig-prename descclassname"><span class="pre">BaseBoard.</span></span><span class="sig-name descname"><span class="pre">pin_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.BaseBoard.pin_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for pins.</p>
 <p>The underlying search method depends on the board implementation, but most
 will search for text in the pin name and title.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>search</strong> – A string to search for. By default returns all pins.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search</strong> – A string to search for. By default returns all pins.</p></li>
+<li><p><strong>as_df</strong> – Whether to return a pandas DataFrame.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -353,17 +356,17 @@ will search for text in the pin name and title.</p>
               
               <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="pins.BaseBoard.pin_upload.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="pins.BaseBoard.pin_delete.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">pins.BaseBoard.pin_upload</p>
+            <p class="prev-next-title">pins.BaseBoard.pin_delete</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="pins.BaseBoard.pin_browse.html" title="next page">
+    <a class='right-next' id="next-link" href="pins.BaseBoard.pin_download.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pins.BaseBoard.pin_browse</p>
+        <p class="prev-next-title">pins.BaseBoard.pin_download</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

@@ -1,6 +1,7 @@
 import tempfile
 import shutil
 import inspect
+import re
 
 from io import IOBase
 from functools import cached_property
@@ -59,7 +60,7 @@ class BaseBoard:
             Pin name.
         """
 
-        return self.fs.exists(self.path_to_pin(name))
+        return self.fs.exists(self.construct_path([self.path_to_pin(name)]))
 
     def pin_versions(self, name: str, as_df: bool = True) -> Sequence[VersionRaw]:
         """Return available versions of a pin.
@@ -73,7 +74,7 @@ class BaseBoard:
         if not self.pin_exists(name):
             raise PinsError("Cannot check version, since pin %s does not exist" % name)
 
-        versions_raw = self.fs.ls(self.path_to_pin(name))
+        versions_raw = self.fs.ls(self.construct_path([self.path_to_pin(name)]))
 
         # get a list of Version(Raw) objects
         all_versions = []
@@ -138,7 +139,7 @@ class BaseBoard:
 
         path_version = self.construct_path([*components, meta_name])
         f = self.fs.open(path_version)
-        return self.meta_factory.read_yaml(f, selected_version)
+        return self.meta_factory.read_pin_yaml(f, pin_name, selected_version)
 
     def pin_list(self):
         """List names of all pins in a board.
@@ -235,7 +236,7 @@ class BaseBoard:
 
             # move pin to destination ----
             # create pin version folder
-            dst_pin_path = self.path_to_pin(name)
+            dst_pin_path = self.construct_path([self.path_to_pin(name)])
             dst_version_path = self.path_to_deploy_version(name, meta.version.version)
 
             try:
@@ -360,8 +361,8 @@ class BaseBoard:
         for version in to_delete:
             self.pin_version_delete(name, version.version)
 
-    def pin_search(self, search=None):
-        """TODO: Search for pins.
+    def pin_search(self, search=None, as_df=True):
+        """Search for pins.
 
         The underlying search method depends on the board implementation, but most
         will search for text in the pin name and title.
@@ -370,12 +371,46 @@ class BaseBoard:
         ----------
         search:
             A string to search for. By default returns all pins.
+        as_df:
+            Whether to return a pandas DataFrame.
 
         """
-        raise NotImplementedError()
+
+        # fetch metadata ----
+
+        names = self.pin_list()
+
+        metas = list(map(self.pin_meta, names))
+
+        # search pins ----
+
+        if search:
+            regex = re.compile(search) if isinstance(search, str) else search
+
+            res = []
+            for meta in metas:
+                if re.search(regex, meta.name) or re.search(regex, meta.title):
+                    res.append(meta)
+        else:
+            res = metas
+
+        # extract specific fields out ----
+
+        if as_df:
+            # optionally pull out selected fields into a DataFrame
+            import pandas as pd
+
+            # TODO(question): was the pulling of specific fields out a v0 thing?
+            extracted = list(map(self._extract_meta_results, res))
+            return pd.DataFrame(extracted)
+
+        # TODO(compat): double check on the as_df=True convention
+        # TODO(compat): double check how people feel the dataframe display
+        #               looks with meta objects in it.
+        return res
 
     def pin_delete(self, names: "str | Sequence[str]"):
-        """TODO: Delete a pin (or pins), removing it from the board.
+        """Delete a pin (or pins), removing it from the board.
 
         Parameters
         ----------
@@ -390,8 +425,8 @@ class BaseBoard:
             if not self.pin_exists(name):
                 raise PinsError("Cannot delete pin, since pin %s does not exist" % name)
 
-            pin_name = self.path_to_pin(name)
-            self.fs.rm(pin_name, recursive=True)
+            path_to_pin = self.construct_path([self.path_to_pin(name)])
+            self.fs.rm(path_to_pin, recursive=True)
 
     def pin_browse(self, name, version=None, local=False):
         """TODO: Navigate to the home of a pin, either on the internet or locally.
@@ -421,14 +456,14 @@ class BaseBoard:
     def path_to_pin(self, name: str) -> str:
         self.validate_pin_name(name)
 
-        return self.construct_path([self.board, name])
+        return name
 
     def path_to_deploy_version(self, name: str, version: str):
         return self.construct_path([self.path_to_pin(name), version])
 
     def construct_path(self, elements) -> str:
         # TODO: should be the job of IFileSystem?
-        return "/".join(elements)
+        return "/".join([self.board] + elements)
 
     def keep_final_path_component(self, path):
         return path.split("/")[-1]
@@ -483,9 +518,16 @@ class BaseBoard:
         # write metadata to tmp pin folder
         meta_name = self.meta_factory.get_meta_name()
         src_meta_path = Path(pin_dir_path) / meta_name
-        meta.to_yaml(src_meta_path.open("w"))
+        meta.to_pin_yaml(src_meta_path.open("w"))
 
         return meta
+
+    def _extract_search_meta(self, meta):
+        keep_fields = ["name", "type", "title", "created", "file_size"]
+
+        d = {k: getattr(meta, k) for k in keep_fields}
+        d["meta"] = meta
+        return d
 
 
 class BoardRsConnect(BaseBoard):
@@ -508,6 +550,47 @@ class BoardRsConnect(BaseBoard):
 
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
+
+    def pin_search(self, search=None, as_df=True):
+        from pins.rsconnect.api import RsConnectApiRequestError
+
+        paged_res = self.fs.api.misc_get_applications("content_type:pin", search=search)
+        results = paged_res.results
+        names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
+
+        res = []
+        for pin_name in names:
+            try:
+                meta = self.pin_meta(pin_name)
+                res.append(meta)
+
+            except RsConnectApiRequestError as e:
+                # handles the case where admins can search content they can't access
+                # verify code is for inadequate permission to access
+                if e.args[0]["code"] != 19:
+                    raise e
+                # TODO(question): should this be a RawMeta class or something?
+                #                 that fixes our isinstance Meta below.
+                # TODO(compatibility): R pins errors instead, see #27
+                res.append({"name": pin_name, "meta": None})
+
+        # extract specific fields out ----
+
+        if as_df:
+            # optionally pull out selected fields into a DataFrame
+            import pandas as pd
+
+            extract = []
+            for entry in res:
+                extract.append(
+                    self._extract_search_meta(entry)
+                    if isinstance(entry, Meta)
+                    else entry
+                )
+
+            return pd.DataFrame(extract)
+
+        return res
 
     def pin_version_delete(self, *args, **kwargs):
         from pins.rsconnect.api import RsConnectApiRequestError
@@ -545,7 +628,11 @@ class BoardRsConnect(BaseBoard):
             return name
 
         # otherwise, prepend username to pin
-        return self.construct_path([self.user_name, name])
+        return f"{self.user_name}/{name}"
+
+    def construct_path(self, elements):
+        # no need to prefix with board
+        return "/".join(elements)
 
     def path_to_deploy_version(self, name: str, version: str):
         # RSConnect deploys a content bundle for a new version, so we simply need

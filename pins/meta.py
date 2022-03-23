@@ -21,6 +21,10 @@ class Meta:
         A title for the pin.
     description:
         A detailed description of the pin contents.
+    created:
+        Datetime the pin was created (TODO: document format).
+    pin_hash:
+        A hash of the pin.
     file:
         All relevant files contained in the pin.
     file_size:
@@ -58,41 +62,29 @@ class Meta:
     name: Optional[str] = None
     user: Mapping = field(default_factory=dict)
 
-    def to_dict(self, flat=False, fmt_created=False) -> Mapping:
+    def to_dict(self) -> Mapping:
         data = asdict(self)
 
-        if fmt_created:
-            created_val = self.version.render_created()
-        else:
-            created_val = data["version"]["created"]
-
-        if not flat:
-            if fmt_created:
-                data["version"]["created"] = created_val
-            return data
-        else:
-            flat_data = {k: v for k, v in data.items() if k != "version"}
-
-            flat_data["created"] = created_val
-            flat_data["pin_hash"] = data["version"]["hash"]
-
-            return flat_data
+        return data
 
     def to_pin_dict(self):
-        return self.to_dict(flat=True, fmt_created=True)
+        d = self.to_dict()
+        del d["name"]
+        del d["version"]
+        return d
 
     @classmethod
-    def from_pin_dict(cls, data, version) -> "Meta":
+    def from_pin_dict(cls, data, pin_name, version) -> "Meta":
 
         # version_fields = {"created", "pin_hash"}
 
         # #get items necessary for re-creating meta data
         # meta_data = {k: v for k, v in data.items() if k not in version_fields}
         # version = version_cls.from_meta_fields(data["created"], data["pin_hash"])
-        return cls(**data, version=version)
+        return cls(**data, name=pin_name, version=version)
 
-    def to_yaml(self, f: Optional[IOBase] = None) -> "str | None":
-        data = self.to_dict(flat=True, fmt_created=True)
+    def to_pin_yaml(self, f: Optional[IOBase] = None) -> "str | None":
+        data = self.to_pin_dict()
 
         return yaml.dump(data, f)
 
@@ -159,7 +151,9 @@ class MetaFactory:
             version=version,
         )
 
-    def read_yaml(self, f: IOBase, version: "str | VersionRaw") -> Meta:
+    def read_pin_yaml(
+        self, f: IOBase, pin_name: str, version: "str | VersionRaw"
+    ) -> Meta:
         if isinstance(version, str):
             version_obj = guess_version(version)
         else:
@@ -167,4 +161,4 @@ class MetaFactory:
 
         data = yaml.safe_load(f)
 
-        return Meta.from_pin_dict(data, version=version_obj)
+        return Meta.from_pin_dict(data, pin_name, version=version_obj)

@@ -33,7 +33,7 @@ def test_meta_to_dict_is_recursive(meta):
 
 def test_meta_to_pin_dict_roundtrip(meta):
     d_meta = meta.to_pin_dict()
-    meta2 = Meta.from_pin_dict(d_meta, meta.version)
+    meta2 = Meta.from_pin_dict(d_meta, meta.name, meta.version)
     assert meta == meta2
 
 
@@ -65,9 +65,9 @@ def test_meta_factory_create():
 
 
 def test_meta_factory_read_yaml_roundtrip(meta):
-    pin_yaml = meta.to_yaml()
+    pin_yaml = meta.to_pin_yaml()
 
     mf = MetaFactory()
-    meta2 = mf.read_yaml(StringIO(pin_yaml), meta.version)
+    meta2 = mf.read_pin_yaml(StringIO(pin_yaml), meta.name, meta.version)
 
     assert meta == meta2

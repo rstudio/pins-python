@@ -218,3 +218,72 @@ def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
 
     # each of the 3 versions adds an 1 more day + 1 min
     assert len(new_versions) == days
+
+
+# pin_search ==================================================================
+
+
+@pytest.mark.parametrize(
+    "search, matches",
+    [
+        # beginning character
+        ("x", ["x-pin-1", "x-pin-2"]),
+        # middle of name
+        ("pin", ["x-pin-1", "x-pin-2", "y-pin-1"]),
+        # regex set
+        ("[0-9]", ["x-pin-1", "x-pin-2", "y-pin-1"]),
+        # exists only in title
+        ("the-title", ["x-pin-1", "x-pin-2", "y-pin-1", "y-z"]),
+    ],
+)
+def test_board_pin_search_name(board, df, search, matches):
+    if board.fs.protocol == "rsc":
+        matches = ["derek/" + m for m in matches]
+
+        # rsc doesn't search by title
+        if search in ["the-title", "[0-9]"]:
+            pytest.xfail()
+
+    for name in ["x-pin-1", "x-pin-2", "y-pin-1", "y-z"]:
+        board.pin_write(df, name, type="csv", title="the-title")
+
+    metas = board.pin_search(search, as_df=False)
+    sorted_meta_names = sorted([m.name for m in metas])
+    assert sorted_meta_names == sorted(matches)
+
+
+# RStudio Connect specific ====================================================
+
+# import fixture that builds / tearsdown user "susan"
+from pins.tests.test_rsconnect_api import (  # noqa
+    fs_short,
+    fs_admin,
+    rsc_admin,
+    rsc_short,
+)
+from pins.boards import BoardRsConnect  # noqa
+
+
+@pytest.mark.xfail
+@pytest.mark.fs_rsc
+def test_board_pin_write_rsc_full_name(df, fs_short):  # noqa
+    board_susan = BoardRsConnect("", fs_short)
+    board_susan.pin_write(df, "susan/df", type="csv")
+
+
+@pytest.mark.fs_rsc
+def test_board_pin_search_admin_user(df, fs_short, fs_admin):  # noqa
+    board_susan = BoardRsConnect("", fs_short)
+    board_susan.pin_write(df, "some_df", type="csv")
+
+    board_admin = BoardRsConnect("", fs_admin)
+    search_res = board_admin.pin_search("susan", as_df=False)
+
+    assert len(search_res) == 1
+    assert search_res[0]["name"] == "susan/some_df"
+    assert search_res[0]["meta"] is None
+
+    search_res2 = board_admin.pin_search("susan", as_df=True)
+    assert search_res2.shape == (1, 2)
+    assert search_res2.loc[0, "name"] == "susan/some_df"
+    assert search_res2.loc[0, "meta"] is None

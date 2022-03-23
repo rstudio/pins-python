@@ -403,7 +403,7 @@ class RsConnectApi:
         _download_file(r, f_obj)
 
     def misc_get_applications(
-        self, filter: str, count: int = 1000
+        self, filter: str, count: int = 1000, search: str = None
     ) -> Paginated[Sequence[Content]]:
         # TODO(question): R pins does not handle pagination, but we could do it here.
         #       Note that R pins also just gets first 1000 entries

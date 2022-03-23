@@ -60,11 +60,13 @@ def test_compat_pin_meta(board):
     if board.fs.protocol == "rsc":
         # TODO: afaik the bundle id is largely non-deterministic, so not possible
         # to test, but should think a bit more about it.
-        pass
+        assert meta.name == "derek/df_csv"
     else:
         assert meta.version.version == "20220214T163720Z-9bfad"
         assert meta.version.created == datetime.datetime(2022, 2, 14, 16, 37, 20)
         assert meta.version.hash == "9bfad"
+
+        assert meta.name == "df_csv"
 
     assert meta.title == "df_csv: a pinned 2 x 3 data frame"
     assert meta.description is None
@@ -76,7 +78,6 @@ def test_compat_pin_meta(board):
 
     # TODO(question): coding api_version as a yaml float intentional?
     assert meta.api_version == 1.0
-    assert meta.name is None
     assert meta.user == {}
 
 

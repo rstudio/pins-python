@@ -4,5 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = ["pins"]
+addopts = "--doctest-modules"
 
 [tool.setuptools_scm]

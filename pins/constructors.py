@@ -55,6 +55,31 @@ def board_local(versioned=True):
     return board("file", path, versioned)
 
 
+def board_github(path, versioned=True, org=None, repo=None):
+    """Returns a github pin board.
+
+    Examples
+    --------
+
+    >>> board = board_github("pins/tests/pins-compat", org="machow", repo="pins-python")
+    >>> board.pin_list()
+    ['df_arrow', 'df_csv', 'df_rds', 'df_unversioned']
+
+    >>> board.pin_read("df_csv")
+       y  z
+    x
+    1  a  3
+    2  b  4
+
+    Note
+    ----
+    This board is read only.
+
+    """
+
+    return board("github", path, versioned, {"org": org, "repo": repo})
+
+
 def board_rsconnect(versioned=True, server_url=None, api_key=None):
     """
 

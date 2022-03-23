@@ -58,6 +58,23 @@ def board_local(versioned=True):
 def board_github(path, versioned=True, org=None, repo=None):
     """Returns a github pin board.
 
+    Parameters
+    ----------
+    path:
+        TODO
+    versioned:
+        TODO
+    org:
+        Name of the github org (e.g. user account).
+    repo:
+        Name of the repo.
+
+
+    Note
+    ----
+    This board is read only.
+
+
     Examples
     --------
 
@@ -70,10 +87,6 @@ def board_github(path, versioned=True, org=None, repo=None):
     x
     1  a  3
     2  b  4
-
-    Note
-    ----
-    This board is read only.
 
     """
 

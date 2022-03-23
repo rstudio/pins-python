@@ -1,5 +1,6 @@
-import os
 import contextlib
+import os
+import pytest
 
 from pathlib import Path
 
@@ -32,6 +33,7 @@ def check_dir_writable(p_dir):
     assert os.access(p_dir.absolute(), os.W_OK)
 
 
+@pytest.mark.skip_on_github
 def test_board_constructor_local_default_writable():
 
     with rm_env("PINS_DATA_DIR"):

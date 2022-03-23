@@ -13,6 +13,7 @@ from collections.abc import Mapping
 from typing import Sequence, TypeVar, Generic
 
 
+RSC_API_KEY = "CONNECT_API_KEY"
 RSC_CODE_OBJECT_DOES_NOT_EXIST = 4
 RSC_CODE_INVALID_NUMERIC_PATH = 3
 
@@ -164,7 +165,7 @@ class RsConnectApi:
         if self.api_key is not None:
             return self.api_key
 
-        return os.environ["RSCONNECT_API_KEY"]
+        return os.environ[RSC_API_KEY]
 
     def _get_headers(self):
         return {"Authorization": f"key {self._get_api_key()}"}

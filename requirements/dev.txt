@@ -16,6 +16,8 @@ aiosignal==1.2.0
     # via aiohttp
 alabaster==0.7.12
     # via sphinx
+appdirs==1.4.4
+    # via pins (setup.cfg)
 appnope==0.1.2
     # via
     #   ipykernel
@@ -210,11 +212,11 @@ pyparsing==3.0.7
     # via packaging
 pyrsistent==0.18.1
     # via jsonschema
-pytest==7.1.0
+pytest==7.1.1
     # via
     #   pins (setup.cfg)
     #   pytest-dotenv
-pytest-cases==3.6.10
+pytest-cases==3.6.11
     # via pins (setup.cfg)
 pytest-dotenv==0.5.2
     # via pins (setup.cfg)
@@ -225,7 +227,7 @@ python-dateutil==2.8.2
     #   pandas
 python-dotenv==0.19.2
     # via pytest-dotenv
-pytz==2021.3
+pytz==2022.1
     # via
     #   babel
     #   pandas
@@ -296,7 +298,7 @@ traitlets==5.1.1
     #   nbsphinx
 typing-extensions==4.1.1
     # via aioitertools
-urllib3==1.26.8
+urllib3==1.26.9
     # via
     #   botocore
     #   requests

@@ -45,11 +45,16 @@ class IFileSystem(Protocol):
 
 class BaseBoard:
     def __init__(
-        self, board: str, fs: IFileSystem, meta_factory=MetaFactory(),
+        self, board: str, fs: IFileSystem, versioned=True, meta_factory=MetaFactory(),
     ):
         self.board = board
         self.fs = fs
         self.meta_factory = meta_factory
+
+        if versioned is False:
+            raise NotImplementedError()
+
+        self.versioned = versioned
 
     def pin_exists(self, name: str) -> bool:
         """Determine if a pin exists.
@@ -536,9 +541,6 @@ class BoardRsConnect(BaseBoard):
     # TODO: should read template dynamically, not at class def'n time
     html_assets_dir: Path = files("pins") / "rsconnect/html"
     html_template: Path = files("pins") / "rsconnect/html/index.html"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     # defaults work ----
 

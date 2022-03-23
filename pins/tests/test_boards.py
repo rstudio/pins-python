@@ -9,18 +9,21 @@ from datetime import datetime, timedelta
 from time import sleep
 
 # using pytest cases, so that we can pass in fixtures as parameters
+# TODO: this seems like maybe overkill
 from pytest_cases import fixture, parametrize
+
+
+@fixture
+def df():
+    import pandas as pd
+
+    return pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
 
 
 @fixture
 def board(backend):
     yield backend.create_tmp_board()
     backend.teardown()
-
-
-@fixture
-def df():
-    return pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
 
 
 # pin_write ===================================================================

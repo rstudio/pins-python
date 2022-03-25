@@ -34,6 +34,13 @@ def snapshot(request):
 
 
 @pytest.fixture
+def df():
+    import pandas as pd
+
+    return pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
+
+
+@pytest.fixture
 def tmp_dir2():
     # fixture for offering a temporary directory
     # note that pytest has a built-in fixture tmp_dir, but it uses the lib py.path

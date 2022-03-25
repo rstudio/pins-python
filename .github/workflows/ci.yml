@@ -24,7 +24,7 @@ jobs:
           python -m pip install -e .
       - name: Run tests
         run: |
-          pytest pins -m 'not fs_rsc'
+          pytest pins -m 'not fs_rsc and not skip_on_github'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -53,7 +53,7 @@ jobs:
       # NOTE: edited to run checks for python package
       - name: Run tests
         run: |
-          pytest pins -m fs_rsc
+          pytest pins -m 'fs_rsc and not skip_on_github'
 
   build-docs:
     name: "Build Docs"
@@ -69,6 +69,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements/dev.txt
           python -m pip install -e .
+          ipython kernel install --name "venv-pins-python" --user
       - uses: r-lib/actions/setup-pandoc@v1
         with:
           pandoc-version: '2.17.0.1'

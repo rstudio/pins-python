@@ -77,3 +77,14 @@ import jupytext  # noqa
 nbsphinx_custom_formats = {
     ".Rmd": lambda s: jupytext.reads(s, ".Rmd"),
 }
+
+nbsphinx_prolog = """
+.. raw:: html
+
+   <style>
+      .nbinput .prompt,
+      .nboutput .prompt {
+          display: none;
+      }
+   </style>
+"""

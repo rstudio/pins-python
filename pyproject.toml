@@ -4,5 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = ["pins"]
+addopts = "--doctest-modules"
+doctest_optionflags = "NORMALIZE_WHITESPACE"
+markers = [
+    "skip_on_github: skip this test if running on github",
+]
 
 [tool.setuptools_scm]

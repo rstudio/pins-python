@@ -45,11 +45,16 @@ class IFileSystem(Protocol):
 
 class BaseBoard:
     def __init__(
-        self, board: str, fs: IFileSystem, meta_factory=MetaFactory(),
+        self, board: str, fs: IFileSystem, versioned=True, meta_factory=MetaFactory(),
     ):
         self.board = board
         self.fs = fs
         self.meta_factory = meta_factory
+
+        if versioned is False:
+            raise NotImplementedError()
+
+        self.versioned = versioned
 
     def pin_exists(self, name: str) -> bool:
         """Determine if a pin exists.
@@ -530,15 +535,67 @@ class BaseBoard:
         return d
 
 
+class BoardManual(BaseBoard):
+    """Simple board that accepts a dictionary of form pin_name: path.
+
+    Examples
+    --------
+    >>> import fsspec
+    >>> fs = fsspec.filesystem("github", org = "machow", repo = "pins-python")
+
+    >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad"}
+    >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
+
+    >>> board.pin_list()
+    ['df_csv']
+
+    >>> board.pin_read("df_csv")
+       y  z
+    x
+    1  a  3
+    2  b  4
+
+    """
+
+    # TODO(question): is this class worth it? Or should the user just use fsspec?
+
+    def __init__(self, *args, pin_paths: dict, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.pin_paths = pin_paths
+
+    def pin_list(self):
+        return list(self.pin_paths)
+
+    def pin_versions(self, *args, **kwargs):
+        raise NotImplementedError("This board does not support pin_versions.")
+
+    def pin_meta(self, name, version=None):
+        if version is not None:
+            raise NotImplementedError()
+
+        pin_name = self.path_to_pin(name)
+        meta_name = self.meta_factory.get_meta_name()
+
+        path_meta = self.construct_path([pin_name, meta_name])
+        f = self.fs.open(path_meta)
+        return self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""))
+
+    def construct_path(self, elements):
+        # TODO: in practice every call to construct_path has the first element of
+        # pin name. to make this safer, we should enforce that in its signature.
+        pin_name, *others = elements
+        pin_path = self.pin_paths[pin_name]
+
+        return super().construct_path([pin_path, *others])
+
+
 class BoardRsConnect(BaseBoard):
     # TODO: note that board is unused in this class (e.g. it's not in construct_path())
 
     # TODO: should read template dynamically, not at class def'n time
     html_assets_dir: Path = files("pins") / "rsconnect/html"
     html_template: Path = files("pins") / "rsconnect/html/index.html"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     # defaults work ----
 

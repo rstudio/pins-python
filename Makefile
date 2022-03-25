@@ -38,4 +38,4 @@ requirements/dev.txt: setup.cfg
 	@pip-compile setup.cfg --rebuild --extra dev --output-file=- > $@
 
 binder/requirements.txt: setup.cfg
-	@pip-compile setup.cfg --rebuild --output-file=- > $@
+	@pip-compile setup.cfg --rebuild --extra dev --output-file=- > $@

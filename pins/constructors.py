@@ -3,7 +3,14 @@ import fsspec
 import os
 import tempfile
 
+from pathlib import Path
+
 from .boards import BaseBoard, BoardRsConnect, BoardManual
+from .cache import PinsCache
+
+
+class DEFAULT:
+    pass
 
 
 # Board constructors ==========================================================
@@ -11,7 +18,43 @@ from .boards import BaseBoard, BoardRsConnect, BoardManual
 # functions. may be worth moving these funcs into their own module.
 
 
-def board(protocol, path="", versioned=True, storage_options: "dict | None" = None):
+def get_data_dir():
+    return os.environ.get("PINS_DATA_DIR", appdirs.user_data_dir("pins"))
+
+
+def get_cache_dir():
+    return os.environ.get("PINS_CACHE_DIR", appdirs.user_cache_dir("pins"))
+
+
+def board(
+    protocol: str,
+    path: str = "",
+    versioned: bool = True,
+    cache: "DEFAULT | None" = DEFAULT,
+    storage_options: "dict | None" = None,
+    board_factory: "callable | BaseBoard | None" = None,
+):
+    """
+    Parameters
+    ----------
+    protocol:
+        File system protocol. E.g. file, s3, github, rsc (for RStudio Connect).
+        See fsspec.filesystem for more information.
+    path:
+        A base path the board should use. For example, the directory the board lives in,
+        or the path to its s3 bucket.
+    versioned:
+        Whether or not pins should be versioned.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If None is passed, then no cache will be
+        used. You can set the cache using the PINS_CACHE_DIR environment variable.
+    storage_options:
+        Additional options passed to the underlying filesystem created by
+        fsspec.filesystem.
+    board_factory:
+        An optional board class to use as the constructor.
+    """
 
     if storage_options is None:
         storage_options = {}
@@ -21,11 +64,30 @@ def board(protocol, path="", versioned=True, storage_options: "dict | None" = No
         from pins.rsconnect.fs import RsConnectFs
 
         fs = RsConnectFs(**storage_options)
-        board = BoardRsConnect(path, fs, versioned)
+
     else:
         fs = fsspec.filesystem(protocol, **storage_options)
-        board = BaseBoard(path, fs, versioned)
 
+    # wrap fs in cache ----
+
+    if cache is DEFAULT:
+        cache_base = get_cache_dir()
+        cache_dir = str(Path(cache_base) / protocol)
+        fs = PinsCache(cache_storage=cache_dir, fs=fs, same_names=True)
+    elif cache is None:
+        pass
+    else:
+        NotImplemented("Can't currently pass own cache object.")
+
+    # construct board ----
+
+    # TODO: should use a registry or something
+    if protocol == "rsc" and board_factory is None:
+        board = BoardRsConnect(path, fs, versioned)
+    elif board_factory is not None:
+        board = board_factory(path, fs, versioned)
+    else:
+        board = BaseBoard(path, fs, versioned)
     return board
 
 
@@ -33,13 +95,13 @@ def board(protocol, path="", versioned=True, storage_options: "dict | None" = No
 
 
 def board_folder(path, versioned=True):
-    return board("file", path, versioned)
+    return board("file", path, versioned, cache=None)
 
 
 def board_temp(versioned=True):
     tmp_dir = tempfile.TemporaryDirectory()
 
-    board_obj = board("file", tmp_dir.name, versioned)
+    board_obj = board("file", tmp_dir.name, versioned, cache=None)
 
     # TODO: this is necessary to ensure the temporary directory dir persists.
     # without maintaining a reference to it, it could be deleted after this
@@ -50,12 +112,12 @@ def board_temp(versioned=True):
 
 
 def board_local(versioned=True):
-    path = os.environ.get("PINS_DATA_DIR", appdirs.user_data_dir("pins"))
+    path = get_data_dir()
 
-    return board("file", path, versioned)
+    return board("file", path, versioned, cache=None)
 
 
-def board_github(path, versioned=True, org=None, repo=None):
+def board_github(org, repo, path="", versioned=True, cache=DEFAULT):
     """Returns a github pin board.
 
     Parameters
@@ -78,7 +140,7 @@ def board_github(path, versioned=True, org=None, repo=None):
     Examples
     --------
 
-    >>> board = board_github("pins/tests/pins-compat", org="machow", repo="pins-python")
+    >>> board = board_github("machow", "pins-python", "pins/tests/pins-compat")
     >>> board.pin_list()
     ['df_arrow', 'df_csv', 'df_rds', 'df_unversioned']
 
@@ -90,10 +152,12 @@ def board_github(path, versioned=True, org=None, repo=None):
 
     """
 
-    return board("github", path, versioned, {"org": org, "repo": repo})
+    return board(
+        "github", path, versioned, cache, storage_options={"org": org, "repo": repo}
+    )
 
 
-def board_urls(path: str, pin_paths: dict):
+def board_urls(path: str, pin_paths: dict, cache=DEFAULT):
     """
 
     Example
@@ -111,11 +175,13 @@ def board_urls(path: str, pin_paths: dict):
 
     # TODO(question): R pins' version is named board_url (no s)
 
-    fs = fsspec.filesystem("http")
-    return BoardManual(path, fs, pin_paths=pin_paths)
+    def build_board(*args, **kwargs):
+        return BoardManual(*args, **kwargs, pin_paths=pin_paths)
+
+    return board("http", path, True, cache, board_factory=build_board)
 
 
-def board_rsconnect(versioned=True, server_url=None, api_key=None):
+def board_rsconnect(versioned=True, server_url=None, api_key=None, cache=DEFAULT):
     """
 
     Parameters

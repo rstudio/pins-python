@@ -1,4 +1,3 @@
-import appdirs
 import fsspec
 import os
 import tempfile
@@ -7,6 +6,7 @@ from pathlib import Path
 
 from .boards import BaseBoard, BoardRsConnect, BoardManual
 from .cache import PinsCache
+from .config import get_data_dir, get_cache_dir
 
 
 class DEFAULT:
@@ -16,14 +16,6 @@ class DEFAULT:
 # Board constructors ==========================================================
 # note that libraries not used by board classes above are imported within these
 # functions. may be worth moving these funcs into their own module.
-
-
-def get_data_dir():
-    return os.environ.get("PINS_DATA_DIR", appdirs.user_data_dir("pins"))
-
-
-def get_cache_dir():
-    return os.environ.get("PINS_CACHE_DIR", appdirs.user_cache_dir("pins"))
 
 
 def board(

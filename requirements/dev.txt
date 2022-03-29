@@ -50,9 +50,9 @@ charset-normalizer==2.0.12
     # via
     #   aiohttp
     #   requests
-click==8.0.4
+click==8.1.0
     # via pip-tools
-debugpy==1.5.1
+debugpy==1.6.0
     # via ipykernel
 decopatch==1.4.10
     # via pytest-cases
@@ -79,6 +79,8 @@ fsspec==2022.02.0
     # via
     #   pins (setup.cfg)
     #   s3fs
+humanize==4.0.0
+    # via pins (setup.cfg)
 idna==3.3
     # via
     #   requests
@@ -87,19 +89,19 @@ imagesize==1.3.0
     # via sphinx
 importlib-metadata==4.11.3
     # via sphinx
-importlib-resources==5.4.0
+importlib-resources==5.6.0
     # via
     #   jsonschema
     #   pins (setup.cfg)
 iniconfig==1.1.1
     # via pytest
-ipykernel==6.9.2
+ipykernel==6.10.0
     # via pins (setup.cfg)
-ipython==8.1.1
+ipython==8.2.0
     # via ipykernel
 jedi==0.18.1
     # via ipython
-jinja2==3.0.3
+jinja2==3.1.1
     # via
     #   nbconvert
     #   nbsphinx
@@ -111,7 +113,7 @@ joblib==1.1.0
     # via pins (setup.cfg)
 jsonschema==4.4.0
     # via nbformat
-jupyter-client==7.1.2
+jupyter-client==7.2.0
     # via
     #   ipykernel
     #   nbclient
@@ -133,7 +135,9 @@ markdown-it-py==1.1.0
     #   jupytext
     #   mdit-py-plugins
 markupsafe==2.1.1
-    # via jinja2
+    # via
+    #   jinja2
+    #   nbconvert
 matplotlib-inline==0.1.3
     # via
     #   ipykernel
@@ -148,7 +152,7 @@ multidict==6.0.2
     #   yarl
 nbclient==0.5.13
     # via nbconvert
-nbconvert==6.4.4
+nbconvert==6.4.5
     # via nbsphinx
 nbformat==5.2.0
     # via
@@ -170,6 +174,7 @@ numpy==1.22.3
 packaging==21.3
     # via
     #   bleach
+    #   pydata-sphinx-theme
     #   pytest
     #   sphinx
 pandas==1.4.1
@@ -200,7 +205,7 @@ pure-eval==0.2.2
     # via stack-data
 py==1.11.0
     # via pytest
-pydata-sphinx-theme==0.8.0
+pydata-sphinx-theme==0.8.1
     # via pins (setup.cfg)
 pygments==2.11.2
     # via
@@ -225,7 +230,7 @@ python-dateutil==2.8.2
     #   botocore
     #   jupyter-client
     #   pandas
-python-dotenv==0.19.2
+python-dotenv==0.20.0
     # via pytest-dotenv
 pytz==2022.1
     # via
@@ -242,7 +247,7 @@ requests==2.27.1
     # via sphinx
 s3fs==2022.2.0
     # via pins (setup.cfg)
-siuba==0.1.2
+siuba==0.2.0
     # via pins (setup.cfg)
 six==1.16.0
     # via
@@ -252,7 +257,7 @@ snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.3.1
     # via beautifulsoup4
-sphinx==4.4.0
+sphinx==4.5.0
     # via
     #   nbsphinx
     #   pins (setup.cfg)

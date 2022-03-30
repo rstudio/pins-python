@@ -33,6 +33,15 @@ def touch_access_time(path, access_time: "float | None" = None):
 class PinsCache(SimpleCacheFileSystem):
     protocol = "pinscache"
 
+    def _open(self, path, *args, **kwargs):
+        # For some reason, the open method of SimpleCacheFileSystem doesn't
+        # call _make_local_details, so we need to patch in here.
+        # Note that methods like .cat() do call it. Other Caches don't have this issue.
+        path = self._strip_protocol(path)
+        self._make_local_details(path)
+
+        return super()._open(path, *args, **kwargs)
+
     def _make_local_details(self, path):
         # modifies method to create any parent directories needed by the cached file
         # note that this is called in ._open(), at the point it's known the file

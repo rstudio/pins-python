@@ -33,6 +33,10 @@ def touch_access_time(path, access_time: "float | None" = None):
 class PinsCache(SimpleCacheFileSystem):
     protocol = "pinscache"
 
+    def __init__(self, *args, hash_prefix=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.hash_prefix = hash_prefix
+
     def _open(self, path, *args, **kwargs):
         # For some reason, the open method of SimpleCacheFileSystem doesn't
         # call _make_local_details, so we need to patch in here.
@@ -55,11 +59,21 @@ class PinsCache(SimpleCacheFileSystem):
         # the main change in this function is that, for same_name, it returns
         # the full path
         if same_name:
-            hash = path
-        else:
-            hash = hash_name(path, same_name)
+            if self.hash_prefix:
+                # optionally make the name relative to a parent path
+                # using the hash of parent path as a prefix, to flatten a bit
+                suffix = Path(path).relative_to(Path(self.hash_prefix))
+                # TODO(compat): R pins uses xxh128 hash here, but fsspec uses sha256
+                prefix = hash_name(self.hash_prefix, False)
 
-        return hash
+                # TODO: hacky to automatically tack on protocol here
+                # but this is what R pins boards do. Could make a bool arg?
+                full_prefix = "_".join([self.fs.protocol, prefix])
+                return str(full_prefix / suffix)
+
+            return path
+        else:
+            return hash_name(path, same_name)
 
     def touch_access_time(path):
         return touch_access_time(path)

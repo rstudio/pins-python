@@ -2,8 +2,6 @@ import fsspec
 import os
 import tempfile
 
-from pathlib import Path
-
 from .boards import BaseBoard, BoardRsConnect, BoardManual
 from .cache import PinsCache
 from .config import get_data_dir, get_cache_dir
@@ -63,9 +61,10 @@ def board(
     # wrap fs in cache ----
 
     if cache is DEFAULT:
-        cache_base = get_cache_dir()
-        cache_dir = str(Path(cache_base) / protocol)
-        fs = PinsCache(cache_storage=cache_dir, fs=fs, same_names=True)
+        cache_dir = get_cache_dir()
+        fs = PinsCache(
+            cache_storage=cache_dir, fs=fs, hash_prefix=path, same_names=True
+        )
     elif cache is None:
         pass
     else:

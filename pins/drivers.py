@@ -1,5 +1,7 @@
 import builtins
 
+from pathlib import Path
+
 from .meta import Meta
 
 
@@ -7,7 +9,7 @@ from .meta import Meta
 # from .boards import IFileSystem
 
 
-def load_data(meta: Meta, fs, path_to_version: str):
+def load_data(meta: Meta, fs, path_to_version: "str | None" = None):
     """Return loaded data, based on meta type.
     Parameters
     ----------
@@ -25,8 +27,12 @@ def load_data(meta: Meta, fs, path_to_version: str):
     if len(fnames) > 1:
         raise ValueError("Cannot load data when more than 1 file")
 
+    # TODO: currently only can load a single file
     target_fname = fnames[0]
-    path_to_file = f"{path_to_version}/{target_fname}"
+    if path_to_version is not None:
+        path_to_file = f"{path_to_version}/{target_fname}"
+    else:
+        path_to_file = target_fname
 
     if meta.type == "csv":
         import pandas as pd
@@ -37,6 +43,10 @@ def load_data(meta: Meta, fs, path_to_version: str):
         import joblib
 
         return joblib.load(fs.open(path_to_file))
+
+    elif meta.type == "file":
+        # TODO: update to handle multiple files
+        return [str(Path(fs.open(path_to_file).name).absolute())]
 
     raise NotImplementedError(f"No driver for type {meta.type}")
 

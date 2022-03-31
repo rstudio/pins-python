@@ -12,6 +12,23 @@ DEFAULT_API_VERSION = 1
 
 
 @dataclass
+class MetaRaw:
+    """Absolute minimum metadata for a pin.
+
+    Parameters
+    ----------
+    file:
+        All relevant files contained in the pin. Note that these be absolute paths
+        to fetch from the target filesystem.
+    type:
+        The type of pin data stored. This is used to determine how to read / write it.
+    """
+
+    file: Union[str, Sequence[str]]
+    type: str
+
+
+@dataclass
 class Meta:
     """Represent metadata for a pin version.
 
@@ -26,7 +43,7 @@ class Meta:
     pin_hash:
         A hash of the pin.
     file:
-        All relevant files contained in the pin.
+        All relevant files in the pin. Should be relative to this pin's folder.
     file_size:
         The total size of the files in the pin.
     type:
@@ -150,6 +167,9 @@ class MetaFactory:
             user=user if user is not None else {},
             version=version,
         )
+
+    def create_raw(self, files: Sequence[StrOrFile], type: str = "file",) -> MetaRaw:
+        return MetaRaw(files, type)
 
     def read_pin_yaml(
         self, f: IOBase, pin_name: str, version: "str | VersionRaw"

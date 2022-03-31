@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from typing import Protocol, Sequence, Optional, Mapping
 
 from .versions import VersionRaw, guess_version
-from .meta import Meta, MetaFactory
+from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
 
@@ -184,6 +184,12 @@ class BaseBoard:
 
         """
         meta = self.pin_fetch(name, version)
+
+        if isinstance(meta, MetaRaw):
+            raise TypeError(
+                "Could not find metadata for this pin version. If this is an individual "
+                "file, may need to use pin_download()."
+            )
 
         if hash is not None:
             raise NotImplementedError("TODO: validate hash")
@@ -577,15 +583,35 @@ class BoardManual(BaseBoard):
         pin_name = self.path_to_pin(name)
         meta_name = self.meta_factory.get_meta_name()
 
+        # special case where we are using http protocol to fetch what may be
+        # a file. here we need to create a stripped down form of metadata, since
+        # a metadata file does not exist (and we can't pull files from a version dir).
+        if self.fs.protocol == "http" and not pin_name.rstrip().endswith("/"):
+            # create metadata, rather than read from a file
+            path_download = self.construct_path([pin_name])
+
+            return self.meta_factory.create_raw(path_download, type="file",)
+
         path_meta = self.construct_path([pin_name, meta_name])
         f = self.fs.open(path_meta)
         return self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""))
+
+    def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
+        meta = self.pin_meta(name, version)
+
+        if isinstance(meta, MetaRaw):
+            return load_data(meta, self.fs, None)
+
+        raise NotImplementedError("TODO: allow download beyond MetaRaw.")
 
     def construct_path(self, elements):
         # TODO: in practice every call to construct_path has the first element of
         # pin name. to make this safer, we should enforce that in its signature.
         pin_name, *others = elements
         pin_path = self.pin_paths[pin_name]
+
+        if self.board.strip() == "":
+            return pin_path
 
         return super().construct_path([pin_path, *others])
 
@@ -626,7 +652,7 @@ class BoardRsConnect(BaseBoard):
                 # verify code is for inadequate permission to access
                 if e.args[0]["code"] != 19:
                     raise e
-                # TODO(question): should this be a RawMeta class or something?
+                # TODO(question): should this be a MetaRaw class or something?
                 #                 that fixes our isinstance Meta below.
                 # TODO(compatibility): R pins errors instead, see #27
                 res.append({"name": pin_name, "meta": None})

@@ -29,8 +29,8 @@ def rm_env(*args):
 
 
 def check_dir_writable(p_dir):
-    assert p_dir.exists()
-    assert os.access(p_dir.absolute(), os.W_OK)
+    assert p_dir.parent.exists()
+    assert os.access(p_dir.parent.absolute(), os.W_OK)
 
 
 @pytest.mark.skip_on_github
@@ -41,7 +41,7 @@ def test_board_constructor_local_default_writable():
         p_board = Path(board.board)
 
         check_dir_writable(p_board)
-        assert p_board.name == "pins"
+        assert p_board.name == "pins-py"
 
 
 def test_board_constructor_temp_writable():

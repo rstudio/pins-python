@@ -3,7 +3,7 @@ import os
 import tempfile
 
 from .boards import BaseBoard, BoardRsConnect, BoardManual
-from .cache import PinsCache
+from .cache import PinsCache, PinsUrlCache
 from .config import get_data_dir, get_cache_dir
 
 
@@ -164,12 +164,18 @@ def board_urls(path: str, pin_paths: dict, cache=DEFAULT):
     ['df_csv', 'df_arrow']
     """
 
-    # TODO(question): R pins' version is named board_url (no s)
+    # TODO(compat): R pins' version is named board_url (no s)
+    if cache is DEFAULT:
+        # copied from board(). this ensures that paths in cache have the form:
+        # <full_path_hash>/<version_placeholder>/<file_name>
+        cache_dir = get_cache_dir()
+        fs = PinsUrlCache(
+            target_protocol="http", cache_storage=cache_dir, same_names=True
+        )
+    else:
+        raise NotImplementedError("Can't currently pass own cache object")
 
-    def build_board(*args, **kwargs):
-        return BoardManual(*args, **kwargs, pin_paths=pin_paths)
-
-    return board("http", path, True, cache, board_factory=build_board)
+    return BoardManual(path, fs, versioned=True, pin_paths=pin_paths)
 
 
 def board_rsconnect(versioned=True, server_url=None, api_key=None, cache=DEFAULT):

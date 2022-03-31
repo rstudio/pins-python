@@ -2,12 +2,18 @@ import humanize
 import os
 import time
 import shutil
+import urllib.parse
 
 from fsspec.implementations.cached import SimpleCacheFileSystem, hash_name
 from fsspec import register_implementation
 from pathlib import Path
 
 from .config import get_cache_dir
+
+
+# used if needed to preserve board path structure in the cache
+PLACEHOLDER_VERSION = "v"
+PLACEHOLDER_FILE = "file"
 
 
 def touch_access_time(path, access_time: "float | None" = None):
@@ -77,6 +83,33 @@ class PinsCache(SimpleCacheFileSystem):
 
     def touch_access_time(path):
         return touch_access_time(path)
+
+
+class PinsUrlCache(PinsCache):
+    protocol = "pinsurlcache"
+
+    def hash_name(self, path, same_name):
+        # strip final arg from path
+        # note that R pins uses fs::path_file, and I'm not sure exactly how it
+        # behaves for the many forms url paths can take.
+        # e.g. path_file(.../extdata/) -> extdata
+        # e.g. path_file(.../extdata?123) -> extdata?123
+        path_parts = urllib.parse.urlparse(path)[2]
+
+        # strip off final whitespace and / (if it exists)
+        # TODO(compat): python pins currently not keeping query part of url
+        final_part = path_parts.rstrip().rstrip("/").rsplit("/", 1)[-1]
+
+        # TODO: what happens in R pins if no final part?
+        if final_part == "":
+            final_part = PLACEHOLDER_FILE
+
+        # hash url
+        prefix = hash_name(path, False)
+
+        # note that we include an extra version folder, so it conforms with
+        # pin board path form: <board_path>/<pin_name>/<version_name>/<file>
+        return str(Path(prefix) / PLACEHOLDER_VERSION / final_part)
 
 
 class CachePruner:

@@ -586,11 +586,10 @@ class BoardManual(BaseBoard):
         # special case where we are using http protocol to fetch what may be
         # a file. here we need to create a stripped down form of metadata, since
         # a metadata file does not exist (and we can't pull files from a version dir).
-        if self.fs.protocol == "http" and not pin_name.rstrip().endswith("/"):
+        path_to_pin = self.construct_path([pin_name])
+        if self.fs.protocol == "http" and not path_to_pin.rstrip().endswith("/"):
             # create metadata, rather than read from a file
-            path_download = self.construct_path([pin_name])
-
-            return self.meta_factory.create_raw(path_download, type="file",)
+            return self.meta_factory.create_raw(path_to_pin, type="file",)
 
         path_meta = self.construct_path([pin_name, meta_name])
         f = self.fs.open(path_meta)
@@ -612,6 +611,12 @@ class BoardManual(BaseBoard):
 
         if self.board.strip() == "":
             return pin_path
+
+        if len(others):
+            # this is confusing, but R pins url board has a final "/" indicate that
+            # something is a pin version, rather than a single file. but since other
+            # boards forbid a final /, we need to strip it off to join elements
+            pin_path = pin_path.rstrip().rstrip("/")
 
         return super().construct_path([pin_path, *others])
 

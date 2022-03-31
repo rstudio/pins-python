@@ -2,7 +2,18 @@ import time
 import shutil
 
 import pytest
-from pins.cache import CachePruner, touch_access_time, cache_prune
+from pins.cache import (
+    CachePruner,
+    touch_access_time,
+    cache_prune,
+    PinsCache,
+    PinsUrlCache,
+)
+
+from fsspec import filesystem
+
+
+# Utilities ===================================================================
 
 
 @pytest.fixture
@@ -29,6 +40,31 @@ def test_touch_access_time_auto(some_file):
 
     assert some_file.stat().st_atime == new_time
     assert orig_access < new_time
+
+
+# Cache Classes ===============================================================
+
+# Boards w/ default cache =====================================================
+
+
+def test_pins_cache_hash_name_preserves():
+    cache = PinsCache(fs=filesystem("file"))
+    assert cache.hash_name("a/b/c.txt", True) == "a/b/c.txt"
+
+
+def test_pins_cache_url_hash_name():
+    cache = PinsUrlCache(fs=filesystem("file"))
+    hashed = cache.hash_name("http://example.com/a.txt", True)
+
+    # should have form <url_hash>/<version_placeholder>/<filename>
+    assert hashed.endswith("/a.txt")
+    assert hashed.count("/") == 2
+
+
+@pytest.mark.skip("TODO")
+def test_pins_cache_open():
+    # check that opening works and creates the cached file
+    pass
 
 
 # Cache pruning ===============================================================

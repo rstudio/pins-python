@@ -33,6 +33,9 @@ def check_dir_writable(p_dir):
     assert os.access(p_dir.parent.absolute(), os.W_OK)
 
 
+# Board particulars ===========================================================
+
+
 @pytest.mark.skip_on_github
 def test_board_constructor_local_default_writable():
 

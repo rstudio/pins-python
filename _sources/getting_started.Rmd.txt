@@ -221,7 +221,7 @@ But you can `pin_download()` something that you've pinned with `pin_write()`:
 # board.pin_download("mtcars")
 ```
 
-## 🚧 Caching
+## Caching
 
 
 The primary purpose of pins is to make it easy to share data.
@@ -244,11 +244,16 @@ You can read this data by combining `pin_download()` with `read.csv()`[^1]:
     For real code I'd recommend using `data.table::fread()` or `readr::read_csv().`
 
 ```{python}
-# import pandas as pd
+fname = my_data.pin_download("penguins")
 
-# fname = my_data.pin_download("penguins")
+fname
 
-# pd.read_csv(fname)
+```
+
+```{python}
+import pandas as pd
+
+pd.read_csv(fname[0]).head()
 ```
 
 ```{python}

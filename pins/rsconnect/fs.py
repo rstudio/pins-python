@@ -1,6 +1,8 @@
 from dataclasses import dataclass, asdict, field, fields
 from pathlib import Path
 
+from fsspec import AbstractFileSystem
+
 from typing import Sequence
 
 from .api import (
@@ -93,7 +95,7 @@ class BundleFilePath(BundlePath):
     file_name: str
 
 
-class RsConnectFs:
+class RsConnectFs(AbstractFileSystem):
     protocol: str = "rsc"
 
     def __init__(self, server_url, **kwargs):

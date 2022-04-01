@@ -7,7 +7,10 @@ from pytest import mark as m
 from pathlib import Path
 from pins.tests.helpers import BoardBuilder, RscBoardBuilder, Snapshot, rm_env
 
+EXAMPLE_REL_PATH = "pins/tests/pins-compat"
 PATH_TO_EXAMPLE_BOARD = files("pins") / "tests/pins-compat"
+PATH_TO_EXAMPLE_VERSION = PATH_TO_EXAMPLE_BOARD / "df_csv/20220214T163720Z-9bfad/"
+EXAMPLE_PIN_NAME = "df_csv"
 
 
 # Based on https://github.com/machow/siuba/blob/main/siuba/tests/helpers.py
@@ -66,19 +69,19 @@ def tmp_dir2():
 
 
 @pytest.fixture
-def tmp_cache(tmp_dir2):
+def tmp_cache():
     with rm_env("PINS_CACHE_DIR"):
-        os.environ["PINS_CACHE_DIR"] = str(tmp_dir2)
-
-        yield tmp_dir2
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            os.environ["PINS_CACHE_DIR"] = str(tmp_dir)
+            yield Path(tmp_dir)
 
 
 @pytest.fixture
-def tmp_data_dir(tmp_dir2):
+def tmp_data_dir():
     with rm_env("PINS_DATA_DIR"):
-        os.environ["PINS_DATA_DIR"] = str(tmp_dir2)
-
-        yield tmp_dir2
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            os.environ["PINS_DATA_DIR"] = str(tmp_dir)
+            yield Path(tmp_dir)
 
 
 def pytest_addoption(parser):

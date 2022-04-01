@@ -36,6 +36,13 @@ def touch_access_time(path, access_time: "float | None" = None):
     return access_time
 
 
+def protocol_to_string(protocol):
+    if isinstance(protocol, str):
+        return protocol
+
+    return protocol[0]
+
+
 class PinsCache(SimpleCacheFileSystem):
     protocol = "pinscache"
 
@@ -74,7 +81,8 @@ class PinsCache(SimpleCacheFileSystem):
 
                 # TODO: hacky to automatically tack on protocol here
                 # but this is what R pins boards do. Could make a bool arg?
-                full_prefix = "_".join([self.fs.protocol, prefix])
+                proto_name = protocol_to_string(self.fs.protocol)
+                full_prefix = "_".join([proto_name, prefix])
                 return str(full_prefix / suffix)
 
             return path
@@ -109,7 +117,9 @@ class PinsUrlCache(PinsCache):
 
         # note that we include an extra version folder, so it conforms with
         # pin board path form: <board_path>/<pin_name>/<version_name>/<file>
-        return str(Path(prefix) / PLACEHOLDER_VERSION / final_part)
+        proto_name = protocol_to_string(self.fs.protocol)
+        full_prefix = "_".join([proto_name, prefix])
+        return str(Path(full_prefix) / PLACEHOLDER_VERSION / final_part)
 
 
 class CachePruner:

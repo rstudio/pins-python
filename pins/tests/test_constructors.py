@@ -1,14 +1,22 @@
 import os
+import pandas as pd
 import pytest
 
+from pandas.testing import assert_frame_equal
 from pathlib import Path
 
 from pins import constructors as c
-from pins.tests.conftest import PATH_TO_EXAMPLE_BOARD
+from pins.tests.conftest import (
+    PATH_TO_EXAMPLE_BOARD,
+    PATH_TO_EXAMPLE_VERSION,
+    EXAMPLE_REL_PATH,
+)
 from pins.tests.helpers import rm_env
 
 
-# adapted from https://stackoverflow.com/a/34333710
+@pytest.fixture
+def df_csv():
+    return pd.read_csv(PATH_TO_EXAMPLE_VERSION / "df_csv.csv", index_col=0)
 
 
 def check_dir_writable(p_dir):
@@ -16,23 +24,67 @@ def check_dir_writable(p_dir):
     assert os.access(p_dir.parent.absolute(), os.W_OK)
 
 
+def check_cache_file_path(p_file, p_cache):
+    assert str(p_file.relative_to(p_cache)).count("/") == 2
+
+
 # End-to-end constructor tests
 
 # there are two facets of boards: reading and writing.
 # copied from test_compat
-def test_constructor_board_url(tmp_cache, http_example_board_path):
+def test_constructor_board_url_data(tmp_cache, http_example_board_path, df_csv):
     board = c.board_urls(
-        http_example_board_path, pin_paths={"df_csv": "df_csv/20220214T163718Z-eceac/"}
+        http_example_board_path,
+        # could derive from example version path
+        pin_paths={"df_csv": "df_csv/20220214T163720Z-9bfad/"},
+    )
+
+    df = board.pin_read("df_csv")
+
+    # check data ----
+    assert_frame_equal(df, df_csv)
+
+
+@pytest.mark.xfail
+def test_constructor_board_url_cache(tmp_cache, http_example_board_path, df_csv):
+    # TODO: downloading a pin does not put files in the same directory, since
+    # in this case we are hashing on the full url.
+
+    board = c.board_urls(
+        http_example_board_path,
+        # could derive from example version path
+        pin_paths={"df_csv": "df_csv/20220214T163718Z-eceac/"},
     )
 
     board.pin_read("df_csv")
 
-    # check cache
-    # check data
+    # check cache ----
+    http_dirs = list(tmp_cache.glob("http_*"))
+
+    assert len(http_dirs) == 1
+
+    parent = http_dirs[0]
+    res = list(parent.rglob("**/*.csv"))
+    assert len(res) == 1
+
+    # has form: <pin>/<version>/<file>
+    check_cache_file_path(res[0], parent)
 
 
-def test_constructor_board_github(tmp_cache, http_example_board_path):
-    board = c.board_github("machow", "pins-python", PATH_TO_EXAMPLE_BOARD)  # noqa
+def test_constructor_board_github(tmp_cache, http_example_board_path, df_csv):
+    board = c.board_github("machow", "pins-python", EXAMPLE_REL_PATH)  # noqa
+
+    df = board.pin_read("df_csv")
+    assert_frame_equal(df, df_csv)
+
+    cache_options = list(tmp_cache.glob("github_*"))
+    assert len(cache_options) == 1
+    cache_dir = cache_options[0]
+
+    res = list(cache_dir.rglob("**/*.csv"))
+    assert len(res) == 1
+
+    check_cache_file_path(res[0], cache_dir)
 
 
 @pytest.fixture(scope="session")
@@ -44,7 +96,7 @@ def board(backend):
     backend.teardown_board(board)
 
 
-def test_constructor_board(board):
+def test_constructor_board(board, df_csv, tmp_cache):
     prot = board.fs.protocol
 
     fs_name = prot if isinstance(prot, str) else prot[0]
@@ -58,9 +110,20 @@ def test_constructor_board(board):
         con_name = fs_name
 
     board = getattr(c, f"board_{con_name}")(board.board)
+    df = board.pin_read("df_csv")
+
+    # check data
+    assert_frame_equal(df, df_csv)
 
     # check cache
-    # check data
+    options = list(tmp_cache.glob("s3_*"))
+    assert len(options) == 1
+
+    cache_dir = options[0]
+    res = list(cache_dir.rglob("**/*.csv"))
+    assert len(res) == 1
+
+    check_cache_file_path(res[0], cache_dir)
 
 
 # Board particulars ===========================================================

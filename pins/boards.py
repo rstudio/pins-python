@@ -45,9 +45,13 @@ class IFileSystem(Protocol):
 
 class BaseBoard:
     def __init__(
-        self, board: str, fs: IFileSystem, versioned=True, meta_factory=MetaFactory(),
+        self,
+        board: "str | Path",
+        fs: IFileSystem,
+        versioned=True,
+        meta_factory=MetaFactory(),
     ):
-        self.board = board
+        self.board = str(board)
         self.fs = fs
         self.meta_factory = meta_factory
 

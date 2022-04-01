@@ -1,24 +1,21 @@
 import pytest
 import datetime
 
-import importlib_resources as resources
 
 from pins.errors import PinsError
 from pins.tests.helpers import xfail_fs
+from pins.tests.conftest import PATH_TO_EXAMPLE_BOARD
 
 
 NOT_A_PIN = "not_a_pin_abcdefg"
 PIN_CSV = "df_csv"
-
-path_to_board = resources.files("pins") / "tests/pins-compat"
-
 
 # set up board ----
 
 
 @pytest.fixture(scope="session")
 def board(backend):
-    board = backend.create_tmp_board(str(path_to_board.absolute()))
+    board = backend.create_tmp_board(str(PATH_TO_EXAMPLE_BOARD.absolute()))
 
     yield board
 
@@ -112,7 +109,7 @@ def test_compat_pin_meta_version_arg_error(board):
 def test_compat_pin_read(board):
     import pandas as pd
 
-    p_data = path_to_board / "df_csv" / "20220214T163720Z-9bfad" / "df_csv.csv"
+    p_data = PATH_TO_EXAMPLE_BOARD / "df_csv" / "20220214T163720Z-9bfad" / "df_csv.csv"
 
     src_df = board.pin_read("df_csv")
     dst_df = pd.read_csv(p_data, index_col=0)

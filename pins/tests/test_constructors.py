@@ -1,36 +1,66 @@
-import contextlib
 import os
 import pytest
 
 from pathlib import Path
 
 from pins import constructors as c
+from pins.tests.conftest import PATH_TO_EXAMPLE_BOARD
+from pins.tests.helpers import rm_env
+
 
 # adapted from https://stackoverflow.com/a/34333710
-
-
-@contextlib.contextmanager
-def rm_env(*args):
-    """
-    Temporarily set the process environment variables.
-
-
-    """
-    old_environ = dict(os.environ)
-    for arg in args:
-        if arg in os.environ:
-            del os.environ[arg]
-
-    try:
-        yield
-    finally:
-        os.environ.clear()
-        os.environ.update(old_environ)
 
 
 def check_dir_writable(p_dir):
     assert p_dir.parent.exists()
     assert os.access(p_dir.parent.absolute(), os.W_OK)
+
+
+# End-to-end constructor tests
+
+# there are two facets of boards: reading and writing.
+# copied from test_compat
+def test_constructor_board_url(tmp_cache, http_example_board_path):
+    board = c.board_urls(
+        http_example_board_path, pin_paths={"df_csv": "df_csv/20220214T163718Z-eceac/"}
+    )
+
+    board.pin_read("df_csv")
+
+    # check cache
+    # check data
+
+
+def test_constructor_board_github(tmp_cache, http_example_board_path):
+    board = c.board_github("machow", "pins-python", PATH_TO_EXAMPLE_BOARD)  # noqa
+
+
+@pytest.fixture(scope="session")
+def board(backend):
+    # TODO: copied from test_compat.py
+
+    board = backend.create_tmp_board(str(PATH_TO_EXAMPLE_BOARD.absolute()))
+    yield board
+    backend.teardown_board(board)
+
+
+def test_constructor_board(board):
+    prot = board.fs.protocol
+
+    fs_name = prot if isinstance(prot, str) else prot[0]
+
+    if fs_name == "file":
+        con_name = "local"
+    elif fs_name == "rsc":
+        con_name = "rsconnect"
+        pytest.xfail()
+    else:
+        con_name = fs_name
+
+    board = getattr(c, f"board_{con_name}")(board.board)
+
+    # check cache
+    # check data
 
 
 # Board particulars ===========================================================

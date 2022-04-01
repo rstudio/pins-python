@@ -1,5 +1,6 @@
 import pytest
 
+import contextlib
 import uuid
 import os
 import json
@@ -104,7 +105,8 @@ class BoardBuilder:
         self.fs_name = fs_name
         self.board_path_registry = []
 
-    def get_param_from_env(self, entry):
+    @staticmethod
+    def get_param_from_env(entry):
         name, default = entry
 
         value = os.environ.get(name, default)
@@ -249,3 +251,22 @@ class Snapshot:
             shutil.copy(dst_file, self.path)
 
         assert self.path.read_text() == Path(dst_file).read_text()
+
+
+@contextlib.contextmanager
+def rm_env(*args):
+    """
+    Temporarily set the process environment variables.
+
+
+    """
+    old_environ = dict(os.environ)
+    for arg in args:
+        if arg in os.environ:
+            del os.environ[arg]
+
+    try:
+        yield
+    finally:
+        os.environ.clear()
+        os.environ.update(old_environ)

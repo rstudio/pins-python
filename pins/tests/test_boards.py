@@ -1,6 +1,7 @@
-import pytest
-import pandas as pd
+import fsspec
 import uuid
+import pandas as pd
+import pytest
 
 from pins.tests.helpers import DEFAULT_CREATION_DATE
 from pins.errors import PinsError
@@ -290,3 +291,53 @@ def test_board_pin_search_admin_user(df, fs_short, fs_admin):  # noqa
     assert search_res2.shape == (1, 2)
     assert search_res2.loc[0, "name"] == "susan/some_df"
     assert search_res2.loc[0, "meta"] is None
+
+
+# Manual Board Specific =======================================================
+
+from pins.boards import BoardManual  # noqa
+
+
+def test_board_manual_http_file_download():
+    # TODO: change when repo is moved to RStudio
+
+    path = "https://raw.githubusercontent.com/machow/pins-python"
+    license_path = "main/LICENSE"
+
+    # use a simple cache, which automatically creates a temporary directory
+    fs = fsspec.filesystem(
+        "simplecache", target_protocol="http", target_options={"block_size": 0}
+    )
+
+    # with path ----
+    board = BoardManual(path, fs, pin_paths={"license": "main/LICENSE"})
+
+    assert board.pin_list() == ["license"]
+    # TODO: better assert
+    assert len(board.pin_download("license"))
+
+    # no base path ----
+    board2 = BoardManual("", fs, pin_paths={"license": f"{path}/{license_path}"})
+
+    assert board2.pin_list() == ["license"]
+    # TODO better assert
+    assert len(board2.pin_download("license"))
+
+
+def test_board_manual_pin_read():
+    # TODO: block size must be set to 0 to handle gzip encoding from github
+    # see https://github.com/fsspec/filesystem_spec/issues/389
+    fs = fsspec.filesystem("http", block_size=0)
+    board = BoardManual(
+        "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat",
+        fs,
+        pin_paths={
+            "df_csv": "df_csv/20220214T163718Z-eceac/",
+            "df_csv2_v2": "df_csv/20220214T163720Z-9bfad/",
+        },
+    )
+
+    df = board.pin_read("df_csv")
+
+    # do a somewhat data-framey check
+    assert df.shape[0] > 1

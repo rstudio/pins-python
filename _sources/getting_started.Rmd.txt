@@ -250,3 +250,7 @@ You can read this data by combining `pin_download()` with `read.csv()`[^1]:
 
 # pd.read_csv(fname)
 ```
+
+```{python}
+my_data.pin_download("penguins")
+```

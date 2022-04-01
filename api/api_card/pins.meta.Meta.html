@@ -8,26 +8,23 @@
 
     <title>pins.meta.Meta &#8212; pins  documentation</title>
     
-    <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/pydata-sphinx-theme.css" />
     
-    <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
@@ -44,7 +41,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -331,10 +328,10 @@
               <div>
                 
   <section id="pins-meta-meta">
-<h1>pins.meta.Meta<a class="headerlink" href="#pins-meta-meta" title="Permalink to this headline">¶</a></h1>
+<h1>pins.meta.Meta<a class="headerlink" href="#pins-meta-meta" title="Permalink to this headline">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pins.meta.Meta">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pins.meta.</span></span><span class="sig-name descname"><span class="pre">Meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">title:</span> <span class="pre">str,</span> <span class="pre">description:</span> <span class="pre">typing.Optional[str],</span> <span class="pre">created:</span> <span class="pre">str,</span> <span class="pre">pin_hash:</span> <span class="pre">str,</span> <span class="pre">file:</span> <span class="pre">typing.Union[str,</span> <span class="pre">typing.Sequence[str]],</span> <span class="pre">file_size:</span> <span class="pre">int,</span> <span class="pre">type:</span> <span class="pre">str,</span> <span class="pre">api_version:</span> <span class="pre">int,</span> <span class="pre">version:</span> <span class="pre">pins.versions.VersionRaw,</span> <span class="pre">name:</span> <span class="pre">typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">user:</span> <span class="pre">typing.Mapping</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.meta.Meta" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pins.meta.</span></span><span class="sig-name descname"><span class="pre">Meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">title:</span> <span class="pre">str,</span> <span class="pre">description:</span> <span class="pre">typing.Optional[str],</span> <span class="pre">created:</span> <span class="pre">str,</span> <span class="pre">pin_hash:</span> <span class="pre">str,</span> <span class="pre">file:</span> <span class="pre">typing.Union[str,</span> <span class="pre">typing.Sequence[str]],</span> <span class="pre">file_size:</span> <span class="pre">int,</span> <span class="pre">type:</span> <span class="pre">str,</span> <span class="pre">api_version:</span> <span class="pre">int,</span> <span class="pre">version:</span> <span class="pre">pins.versions.VersionRaw,</span> <span class="pre">name:</span> <span class="pre">typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">user:</span> <span class="pre">typing.Mapping</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.meta.Meta" title="Permalink to this definition">#</a></dt>
 <dd><p>Represent metadata for a pin version.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -343,7 +340,7 @@
 <li><p><strong>description</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A detailed description of the pin contents.</p></li>
 <li><p><strong>created</strong> (<em>str</em>) – Datetime the pin was created (TODO: document format).</p></li>
 <li><p><strong>pin_hash</strong> (<em>str</em>) – A hash of the pin.</p></li>
-<li><p><strong>file</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – All relevant files contained in the pin.</p></li>
+<li><p><strong>file</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – All relevant files in the pin. Should be relative to this pin’s folder.</p></li>
 <li><p><strong>file_size</strong> (<em>int</em>) – The total size of the files in the pin.</p></li>
 <li><p><strong>type</strong> (<em>str</em>) – The type of pin data stored. This is used to determine how to read / write it.</p></li>
 <li><p><strong>api_version</strong> (<em>int</em>) – The internal version of the metadata format.</p></li>
@@ -354,11 +351,11 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pins.meta.Meta.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">title:</span> <span class="pre">str,</span> <span class="pre">description:</span> <span class="pre">typing.Optional[str],</span> <span class="pre">created:</span> <span class="pre">str,</span> <span class="pre">pin_hash:</span> <span class="pre">str,</span> <span class="pre">file:</span> <span class="pre">typing.Union[str,</span> <span class="pre">typing.Sequence[str]],</span> <span class="pre">file_size:</span> <span class="pre">int,</span> <span class="pre">type:</span> <span class="pre">str,</span> <span class="pre">api_version:</span> <span class="pre">int,</span> <span class="pre">version:</span> <span class="pre">pins.versions.VersionRaw,</span> <span class="pre">name:</span> <span class="pre">typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">user:</span> <span class="pre">typing.Mapping</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pins.meta.Meta.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">title:</span> <span class="pre">str,</span> <span class="pre">description:</span> <span class="pre">typing.Optional[str],</span> <span class="pre">created:</span> <span class="pre">str,</span> <span class="pre">pin_hash:</span> <span class="pre">str,</span> <span class="pre">file:</span> <span class="pre">typing.Union[str,</span> <span class="pre">typing.Sequence[str]],</span> <span class="pre">file_size:</span> <span class="pre">int,</span> <span class="pre">type:</span> <span class="pre">str,</span> <span class="pre">api_version:</span> <span class="pre">int,</span> <span class="pre">version:</span> <span class="pre">pins.versions.VersionRaw,</span> <span class="pre">name:</span> <span class="pre">typing.Optional[str]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">user:</span> <span class="pre">typing.Mapping</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pins.meta.Meta.__init__" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable table autosummary">
+<table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -382,7 +379,7 @@
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable table autosummary">
+<table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -455,8 +452,9 @@
       </div>
     </div>
   
-    <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -467,7 +465,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

@@ -8,26 +8,23 @@
 
     <title>Getting Started &#8212; pins  documentation</title>
     
-    <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/pydata-sphinx-theme.css" />
     
-    <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -46,7 +43,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -137,7 +134,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -448,7 +445,7 @@ div.rendered_html tbody tr:hover {
        display: none;
    }
 </style><section id="Getting-Started">
-<h1>Getting Started<a class="headerlink" href="#Getting-Started" title="Permalink to this headline">¶</a></h1>
+<h1>Getting Started<a class="headerlink" href="#Getting-Started" title="Permalink to this headline">#</a></h1>
 <p>The pins package helps you publish data sets, models, and other R objects, making it easy to share them across projects and with your colleagues. You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with dropbox), RStudio connect, Amazon S3, and more. This vignette will introduce you to the basics of pins.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -459,7 +456,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="Getting-started">
-<h2>Getting started<a class="headerlink" href="#Getting-started" title="Permalink to this headline">¶</a></h2>
+<h2>Getting started<a class="headerlink" href="#Getting-started" title="Permalink to this headline">#</a></h2>
 <p>Every pin lives in a pin <em>board</em>, so you must start by creating a pin board. In this vignette I’ll use a temporary board which is automatically deleted when your python session is over:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -478,7 +475,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Reading-and-writing-data">
-<h2>Reading and writing data<a class="headerlink" href="#Reading-and-writing-data" title="Permalink to this headline">¶</a></h2>
+<h2>Reading and writing data<a class="headerlink" href="#Reading-and-writing-data" title="Permalink to this headline">#</a></h2>
 <p>Once you have a pin board, you can write data to it with <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code>:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -710,7 +707,7 @@ div.rendered_html tbody tr:hover {
 <p>Note that when the data lives elsewhere, pins takes care of downloading and caching so that it’s only re-downloaded when needed. That said, most boards transmit pins over HTTP, and this is going to be slow and possibly unreliable for very large pins. As a general rule of thumb, we don’t recommend using pins with files over 500 MB. If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.</p>
 </section>
 <section id="Metadata">
-<h2>Metadata<a class="headerlink" href="#Metadata" title="Permalink to this headline">¶</a></h2>
+<h2>Metadata<a class="headerlink" href="#Metadata" title="Permalink to this headline">#</a></h2>
 <p>Every pin is accompanied by some metadata that you can access with pin_meta():</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
@@ -726,7 +723,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;20220325T155444Z&#39;, pin_hash=&#39;7f10d4e9942bb928&#39;, file=&#39;mtcars&#39;, file_size=1420, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 3, 25, 15, 54, 44), hash=&#39;7f10d&#39;), name=&#39;mtcars&#39;, user={})
+Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;20220401T202828Z&#39;, pin_hash=&#39;7f10d4e9942bb928&#39;, file=&#39;mtcars&#39;, file_size=1420, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 1, 20, 28, 28), hash=&#39;7f10d&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div></div>
 </div>
 <p>This shows you the metadata that’s generated by default. This includes:</p>
@@ -760,7 +757,7 @@ Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;202203
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20220325T155444Z&#39;, pin_hash=&#39;7f10d4e9942bb928&#39;, file=&#39;mtcars2&#39;, file_size=1420, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 3, 25, 15, 54, 44, 397213), hash=&#39;7f10d4e9942bb928&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;})
+Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20220401T202828Z&#39;, pin_hash=&#39;7f10d4e9942bb928&#39;, file=&#39;mtcars2&#39;, file_size=1420, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 1, 20, 28, 28, 683558), hash=&#39;7f10d4e9942bb928&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;})
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -777,13 +774,13 @@ Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=&#39;Data extracted from 
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;20220325T155444Z&#39;, pin_hash=&#39;7f10d4e9942bb928&#39;, file=&#39;mtcars&#39;, file_size=1420, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 3, 25, 15, 54, 44), hash=&#39;7f10d&#39;), name=&#39;mtcars&#39;, user={})
+Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;20220401T202828Z&#39;, pin_hash=&#39;7f10d4e9942bb928&#39;, file=&#39;mtcars&#39;, file_size=1420, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 1, 20, 28, 28), hash=&#39;7f10d&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div></div>
 </div>
 <p>While we’ll do our best to keep the automatically generated metadata consistent over time, I’d recommend manually capturing anything you really care about in metadata.</p>
 </section>
 <section id="🚧-Versioning">
-<h2>🚧 Versioning<a class="headerlink" href="#🚧-Versioning" title="Permalink to this headline">¶</a></h2>
+<h2>🚧 Versioning<a class="headerlink" href="#🚧-Versioning" title="Permalink to this headline">#</a></h2>
 <blockquote>
 <div><p>⚠️: versioning is not yet implemented. These docs are copied from R pins.</p>
 </div></blockquote>
@@ -848,21 +845,21 @@ Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;202203
   <tbody>
     <tr>
       <th>0</th>
-      <td>2022-03-25 15:54:44</td>
-      <td>331fd</td>
-      <td>20220325T155444Z-331fd</td>
+      <td>2022-04-01 20:28:28</td>
+      <td>91544</td>
+      <td>20220401T202828Z-91544</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2022-03-25 15:54:44</td>
-      <td>91544</td>
-      <td>20220325T155444Z-91544</td>
+      <td>2022-04-01 20:28:28</td>
+      <td>331fd</td>
+      <td>20220401T202828Z-331fd</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2022-03-25 15:54:44</td>
+      <td>2022-04-01 20:28:28</td>
       <td>40b4b</td>
-      <td>20220325T155444Z-40b4b</td>
+      <td>20220401T202828Z-40b4b</td>
     </tr>
   </tbody>
 </table>
@@ -902,12 +899,12 @@ Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;202203
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[1, 2, 3, 4, 5]
+[1, 2, 3]
 </pre></div></div>
 </div>
 </section>
 <section id="🚧-Reading-and-writing-files">
-<h2>🚧 Reading and writing files<a class="headerlink" href="#🚧-Reading-and-writing-files" title="Permalink to this headline">¶</a></h2>
+<h2>🚧 Reading and writing files<a class="headerlink" href="#🚧-Reading-and-writing-files" title="Permalink to this headline">#</a></h2>
 <p>So far we’ve focussed on <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> which work with R objects. pins also provides the lower-level <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> which work with files on disk. You can use them to share types of data that are otherwise unsupported by pins.</p>
 <p><code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> works like <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> but instead of an R object you give it a vector of paths. I’ll start by creating a few files in the temp directory:</p>
 <div class="nbinput nblast docutils container">
@@ -959,7 +956,7 @@ Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;202203
 </div>
 </section>
 <section id="🚧-Caching">
-<h2>🚧 Caching<a class="headerlink" href="#🚧-Caching" title="Permalink to this headline">¶</a></h2>
+<h2>🚧 Caching<a class="headerlink" href="#🚧-Caching" title="Permalink to this headline">#</a></h2>
 <p>The primary purpose of pins is to make it easy to share data. But pins is also designed to help you spend as little time as possible downloading data. <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> automatically cache remote pins: they maintain a local copy of the data (so it’s fast) but always check that it’s up-to-date (so your analysis doesn’t use stale data).</p>
 <p>Wouldn’t it be nice if you could take advantage of this feature for any dataset on the internet? That’s the idea behind <code class="docutils literal notranslate"><span class="pre">board_url()</span></code> — you can assemble your own board from datasets, wherever they live on the internet. For example, this code creates a board containing a single pin, <code class="docutils literal notranslate"><span class="pre">penguins</span></code>, that refers to some fun data I found on GitHub:</p>
 <div class="nbinput nblast docutils container">
@@ -989,6 +986,23 @@ Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;202203
 <span class="c1"># pd.read_csv(fname)</span>
 </pre></div>
 </div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_data</span><span class="o">.</span><span class="n">pin_download</span><span class="p">(</span><span class="s2">&quot;penguins&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;/home/runner/.cache/pins-py/http_e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e/v/penguins_raw.csv&#39;]
+</pre></div></div>
 </div>
 </section>
 </section>
@@ -1021,8 +1035,9 @@ Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;202203
       </div>
     </div>
   
-    <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -1033,7 +1048,7 @@ Meta(title=&#39;A pinned 32 x 11 CSV&#39;, description=None, created=&#39;202203
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

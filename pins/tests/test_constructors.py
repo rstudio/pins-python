@@ -102,7 +102,7 @@ def test_constructor_board(board, df_csv, tmp_cache):
     fs_name = prot if isinstance(prot, str) else prot[0]
 
     if fs_name == "file":
-        con_name = "local"
+        con_name = "folder"
     elif fs_name == "rsc":
         con_name = "rsconnect"
         pytest.xfail()
@@ -116,14 +116,18 @@ def test_constructor_board(board, df_csv, tmp_cache):
     assert_frame_equal(df, df_csv)
 
     # check cache
-    options = list(tmp_cache.glob("s3_*"))
-    assert len(options) == 1
+    if fs_name == "file":
+        # no caching for local file boards
+        pass
+    else:
+        options = list(tmp_cache.glob("*"))
+        assert len(options) == 1
 
-    cache_dir = options[0]
-    res = list(cache_dir.rglob("**/*.csv"))
-    assert len(res) == 1
+        cache_dir = options[0]
+        res = list(cache_dir.rglob("**/*.csv"))
+        assert len(res) == 1
 
-    check_cache_file_path(res[0], cache_dir)
+        check_cache_file_path(res[0], cache_dir)
 
 
 # Board particulars ===========================================================

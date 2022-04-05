@@ -268,11 +268,10 @@ from pins.tests.test_rsconnect_api import (  # noqa
 from pins.boards import BoardRsConnect  # noqa
 
 
-@pytest.mark.xfail
 @pytest.mark.fs_rsc
 def test_board_pin_write_rsc_full_name(df, fs_short):  # noqa
     board_susan = BoardRsConnect("", fs_short)
-    board_susan.pin_write(df, "susan/df", type="csv")
+    board_susan.pin_write(df, "susan/some_df", type="csv")
 
 
 @pytest.mark.fs_rsc

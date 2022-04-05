@@ -736,13 +736,15 @@ class BoardRsConnect(BaseBoard):
         user = self.fs.api.get_user()
         return user["username"]
 
-    def prepare_pin_version(self, pin_dir_path, x, *args, **kwargs):
-        from jinja2 import Environment
+    def prepare_pin_version(self, pin_dir_path, x, name: "str | None", *args, **kwargs):
 
-        env = Environment()
-        template = env.from_string(self.html_template.read_text())
+        # RSC pin names can have form <user_name>/<name>, but this will try to
+        # create the object in a directory named <user_name>. So we grab just
+        # the <name> part.
+        if "/" in name:
+            name = name.split("/")[-1]
 
-        meta = super().prepare_pin_version(pin_dir_path, x, *args, **kwargs)
+        meta = super().prepare_pin_version(pin_dir_path, x, name, *args, **kwargs)
 
         # copy in files needed by index.html ----------------------------------
         crnt_files = set([meta.file] if isinstance(meta.file, str) else meta.file)
@@ -787,6 +789,13 @@ class BoardRsConnect(BaseBoard):
         else:
             # TODO(compat): set display none in index.html
             context["data_preview"] = json.dumps({})
+
+        # render html template ----
+
+        from jinja2 import Environment
+
+        env = Environment()
+        template = env.from_string(self.html_template.read_text())
 
         rendered = template.render(context)
         (Path(pin_dir_path) / "index.html").write_text(rendered)

@@ -5,6 +5,7 @@ import pytest
 
 from pins.tests.helpers import DEFAULT_CREATION_DATE
 from pins.errors import PinsError
+from pins.meta import MetaRaw
 
 from datetime import datetime, timedelta
 from time import sleep
@@ -268,11 +269,10 @@ from pins.tests.test_rsconnect_api import (  # noqa
 from pins.boards import BoardRsConnect  # noqa
 
 
-@pytest.mark.xfail
 @pytest.mark.fs_rsc
 def test_board_pin_write_rsc_full_name(df, fs_short):  # noqa
     board_susan = BoardRsConnect("", fs_short)
-    board_susan.pin_write(df, "susan/df", type="csv")
+    board_susan.pin_write(df, "susan/some_df", type="csv")
 
 
 @pytest.mark.fs_rsc
@@ -284,13 +284,13 @@ def test_board_pin_search_admin_user(df, fs_short, fs_admin):  # noqa
     search_res = board_admin.pin_search("susan", as_df=False)
 
     assert len(search_res) == 1
-    assert search_res[0]["name"] == "susan/some_df"
-    assert search_res[0]["meta"] is None
+    assert search_res[0].name == "susan/some_df"
+    assert isinstance(search_res[0], MetaRaw)
 
     search_res2 = board_admin.pin_search("susan", as_df=True)
-    assert search_res2.shape == (1, 2)
+    assert search_res2.shape == (1, 6)
     assert search_res2.loc[0, "name"] == "susan/some_df"
-    assert search_res2.loc[0, "meta"] is None
+    assert isinstance(search_res2.loc[0, "meta"], MetaRaw)
 
 
 # Manual Board Specific =======================================================

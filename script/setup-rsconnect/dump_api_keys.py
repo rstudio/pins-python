@@ -5,10 +5,10 @@ from pins.rsconnect.api import _HackyConnect
 
 OUT_FILE = sys.argv[1]
 
-rsc = _HackyConnect("http://localhost:3939")
-
 
 def get_api_key(user, password, email):
+    rsc = _HackyConnect("http://localhost:3939")
+
     return rsc.create_first_admin(user, password, email).api_key
 
 

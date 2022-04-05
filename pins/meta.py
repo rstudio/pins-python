@@ -1,3 +1,4 @@
+from typing import ClassVar
 from dataclasses import dataclass, asdict, field
 
 import yaml
@@ -24,8 +25,9 @@ class MetaRaw:
         The type of pin data stored. This is used to determine how to read / write it.
     """
 
-    file: Union[str, Sequence[str]]
+    file: "str | Sequence[str] | None"
     type: str
+    name: str
 
 
 @dataclass
@@ -57,7 +59,7 @@ class Meta:
 
     """
 
-    title: str
+    title: Optional[str]
     description: Optional[str]
 
     # TODO(defer): different from R pins, which has a local field
@@ -93,17 +95,56 @@ class Meta:
     @classmethod
     def from_pin_dict(cls, data, pin_name, version) -> "Meta":
 
-        # version_fields = {"created", "pin_hash"}
-
-        # #get items necessary for re-creating meta data
-        # meta_data = {k: v for k, v in data.items() if k not in version_fields}
-        # version = version_cls.from_meta_fields(data["created"], data["pin_hash"])
-        return cls(**data, name=pin_name, version=version)
+        # TODO: re-arrange Meta argument positions to reflect what's been
+        # learned about default arguments. e.g. title was not used at some
+        # point in api_version 1
+        extra = {"title": None} if "title" not in data else {}
+        return cls(**data, **extra, name=pin_name, version=version)
 
     def to_pin_yaml(self, f: Optional[IOBase] = None) -> "str | None":
         data = self.to_pin_dict()
 
         return yaml.dump(data, f)
+
+
+@dataclass
+class MetaV0:
+    file: Union[str, Sequence[str]]
+    type: str
+
+    description: str
+    name: str
+
+    version: VersionRaw
+
+    # holds raw data.txt contents
+    original_fields: dict = field(default_factory=dict)
+    user: dict = field(default_factory=dict, init=False)
+
+    title: ClassVar[None] = None
+    created: ClassVar[None] = None
+    pin_hash: ClassVar[None] = None
+    file_size: ClassVar[None] = None
+    api_version: ClassVar[None] = None
+
+    def to_dict(self):
+        return asdict(self)
+
+    @classmethod
+    def from_pin_dict(cls, data, pin_name, version) -> "MetaV0":
+        # could infer from dataclasses.fields(), but seems excessive.
+        req_fields = {"type", "description", "name"}
+
+        req_inputs = {k: v for k, v in data.items() if k in req_fields}
+        req_inputs["file"] = data["path"]
+
+        return cls(**req_inputs, name=pin_name, original_fields=data, version=version)
+
+    def to_pin_dict(self):
+        raise NotImplementedError("v0 pins metadata are read only.")
+
+    def to_pin_yaml(self, *args, **kwargs):
+        self.to_pin_dict()
 
 
 class MetaFactory:
@@ -168,8 +209,8 @@ class MetaFactory:
             version=version,
         )
 
-    def create_raw(self, files: Sequence[StrOrFile], type: str = "file",) -> MetaRaw:
-        return MetaRaw(files, type)
+    def create_raw(self, files: Sequence[StrOrFile], type: str, name: str) -> MetaRaw:
+        return MetaRaw(files, type, name)
 
     def read_pin_yaml(
         self, f: IOBase, pin_name: str, version: "str | VersionRaw"
@@ -181,4 +222,14 @@ class MetaFactory:
 
         data = yaml.safe_load(f)
 
-        return Meta.from_pin_dict(data, pin_name, version=version_obj)
+        api_version = data.get("api_version", 0)
+        if api_version >= 2:
+            raise NotImplementedError(
+                f"api_version {api_version} by this version of the pins library"
+            )
+        elif api_version == 0:
+            cls_meta = MetaV0
+        else:
+            cls_meta = Meta
+
+        return cls_meta.from_pin_dict(data, pin_name, version=version_obj)

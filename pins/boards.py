@@ -416,7 +416,7 @@ class BaseBoard:
             import pandas as pd
 
             # TODO(question): was the pulling of specific fields out a v0 thing?
-            extracted = list(map(self._extract_meta_results, res))
+            extracted = list(map(self._extract_search_meta, res))
             return pd.DataFrame(extracted)
 
         # TODO(compat): double check on the as_df=True convention
@@ -540,7 +540,7 @@ class BaseBoard:
     def _extract_search_meta(self, meta):
         keep_fields = ["name", "type", "title", "created", "file_size"]
 
-        d = {k: getattr(meta, k) for k in keep_fields}
+        d = {k: getattr(meta, k, None) for k in keep_fields}
         d["meta"] = meta
         return d
 
@@ -593,7 +593,7 @@ class BoardManual(BaseBoard):
         path_to_pin = self.construct_path([pin_name])
         if self.fs.protocol == "http" and not path_to_pin.rstrip().endswith("/"):
             # create metadata, rather than read from a file
-            return self.meta_factory.create_raw(path_to_pin, type="file",)
+            return self.meta_factory.create_raw(path_to_pin, type="file", name=pin_name)
 
         path_meta = self.construct_path([pin_name, meta_name])
         f = self.fs.open(path_meta)
@@ -661,10 +661,8 @@ class BoardRsConnect(BaseBoard):
                 # verify code is for inadequate permission to access
                 if e.args[0]["code"] != 19:
                     raise e
-                # TODO(question): should this be a MetaRaw class or something?
-                #                 that fixes our isinstance Meta below.
                 # TODO(compatibility): R pins errors instead, see #27
-                res.append({"name": pin_name, "meta": None})
+                res.append(self.meta_factory.create_raw(None, type=None, name=pin_name))
 
         # extract specific fields out ----
 
@@ -674,11 +672,7 @@ class BoardRsConnect(BaseBoard):
 
             extract = []
             for entry in res:
-                extract.append(
-                    self._extract_search_meta(entry)
-                    if isinstance(entry, Meta)
-                    else entry
-                )
+                extract.append(self._extract_search_meta(entry))
 
             return pd.DataFrame(extract)
 

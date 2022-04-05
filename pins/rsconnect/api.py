@@ -133,9 +133,15 @@ class RsConnectApi:
     api_key: "str | None"
     server_url: "str"
 
-    def __init__(self, server_url, api_key=None):
+    def __init__(
+        self,
+        server_url: "str | None",
+        api_key: "str | None" = None,
+        session: "requests.Session | None" = None,
+    ):
         self.server_url = server_url
         self.api_key = api_key
+        self.session = requests.Session() if session is None else session
 
     # utility functions -------------------------------------------------------
 
@@ -165,10 +171,16 @@ class RsConnectApi:
         if self.api_key is not None:
             return self.api_key
 
-        return os.environ[RSC_API_KEY]
+        return os.environ.get(RSC_API_KEY)
 
     def _get_headers(self):
-        return {"Authorization": f"key {self._get_api_key()}"}
+        api_key = self._get_api_key()
+        rsc_xsrf = self.session.cookies.get("RSC-XSRF")
+
+        d_key = {"Authorization": f"key {api_key}"} if api_key is not None else {}
+        d_rsc = {"X-RSC-XSRF": rsc_xsrf} if rsc_xsrf is not None else {}
+
+        return {**d_key, **d_rsc}
 
     def _validate_json_response(self, data: "dict | list"):
         if isinstance(data, list):
@@ -209,7 +221,7 @@ class RsConnectApi:
 
         headers = self._get_headers()
 
-        r = requests.request(method, url, headers=headers, **kwargs)
+        r = self.session.request(method, url, headers=headers, **kwargs)
 
         if return_request:
             return r
@@ -418,21 +430,13 @@ class RsConnectApi:
 
 
 # ported from github.com/rstudio/connectapi
+# TODO: could just move these methods into RsConnectApi?
 class _HackyConnect(RsConnectApi):
     """Handles logging in to connect, rather than using an API key.
 
     This class allows you to create users and generate API keys on a fresh
     RStudio Connect service.
     """
-
-    xsrf: "None | str"
-
-    def __init__(self, *args, **kwargs):
-        self.xsrf = None
-        super().__init__(*args, **kwargs)
-
-    def _get_headers(self):
-        return {"X-RSC-XSRF": self.xsrf}
 
     def login(self, user, password):
         res = self.query(
@@ -441,23 +445,13 @@ class _HackyConnect(RsConnectApi):
             return_request=True,
             json={"username": user, "password": password},
         )
-        self.xsrf = res.cookies["RSC-XSRF"]
         return res
 
     def create_first_admin(self, user, password, email, keyname="first-key"):
-        # TODO(question): this is run in the R rsconnect, but it returns json
-        # error codes. tests run okay without it...
-        # self.query_v1(
-        #     "users", "POST", json=dict(username=user, password=password, email=email)
-        #
-        # )
+        self.login(user, password)
 
-        res = self.login(user, password)
+        self.query("me")
 
-        self.query("me", cookies=res.cookies)
-
-        api_key = self.query(
-            "keys", "POST", json=dict(name=keyname), cookies=res.cookies
-        )
+        api_key = self.query("keys", "POST", json=dict(name=keyname))
 
         return RsConnectApi(self.server_url, api_key=api_key["key"])

@@ -241,7 +241,7 @@ def board_urls(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None
 
 
 def board_rsconnect(
-    versioned=True, server_url=None, api_key=None, cache=DEFAULT, allow_pickle_read=None
+    server_url=None, versioned=True, api_key=None, cache=DEFAULT, allow_pickle_read=None
 ):
     """Create a board to read and write pins from an RStudio Connect instance.
 

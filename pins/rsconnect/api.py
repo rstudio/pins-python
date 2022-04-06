@@ -314,6 +314,11 @@ class RsConnectApi:
         return self.query_v1(f"content/{guid}/deploy", "POST", json=json)
 
     def patch_content_item(self, guid, **kwargs) -> Content:
+        """Update a content item (e.g. its title or description).
+
+        See post_content_item method for possible arguments.
+        """
+
         # see https://docs.rstudio.com/connect/api/#patch-/v1/content/{guid}
         result = self.query_v1(f"content/{guid}", "PATCH", json=kwargs)
 

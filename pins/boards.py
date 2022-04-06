@@ -650,6 +650,31 @@ class BoardRsConnect(BaseBoard):
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
 
+    def pin_write(self, *args, **kwargs):
+
+        # run parent function ---
+
+        f_super = super().pin_write
+        meta = f_super(*args, **kwargs)
+
+        # update content title to reflect what's in metadata ----
+
+        # TODO(question): R pins updates this info before writing the pin..?
+        # bind the original signature to get pin name
+        sig = inspect.signature(f_super)
+        bind = sig.bind(*args, **kwargs)
+
+        pin_name = self.path_to_pin(bind.arguments["name"])
+        content = self.fs.info(pin_name)
+        self.fs.api.patch_content_item(
+            content["guid"],
+            title=meta.title,
+            description=meta.description or "",
+            # access_type = content.access_type
+        )
+
+        return meta
+
     def pin_search(self, search=None, as_df=True):
         from pins.rsconnect.api import RsConnectApiRequestError
 

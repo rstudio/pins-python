@@ -1,5 +1,6 @@
 from typing import ClassVar
 from dataclasses import dataclass, asdict, field
+from pathlib import Path
 
 import yaml
 
@@ -163,6 +164,7 @@ class MetaFactory:
 
     def create(
         self,
+        base_folder: "str | Path",
         files: Sequence[StrOrFile],
         type,
         # TODO: when files is a string name should be okay as None
@@ -181,6 +183,8 @@ class MetaFactory:
             version = Version.from_files([files], created)
             p_file = Path(files)
             file_size = p_file.stat().st_size
+            file_name = str(Path(files).relative_to(Path(base_folder)))
+
         elif isinstance(files, IOBase):
             # TODO: in theory can calculate size from a file object, but let's
             # wait until it's clear how calculating file size fits into pins
@@ -198,7 +202,7 @@ class MetaFactory:
         return Meta(
             title=title,
             description=description,
-            file=name,  # TODO: FINISH
+            file=file_name,  # TODO: FINISH
             file_size=file_size,
             pin_hash=version.hash,
             created=version.render_created(),

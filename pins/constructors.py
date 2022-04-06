@@ -95,13 +95,31 @@ def board(
 # TODO(#31): change file boards to unversioned once implemented
 
 
-def board_folder(path, versioned=True, allow_pickle_read=None):
+def board_folder(path: str, versioned=True, allow_pickle_read=None):
+    """Create a pins board inside a folder.
+
+    Parameters
+    ----------
+    path:
+        The folder that will hold the board.
+    **kwargs:
+        Passed to the pins.board function.
+    """
+
     return board(
         "file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read
     )
 
 
 def board_temp(versioned=True, allow_pickle_read=None):
+    """Create a pins board in a temporary directory.
+
+    Parameters
+    ----------
+    **kwargs:
+        Passed to the pins.board function.
+    """
+
     tmp_dir = tempfile.TemporaryDirectory()
 
     board_obj = board(
@@ -117,6 +135,13 @@ def board_temp(versioned=True, allow_pickle_read=None):
 
 
 def board_local(versioned=True, allow_pickle_read=None):
+    """Create a board in a system data directory.
+
+    Parameters
+    ----------
+    **kwargs:
+        Passed to the pins.board function.
+    """
     path = get_data_dir()
 
     return board(
@@ -131,15 +156,14 @@ def board_github(
 
     Parameters
     ----------
-    path:
-        TODO
-    versioned:
-        TODO
     org:
         Name of the github org (e.g. user account).
     repo:
         Name of the repo.
-
+    path:
+        A subfolder in the github repo holding the board.
+    **kwargs:
+        Passed to the pins.board function.
 
     Note
     ----
@@ -172,7 +196,16 @@ def board_github(
 
 
 def board_urls(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None):
-    """
+    """Create a board from individual urls.
+
+    Parameters
+    ----------
+    path:
+        A base url to prefix all individual pin urls with.
+    pin_paths: Mapping
+        A dictionary mapping pin name to pin url .
+    **kwargs:
+        Passed to the pins.board function.
 
     Example
     -------
@@ -210,14 +243,17 @@ def board_urls(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None
 def board_rsconnect(
     versioned=True, server_url=None, api_key=None, cache=DEFAULT, allow_pickle_read=None
 ):
-    """
+    """Create a board to read and write pins from an RStudio Connect instance.
 
     Parameters
     ----------
     server_url:
-        TODO
+        Url to the RStudio Connect server.
     api_key:
-        TODO
+        API key for server. If not specified, pins will attempt to read it from
+        CONNECT_API_KEY environment variable.
+    **kwargs:
+        Passed to the pins.board function.
     """
 
     # TODO: api_key can be passed in to underlying RscApi, equiv to R's manual mode
@@ -231,5 +267,14 @@ def board_rsconnect(
 
 
 def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+    """Create a board to read and write pins from an AWS S3 bucket folder.
+
+    Parameters
+    ----------
+    path:
+        Path of form <bucket_name>/<optional>/<subdirectory>.
+    **kwargs:
+        Passed to the pins.board function.
+    """
     # TODO: user should be able to specify storage options here?
     return board("s3", path, versioned, cache, allow_pickle_read)

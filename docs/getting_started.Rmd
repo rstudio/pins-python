@@ -130,6 +130,9 @@ While we’ll do our best to keep the automatically generated metadata consisten
 ## 🚧 Versioning
 
 
+> ⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and **pickle files are not secure**. Only read pickle files you trust. In order to read pickle files, set the `allow_pickle_read=True` argument. See: https://docs.python.org/3/library/pickle.html.
+
+
 > ⚠️: versioning is not yet implemented. These docs are copied from R pins.
 
 In many situations it's useful to version pins, so that writing to an existing pin does not replace the existing data, but instead adds a new copy.
@@ -154,9 +157,8 @@ The primary exception is `board_folder()` since that stores data on your compute
 Once you have turned versioning on, every `pin_write()` will create a new version:
 
 ```{python}
-# TODO: can save lists using joblib, but should warn about security
+board2 = board_temp(versioned = True, allow_pickle_read=True)
 
-board2 = board_temp(versioned = True)
 board2.pin_write([1,2,3,4,5], name = "x", type = "joblib", title="TODO")
 board2.pin_write([1,2,3], name = "x", type = "joblib", title="TODO")
 board2.pin_write([1,2], name = "x", type = "joblib", title="TODO")

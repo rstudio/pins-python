@@ -1,10 +1,11 @@
 import fsspec
+import os
 import uuid
 import pandas as pd
 import pytest
 
-from pins.tests.helpers import DEFAULT_CREATION_DATE
-from pins.errors import PinsError
+from pins.tests.helpers import DEFAULT_CREATION_DATE, rm_env
+from pins.errors import PinsError, PinsInsecureReadError
 from pins.meta import MetaRaw
 
 from datetime import datetime, timedelta
@@ -111,15 +112,44 @@ def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
     "obj, type_", [(df, "csv"), (df, "joblib"), ({"a": 1, "b": [2, 3]}, "joblib")]
 )
 def test_board_pin_write_type(board, obj, type_, request):
-    meta = board.pin_write(obj, "test_pin", type=type_, title="some title")
-    dst_obj = board.pin_read("test_pin")
+    with rm_env("PINS_ALLOW_INSECURE_READ"):
+        os.environ["PINS_ALLOW_INSECURE_READ"] = "1"
+        meta = board.pin_write(obj, "test_pin", type=type_, title="some title")
+        dst_obj = board.pin_read("test_pin")
 
-    assert meta.type == type_
+        assert meta.type == type_
 
-    if isinstance(obj, pd.DataFrame):
-        assert obj.equals(dst_obj)
+        if isinstance(obj, pd.DataFrame):
+            assert obj.equals(dst_obj)
 
-    obj == dst_obj
+        obj == dst_obj
+
+
+def test_board_pin_read_insecure_fail_default(board):
+    board.pin_write({"a": 1}, "test_pin", type="joblib", title="some title")
+    with pytest.raises(PinsInsecureReadError) as exc_info:
+        board.pin_read("test_pin")
+
+    assert "joblib" in exc_info.value.args[0]
+
+
+def test_board_pin_read_insecure_fail_board_flag(board):
+    # board flag prioritized over env var
+    with rm_env("PINS_ALLOW_INSECURE_READ"):
+        os.environ["PINS_ALLOW_INSECURE_READ"] = "1"
+        board.allow_insecure_read = False
+        board.pin_write({"a": 1}, "test_pin", type="joblib", title="some title")
+        with pytest.raises(PinsInsecureReadError):
+            board.pin_read("test_pin")
+
+
+def test_board_pin_read_insecure_succeed_board_flag(board):
+    # board flag prioritized over env var
+    with rm_env("PINS_ALLOW_INSECURE_READ"):
+        os.environ["PINS_ALLOW_INSECURE_READ"] = "0"
+        board.allow_insecure_read = True
+        board.pin_write({"a": 1}, "test_pin", type="joblib", title="some title")
+        board.pin_read("test_pin")
 
 
 # pin_delete ==================================================================

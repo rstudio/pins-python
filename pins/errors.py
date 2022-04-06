@@ -4,3 +4,7 @@ class PinsError(Exception):
 
 class PinsVersionError(PinsError):
     pass
+
+
+class PinsInsecureReadError(PinsError):
+    pass

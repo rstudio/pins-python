@@ -2,14 +2,23 @@ import builtins
 
 from pathlib import Path
 
+from .config import get_allow_insecure_read, PINS_ENV_INSECURE_READ
 from .meta import Meta
-
+from .errors import PinsInsecureReadError
 
 # TODO: move IFileSystem out of boards, to fix circular import
 # from .boards import IFileSystem
 
 
-def load_data(meta: Meta, fs, path_to_version: "str | None" = None):
+UNSAFE_TYPES = frozenset(["joblib"])
+
+
+def load_data(
+    meta: Meta,
+    fs,
+    path_to_version: "str | None" = None,
+    allow_insecure_read: "bool | None" = None,
+):
     """Return loaded data, based on meta type.
     Parameters
     ----------
@@ -21,6 +30,14 @@ def load_data(meta: Meta, fs, path_to_version: "str | None" = None):
         A filepath used as the parent directory the data to-be-loaded lives in.
     """
     # TODO: extandable loading with deferred importing
+    if meta.type in UNSAFE_TYPES and not get_allow_insecure_read(allow_insecure_read):
+        raise PinsInsecureReadError(
+            f"Reading pin type {meta.type} is NOT secure. Set the allow_insecure_read=True "
+            f"when creating the board, or the {PINS_ENV_INSECURE_READ}=1 environment variable.\n"
+            "See:\n"
+            "  * https://docs.python.org/3/library/pickle.html \n"
+            "  * https://scikit-learn.org/stable/modules/model_persistence.html#security-maintainability-limitations"
+        )
 
     # Check that only a single file name was given
     fnames = [meta.file] if isinstance(meta.file, str) else meta.file

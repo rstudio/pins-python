@@ -50,7 +50,7 @@ class BaseBoard:
         fs: IFileSystem,
         versioned=True,
         meta_factory=MetaFactory(),
-        allow_insecure_read: "bool | None" = None,
+        allow_pickle_read: "bool | None" = None,
     ):
         self.board = str(board)
         self.fs = fs
@@ -60,7 +60,7 @@ class BaseBoard:
             raise NotImplementedError()
 
         self.versioned = versioned
-        self.allow_insecure_read = allow_insecure_read
+        self.allow_pickle_read = allow_pickle_read
 
     def pin_exists(self, name: str) -> bool:
         """Determine if a pin exists.
@@ -206,7 +206,7 @@ class BaseBoard:
             meta,
             self.fs,
             self.construct_path([pin_name, meta.version.version]),
-            allow_insecure_read=self.allow_insecure_read,
+            allow_pickle_read=self.allow_pickle_read,
         )
 
     def pin_write(
@@ -609,7 +609,7 @@ class BoardManual(BaseBoard):
 
         if isinstance(meta, MetaRaw):
             return load_data(
-                meta, self.fs, None, allow_insecure_read=self.allow_insecure_read
+                meta, self.fs, None, allow_pickle_read=self.allow_pickle_read
             )
 
         raise NotImplementedError("TODO: allow download beyond MetaRaw.")

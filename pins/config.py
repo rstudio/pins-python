@@ -4,7 +4,7 @@ import os
 PINS_NAME = "pins-py"
 PINS_ENV_DATA_DIR = "PINS_DATA_DIR"
 PINS_ENV_CACHE_DIR = "PINS_CACHE_DIR"
-PINS_ENV_INSECURE_READ = "PINS_ALLOW_INSECURE_READ"
+PINS_ENV_INSECURE_READ = "PINS_ALLOW_PICKLE_READ"
 
 
 def get_data_dir():
@@ -15,7 +15,7 @@ def get_cache_dir():
     return os.environ.get(PINS_ENV_CACHE_DIR, appdirs.user_cache_dir(PINS_NAME))
 
 
-def get_allow_insecure_read(flag):
+def get_allow_pickle_read(flag):
     if flag is None:
         env_var = os.environ.get(PINS_ENV_INSECURE_READ, "0")
         try:

@@ -39,9 +39,10 @@ def test_meta_to_pin_dict_roundtrip(meta):
 
 def test_meta_factory_create():
     mf = MetaFactory()
-    with tempfile.NamedTemporaryFile() as tmp_file:
-        tmp_file.file.write(b"test")
-        tmp_file.file.close()
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_file = f"{tmp_dir}/some_name"
+        with open(tmp_file, "wb") as f:
+            f.write(b"test")
 
         kwargs = {
             "title": "some title",
@@ -51,7 +52,7 @@ def test_meta_factory_create():
             "name": "some_name",
         }
 
-        meta = mf.create(tmp_file.name, **kwargs)
+        meta = mf.create(tmp_dir, tmp_file, **kwargs)
 
         # test that kwargs are passed through ----
         for k, v in kwargs.items():

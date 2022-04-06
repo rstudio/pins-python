@@ -47,10 +47,10 @@ def test_board_pin_write_prepare_pin(board, tmp_dir2):
     meta = board.prepare_pin_version(
         str(tmp_dir2), df, "df_csv", title=None, type="csv"
     )
-    assert meta.file == "df_csv"
+    assert meta.file == "df_csv.csv"
     assert (tmp_dir2 / "data.txt").exists()
-    assert (tmp_dir2 / "df_csv").exists()
-    assert not (tmp_dir2 / "df_csv").is_dir()
+    assert (tmp_dir2 / "df_csv.csv").exists()
+    assert not (tmp_dir2 / "df_csv.csv").is_dir()
 
 
 def test_board_pin_write_roundtrip(board):

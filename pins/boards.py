@@ -767,10 +767,11 @@ class BoardRsConnect(BaseBoard):
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
         # the <name> part.
-        if "/" in name:
-            name = name.split("/")[-1]
+        short_name = name.split("/")[-1]
 
-        meta = super().prepare_pin_version(pin_dir_path, x, name, *args, **kwargs)
+        # TODO(compat): py pins always uses the short name, R pins uses w/e the
+        # user passed, but guessing people want the long name?
+        meta = super().prepare_pin_version(pin_dir_path, x, short_name, *args, **kwargs)
 
         # copy in files needed by index.html ----------------------------------
         crnt_files = set([meta.file] if isinstance(meta.file, str) else meta.file)
@@ -790,7 +791,8 @@ class BoardRsConnect(BaseBoard):
         pin_files = ", ".join(f"""<a href="{x}">{x}</a>""" for x in all_files)
 
         context = {
-            "pin_name": "TODO",
+            "date": meta.version.created.replace(microsecond=0),
+            "pin_name": self.path_to_pin(name),
             "pin_files": pin_files,
             "pin_metadata": meta,
         }

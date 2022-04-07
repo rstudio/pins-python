@@ -36,6 +36,17 @@ def test_compat_pin_list(board):
     assert src_sorted == dst_sorted
 
 
+# pin_versions ----------------------------------------------------------------
+
+
+def test_compat_pin_versions(board):
+    if board.fs.protocol == "rsc":
+        pytest.skip("RSC uses bundle ids as pin versions")
+    versions = board.pin_versions("df_csv", as_df=False)
+    v_strings = list(v.version for v in versions)
+    assert v_strings == ["20220214T163718Z-eceac", "20220214T163720Z-9bfad"]
+
+
 # pin_exists --------------------------------------------------------------------
 
 

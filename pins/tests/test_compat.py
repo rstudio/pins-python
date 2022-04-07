@@ -47,6 +47,7 @@ def test_compat_pin_versions(board):
     assert v_strings == ["20220214T163718Z-eceac", "20220214T163720Z-9bfad"]
 
 
+@pytest.mark.skip("Used to diagnose os listdir ordering")
 def test_compat_os_listdir():
     import os
 

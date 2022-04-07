@@ -501,7 +501,7 @@ class BaseBoard:
 
     def sort_pin_versions(self, versions):
         # assume filesystem returned them with most recent last
-        return versions
+        return sorted(versions, key=lambda v: v.version)
 
     def prepare_pin_version(
         self,

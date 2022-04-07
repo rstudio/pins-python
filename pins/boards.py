@@ -245,18 +245,29 @@ class BaseBoard:
             A date to store in the Meta.created field. This field may be used as
             part of the pin version name.
         """
+
+        pin_name = self.path_to_pin(name)
+
         # TODO(docs): describe options for type argument
         # TODO(docs): elaborate on default behavior for versioned parameter
         # TODO(compat): python pins added a created parameter above
         with tempfile.TemporaryDirectory() as tmp_dir:
             # create all pin data (e.g. data.txt, save object)
             meta = self.prepare_pin_version(
-                tmp_dir, x, name, type, title, description, metadata, versioned, created
+                tmp_dir,
+                x,
+                pin_name,
+                type,
+                title,
+                description,
+                metadata,
+                versioned,
+                created,
             )
 
             # move pin to destination ----
             # create pin version folder
-            dst_pin_path = self.construct_path([self.path_to_pin(name)])
+            dst_pin_path = self.construct_path([pin_name])
             dst_version_path = self.path_to_deploy_version(name, meta.version.version)
 
             try:
@@ -773,6 +784,7 @@ class BoardRsConnect(BaseBoard):
         # TODO(compat): py pins always uses the short name, R pins uses w/e the
         # user passed, but guessing people want the long name?
         meta = super().prepare_pin_version(pin_dir_path, x, short_name, *args, **kwargs)
+        meta.name = name
 
         # copy in files needed by index.html ----------------------------------
         crnt_files = set([meta.file] if isinstance(meta.file, str) else meta.file)

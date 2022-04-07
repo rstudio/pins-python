@@ -301,15 +301,20 @@ from pins.boards import BoardRsConnect  # noqa
 
 
 @pytest.mark.fs_rsc
-def test_board_pin_write_rsc_full_name(df, fs_short):  # noqa
-    board_susan = BoardRsConnect("", fs_short)
-    board_susan.pin_write(df, "susan/some_df", type="csv")
+@pytest.fixture
+def board_short(fs_short):  # noqa
+    board_short = BoardRsConnect("", fs_short)
+    return board_short
 
 
 @pytest.mark.fs_rsc
-def test_board_pin_search_admin_user(df, fs_short, fs_admin):  # noqa
-    board_susan = BoardRsConnect("", fs_short)
-    board_susan.pin_write(df, "some_df", type="csv")
+def test_board_pin_write_rsc_full_name(df, board_short):  # noqa
+    board_short.pin_write(df, "susan/some_df", type="csv")
+
+
+@pytest.mark.fs_rsc
+def test_board_pin_search_admin_user(df, board_short, fs_admin):  # noqa
+    board_short.pin_write(df, "some_df", type="csv")
 
     board_admin = BoardRsConnect("", fs_admin)
     search_res = board_admin.pin_search("susan", as_df=False)
@@ -322,6 +327,23 @@ def test_board_pin_search_admin_user(df, fs_short, fs_admin):  # noqa
     assert search_res2.shape == (1, 6)
     assert search_res2.loc[0, "name"] == "susan/some_df"
     assert isinstance(search_res2.loc[0, "meta"], MetaRaw)
+
+
+@pytest.mark.fs_rsc
+def test_board_pin_meta_is_full_name(df, board_short):
+    meta = board_short.pin_write(df, "susan/some_df", type="csv")
+
+    assert meta.name == "susan/some_df"
+
+    meta2 = board_short.pin_write(df, "some_df", type="csv")
+    assert meta2.name == "susan/some_df"
+
+    meta3 = board_short.pin_meta("some_df")
+    assert meta3.name == "susan/some_df"
+
+
+def test_board_rsc_path_to_pin_safe(board_short):
+    assert board_short.path_to_pin("me/some_pin") == "me/some_pin"
 
 
 # Manual Board Specific =======================================================

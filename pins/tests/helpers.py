@@ -181,7 +181,8 @@ class RscBoardBuilder(BoardBuilder):
 
             shutil.copytree(src_board, p_root)
 
-            for pin_entry in p_root.glob("*/*"):
+            # note that glob order is technically arbitrary
+            for pin_entry in sorted(p_root.glob("*/*"), key=lambda x: str(x)):
                 # two key points:
                 #   1. username is required when putting content bundles up
                 #   2. the version must be removed.

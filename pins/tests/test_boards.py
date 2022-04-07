@@ -47,10 +47,10 @@ def test_board_pin_write_prepare_pin(board, tmp_dir2):
     meta = board.prepare_pin_version(
         str(tmp_dir2), df, "df_csv", title=None, type="csv"
     )
-    assert meta.file == "df_csv"
+    assert meta.file == "df_csv.csv"
     assert (tmp_dir2 / "data.txt").exists()
-    assert (tmp_dir2 / "df_csv").exists()
-    assert not (tmp_dir2 / "df_csv").is_dir()
+    assert (tmp_dir2 / "df_csv.csv").exists()
+    assert not (tmp_dir2 / "df_csv.csv").is_dir()
 
 
 def test_board_pin_write_roundtrip(board):
@@ -301,15 +301,20 @@ from pins.boards import BoardRsConnect  # noqa
 
 
 @pytest.mark.fs_rsc
-def test_board_pin_write_rsc_full_name(df, fs_short):  # noqa
-    board_susan = BoardRsConnect("", fs_short)
-    board_susan.pin_write(df, "susan/some_df", type="csv")
+@pytest.fixture
+def board_short(fs_short):  # noqa
+    board_short = BoardRsConnect("", fs_short)
+    return board_short
 
 
 @pytest.mark.fs_rsc
-def test_board_pin_search_admin_user(df, fs_short, fs_admin):  # noqa
-    board_susan = BoardRsConnect("", fs_short)
-    board_susan.pin_write(df, "some_df", type="csv")
+def test_board_pin_write_rsc_full_name(df, board_short):  # noqa
+    board_short.pin_write(df, "susan/some_df", type="csv")
+
+
+@pytest.mark.fs_rsc
+def test_board_pin_search_admin_user(df, board_short, fs_admin):  # noqa
+    board_short.pin_write(df, "some_df", type="csv")
 
     board_admin = BoardRsConnect("", fs_admin)
     search_res = board_admin.pin_search("susan", as_df=False)
@@ -322,6 +327,33 @@ def test_board_pin_search_admin_user(df, fs_short, fs_admin):  # noqa
     assert search_res2.shape == (1, 6)
     assert search_res2.loc[0, "name"] == "susan/some_df"
     assert isinstance(search_res2.loc[0, "meta"], MetaRaw)
+
+
+@pytest.mark.fs_rsc
+def test_board_rsc_pin_write_title_update(df, board_short):
+    board_short.pin_write(df, "susan/some_df", type="csv", title="title a")
+    board_short.pin_write(df, "susan/some_df", type="csv", title="title b")
+
+    content = board_short.fs.info("susan/some_df")
+    assert content["title"] == "title b"
+
+
+@pytest.mark.fs_rsc
+def test_board_pin_meta_is_full_name(df, board_short):
+    meta = board_short.pin_write(df, "susan/some_df", type="csv")
+
+    assert meta.name == "susan/some_df"
+
+    meta2 = board_short.pin_write(df, "some_df", type="csv")
+    assert meta2.name == "susan/some_df"
+
+    meta3 = board_short.pin_meta("some_df")
+    assert meta3.name == "susan/some_df"
+
+
+@pytest.mark.fs_rsc
+def test_board_rsc_path_to_pin_safe(board_short):
+    assert board_short.path_to_pin("me/some_pin") == "me/some_pin"
 
 
 # Manual Board Specific =======================================================

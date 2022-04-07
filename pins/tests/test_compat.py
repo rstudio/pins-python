@@ -36,6 +36,27 @@ def test_compat_pin_list(board):
     assert src_sorted == dst_sorted
 
 
+# pin_versions ----------------------------------------------------------------
+
+
+def test_compat_pin_versions(board):
+    if board.fs.protocol == "rsc":
+        pytest.skip("RSC uses bundle ids as pin versions")
+    versions = board.pin_versions("df_csv", as_df=False)
+    v_strings = list(v.version for v in versions)
+    assert v_strings == ["20220214T163718Z-eceac", "20220214T163720Z-9bfad"]
+
+
+@pytest.mark.skip("Used to diagnose os listdir ordering")
+def test_compat_os_listdir():
+    import os
+
+    res = os.listdir(PATH_TO_EXAMPLE_BOARD / "df_csv")
+    dst = ["20220214T163718Z-eceac", "20220214T163720Z-9bfad"]
+
+    assert res == dst
+
+
 # pin_exists --------------------------------------------------------------------
 
 

@@ -245,18 +245,29 @@ class BaseBoard:
             A date to store in the Meta.created field. This field may be used as
             part of the pin version name.
         """
+
+        pin_name = self.path_to_pin(name)
+
         # TODO(docs): describe options for type argument
         # TODO(docs): elaborate on default behavior for versioned parameter
         # TODO(compat): python pins added a created parameter above
         with tempfile.TemporaryDirectory() as tmp_dir:
             # create all pin data (e.g. data.txt, save object)
             meta = self.prepare_pin_version(
-                tmp_dir, x, name, type, title, description, metadata, versioned, created
+                tmp_dir,
+                x,
+                pin_name,
+                type,
+                title,
+                description,
+                metadata,
+                versioned,
+                created,
             )
 
             # move pin to destination ----
             # create pin version folder
-            dst_pin_path = self.construct_path([self.path_to_pin(name)])
+            dst_pin_path = self.construct_path([pin_name])
             dst_version_path = self.path_to_deploy_version(name, meta.version.version)
 
             try:
@@ -490,7 +501,7 @@ class BaseBoard:
 
     def sort_pin_versions(self, versions):
         # assume filesystem returned them with most recent last
-        return versions
+        return sorted(versions, key=lambda v: v.version)
 
     def prepare_pin_version(
         self,
@@ -523,10 +534,11 @@ class BaseBoard:
         p_obj = Path(pin_dir_path) / name
 
         # file is saved locally in order to hash, calc size
-        save_data(x, str(p_obj), type)
+        file_names = save_data(x, str(p_obj), type)
 
         meta = self.meta_factory.create(
-            str(p_obj),
+            pin_dir_path,
+            file_names,
             type,
             title=title,
             description=description,
@@ -556,8 +568,8 @@ class BoardManual(BaseBoard):
     Examples
     --------
     >>> import fsspec
+    >>> import os
     >>> fs = fsspec.filesystem("github", org = "machow", repo = "pins-python")
-
     >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad"}
     >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
 
@@ -649,6 +661,31 @@ class BoardRsConnect(BaseBoard):
 
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
+
+    def pin_write(self, *args, **kwargs):
+
+        # run parent function ---
+
+        f_super = super().pin_write
+        meta = f_super(*args, **kwargs)
+
+        # update content title to reflect what's in metadata ----
+
+        # TODO(question): R pins updates this info before writing the pin..?
+        # bind the original signature to get pin name
+        sig = inspect.signature(f_super)
+        bind = sig.bind(*args, **kwargs)
+
+        pin_name = self.path_to_pin(bind.arguments["name"])
+        content = self.fs.info(pin_name)
+        self.fs.api.patch_content_item(
+            content["guid"],
+            title=meta.title,
+            description=meta.description or "",
+            # access_type = content.access_type
+        )
+
+        return meta
 
     def pin_search(self, search=None, as_df=True):
         from pins.rsconnect.api import RsConnectApiRequestError
@@ -742,10 +779,12 @@ class BoardRsConnect(BaseBoard):
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
         # the <name> part.
-        if "/" in name:
-            name = name.split("/")[-1]
+        short_name = name.split("/")[-1]
 
-        meta = super().prepare_pin_version(pin_dir_path, x, name, *args, **kwargs)
+        # TODO(compat): py pins always uses the short name, R pins uses w/e the
+        # user passed, but guessing people want the long name?
+        meta = super().prepare_pin_version(pin_dir_path, x, short_name, *args, **kwargs)
+        meta.name = name
 
         # copy in files needed by index.html ----------------------------------
         crnt_files = set([meta.file] if isinstance(meta.file, str) else meta.file)
@@ -765,7 +804,8 @@ class BoardRsConnect(BaseBoard):
         pin_files = ", ".join(f"""<a href="{x}">{x}</a>""" for x in all_files)
 
         context = {
-            "pin_name": "TODO",
+            "date": meta.version.created.replace(microsecond=0),
+            "pin_name": self.path_to_pin(name),
             "pin_files": pin_files,
             "pin_metadata": meta,
         }

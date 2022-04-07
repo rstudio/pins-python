@@ -6,6 +6,8 @@ from .config import get_allow_pickle_read, PINS_ENV_INSECURE_READ
 from .meta import Meta
 from .errors import PinsInsecureReadError
 
+from typing import Sequence
+
 # TODO: move IFileSystem out of boards, to fix circular import
 # from .boards import IFileSystem
 
@@ -69,7 +71,9 @@ def load_data(
     raise NotImplementedError(f"No driver for type {meta.type}")
 
 
-def save_data(obj, fname, type=None):
+def save_data(
+    obj, fname, type=None, apply_suffix: bool = True
+) -> "str | Sequence[str]":
     # TODO: extensible saving with deferred importing
     # TODO: how to encode arguments to saving / loading drivers?
     #       e.g. pandas index options
@@ -79,6 +83,9 @@ def save_data(obj, fname, type=None):
     if type == "csv":
         import pandas as pd
 
+        if apply_suffix:
+            fname = f"{fname}.{type}"
+
         if not isinstance(obj, pd.DataFrame):
             raise NotImplementedError(
                 "Currently only pandas.DataFrame can be saved to a CSV."
@@ -87,9 +94,14 @@ def save_data(obj, fname, type=None):
     elif type == "joblib":
         import joblib
 
+        if apply_suffix:
+            fname = f"{fname}.{type}"
+
         joblib.dump(obj, fname)
     else:
         raise NotImplementedError(f"Cannot save type: {type}")
+
+    return fname
 
 
 def default_title(obj, type):

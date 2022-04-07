@@ -569,13 +569,7 @@ class BoardManual(BaseBoard):
     --------
     >>> import fsspec
     >>> import os
-    >>> fs = fsspec.filesystem(
-    ...     "github",
-    ...     org = "machow",
-    ...     repo = "pins-python",
-    ...     token=os.environ.get("GITHUB_TOKEN")   # optional
-    ... )
-
+    >>> fs = fsspec.filesystem("github", org = "machow", repo = "pins-python")
     >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad"}
     >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
 

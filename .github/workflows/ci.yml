@@ -15,7 +15,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["macos-latest", "ubuntu-latest"]
+        include:
+          - os: "macos-latest"
+            # ignore doctests, as they involve calls to github, and all mac machines
+            # use the same IP address
+            pytest_opts: "-k pins/tests"
+          - os: "ubuntu-latest"
+            pytest_opts:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -28,12 +34,12 @@ jobs:
           python -m pip install -e .
       - name: Run tests
         run: |
-          pytest pins -m 'not fs_rsc and not skip_on_github'
+          pytest pins -m 'not fs_rsc and not skip_on_github' $PYTEST_OPTS
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "us-east-1"
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          PYTEST_OPTS: ${{ matrix.pytest_opts}}
 
   test-rsconnect:
     name: "Test RSConnect"

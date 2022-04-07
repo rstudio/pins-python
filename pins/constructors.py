@@ -182,8 +182,7 @@ def board_github(
     --------
 
     >>> import os
-    >>> gh_token = os.environ.get("GITHUB_TOKEN")
-    >>> board = board_github("machow", "pins-python", "pins/tests/pins-compat", gh_token)
+    >>> board = board_github("machow", "pins-python", "pins/tests/pins-compat")
     >>> board.pin_list()
     ['df_arrow', 'df_csv', 'df_rds', 'df_unversioned']
 

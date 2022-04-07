@@ -351,6 +351,7 @@ def test_board_pin_meta_is_full_name(df, board_short):
     assert meta3.name == "susan/some_df"
 
 
+@pytest.mark.fs_rsc
 def test_board_rsc_path_to_pin_safe(board_short):
     assert board_short.path_to_pin("me/some_pin") == "me/some_pin"
 

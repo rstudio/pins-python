@@ -32,6 +32,7 @@ def check_cache_file_path(p_file, p_cache):
 
 # there are two facets of boards: reading and writing.
 # copied from test_compat
+@pytest.mark.skip_on_github
 def test_constructor_board_url_data(tmp_cache, http_example_board_path, df_csv):
     board = c.board_urls(
         http_example_board_path,
@@ -46,6 +47,7 @@ def test_constructor_board_url_data(tmp_cache, http_example_board_path, df_csv):
 
 
 @pytest.mark.xfail
+@pytest.mark.skip_on_github
 def test_constructor_board_url_cache(tmp_cache, http_example_board_path, df_csv):
     # TODO: downloading a pin does not put files in the same directory, since
     # in this case we are hashing on the full url.
@@ -71,6 +73,7 @@ def test_constructor_board_url_cache(tmp_cache, http_example_board_path, df_csv)
     check_cache_file_path(res[0], parent)
 
 
+@pytest.mark.skip_on_github
 def test_constructor_board_github(tmp_cache, http_example_board_path, df_csv):
     board = c.board_github("machow", "pins-python", EXAMPLE_REL_PATH)  # noqa
 

@@ -150,7 +150,13 @@ def board_local(versioned=True, allow_pickle_read=None):
 
 
 def board_github(
-    org, repo, path="", versioned=True, cache=DEFAULT, allow_pickle_read=None
+    org,
+    repo,
+    path="",
+    token=None,
+    versioned=True,
+    cache=DEFAULT,
+    allow_pickle_read=None,
 ):
     """Returns a github pin board.
 
@@ -162,6 +168,8 @@ def board_github(
         Name of the repo.
     path:
         A subfolder in the github repo holding the board.
+    token:
+        An optional github token.
     **kwargs:
         Passed to the pins.board function.
 
@@ -173,7 +181,9 @@ def board_github(
     Examples
     --------
 
-    >>> board = board_github("machow", "pins-python", "pins/tests/pins-compat")
+    >>> import os
+    >>> gh_token = os.environ.get("GITHUB_TOKEN")
+    >>> board = board_github("machow", "pins-python", "pins/tests/pins-compat", gh_token)
     >>> board.pin_list()
     ['df_arrow', 'df_csv', 'df_rds', 'df_unversioned']
 

@@ -47,6 +47,15 @@ def test_compat_pin_versions(board):
     assert v_strings == ["20220214T163718Z-eceac", "20220214T163720Z-9bfad"]
 
 
+def test_compat_os_listdir():
+    import os
+
+    res = os.listdir(PATH_TO_EXAMPLE_BOARD / "df_csv")
+    dst = ["20220214T163718Z-eceac", "20220214T163720Z-9bfad"]
+
+    assert res == dst
+
+
 # pin_exists --------------------------------------------------------------------
 
 

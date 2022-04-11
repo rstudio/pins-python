@@ -717,12 +717,13 @@ class BoardRsConnect(BaseBoard):
 
         paged_res = self.fs.api.misc_get_applications("content_type:pin", search=search)
         results = paged_res.results
-        names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
 
         res = []
-        for pin_name in names:
+        for content in results:
+            pin_name = f"{content['owner_username']}/{content['name']}"
+            version = str(content["bundle_id"])
             try:
-                meta = self.pin_meta(pin_name)
+                meta = self.pin_meta(pin_name, version)
                 res.append(meta)
 
             except RsConnectApiRequestError as e:

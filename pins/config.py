@@ -29,3 +29,12 @@ def get_allow_pickle_read(flag):
         flag = bool(env_int)
 
     return flag
+
+
+def _enable_logs():
+    import logging
+
+    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    handlers = [logging.FileHandler("filename.log"), logging.StreamHandler()]
+
+    logging.basicConfig(level=logging.INFO, format=format, handlers=handlers)

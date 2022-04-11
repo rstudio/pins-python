@@ -222,6 +222,7 @@ class RsConnectApi:
 
         headers = self._get_headers()
 
+        logging.info(f"RSConnect API {method}: {url} -- {kwargs}")
         r = self.session.request(method, url, headers=headers, **kwargs)
 
         if return_request:
@@ -247,7 +248,6 @@ class RsConnectApi:
         all_results.extend(data["results"])
 
         while data["results"]:
-            logging.info(f"RSConnect API {method}: {endpoint}")
             page_kwargs = {"page_number": data["current_page"] + 1}
             new_params = {**params, **page_kwargs}
             data = f_query(endpoint, method, params=new_params)

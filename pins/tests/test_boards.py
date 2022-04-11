@@ -316,7 +316,6 @@ def test_board_base_pin_meta_cache_touch(tmp_dir2, df):
     new_access = p_cache_meta.stat().st_atime
 
     assert orig_access < new_access
-    assert False
 
 
 # RStudio Connect specific ====================================================

@@ -1,3 +1,4 @@
+import logging
 import tempfile
 import shutil
 import inspect
@@ -390,9 +391,9 @@ class BaseBoard:
         # TODO(question): how to pin_inform? Log or warning?
         if to_delete:
             str_vers = ", ".join([v.version for v in to_delete])
-            print(f"Deleting versions: {str_vers}.")
+            logging.info(f"Deleting versions: {str_vers}.")
         if not to_delete:
-            print("No old versions to delete")
+            logging.info("No old versions to delete")
 
         for version in to_delete:
             self.pin_version_delete(name, version.version)

@@ -1,4 +1,5 @@
 import humanize
+import logging
 import os
 import time
 import shutil
@@ -64,7 +65,7 @@ class PinsCache(SimpleCacheFileSystem):
         # note that this is called in ._open(), at the point it's known the file
         # will be cached
         fn = super()._make_local_details(path)
-        print(f"cache file: {fn}")
+        logging.info(f"cache file: {fn}")
         Path(fn).parent.mkdir(parents=True, exist_ok=True)
 
         return fn
@@ -199,7 +200,7 @@ class CachePruner:
             for path in to_prune:
                 delete_version(to_prune)
 
-        print("Skipping cache deletion")
+        logging.info("Skipping cache deletion")
 
 
 def delete_version(path: "str | Path"):
@@ -212,7 +213,7 @@ def disk_usage(path):
 
 
 def prompt_cache_prune(to_prune, size) -> bool:
-    print(to_prune)
+    logging.info(f"Pruning items: {to_prune}")
     human_size = humanize.naturalsize(size, binary=True)
     resp = input(f"Delete {len(to_prune)} pin versions, freeing {human_size}?")
     return resp == "yes"

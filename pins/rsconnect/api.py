@@ -1,3 +1,4 @@
+import logging
 import os
 import requests
 import tempfile
@@ -246,13 +247,12 @@ class RsConnectApi:
         all_results.extend(data["results"])
 
         while data["results"]:
-            print("FETCHING")
+            logging.info(f"RSConnect API {method}: {endpoint}")
             page_kwargs = {"page_number": data["current_page"] + 1}
             new_params = {**params, **page_kwargs}
             data = f_query(endpoint, method, params=new_params)
 
             all_results.extend(data["results"])
-            print(data["results"])
 
         return all_results
 

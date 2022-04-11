@@ -3,7 +3,7 @@ import os
 import tempfile
 
 from .boards import BaseBoard, BoardRsConnect, BoardManual
-from .cache import PinsCache, PinsUrlCache
+from .cache import PinsCache, PinsUrlCache, PinsRscCache
 from .config import get_data_dir, get_cache_dir
 
 
@@ -58,6 +58,8 @@ def board(
     if storage_options is None:
         storage_options = {}
 
+    # TODO: at this point should just manually construct the rsc board directly
+    # from board_rsconnect...
     if protocol == "rsc":
         # TODO: register RsConnectFs with fsspec
         from pins.rsconnect.fs import RsConnectFs
@@ -71,9 +73,17 @@ def board(
 
     if cache is DEFAULT:
         cache_dir = get_cache_dir()
-        fs = PinsCache(
-            cache_storage=cache_dir, fs=fs, hash_prefix=path, same_names=True
-        )
+
+        # manually create a subdirectory for rsc server
+        if protocol == "rsc":
+            hash_prefix = storage_options["server_url"]
+            fs = PinsRscCache(
+                cache_storage=cache_dir, fs=fs, hash_prefix=hash_prefix, same_names=True
+            )
+        else:
+            fs = PinsCache(
+                cache_storage=cache_dir, fs=fs, hash_prefix=path, same_names=True
+            )
     elif cache is None:
         pass
     else:
@@ -272,7 +282,9 @@ def board_rsconnect(
         server_url = os.environ.get("CONNECT_SERVER")
 
     kwargs = dict(server_url=server_url, api_key=api_key)
-    return board("rsc", "", versioned, cache, allow_pickle_read, storage_options=kwargs)
+    return board(
+        "rsc", None, versioned, cache, allow_pickle_read, storage_options=kwargs
+    )
 
 
 def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):

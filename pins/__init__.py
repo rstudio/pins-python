@@ -11,3 +11,4 @@ del _v
 # Imports ----
 from .boards import BaseBoard
 from .constructors import *
+from .cache import PinsCache, PinsUrlCache, cache_prune

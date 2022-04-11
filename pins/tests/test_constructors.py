@@ -100,37 +100,61 @@ def board(backend):
 
 
 def test_constructor_board(board, df_csv, tmp_cache):
-    prot = board.fs.protocol
+    # TODO: would be nice to have fixtures for each board constructor
+    # doesn't need to copy over pins-compat content
 
+    # create board from constructor -------------------------------------------
+
+    prot = board.fs.protocol
     fs_name = prot if isinstance(prot, str) else prot[0]
 
     if fs_name == "file":
-        con_name = "folder"
+        board = c.board_folder(board.board)
     elif fs_name == "rsc":
-        con_name = "rsconnect"
-        pytest.xfail()
+        board = c.board_rsconnect(
+            server_url=board.fs.api.server_url, api_key=board.fs.api.api_key
+        )
     else:
-        con_name = fs_name
+        board = getattr(c, f"board_{fs_name}")(board.board)
 
-    board = getattr(c, f"board_{con_name}")(board.board)
+    # read a pin and check its contents ---------------------------------------
+
     df = board.pin_read("df_csv")
 
     # check data
     assert_frame_equal(df, df_csv)
+
+    # check the cache structure -----------------------------------------------
 
     # check cache
     if fs_name == "file":
         # no caching for local file boards
         pass
     else:
+        # check path structure ----
+
         options = list(tmp_cache.glob("*"))
         assert len(options) == 1
 
         cache_dir = options[0]
-        res = list(cache_dir.rglob("**/*.csv"))
+        res = list(cache_dir.rglob("*/*.csv"))
         assert len(res) == 1
 
         check_cache_file_path(res[0], cache_dir)
+
+        # check cache touch on access time ----
+
+        meta = board.pin_meta("df_csv")
+        p_cache_meta = (
+            Path(board._get_cache_path(meta.name, meta.version.version)) / "data.txt"
+        )
+        orig_access = p_cache_meta.stat().st_atime
+
+        board.pin_meta("df_csv")
+
+        new_access = p_cache_meta.stat().st_atime
+
+        assert orig_access < new_access
 
 
 # Board particulars ===========================================================

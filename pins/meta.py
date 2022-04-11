@@ -112,8 +112,8 @@ class Meta:
 class MetaV0:
     file: Union[str, Sequence[str]]
     type: str
+    description: "str | None"
 
-    description: str
     name: str
 
     version: VersionRaw
@@ -134,9 +134,10 @@ class MetaV0:
     @classmethod
     def from_pin_dict(cls, data, pin_name, version) -> "MetaV0":
         # could infer from dataclasses.fields(), but seems excessive.
-        req_fields = {"type", "description", "name"}
+        req_fields = {"type", "description"}
 
-        req_inputs = {k: v for k, v in data.items() if k in req_fields}
+        # Note that we need to .get(), since fields may not be in metadata
+        req_inputs = {k: data.get(k) for k in req_fields}
         req_inputs["file"] = data["path"]
 
         return cls(**req_inputs, name=pin_name, original_fields=data, version=version)

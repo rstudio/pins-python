@@ -11,6 +11,7 @@ from pins.meta import MetaRaw
 
 from datetime import datetime, timedelta
 from time import sleep
+from pathlib import Path
 
 # using pytest cases, so that we can pass in fixtures as parameters
 # TODO: this seems like maybe overkill
@@ -286,6 +287,35 @@ def test_board_pin_search_name(board, df, search, matches):
     metas = board.pin_search(search, as_df=False)
     sorted_meta_names = sorted([m.name for m in metas])
     assert sorted_meta_names == sorted(matches)
+
+
+# BaseBoard specific ==========================================================
+
+from pins.boards import BaseBoard  # noqa
+from pins.cache import PinsCache  # noqa
+
+
+def test_board_base_pin_meta_cache_touch(tmp_dir2, df):
+
+    cache = fsspec.filesystem(
+        "pinscache", target_protocol="file", same_names=True, hash_prefix=str(tmp_dir2),
+    )
+    board = BaseBoard(str(tmp_dir2), fs=cache)
+
+    board.pin_write(df, "some_df", type="csv")
+    meta = board.pin_meta("some_df")
+    v = meta.version.version
+
+    p_cache_version = board._get_cache_path(meta.name, v)
+    p_cache_meta = Path(p_cache_version) / "data.txt"
+
+    orig_access = p_cache_meta.stat().st_atime
+
+    board.pin_meta("some_df")
+
+    new_access = p_cache_meta.stat().st_atime
+
+    assert orig_access < new_access
 
 
 # RStudio Connect specific ====================================================

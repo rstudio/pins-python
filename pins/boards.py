@@ -148,9 +148,14 @@ class BaseBoard:
         components = [pin_name, selected_version.version]
         meta_name = self.meta_factory.get_meta_name(*components)
 
-        path_version = self.construct_path([*components, meta_name])
-        f = self.fs.open(path_version)
-        return self.meta_factory.read_pin_yaml(f, pin_name, selected_version)
+        path_meta = self.construct_path([*components, meta_name])
+        f = self.fs.open(path_meta)
+
+        meta = self.meta_factory.read_pin_yaml(f, pin_name, selected_version)
+
+        self._touch_cache(path_meta)
+
+        return meta
 
     def pin_list(self):
         """List names of all pins in a board.
@@ -561,6 +566,23 @@ class BaseBoard:
         d["meta"] = meta
         return d
 
+    def _get_cache_path(self, pin_name, version):
+        p_version = self.construct_path([self.path_to_pin(pin_name), version])
+        hash = self.fs.hash_name(p_version, True)
+        return str(Path(self.fs.storage[-1]) / hash)
+
+    def _touch_cache(self, path):
+        from pins.cache import touch_access_time
+
+        # TODO: assumes same_name set to True. Let's require this be set to
+        # instantiate a pins cache.
+        if not hasattr(self.fs, "cached_files"):
+            return
+
+        hash = self.fs.hash_name(path, True)
+        path_to_hashed = Path(self.fs.storage[-1]) / hash
+        return touch_access_time(path_to_hashed)
+
 
 class BoardManual(BaseBoard):
     """Simple board that accepts a dictionary of form pin_name: path.
@@ -614,7 +636,9 @@ class BoardManual(BaseBoard):
 
         path_meta = self.construct_path([pin_name, meta_name])
         f = self.fs.open(path_meta)
-        return self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""))
+        meta = self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""))
+
+        return meta
 
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
         meta = self.pin_meta(name, version)

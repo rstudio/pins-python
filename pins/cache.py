@@ -16,7 +16,7 @@ PLACEHOLDER_VERSION = "v"
 PLACEHOLDER_FILE = "file"
 
 
-def touch_access_time(path, access_time: "float | None" = None):
+def touch_access_time(path, access_time: "float | None" = None, strict=True):
     """Update access time of file.
 
     Returns the new access time.
@@ -27,7 +27,7 @@ def touch_access_time(path, access_time: "float | None" = None):
 
     p = Path(path)
 
-    if not p.exists():
+    if not p.exists() and not strict:
         p.touch()
 
     stat = p.stat()
@@ -64,6 +64,7 @@ class PinsCache(SimpleCacheFileSystem):
         # note that this is called in ._open(), at the point it's known the file
         # will be cached
         fn = super()._make_local_details(path)
+        print(f"cache file: {fn}")
         Path(fn).parent.mkdir(parents=True, exist_ok=True)
 
         return fn
@@ -72,7 +73,7 @@ class PinsCache(SimpleCacheFileSystem):
         # the main change in this function is that, for same_name, it returns
         # the full path
         if same_name:
-            if self.hash_prefix:
+            if self.hash_prefix is not None:
                 # optionally make the name relative to a parent path
                 # using the hash of parent path as a prefix, to flatten a bit
                 suffix = Path(path).relative_to(Path(self.hash_prefix))
@@ -87,10 +88,37 @@ class PinsCache(SimpleCacheFileSystem):
 
             return path
         else:
-            return hash_name(path, same_name)
+            raise NotImplementedError()
 
-    def touch_access_time(path):
-        return touch_access_time(path)
+
+class PinsRscCache(PinsCache):
+    """Modifies the PinsCache to allow hash_prefix to be an RSC server url.
+
+    Note that this class also modifies the first / in a path to be a -, so that
+    pin contents will not be put into subdirectories, for e.g. michael/mtcars/data.txt.
+    """
+
+    protocol = "pinsrsccache"
+
+    def hash_name(self, path, same_name):
+        # the main change in this function is that, for same_name, it returns
+        # the full path
+        if same_name:
+            if self.hash_prefix is None:
+                raise NotImplementedError()
+
+            # change pin path of form <user>/<content> to <user>+<content>
+            suffix = path.replace("/", "+", 1)
+            prefix = hash_name(self.hash_prefix, False)
+
+            # TODO: hacky to automatically tack on protocol here
+            # but this is what R pins boards do. Could make a bool arg?
+            proto_name = protocol_to_string(self.fs.protocol)
+            full_prefix = "_".join([proto_name, prefix])
+            return str(full_prefix / Path(suffix))
+
+        else:
+            raise NotImplementedError()
 
 
 class PinsUrlCache(PinsCache):

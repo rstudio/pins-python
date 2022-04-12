@@ -2,8 +2,8 @@ api_version: 1
 created: 20200113T235859Z
 description: some description
 file: test_rsc_pin.csv
-file_size: 23
-pin_hash: 60d4c36d7138cb6c
+file_size: 16
+pin_hash: d6820e2d11300a70
 title: some pin
 type: csv
 user: {}

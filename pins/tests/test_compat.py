@@ -133,7 +133,7 @@ def test_compat_pin_read(board):
     p_data = PATH_TO_EXAMPLE_BOARD / "df_csv" / "20220214T163720Z-9bfad" / "df_csv.csv"
 
     src_df = board.pin_read("df_csv")
-    dst_df = pd.read_csv(p_data, index_col=0)
+    dst_df = pd.read_csv(p_data)
 
     assert isinstance(src_df, pd.DataFrame)
     assert src_df.equals(dst_df)

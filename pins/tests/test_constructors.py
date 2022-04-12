@@ -16,7 +16,7 @@ from pins.tests.helpers import rm_env
 
 @pytest.fixture
 def df_csv():
-    return pd.read_csv(PATH_TO_EXAMPLE_VERSION / "df_csv.csv", index_col=0)
+    return pd.read_csv(PATH_TO_EXAMPLE_VERSION / "df_csv.csv")
 
 
 def check_dir_writable(p_dir):

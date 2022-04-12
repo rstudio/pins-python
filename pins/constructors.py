@@ -197,10 +197,10 @@ def board_github(
     ['df_arrow', 'df_csv', 'df_rds', 'df_unversioned']
 
     >>> board.pin_read("df_csv")
-       y  z
-    x
-    1  a  3
-    2  b  4
+       x  y  z
+    0  1  a  3
+    1  2  b  4
+
 
     """
 

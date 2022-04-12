@@ -57,7 +57,7 @@ def load_data(
     if meta.type == "csv":
         import pandas as pd
 
-        return pd.read_csv(fs.open(path_to_file), index_col=0)
+        return pd.read_csv(fs.open(path_to_file))
 
     elif meta.type == "joblib":
         import joblib
@@ -90,7 +90,7 @@ def save_data(
             raise NotImplementedError(
                 "Currently only pandas.DataFrame can be saved to a CSV."
             )
-        obj.to_csv(fname)
+        obj.to_csv(fname, index=False)
     elif type == "joblib":
         import joblib
 

@@ -600,10 +600,12 @@ class BoardManual(BaseBoard):
     ['df_csv']
 
     >>> board.pin_read("df_csv")
-       y  z
-    x
-    1  a  3
-    2  b  4
+       x  y  z
+    0  1  a  3
+    1  2  b  4
+
+
+
 
     """
 

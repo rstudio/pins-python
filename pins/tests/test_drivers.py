@@ -1,5 +1,6 @@
 import fsspec
 import pytest
+import pandas as pd
 
 from pathlib import Path
 
@@ -7,7 +8,7 @@ from pins.tests.helpers import rm_env
 
 from pins.meta import MetaRaw
 from pins.config import PINS_ENV_INSECURE_READ
-from pins.drivers import load_data, save_data
+from pins.drivers import load_data, save_data, default_title
 from pins.errors import PinsInsecureReadError
 
 
@@ -19,6 +20,29 @@ def some_joblib(tmp_dir2):
     joblib.dump({"a": 1}, p_obj)
 
     return p_obj
+
+
+# default title ---------------------------------------------------------------
+
+
+class ExC:
+    class D:
+        pass
+
+
+@pytest.mark.parametrize(
+    "obj, dst_title",
+    [
+        (pd.DataFrame({"x": [1, 2]}), "somename: a pinned 2 x 1 DataFrame"),
+        (pd.DataFrame({"x": [1], "y": [2]}), "somename: a pinned 1 x 2 DataFrame"),
+        (ExC(), "somename: a pinned ExC object"),
+        (ExC().D(), "somename: a pinned ExC.D object"),
+        ([1, 2, 3], "somename: a pinned list object"),
+    ],
+)
+def test_default_title(obj, dst_title):
+    res = default_title(obj, "somename")
+    assert res == dst_title
 
 
 def test_driver_roundtrip_csv(tmp_dir2):

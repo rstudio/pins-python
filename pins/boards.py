@@ -531,7 +531,7 @@ class BaseBoard:
             raise NotImplementedError("Type argument is required.")
 
         if title is None:
-            title = default_title(x, type)
+            title = default_title(x, name)
 
         # create metadata from object on disk ---------------------------------
         # save all pin data to a temporary folder (including data.txt), so we

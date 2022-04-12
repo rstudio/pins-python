@@ -38,7 +38,7 @@ def test_board_pin_write_default_title(board):
 
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
     meta = board.pin_write(df, "df_csv", title=None, type="csv")
-    assert meta.title == "A pinned 3 x 2 CSV"
+    assert meta.title == "df_csv: a pinned 3 x 2 DataFrame"
 
 
 def test_board_pin_write_prepare_pin(board, tmp_dir2):

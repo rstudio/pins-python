@@ -1,5 +1,3 @@
-import builtins
-
 from pathlib import Path
 
 from .config import get_allow_pickle_read, PINS_ENV_INSECURE_READ
@@ -119,17 +117,14 @@ def save_data(
     return fname
 
 
-def default_title(obj, type):
-    if type == "csv":
-        import pandas as pd
+def default_title(obj, name):
+    import pandas as pd
 
-        if isinstance(obj, pd.DataFrame):
-            # TODO(compat): title says CSV rather than data.frame
-            # see https://github.com/machow/pins-python/issues/5
-            shape_str = " x ".join(map(str, obj.shape))
-            return f"A pinned {shape_str} CSV"
-        raise NotImplementedError(
-            f"No default csv title support for class: {builtins.type(obj)}"
-        )
-
-    raise NotImplementedError(f"Cannot create default title for type: {type}")
+    if isinstance(obj, pd.DataFrame):
+        # TODO(compat): title says CSV rather than data.frame
+        # see https://github.com/machow/pins-python/issues/5
+        shape_str = " x ".join(map(str, obj.shape))
+        return f"{name}: a pinned {shape_str} DataFrame"
+    else:
+        obj_name = type(obj).__qualname__
+        return f"{name}: a pinned {obj_name} object"

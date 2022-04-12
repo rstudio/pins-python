@@ -13,6 +13,7 @@ from typing import Sequence
 
 
 UNSAFE_TYPES = frozenset(["joblib"])
+REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib", "file"])
 
 
 def load_data(
@@ -44,17 +45,31 @@ def load_data(
 
     # Check that only a single file name was given
     fnames = [meta.file] if isinstance(meta.file, str) else meta.file
-    if len(fnames) > 1:
+    if len(fnames) > 1 and type in REQUIRES_SINGLE_FILE:
         raise ValueError("Cannot load data when more than 1 file")
 
-    # TODO: currently only can load a single file
-    target_fname = fnames[0]
+    # file path creation ------------------------------------------------------
+
+    if type == "table":
+        # this type contains an rds and csv files named data.{ext}, so we match
+        # R pins behavior and hardcode the name
+        target_fname = "data.csv"
+    else:
+        target_fname = fnames[0]
+
     if path_to_version is not None:
         path_to_file = f"{path_to_version}/{target_fname}"
     else:
         path_to_file = target_fname
 
+    # type handling -----------------------------------------------------------
+
     if meta.type == "csv":
+        import pandas as pd
+
+        return pd.read_csv(fs.open(path_to_file))
+
+    elif meta.type == "table":
         import pandas as pd
 
         return pd.read_csv(fs.open(path_to_file))

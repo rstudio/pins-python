@@ -1,0 +1,9 @@
+path:
+- data.csv
+- data.rds
+type: table
+rows: 2
+cols: 2
+columns:
+  a: integer
+  b: character

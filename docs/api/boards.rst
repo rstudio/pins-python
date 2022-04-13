@@ -1,5 +1,5 @@
-Board
-=====
+Board Methods
+=============
 
 .. currentmodule:: pins
 

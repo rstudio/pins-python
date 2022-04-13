@@ -14,6 +14,12 @@ kernelspec:
 
 # Welcome
 
+```{image} logo.png
+:align: right
+:height: 139px
+:alt: pins, a library for organizing and sharing data.
+```
+
 The pins package publishes data, models, and other R objects, making it easy to share them across projects and with your colleagues.
 You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Azure storage and ~Microsoft 365 (OneDrive and SharePoint)~.
 Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.
@@ -64,9 +70,12 @@ To get started, you can use `board_folder()` with a directory on a shared drive 
 +++
 
 ```python
-board <- board_rsconnect()
+from pins import board_rsconnect
+
+board = board_rsconnect()
 #> Connecting to RSC 1.9.0.1 at <https://connect.rstudioservices.com>
-board.pin_write(tidy_sales_data, "sales-summary", type = "rds")
+
+board.pin_write(tidy_sales_data, "sales-summary", type = "csv")
 #> Writing to pin 'hadley/sales-summary'
 ```
 

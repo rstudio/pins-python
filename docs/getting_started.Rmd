@@ -12,7 +12,7 @@ jupyter:
     name: venv-pins-python
 ---
 
-```{python tags=c(), nbsphinx="hidden"}
+```{python tags=c("remove-input"), nbsphinx="hidden"}
 import pandas as pd
 pd.options.display.max_rows = 25
 ```

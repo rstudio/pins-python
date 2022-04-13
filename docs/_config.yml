@@ -33,6 +33,7 @@ html:
 
 sphinx:
   config:
+    add_module_names: true
     nb_custom_formats:
         .Rmd:
             - jupytext.reads

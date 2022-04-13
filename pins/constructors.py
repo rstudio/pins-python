@@ -52,7 +52,7 @@ def board_deparse(board: BaseBoard):
         return f"board_folder({repr(board.board)})"
     else:
         raise NotImplementedError(
-            "board deparsing currently not supported for protocol: {prot}"
+            f"board deparsing currently not supported for protocol: {prot}"
         )
 
 

@@ -32,7 +32,7 @@ Boards abstract over different storage backends, making it easy to share data in
 .. list-table::
    :class: table-align-left
 
-   * - :func:`.board_folder`, :func:`board_local`
+   * - :func:`.board_folder`, :func:`.board_local`
      - Use a local folder as a board
    * - :func:`.board_rsconnect`
      - Use RStudio Connect as a board

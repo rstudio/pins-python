@@ -11,6 +11,51 @@ class DEFAULT:
     pass
 
 
+# Representing constructors ===================================================
+
+
+def deparse_board(board: BaseBoard):
+    """Return a representation of how a board could be reconstructed.
+
+    Note that this function does not try to represent the exact arguments used
+    to construct a board, but key pieces (like the path to the board). You may
+    need to specify environment variables with API keys to complete the connection.
+
+    Parameters
+    ----------
+    board:
+        A pins board to be represented.
+
+    Examples
+    --------
+
+    The example below deparses a board connected to RStudio Connect.
+
+    >>> deparse_board(board_rsconnect(server_url="http://example.com", api_key="xxx"))
+    "board_rsconnect(server_url='http://example.com')"
+
+    Note that the deparsing an RStudio Connect board does not keep the api_key,
+    which is sensitive information. In this case, you can set the CONNECT_API_KEY
+    environment variable to connect.
+
+    Below is an example of representing a board connected to a local folder.
+
+    >>> deparse_board(board_folder("a/b/c"))
+    "board_folder('a/b/c')"
+    """
+
+    prot = board.fs.protocol
+    if prot == "rsc":
+        url = board.fs.api.server_url
+        return f"board_rsconnect(server_url={repr(url)})"
+    elif prot == "file":
+        return f"board_folder({repr(board.board)})"
+    else:
+        raise NotImplementedError(
+            "board deparsing currently not supported for protocol: {prot}"
+        )
+
+
 # Board constructors ==========================================================
 # note that libraries not used by board classes above are imported within these
 # functions. may be worth moving these funcs into their own module.

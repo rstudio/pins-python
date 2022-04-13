@@ -11,3 +11,4 @@ Board Constructors
    ~board_temp
    ~board_s3
    ~board_rsconnect
+   ~board

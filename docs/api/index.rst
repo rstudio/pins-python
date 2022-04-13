@@ -38,6 +38,8 @@ Boards abstract over different storage backends, making it easy to share data in
      - Use RStudio Connect as a board
    * - :func:`.board_s3`
      - Use an S3 bucket as a board
+   * - :func:`.board`
+     - Generic board constructor
 
 
 .. toctree::

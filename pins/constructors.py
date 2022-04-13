@@ -13,8 +13,8 @@ class DEFAULT:
 
 # Representing constructors ===================================================
 
-
-def deparse_board(board: BaseBoard):
+# Note that this is not a constructor, but a function to represent them.
+def board_deparse(board: BaseBoard):
     """Return a representation of how a board could be reconstructed.
 
     Note that this function does not try to represent the exact arguments used
@@ -31,7 +31,7 @@ def deparse_board(board: BaseBoard):
 
     The example below deparses a board connected to RStudio Connect.
 
-    >>> deparse_board(board_rsconnect(server_url="http://example.com", api_key="xxx"))
+    >>> board_deparse(board_rsconnect(server_url="http://example.com", api_key="xxx"))
     "board_rsconnect(server_url='http://example.com')"
 
     Note that the deparsing an RStudio Connect board does not keep the api_key,
@@ -40,7 +40,7 @@ def deparse_board(board: BaseBoard):
 
     Below is an example of representing a board connected to a local folder.
 
-    >>> deparse_board(board_folder("a/b/c"))
+    >>> board_deparse(board_folder("a/b/c"))
     "board_folder('a/b/c')"
     """
 

@@ -188,3 +188,20 @@ def test_board_constructor_folder(tmp_dir2, df):
     df2 = board.pin_read("some_df")
 
     assert df.equals(df2)
+
+
+# Deparsing ===================================================================
+
+
+def test_board_deparse(board):
+    prot = board.fs.protocol
+    if prot not in ["rsc", "file"]:
+        # not implemented for other boards
+        pytest.xfail()
+
+    with rm_env("CONNECT_API_KEY"):
+        if prot == "rsc":
+            os.environ["CONNECT_API_KEY"] = board.fs.api.api_key
+
+        new_board = eval(c.board_deparse(board), c.__dict__)
+        new_board.pin_list()

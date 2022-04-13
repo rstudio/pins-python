@@ -1,6 +1,0 @@
-﻿pins.boards.IFileSystem.mkdir
-=============================
-
-.. currentmodule:: pins.boards
-
-.. automethod:: IFileSystem.mkdir

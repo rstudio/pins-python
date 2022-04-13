@@ -1,6 +1,0 @@
-﻿pins.boards.IFileSystem.info
-============================
-
-.. currentmodule:: pins.boards
-
-.. automethod:: IFileSystem.info

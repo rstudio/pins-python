@@ -4,13 +4,11 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>Board &#8212; pins  documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Board Methods &#8212; Pins</title>
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -20,20 +18,43 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pins.BaseBoard" href="api_card/pins.BaseBoard.html" />
-    <link rel="prev" title="API" href="index.html" />
+    <link rel="prev" title="pins.board_rsconnect" href="api_card/pins.board_rsconnect.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -41,276 +62,293 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
-
-  <div id="navbar-start">
-    
-    
-<a class="navbar-brand" href="../index.html">
-<p class="title">pins</p>
-</a>
-
-    
-  </div>
-
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
-    <div id="navbar-center" class="mr-auto">
-      
-      <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../getting_started.html">
-  Getting Started
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../user_guide/index.html">
-  User Guide
- </a>
-</li>
-
-<li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="index.html">
-  API
- </a>
-</li>
-
-    
-</ul>
-      </div>
-      
-    </div>
-
-    <div id="navbar-end">
-      
-      <div class="navbar-end-item">
-        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
-      </ul>
-      </div>
-      
-    </div>
-  </div>
-</div>
-    </nav>
     
 
     <div class="container-xl">
       <div class="row">
           
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Pins</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
   <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <div class="bd-toc-item active">
-    <ul class="current nav bd-sidenav">
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Welcome
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../getting_started.html">
+   Getting Started
+  </a>
+ </li>
  <li class="toctree-l1 current active has-children">
-  <a class="current reference internal" href="#">
-   Board
+  <a class="reference internal" href="index.html">
+   Reference
   </a>
   <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.html">
-     pins.BaseBoard
+  <ul class="current">
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="constructors.html">
+     Board Constructors
     </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.board_folder.html">
+       pins.board_folder
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.board_local.html">
+       pins.board_local
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.board_temp.html">
+       pins.board_temp
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.board_s3.html">
+       pins.board_s3
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.board_rsconnect.html">
+       pins.board_rsconnect
+      </a>
+     </li>
+    </ul>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_read.html">
-     pins.BaseBoard.pin_read
+   <li class="toctree-l2 current active has-children">
+    <a class="current reference internal" href="#">
+     Board Methods
     </a>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.html">
+       pins.BaseBoard
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_read.html">
+       pins.BaseBoard.pin_read
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_write.html">
+       pins.BaseBoard.pin_write
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_meta.html">
+       pins.BaseBoard.pin_meta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_versions.html">
+       pins.BaseBoard.pin_versions
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_list.html">
+       pins.BaseBoard.pin_list
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_exists.html">
+       pins.BaseBoard.pin_exists
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_version_delete.html">
+       pins.BaseBoard.pin_version_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_versions_prune.html">
+       pins.BaseBoard.pin_versions_prune
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_delete.html">
+       pins.BaseBoard.pin_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_search.html">
+       pins.BaseBoard.pin_search
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_download.html">
+       pins.BaseBoard.pin_download
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_upload.html">
+       pins.BaseBoard.pin_upload
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.BaseBoard.pin_browse.html">
+       pins.BaseBoard.pin_browse
+      </a>
+     </li>
+    </ul>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_write.html">
-     pins.BaseBoard.pin_write
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="meta.html">
+     Metadata
     </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_meta.html">
-     pins.BaseBoard.pin_meta
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_versions.html">
-     pins.BaseBoard.pin_versions
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_list.html">
-     pins.BaseBoard.pin_list
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_exists.html">
-     pins.BaseBoard.pin_exists
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_version_delete.html">
-     pins.BaseBoard.pin_version_delete
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_versions_prune.html">
-     pins.BaseBoard.pin_versions_prune
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_delete.html">
-     pins.BaseBoard.pin_delete
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_search.html">
-     pins.BaseBoard.pin_search
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_download.html">
-     pins.BaseBoard.pin_download
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_upload.html">
-     pins.BaseBoard.pin_upload
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.BaseBoard.pin_browse.html">
-     pins.BaseBoard.pin_browse
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="meta.html">
-   Metadata
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.meta.Meta.html">
-     pins.meta.Meta
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.meta.MetaFactory.html">
-     pins.meta.MetaFactory
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.versions.VersionRaw.html">
-     pins.versions.VersionRaw
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.versions.Version.html">
-     pins.versions.Version
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="filesystem.html">
-   File System
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-  <label for="toctree-checkbox-3">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.html">
-     pins.boards.IFileSystem
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.exists.html">
-     pins.boards.IFileSystem.exists
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.info.html">
-     pins.boards.IFileSystem.info
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.ls.html">
-     pins.boards.IFileSystem.ls
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.open.html">
-     pins.boards.IFileSystem.open
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.put.html">
-     pins.boards.IFileSystem.put
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.get.html">
-     pins.boards.IFileSystem.get
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.mkdir.html">
-     pins.boards.IFileSystem.mkdir
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api_card/pins.boards.IFileSystem.rm.html">
-     pins.boards.IFileSystem.rm
-    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.meta.Meta.html">
+       pins.meta.Meta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.meta.MetaFactory.html">
+       pins.meta.MetaFactory
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.versions.VersionRaw.html">
+       pins.versions.VersionRaw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.versions.Version.html">
+       pins.versions.Version
+      </a>
+     </li>
+    </ul>
    </li>
   </ul>
  </li>
 </ul>
 
-  </div>
-</nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
-            </div>
-            
-          
+    </div>
+</nav> <!-- To handle the deprecated key -->
 
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
-            
-              
-              <div class="toc-item">
-                
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
-    <i class="fas fa-list"></i> On this page
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
 </div>
 
-<nav id="bd-toc-nav">
-    <ul class="visible nav section-nav flex-column">
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/api/boards.rst"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/machow/pins-python"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/boards.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#constructor">
    Constructor
@@ -328,29 +366,52 @@
  </li>
 </ul>
 
-</nav>
-              </div>
-              
-              <div class="toc-item">
-                
-              </div>
-              
-            
-          </div>
-          
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Board Methods</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#constructor">
+   Constructor
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#methods-implemented">
+   Methods (Implemented)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#methods-planned">
+   Methods (Planned)
+  </a>
+ </li>
+</ul>
 
-          
-          
+                        </nav>
+                    </div>
+                </div>
+            </div>
             
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
               <div>
                 
-  <section id="board">
-<h1>Board<a class="headerlink" href="#board" title="Permalink to this headline">#</a></h1>
-<section id="constructor">
-<h2>Constructor<a class="headerlink" href="#constructor" title="Permalink to this headline">#</a></h2>
+  <div class="section" id="board-methods">
+<h1>Board Methods<a class="headerlink" href="#board-methods" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="constructor">
+<h2>Constructor<a class="headerlink" href="#constructor" title="Permalink to this headline">¶</a></h2>
 <table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
@@ -362,9 +423,9 @@
 </tr>
 </tbody>
 </table>
-</section>
-<section id="methods-implemented">
-<h2>Methods (Implemented)<a class="headerlink" href="#methods-implemented" title="Permalink to this headline">#</a></h2>
+</div>
+<div class="section" id="methods-implemented">
+<h2>Methods (Implemented)<a class="headerlink" href="#methods-implemented" title="Permalink to this headline">¶</a></h2>
 <table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
@@ -403,9 +464,9 @@
 </tr>
 </tbody>
 </table>
-</section>
-<section id="methods-planned">
-<h2>Methods (Planned)<a class="headerlink" href="#methods-planned" title="Permalink to this headline">#</a></h2>
+</div>
+<div class="section" id="methods-planned">
+<h2>Methods (Planned)<a class="headerlink" href="#methods-planned" title="Permalink to this headline">¶</a></h2>
 <table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
@@ -423,20 +484,39 @@
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./api"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
 
               </div>
               
-              
-              <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="api_card/pins.board_rsconnect.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">API</p>
+            <p class="prev-next-title">pins.board_rsconnect</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="api_card/pins.BaseBoard.html" title="next page">
@@ -447,31 +527,24 @@
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-              
-          </main>
-          
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By RStudio Inc.<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
+</main>
+
 
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2022, RStudio.<br>
-</p>
-    </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
-</p>
-    </div>
-    
-  </div>
-</footer>
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
   </body>
 </html>

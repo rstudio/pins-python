@@ -4,13 +4,11 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>Getting Started &#8212; pins  documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Getting Started &#8212; Pins</title>
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -20,22 +18,43 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="User Guide" href="user_guide/index.html" />
-    <link rel="prev" title="Welcome to pins’s documentation!" href="index.html" />
+    <link rel="next" title="Reference" href="api/index.html" />
+    <link rel="prev" title="Welcome" href="intro.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -43,454 +62,452 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
-
-  <div id="navbar-start">
-    
-    
-<a class="navbar-brand" href="index.html">
-<p class="title">pins</p>
-</a>
-
-    
-  </div>
-
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
-    <div id="navbar-center" class="mr-auto">
-      
-      <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 current active nav-item">
- <a class="current reference internal nav-link" href="#">
-  Getting Started
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="user_guide/index.html">
-  User Guide
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="api/index.html">
-  API
- </a>
-</li>
-
-    
-</ul>
-      </div>
-      
-    </div>
-
-    <div id="navbar-end">
-      
-      <div class="navbar-end-item">
-        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
-      </ul>
-      </div>
-      
-    </div>
-  </div>
-</div>
-    </nav>
     
 
     <div class="container-xl">
       <div class="row">
           
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <div class="bd-toc-item active">
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
-  </div>
-</nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
-            </div>
-            
-          
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Pins</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Welcome
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Getting Started
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="api/index.html">
+   Reference
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="api/constructors.html">
+     Board Constructors
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.board_folder.html">
+       pins.board_folder
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.board_local.html">
+       pins.board_local
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.board_temp.html">
+       pins.board_temp
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.board_s3.html">
+       pins.board_s3
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.board_rsconnect.html">
+       pins.board_rsconnect
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="api/boards.html">
+     Board Methods
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.html">
+       pins.BaseBoard
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_read.html">
+       pins.BaseBoard.pin_read
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_write.html">
+       pins.BaseBoard.pin_write
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_meta.html">
+       pins.BaseBoard.pin_meta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_versions.html">
+       pins.BaseBoard.pin_versions
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_list.html">
+       pins.BaseBoard.pin_list
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_exists.html">
+       pins.BaseBoard.pin_exists
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_version_delete.html">
+       pins.BaseBoard.pin_version_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_versions_prune.html">
+       pins.BaseBoard.pin_versions_prune
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_delete.html">
+       pins.BaseBoard.pin_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_search.html">
+       pins.BaseBoard.pin_search
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_download.html">
+       pins.BaseBoard.pin_download
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_upload.html">
+       pins.BaseBoard.pin_upload
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.BaseBoard.pin_browse.html">
+       pins.BaseBoard.pin_browse
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="api/meta.html">
+     Metadata
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.meta.Meta.html">
+       pins.meta.Meta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.meta.MetaFactory.html">
+       pins.meta.MetaFactory
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.versions.VersionRaw.html">
+       pins.versions.VersionRaw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.versions.Version.html">
+       pins.versions.Version
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
 
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
-            
-              
-              <div class="toc-item">
-                
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
-    <i class="fas fa-list"></i> On this page
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
 </div>
 
-<nav id="bd-toc-nav">
-    <ul class="visible nav section-nav flex-column">
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/getting_started.Rmd"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.Rmd</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/machow/pins-python"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fgetting_started.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/machow/pins-python/main?urlpath=tree/docs/getting_started.Rmd"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#Getting-started">
+  <a class="reference internal nav-link" href="#id1">
    Getting started
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#Reading-and-writing-data">
+  <a class="reference internal nav-link" href="#reading-and-writing-data">
    Reading and writing data
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#Metadata">
+  <a class="reference internal nav-link" href="#metadata">
    Metadata
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#🚧-Versioning">
+  <a class="reference internal nav-link" href="#versioning">
    🚧 Versioning
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#🚧-Reading-and-writing-files">
+  <a class="reference internal nav-link" href="#reading-and-writing-files">
    🚧 Reading and writing files
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#Caching">
+  <a class="reference internal nav-link" href="#caching">
    Caching
   </a>
  </li>
 </ul>
 
-</nav>
-              </div>
-              
-              <div class="toc-item">
-                
-              </div>
-              
-            
-          </div>
-          
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Getting Started</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   Getting started
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#reading-and-writing-data">
+   Reading and writing data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#metadata">
+   Metadata
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#versioning">
+   🚧 Versioning
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#reading-and-writing-files">
+   🚧 Reading and writing files
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#caching">
+   Caching
+  </a>
+ </li>
+</ul>
 
-          
-          
+                        </nav>
+                    </div>
+                </div>
+            </div>
             
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
               <div>
                 
-  
-<style>
-/* CSS for nbsphinx extension */
-
-/* remove conflicting styling from Sphinx themes */
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt *,
-div.nbinput.container div.input_area pre,
-div.nboutput.container div.output_area pre,
-div.nbinput.container div.input_area .highlight,
-div.nboutput.container div.output_area .highlight {
-    border: none;
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-}
-
-div.nbinput.container > div[class*=highlight],
-div.nboutput.container > div[class*=highlight] {
-    margin: 0;
-}
-
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt * {
-    background: none;
-}
-
-div.nboutput.container div.output_area .highlight,
-div.nboutput.container div.output_area pre {
-    background: unset;
-}
-
-div.nboutput.container div.output_area div.highlight {
-    color: unset;  /* override Pygments text color */
-}
-
-/* avoid gaps between output lines */
-div.nboutput.container div[class*=highlight] pre {
-    line-height: normal;
-}
-
-/* input/output containers */
-div.nbinput.container,
-div.nboutput.container {
-    display: -webkit-flex;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    width: 100%;
-}
-@media (max-width: 540px) {
-    div.nbinput.container,
-    div.nboutput.container {
-        flex-direction: column;
-    }
-}
-
-/* input container */
-div.nbinput.container {
-    padding-top: 5px;
-}
-
-/* last container */
-div.nblast.container {
-    padding-bottom: 5px;
-}
-
-/* input prompt */
-div.nbinput.container div.prompt pre {
-    color: #307FC1;
-}
-
-/* output prompt */
-div.nboutput.container div.prompt pre {
-    color: #BF5B3D;
-}
-
-/* all prompts */
-div.nbinput.container div.prompt,
-div.nboutput.container div.prompt {
-    width: 4.5ex;
-    padding-top: 5px;
-    position: relative;
-    user-select: none;
-}
-
-div.nbinput.container div.prompt > div,
-div.nboutput.container div.prompt > div {
-    position: absolute;
-    right: 0;
-    margin-right: 0.3ex;
-}
-
-@media (max-width: 540px) {
-    div.nbinput.container div.prompt,
-    div.nboutput.container div.prompt {
-        width: unset;
-        text-align: left;
-        padding: 0.4em;
-    }
-    div.nboutput.container div.prompt.empty {
-        padding: 0;
-    }
-
-    div.nbinput.container div.prompt > div,
-    div.nboutput.container div.prompt > div {
-        position: unset;
-    }
-}
-
-/* disable scrollbars on prompts */
-div.nbinput.container div.prompt pre,
-div.nboutput.container div.prompt pre {
-    overflow: hidden;
-}
-
-/* input/output area */
-div.nbinput.container div.input_area,
-div.nboutput.container div.output_area {
-    -webkit-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-@media (max-width: 540px) {
-    div.nbinput.container div.input_area,
-    div.nboutput.container div.output_area {
-        width: 100%;
-    }
-}
-
-/* input area */
-div.nbinput.container div.input_area {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    /*background: #f5f5f5;*/
-}
-
-/* override MathJax center alignment in output cells */
-div.nboutput.container div[class*=MathJax] {
-    text-align: left !important;
-}
-
-/* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput.container div.math p {
-    text-align: left;
-}
-
-/* standard error */
-div.nboutput.container div.output_area.stderr {
-    background: #fdd;
-}
-
-/* ANSI colors */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-default-inverse-fg { color: #FFFFFF; }
-.ansi-default-inverse-bg { background-color: #000000; }
-
-.ansi-bold { font-weight: bold; }
-.ansi-underline { text-decoration: underline; }
-
-
-div.nbinput.container div.input_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight].math,
-div.nboutput.container div.output_area.rendered_html,
-div.nboutput.container div.output_area > div.output_javascript,
-div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 5px;
-    margin: 0;
-}
-
-/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
-div.nbinput.container div.input_area > div[class^='highlight'],
-div.nboutput.container div.output_area > div[class^='highlight']{
-    overflow-y: hidden;
-}
-
-/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt .copybtn {
-    display: none;
-}
-
-/* Some additional styling taken form the Jupyter notebook CSS */
-div.rendered_html table {
-  border: none;
-  border-collapse: collapse;
-  border-spacing: 0;
-  color: black;
-  font-size: 12px;
-  table-layout: fixed;
-}
-div.rendered_html thead {
-  border-bottom: 1px solid black;
-  vertical-align: bottom;
-}
-div.rendered_html tr,
-div.rendered_html th,
-div.rendered_html td {
-  text-align: right;
-  vertical-align: middle;
-  padding: 0.5em 0.5em;
-  line-height: normal;
-  white-space: normal;
-  max-width: none;
-  border: none;
-}
-div.rendered_html th {
-  font-weight: bold;
-}
-div.rendered_html tbody tr:nth-child(odd) {
-  background: #f5f5f5;
-}
-div.rendered_html tbody tr:hover {
-  background: rgba(66, 165, 245, 0.2);
-}
-</style>
-<style>
-   .nbinput .prompt,
-   .nboutput .prompt {
-       display: none;
-   }
-</style><section id="Getting-Started">
-<h1>Getting Started<a class="headerlink" href="#Getting-Started" title="Permalink to this headline">#</a></h1>
-<p>The pins package helps you publish data sets, models, and other R objects, making it easy to share them across projects and with your colleagues. You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with dropbox), RStudio connect, Amazon S3, and more. This vignette will introduce you to the basics of pins.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
+  <div class="cell tag_remove-input docutils container">
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pins</span> <span class="kn">import</span> <span class="n">board_local</span><span class="p">,</span> <span class="n">board_folder</span><span class="p">,</span> <span class="n">board_temp</span><span class="p">,</span> <span class="n">board_urls</span>
+<div class="tex2jax_ignore mathjax_ignore section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>The pins package helps you publish data sets, models, and other R objects, making it easy to share them across projects and with your colleagues.
+You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with dropbox), RStudio connect, Amazon S3, and more.
+This vignette will introduce you to the basics of pins.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pins</span> <span class="kn">import</span> <span class="n">board_local</span><span class="p">,</span> <span class="n">board_folder</span><span class="p">,</span> <span class="n">board_temp</span><span class="p">,</span> <span class="n">board_urls</span>
 </pre></div>
 </div>
 </div>
-<section id="Getting-started">
-<h2>Getting started<a class="headerlink" href="#Getting-started" title="Permalink to this headline">#</a></h2>
-<p>Every pin lives in a pin <em>board</em>, so you must start by creating a pin board. In this vignette I’ll use a temporary board which is automatically deleted when your python session is over:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</div>
+<div class="section" id="id1">
+<h2>Getting started<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Every pin lives in a pin <em>board</em>, so you must start by creating a pin board.
+In this vignette I’ll use a temporary board which is automatically deleted when your python session is over:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">()</span>
-</pre></div>
 </div>
 </div>
-<p>In real-life, you’d pick a board depending on how you want to share the data. Here are a few options:</p>
+<p>In real-life, you’d pick a board depending on how you want to share the data.
+Here are a few options:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">board_local</span><span class="p">()</span> <span class="c1"># share data across R sessions on the same computer</span>
 <span class="n">board</span> <span class="o">=</span> <span class="n">board_folder</span><span class="p">(</span><span class="s2">&quot;~/Dropbox&quot;</span><span class="p">)</span> <span class="c1"># share data with others using dropbox</span>
 <span class="n">board</span> <span class="o">=</span> <span class="n">board_folder</span><span class="p">(</span><span class="s2">&quot;Z:</span><span class="se">\\</span><span class="s2">my-team\pins&quot;</span><span class="p">)</span> <span class="c1"># share data using a shared network drive</span>
 <span class="n">board</span> <span class="o">=</span> <span class="n">board_rsconnect</span><span class="p">()</span> <span class="c1"># share data with RStudio Connect</span>
 </pre></div>
 </div>
-</section>
-<section id="Reading-and-writing-data">
-<h2>Reading and writing data<a class="headerlink" href="#Reading-and-writing-data" title="Permalink to this headline">#</a></h2>
-<p>Once you have a pin board, you can write data to it with <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code>:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pins.data</span> <span class="kn">import</span> <span class="n">mtcars</span>
+<div class="section" id="reading-and-writing-data">
+<h2>Reading and writing data<a class="headerlink" href="#reading-and-writing-data" title="Permalink to this headline">¶</a></h2>
+<p>Once you have a pin board, you can write data to it with <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pins.data</span> <span class="kn">import</span> <span class="n">mtcars</span>
 
 <span class="n">meta</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">pin_write</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span> <span class="s2">&quot;mtcars&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>The first argument is the object to save (usually a data frame, but it can be any R object), and the second argument gives the “name” of the pin. The name is basically equivalent to a file name: you’ll use it when you later want to read the data from the pin. The only rule for a pin name is that it can’t contain slashes.</p>
-<p>As you can see from the output, pins has chosen to save this data to an <code class="docutils literal notranslate"><span class="pre">.rds</span></code> file. But you can choose another option depending on your goals:</p>
+</div>
+<p>The first argument is the object to save (usually a data frame, but it can be any R object), and the second argument gives the “name” of the pin.
+The name is basically equivalent to a file name: you’ll use it when you later want to read the data from the pin.
+The only rule for a pin name is that it can’t contain slashes.</p>
+<p>As you can see from the output, pins has chosen to save this data to an <code class="docutils literal notranslate"><span class="pre">.rds</span></code> file.
+But you can choose another option depending on your goals:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;csv&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">write.csv()</span></code> to create a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file. CSVs can read by any application, but only support simple columns (e.g. numbers, strings, dates), can take up a lot of disk space, and can be slow to read.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;csv&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">write.csv()</span></code> to create a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file. CSVs can read by any application, but only support simple columns (e.g. numbers, strings, dates), can take up a lot of disk space, and can be slow to read.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;joblib&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">joblib.dump()</span></code> to create a binary python data file. See the <a class="reference external" href="https://joblib.readthedocs.io/en/latest/">joblib docs</a> for more information.</p></li>
 </ul>
 <p>🚧 Data formats TODO 🚧</p>
@@ -499,20 +516,14 @@ div.rendered_html tbody tr:hover {
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;json&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">jsonlite::write_json()</span></code> to create a <code class="docutils literal notranslate"><span class="pre">.json</span></code> file. Pretty much every programming language can read json files, but they only work well for nested lists.</p></li>
 </ul>
 <p>After you’ve pinned an object, you can read it back with <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code>:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
-</pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -701,30 +712,28 @@ div.rendered_html tbody tr:hover {
   </tbody>
 </table>
 <p>32 rows × 11 columns</p>
-</div></div>
+</div></div></div>
 </div>
 <p>You don’t need to supply the file type when reading data from a pin because pins automatically stores the file type in the metadata, the topic of the next section.</p>
-<p>Note that when the data lives elsewhere, pins takes care of downloading and caching so that it’s only re-downloaded when needed. That said, most boards transmit pins over HTTP, and this is going to be slow and possibly unreliable for very large pins. As a general rule of thumb, we don’t recommend using pins with files over 500 MB. If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.</p>
-</section>
-<section id="Metadata">
-<h2>Metadata<a class="headerlink" href="#Metadata" title="Permalink to this headline">#</a></h2>
+<p>Note that when the data lives elsewhere, pins takes care of downloading and caching so that it’s only re-downloaded when needed.
+That said, most boards transmit pins over HTTP, and this is going to be slow and possibly unreliable for very large pins.
+As a general rule of thumb, we don’t recommend using pins with files over 500 MB.
+If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.</p>
+</div>
+<div class="section" id="metadata">
+<h2>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h2>
 <p>Every pin is accompanied by some metadata that you can access with pin_meta():</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_meta</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_meta</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220413T213321Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 13, 21, 33, 21), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220413T165311Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 13, 16, 53, 11), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
-</pre></div></div>
 </div>
 <p>This shows you the metadata that’s generated by default. This includes:</p>
 <ul class="simple">
@@ -735,11 +744,9 @@ Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, creat
 <li><p>a unique <code class="docutils literal notranslate"><span class="pre">pin_hash</span></code> that you can supply to <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> to ensure that you’re reading exactly the data that you expect.</p></li>
 </ul>
 <p>When creating the pin, you can override the default description or provide additional metadata that is stored with the data:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_write</span><span class="p">(</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_write</span><span class="p">(</span>
     <span class="n">mtcars</span><span class="p">,</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mtcars2&quot;</span><span class="p">,</span>
     <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span>
@@ -751,43 +758,36 @@ Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, creat
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20220413T165311Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 13, 16, 53, 11, 461606), hash=&#39;3b134bae183b50c9&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;})
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_meta</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20220413T213321Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 13, 21, 33, 21, 259168), hash=&#39;3b134bae183b50c9&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;})
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_meta</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220413T165311Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 13, 16, 53, 11), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
-</pre></div></div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220413T213321Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 4, 13, 21, 33, 21), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
+</pre></div>
+</div>
+</div>
 </div>
 <p>While we’ll do our best to keep the automatically generated metadata consistent over time, I’d recommend manually capturing anything you really care about in metadata.</p>
-</section>
-<section id="🚧-Versioning">
-<h2>🚧 Versioning<a class="headerlink" href="#🚧-Versioning" title="Permalink to this headline">#</a></h2>
+</div>
+<div class="section" id="versioning">
+<h2>🚧 Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and <strong>pickle files are not secure</strong>. Only read pickle files you trust. In order to read pickle files, set the <code class="docutils literal notranslate"><span class="pre">allow_pickle_read=True</span></code> argument. See: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">https://docs.python.org/3/library/pickle.html</a>.</p>
 </div></blockquote>
 <blockquote>
 <div><p>⚠️: versioning is not yet implemented. These docs are copied from R pins.</p>
 </div></blockquote>
-<p>In many situations it’s useful to version pins, so that writing to an existing pin does not replace the existing data, but instead adds a new copy. There are two ways to turn versioning on:</p>
+<p>In many situations it’s useful to version pins, so that writing to an existing pin does not replace the existing data, but instead adds a new copy.
+There are two ways to turn versioning on:</p>
 <ul>
 <li><p>When you create a board you can turn versioning on for every pin in that board:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">(</span><span class="n">versioned</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
@@ -801,13 +801,12 @@ Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, creat
 </div>
 </li>
 </ul>
-<p>Most boards have versioning on by default. The primary exception is <code class="docutils literal notranslate"><span class="pre">board_folder()</span></code> since that stores data on your computer, and there’s no automated way to clean up the data your saving.</p>
+<p>Most boards have versioning on by default.
+The primary exception is <code class="docutils literal notranslate"><span class="pre">board_folder()</span></code> since that stores data on your computer, and there’s no automated way to clean up the data your saving.</p>
 <p>Once you have turned versioning on, every <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> will create a new version:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">(</span><span class="n">versioned</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">allow_pickle_read</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">(</span><span class="n">versioned</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">allow_pickle_read</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;joblib&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;TODO&quot;</span><span class="p">)</span>
 <span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;joblib&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;TODO&quot;</span><span class="p">)</span>
@@ -816,12 +815,8 @@ Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, creat
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -847,171 +842,146 @@ Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, creat
   <tbody>
     <tr>
       <th>0</th>
-      <td>2022-04-13 16:53:11</td>
+      <td>2022-04-13 21:33:21</td>
       <td>331fd</td>
-      <td>20220413T165311Z-331fd</td>
+      <td>20220413T213321Z-331fd</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2022-04-13 16:53:11</td>
+      <td>2022-04-13 21:33:21</td>
       <td>40b4b</td>
-      <td>20220413T165311Z-40b4b</td>
+      <td>20220413T213321Z-40b4b</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2022-04-13 16:53:11</td>
+      <td>2022-04-13 21:33:21</td>
       <td>91544</td>
-      <td>20220413T165311Z-91544</td>
+      <td>20220413T213321Z-91544</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div></div></div>
 </div>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> will return the most recent version:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 2, 3, 4, 5]
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[1, 2, 3, 4, 5]
-</pre></div></div>
 </div>
 <p>But you can request an older version by supplying the <code class="docutils literal notranslate"><span class="pre">version</span></code> argument:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="n">board2</span><span class="o">.</span><span class="n">pin_versions</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="n">board2</span><span class="o">.</span><span class="n">pin_versions</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">board2</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">version</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 2]
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[1, 2]
-</pre></div></div>
 </div>
-</section>
-<section id="🚧-Reading-and-writing-files">
-<h2>🚧 Reading and writing files<a class="headerlink" href="#🚧-Reading-and-writing-files" title="Permalink to this headline">#</a></h2>
-<p>So far we’ve focussed on <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> which work with R objects. pins also provides the lower-level <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> which work with files on disk. You can use them to share types of data that are otherwise unsupported by pins.</p>
-<p><code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> works like <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> but instead of an R object you give it a vector of paths. I’ll start by creating a few files in the temp directory:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># paths = file.path(tempdir(), c(&quot;mtcars.csv&quot;, &quot;alphabet.txt&quot;))</span>
+</div>
+<div class="section" id="reading-and-writing-files">
+<h2>🚧 Reading and writing files<a class="headerlink" href="#reading-and-writing-files" title="Permalink to this headline">¶</a></h2>
+<p>So far we’ve focussed on <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> which work with R objects.
+pins also provides the lower-level <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> which work with files on disk.
+You can use them to share types of data that are otherwise unsupported by pins.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> works like <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> but instead of an R object you give it a vector of paths.
+I’ll start by creating a few files in the temp directory:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># paths = file.path(tempdir(), c(&quot;mtcars.csv&quot;, &quot;alphabet.txt&quot;))</span>
 <span class="c1"># write.csv(mtcars, paths[[1]])</span>
 <span class="c1"># writeLines(letters, paths[[2]])</span>
 </pre></div>
 </div>
 </div>
+</div>
 <p>Now I can upload those to the board:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_upload(paths, &quot;example&quot;)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_upload(paths, &quot;example&quot;)</span>
-</pre></div>
 </div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> returns a vector of paths:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_download(&quot;example&quot;)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_download(&quot;example&quot;)</span>
-</pre></div>
 </div>
 </div>
 <p>You should treat these paths as internal implementation details — never modify them and never save them for use outside of pins.</p>
 <p>Note that you can’t <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> something you pinned with <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code>:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_read(&quot;example&quot;)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_read(&quot;example&quot;)</span>
-</pre></div>
 </div>
 </div>
 <p>But you can <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> something that you’ve pinned with <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code>:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_download(&quot;mtcars&quot;)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_download(&quot;mtcars&quot;)</span>
-</pre></div>
 </div>
 </div>
-</section>
-<section id="Caching">
-<h2>Caching<a class="headerlink" href="#Caching" title="Permalink to this headline">#</a></h2>
-<p>The primary purpose of pins is to make it easy to share data. But pins is also designed to help you spend as little time as possible downloading data. <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> automatically cache remote pins: they maintain a local copy of the data (so it’s fast) but always check that it’s up-to-date (so your analysis doesn’t use stale data).</p>
-<p>Wouldn’t it be nice if you could take advantage of this feature for any dataset on the internet? That’s the idea behind <code class="docutils literal notranslate"><span class="pre">board_url()</span></code> — you can assemble your own board from datasets, wherever they live on the internet. For example, this code creates a board containing a single pin, <code class="docutils literal notranslate"><span class="pre">penguins</span></code>, that refers to some fun data I found on GitHub:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_data</span> <span class="o">=</span> <span class="n">board_urls</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
+<div class="section" id="caching">
+<h2>Caching<a class="headerlink" href="#caching" title="Permalink to this headline">¶</a></h2>
+<p>The primary purpose of pins is to make it easy to share data.
+But pins is also designed to help you spend as little time as possible downloading data.
+<code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> automatically cache remote pins: they maintain a local copy of the data (so it’s fast) but always check that it’s up-to-date (so your analysis doesn’t use stale data).</p>
+<p>Wouldn’t it be nice if you could take advantage of this feature for any dataset on the internet?
+That’s the idea behind <code class="docutils literal notranslate"><span class="pre">board_url()</span></code> — you can assemble your own board from datasets, wherever they live on the internet.
+For example, this code creates a board containing a single pin, <code class="docutils literal notranslate"><span class="pre">penguins</span></code>, that refers to some fun data I found on GitHub:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_data</span> <span class="o">=</span> <span class="n">board_urls</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
   <span class="s2">&quot;penguins&quot;</span><span class="p">:</span> <span class="s2">&quot;https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins_raw.csv&quot;</span>
 <span class="p">})</span>
 </pre></div>
 </div>
 </div>
-<p>You can read this data by combining <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> with <code class="docutils literal notranslate"><span class="pre">read.csv()</span></code> <a class="footnote-reference brackets" href="#id3" id="id2">1</a>:</p>
-<dl class="footnote brackets">
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p>Here I’m using <code class="docutils literal notranslate"><span class="pre">read.csv()</span></code> to the reduce the dependencies of the pins package. For real code I’d recommend using <code class="docutils literal notranslate"><span class="pre">data.table::fread()</span></code> or <code class="docutils literal notranslate"><span class="pre">readr::read_csv().</span></code></p>
-</dd>
-</dl>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname</span> <span class="o">=</span> <span class="n">my_data</span><span class="o">.</span><span class="n">pin_download</span><span class="p">(</span><span class="s2">&quot;penguins&quot;</span><span class="p">)</span>
+<p>You can read this data by combining <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> with <code class="docutils literal notranslate"><span class="pre">read.csv()</span></code><a class="footnote-reference brackets" href="#id3" id="id2">1</a>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname</span> <span class="o">=</span> <span class="n">my_data</span><span class="o">.</span><span class="n">pin_download</span><span class="p">(</span><span class="s2">&quot;penguins&quot;</span><span class="p">)</span>
 
 <span class="n">fname</span>
-<br/></pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[&#39;/home/runner/.cache/pins-py/http_e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e/v/penguins_raw.csv&#39;]
-</pre></div></div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/home/runner/.cache/pins-py/http_e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e/v/penguins_raw.csv&#39;]
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -1151,74 +1121,88 @@ Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, creat
     </tr>
   </tbody>
 </table>
-</div></div>
+</div></div></div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_data</span><span class="o">.</span><span class="n">pin_download</span><span class="p">(</span><span class="s2">&quot;penguins&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_data</span><span class="o">.</span><span class="n">pin_download</span><span class="p">(</span><span class="s2">&quot;penguins&quot;</span><span class="p">)</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/home/runner/.cache/pins-py/http_e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e/v/penguins_raw.csv&#39;]
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[&#39;/home/runner/.cache/pins-py/http_e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e/v/penguins_raw.csv&#39;]
-</pre></div></div>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>Here I’m using <code class="docutils literal notranslate"><span class="pre">read.csv()</span></code> to the reduce the dependencies of the pins package.
+For real code I’d recommend using <code class="docutils literal notranslate"><span class="pre">data.table::fread()</span></code> or <code class="docutils literal notranslate"><span class="pre">readr::read_csv().</span></code></p>
+</dd>
+</dl>
 </div>
-</section>
-</section>
+</div>
 
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "venv-pins-python",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'venv-pins-python'</script>
 
               </div>
               
-              
-              <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="intro.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Welcome to pins’s documentation!</p>
+            <p class="prev-next-title">Welcome</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="user_guide/index.html" title="next page">
+    <a class='right-next' id="next-link" href="api/index.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">User Guide</p>
+        <p class="prev-next-title">Reference</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-              
-          </main>
-          
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By RStudio Inc.<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
+</main>
+
 
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2022, RStudio.<br>
-</p>
-    </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
-</p>
-    </div>
-    
-  </div>
-</footer>
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
   </body>
 </html>

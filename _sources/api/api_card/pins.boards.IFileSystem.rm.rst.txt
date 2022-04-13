@@ -1,6 +1,0 @@
-﻿pins.boards.IFileSystem.rm
-==========================
-
-.. currentmodule:: pins.boards
-
-.. automethod:: IFileSystem.rm

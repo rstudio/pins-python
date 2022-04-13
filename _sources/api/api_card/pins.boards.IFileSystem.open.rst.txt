@@ -1,6 +1,0 @@
-﻿pins.boards.IFileSystem.open
-============================
-
-.. currentmodule:: pins.boards
-
-.. automethod:: IFileSystem.open

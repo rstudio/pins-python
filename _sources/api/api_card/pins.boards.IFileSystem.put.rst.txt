@@ -1,6 +1,0 @@
-﻿pins.boards.IFileSystem.put
-===========================
-
-.. currentmodule:: pins.boards
-
-.. automethod:: IFileSystem.put

@@ -24,10 +24,7 @@ test:
 	pytest
 
 docs-build:
-	cd docs && sphinx-build . ./_build/html $(SPHINX_BUILDARGS)
-
-docs-watch:
-	cd docs && sphinx-autobuild . ./_build/html $(SPHINX_BUILDARGS)
+	jb build --builder html docs
 
 docs-clean:
 	rm -rf docs/_build docs/api/api_card

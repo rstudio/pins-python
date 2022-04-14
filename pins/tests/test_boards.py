@@ -31,6 +31,16 @@ def board(backend):
     backend.teardown()
 
 
+# misc ========================================================================
+
+
+def test_board_validate_pin_name_root(board):
+    with pytest.raises(ValueError) as exc_info:
+        board.path_to_pin("/some_pin")
+
+    assert "Invalid pin name" in exc_info.value.args[0]
+
+
 # pin_write ===================================================================
 
 

@@ -14,8 +14,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      python: ["3.7", "3.8", "3.9", "3.10"]
       matrix:
+        python: ["3.7", "3.8", "3.9", "3.10"]
         include:
           - os: "macos-latest"
             # ignore doctests, as they involve calls to github, and all mac machines

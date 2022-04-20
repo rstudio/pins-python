@@ -770,7 +770,7 @@ class BoardRsConnect(BaseBoard):
         super().pin_versions_prune(*args, **kwargs)
 
     def validate_pin_name(self, name) -> None:
-        if name.count("/") > 1:
+        if name.count("/") > 1 or name.lstrip().startswith("/"):
             raise ValueError(f"Invalid pin name: {name}")
 
     def sort_pin_versions(self, versions) -> Sequence[VersionRaw]:

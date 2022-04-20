@@ -1,7 +1,7 @@
 # flake8: noqa
 
 # Set version ----
-from importlib.metadata import version as _v
+from importlib_metadata import version as _v
 
 __version__ = _v("pins")
 

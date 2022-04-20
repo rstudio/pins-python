@@ -15,23 +15,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        python: ["3.7", "3.8", "3.9", "3.10"]
+        os: ["ubuntu-latest"]
+        pytest_ops: [""]
         include:
           - os: "macos-latest"
+            python: "3.10"
             # ignore doctests, as they involve calls to github, and all mac machines
             # use the same IP address
             pytest_opts: "-k pins/tests"
-          - os: "ubuntu-latest"
-            pytest_opts:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements/dev.txt
-          python -m pip install -e .
+          python -m pip install -e .[test]
       - name: Run tests
         run: |
           pytest pins -m 'not fs_rsc and not skip_on_github' $PYTEST_OPTS

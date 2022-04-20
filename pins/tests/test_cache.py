@@ -1,5 +1,4 @@
 import time
-import shutil
 
 import pytest
 from pins.cache import (
@@ -72,7 +71,7 @@ def test_pins_cache_open():
 
 @pytest.fixture
 def a_cache(tmp_dir2):
-    return tmp_dir2
+    return tmp_dir2 / "board_cache"
 
 
 def create_metadata(p, access_time):
@@ -141,12 +140,10 @@ def test_cache_pruner_old_versions_multi_pins(a_cache, pin1_v2, pin2_v3):
     assert set(old) == {pin1_v2, pin2_v3}
 
 
-def test_cache_prune_prompt(tmp_dir2, a_cache, pin1_v1, pin2_v3, monkeypatch):
-    p_board = tmp_dir2 / "a_board"
-    shutil.copytree(a_cache, p_board)
-    cache_prune(days=1, cache_root=tmp_dir2, prompt=False)
+def test_cache_prune_prompt(a_cache, pin1_v1, pin2_v3, monkeypatch):
+    cache_prune(days=1, cache_root=a_cache.parent, prompt=False)
 
-    versions = list(p_board.glob("*/*"))
+    versions = list(a_cache.glob("*/*"))
 
     # pin2_v3 deleted
     assert len(versions) == 1

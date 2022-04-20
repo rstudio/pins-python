@@ -16,13 +16,14 @@ jobs:
       fail-fast: false
       matrix:
         python: ["3.7", "3.8", "3.9", "3.10"]
+        os: ["ubuntu-latest"]
+        pytest_ops: [""]
         include:
           - os: "macos-latest"
+            python: "3.10"
             # ignore doctests, as they involve calls to github, and all mac machines
             # use the same IP address
             pytest_opts: "-k pins/tests"
-          - os: "ubuntu-latest"
-            pytest_opts:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2

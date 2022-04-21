@@ -11,6 +11,8 @@ from pathlib import Path
 
 from .config import get_cache_dir
 
+_log = logging.getLogger(__name__)
+
 
 # used if needed to preserve board path structure in the cache
 PLACEHOLDER_VERSION = "v"
@@ -65,7 +67,7 @@ class PinsCache(SimpleCacheFileSystem):
         # note that this is called in ._open(), at the point it's known the file
         # will be cached
         fn = super()._make_local_details(path)
-        logging.info(f"cache file: {fn}")
+        _log.info(f"cache file: {fn}")
         Path(fn).parent.mkdir(parents=True, exist_ok=True)
 
         return fn
@@ -200,7 +202,7 @@ class CachePruner:
             for path in to_prune:
                 delete_version(to_prune)
 
-        logging.info("Skipping cache deletion")
+        _log.info("Skipping cache deletion")
 
 
 def delete_version(path: "str | Path"):
@@ -213,7 +215,7 @@ def disk_usage(path):
 
 
 def prompt_cache_prune(to_prune, size) -> bool:
-    logging.info(f"Pruning items: {to_prune}")
+    _log.info(f"Pruning items: {to_prune}")
     human_size = humanize.naturalsize(size, binary=True)
     resp = input(f"Delete {len(to_prune)} pin versions, freeing {human_size}?")
     return resp == "yes"

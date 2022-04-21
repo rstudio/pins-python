@@ -10,7 +10,7 @@ del _v
 
 # Imports ----
 from .boards import BaseBoard
-from .cache import PinsCache, PinsUrlCache, cache_prune
+from .cache import PinsCache, PinsUrlCache, cache_prune, cache_info
 from .constructors import (
     board_deparse,
     board_folder,

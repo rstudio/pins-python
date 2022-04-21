@@ -15,6 +15,10 @@ from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
+from .utils import inform
+
+
+_log = logging.getLogger(__name__)
 
 
 # Note that once we drop python 3.7, we can make this a Protocol
@@ -292,6 +296,8 @@ class BaseBoard:
                     "but that directory already exists."
                 )
 
+            inform(_log, f"Writing to pin {repr(pin_name)}")
+
             res = self.fs.put(tmp_dir, dst_version_path, recursive=True)
 
         if dst_version_path == dst_pin_path:
@@ -391,9 +397,9 @@ class BaseBoard:
         # TODO(question): how to pin_inform? Log or warning?
         if to_delete:
             str_vers = ", ".join([v.version for v in to_delete])
-            logging.info(f"Deleting versions: {str_vers}.")
+            inform(_log, f"Deleting versions: {str_vers}.")
         if not to_delete:
-            logging.info("No old versions to delete")
+            inform(_log, "No old versions to delete")
 
         for version in to_delete:
             self.pin_version_delete(name, version.version)

@@ -1,10 +1,14 @@
 import appdirs
 import os
 
+from types import SimpleNamespace
+
 PINS_NAME = "pins-py"
 PINS_ENV_DATA_DIR = "PINS_DATA_DIR"
 PINS_ENV_CACHE_DIR = "PINS_CACHE_DIR"
 PINS_ENV_INSECURE_READ = "PINS_ALLOW_PICKLE_READ"
+
+pins_options = SimpleNamespace(quiet=False)
 
 
 def get_data_dir():
@@ -29,12 +33,3 @@ def get_allow_pickle_read(flag):
         flag = bool(env_int)
 
     return flag
-
-
-def _enable_logs():
-    import logging
-
-    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    handlers = [logging.FileHandler("filename.log"), logging.StreamHandler()]
-
-    logging.basicConfig(level=logging.INFO, format=format, handlers=handlers)

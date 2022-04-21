@@ -16,6 +16,7 @@ from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
 from .utils import inform
+from .config import get_allow_rsc_short_name
 
 
 _log = logging.getLogger(__name__)
@@ -776,6 +777,16 @@ class BoardRsConnect(BaseBoard):
         super().pin_versions_prune(*args, **kwargs)
 
     def validate_pin_name(self, name) -> None:
+        # this should be the default behavior, expecting a full pin name.
+        # but because the tests use short names, we allow it to be disabled via config
+        if not get_allow_rsc_short_name() and name.count("/") != 1:
+            raise ValueError(
+                f"Invalid pin name: {name}"
+                "\nRStudio Connect pin names must include user name. E.g. "
+                "\nsome_user/mtcars, for the user some_user."
+            )
+
+        # less strict test, that allows no slash: e.g. "mtcars"
         if name.count("/") > 1 or name.lstrip().startswith("/"):
             raise ValueError(f"Invalid pin name: {name}")
 

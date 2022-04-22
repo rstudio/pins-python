@@ -16,7 +16,7 @@ from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
 from .utils import inform
-from .config import get_allow_rsc_short_name
+from .config import get_allow_rsc_short_name, get_feature_preview
 
 
 _log = logging.getLogger(__name__)
@@ -622,6 +622,15 @@ class BoardManual(BaseBoard):
         super().__init__(*args, **kwargs)
 
         self.pin_paths = pin_paths
+
+    def pin_read(self, *args, **kwargs):
+        if not get_feature_preview():
+            raise NotImplementedError(
+                "pin_read with BoardManual is currently unimplemented. "
+                "See https://github.com/machow/pins-python/issues/59."
+            )
+
+        return super().pin_read(*args, **kwargs)
 
     def pin_list(self):
         return list(self.pin_paths)

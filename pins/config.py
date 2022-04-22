@@ -8,6 +8,7 @@ PINS_ENV_DATA_DIR = "PINS_DATA_DIR"
 PINS_ENV_CACHE_DIR = "PINS_CACHE_DIR"
 PINS_ENV_INSECURE_READ = "PINS_ALLOW_PICKLE_READ"
 PINS_ENV_ALLOW_RSC_SHORT_NAME = "PINS_ALLOW_RSC_SHORT_NAME"
+PINS_ENV_FEATURE_PREVIEW = "PINS_FEATURE_PREVIEW"
 
 pins_options = SimpleNamespace(quiet=False)
 
@@ -42,3 +43,7 @@ def get_allow_pickle_read(flag):
 
 def get_allow_rsc_short_name():
     return _interpret_int(PINS_ENV_ALLOW_RSC_SHORT_NAME)
+
+
+def get_feature_preview():
+    return _interpret_int(PINS_ENV_FEATURE_PREVIEW)

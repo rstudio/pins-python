@@ -667,7 +667,9 @@ class BoardManual(BaseBoard):
                 meta, self.fs, None, allow_pickle_read=self.allow_pickle_read
             )
 
-        raise NotImplementedError("TODO: allow download beyond MetaRaw.")
+        raise NotImplementedError(
+            "TODO: pin_download currently can only read a url to a single file."
+        )
 
     def construct_path(self, elements):
         # TODO: in practice every call to construct_path has the first element of

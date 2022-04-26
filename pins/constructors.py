@@ -117,15 +117,23 @@ def board(
     # wrap fs in cache ----
 
     if cache is DEFAULT:
-        cache_dir = get_cache_dir()
+        base_cache_dir = get_cache_dir()
 
         # manually create a subdirectory for rsc server
         if protocol == "rsc":
+            # ensures each server_url is its own cache directory
             hash_prefix = storage_options["server_url"]
+            board_cache = prefix_cache(fs, hash_prefix)
+            cache_dir = os.path.join(base_cache_dir, board_cache)
+
             fs = PinsRscCache(
                 cache_storage=cache_dir, fs=fs, hash_prefix=hash_prefix, same_names=True
             )
         else:
+            # ensures each subdir path is its own cache directory
+            board_cache = prefix_cache(fs, path)
+            cache_dir = os.path.join(base_cache_dir, board_cache)
+
             fs = PinsCache(
                 cache_storage=cache_dir, fs=fs, hash_prefix=path, same_names=True
             )
@@ -138,10 +146,10 @@ def board(
 
     pickle_kwargs = {"allow_pickle_read": allow_pickle_read}
     # TODO: should use a registry or something
-    if protocol == "rsc" and board_factory is None:
-        board = BoardRsConnect(path, fs, versioned, **pickle_kwargs)
-    elif board_factory is not None:
+    if board_factory is not None:
         board = board_factory(path, fs, versioned, **pickle_kwargs)
+    elif protocol == "rsc":
+        board = BoardRsConnect(path, fs, versioned, **pickle_kwargs)
     else:
         board = BaseBoard(path, fs, versioned, **pickle_kwargs)
     return board

@@ -90,15 +90,8 @@ class PinsCache(SimpleCacheFileSystem):
             if self.hash_prefix is not None:
                 # optionally make the name relative to a parent path
                 # using the hash of parent path as a prefix, to flatten a bit
-                suffix = Path(path).relative_to(Path(self.hash_prefix))
-                # TODO(compat): R pins uses xxh128 hash here, but fsspec uses sha256
-                prefix = hash_name(self.hash_prefix, False)
-
-                # TODO: hacky to automatically tack on protocol here
-                # but this is what R pins boards do. Could make a bool arg?
-                proto_name = protocol_to_string(self.fs.protocol)
-                full_prefix = "_".join([proto_name, prefix])
-                return str(full_prefix / suffix)
+                hash = Path(path).relative_to(Path(self.hash_prefix))
+                return hash
 
             return path
         else:
@@ -122,14 +115,8 @@ class PinsRscCache(PinsCache):
                 raise NotImplementedError()
 
             # change pin path of form <user>/<content> to <user>+<content>
-            suffix = path.replace("/", "+", 1)
-            prefix = hash_name(self.hash_prefix, False)
-
-            # TODO: hacky to automatically tack on protocol here
-            # but this is what R pins boards do. Could make a bool arg?
-            proto_name = protocol_to_string(self.fs.protocol)
-            full_prefix = "_".join([proto_name, prefix])
-            return str(full_prefix / Path(suffix))
+            hash = path.replace("/", "+", 1)
+            return hash
 
         else:
             raise NotImplementedError()

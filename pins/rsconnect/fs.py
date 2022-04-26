@@ -18,6 +18,17 @@ from .api import (
     RSC_CODE_OBJECT_DOES_NOT_EXIST,
 )
 
+# Misc ----
+
+
+def _not_impl_args_kwargs(args, kwargs):
+    return NotImplementedError(
+        "Additional args and kwargs not supported." f"\nArgs: {args}\nKwargs: {kwargs}"
+    )
+
+
+# Bundles ----
+
 
 @dataclass
 class PinBundleManifestMetadata:
@@ -148,6 +159,7 @@ class RsConnectFs(AbstractFileSystem):
         rpath,
         recursive=False,
         *args,
+        access_type="acl",
         deploy=True,
         cls_manifest=PinBundleManifest,
         **kwargs,
@@ -160,6 +172,8 @@ class RsConnectFs(AbstractFileSystem):
             A path to the local bundle directory.
         rpath: str
             A path to the content where the bundle is being put.
+        access_type:
+            Who can use and view this content? Must be one of all, logged_in or acl.
         cls_manifest:
             If maniest does not exist, a class with an .add_manifest_to_directory()
             method.
@@ -167,6 +181,9 @@ class RsConnectFs(AbstractFileSystem):
         """
 
         parsed = self.parse_path(rpath)
+
+        if len(args) or len(kwargs):
+            raise _not_impl_args_kwargs(args, kwargs)
 
         if recursive is False:
             raise NotImplementedError(
@@ -185,7 +202,7 @@ class RsConnectFs(AbstractFileSystem):
             # TODO: this could be seen as analogous to mkdir (which gets
             # called by pins anyway)
             # TODO: hard-coded acl bad?
-            content = self.api.post_content_item(parsed.content, "acl")
+            content = self.api.post_content_item(parsed.content, access_type)
 
         # Create bundle (with manifest.json inserted if missing) ----
 
@@ -265,8 +282,13 @@ class RsConnectFs(AbstractFileSystem):
         except RsConnectApiMissingContentError:
             return False
 
-    def mkdir(self, path, create_parents=True, **kwargs) -> None:
+    def mkdir(
+        self, path, create_parents=True, *args, access_type="acl", **kwargs
+    ) -> None:
         parsed = self.parse_path(path)
+
+        if len(args) or len(kwargs):
+            raise _not_impl_args_kwargs(args, kwargs)
 
         if not isinstance(parsed, ContentPath):
             raise ValueError(f"Requires path to content, but received: {path}")
@@ -275,8 +297,7 @@ class RsConnectFs(AbstractFileSystem):
             raise FileExistsError(path)
 
         # TODO: could implement and call makedirs, but seems overkill
-        # TODO: hard-coded "acl"?
-        self.api.post_content_item(parsed.content, "acl", **kwargs)
+        self.api.post_content_item(parsed.content, access_type, **kwargs)
 
     def info(self, path, **kwargs) -> "User | Content | Bundle":
         # TODO: source of fsspec info uses self._parent to check cache?

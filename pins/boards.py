@@ -16,6 +16,7 @@ from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
 from .utils import inform
+from .config import get_allow_rsc_short_name
 
 
 _log = logging.getLogger(__name__)
@@ -154,11 +155,9 @@ class BaseBoard:
         meta_name = self.meta_factory.get_meta_name(*components)
 
         path_meta = self.construct_path([*components, meta_name])
-        f = self.fs.open(path_meta)
+        f = self._open_pin_meta(path_meta)
 
         meta = self.meta_factory.read_pin_yaml(f, pin_name, selected_version)
-
-        self._touch_cache(path_meta)
 
         return meta
 
@@ -212,11 +211,8 @@ class BaseBoard:
 
         pin_name = self.path_to_pin(name)
 
-        return load_data(
-            meta,
-            self.fs,
-            self.construct_path([pin_name, meta.version.version]),
-            allow_pickle_read=self.allow_pickle_read,
+        return self._load_data(
+            meta, self.construct_path([pin_name, meta.version.version])
         )
 
     def pin_write(
@@ -492,7 +488,13 @@ class BaseBoard:
 
         raise NotImplementedError()
 
+    # pin name internal methods -----------------------------------------------
+    # these methods are responsible for validating pin names, and converting
+    # names to their ultimate path on the file system.
+
     def validate_pin_name(self, name: str) -> None:
+        """Raise an error if a pin name is not valid."""
+
         if "/" in name:
             raise ValueError(f"Invalid pin name: {name}")
 
@@ -510,6 +512,8 @@ class BaseBoard:
 
     def keep_final_path_component(self, path):
         return path.split("/")[-1]
+
+    # version ordering, creation ----------------------------------------------
 
     def sort_pin_versions(self, versions):
         # assume filesystem returned them with most recent last
@@ -573,10 +577,29 @@ class BaseBoard:
         d["meta"] = meta
         return d
 
-    def _get_cache_path(self, pin_name, version):
-        p_version = self.construct_path([self.path_to_pin(pin_name), version])
-        hash = self.fs.hash_name(p_version, True)
-        return str(Path(self.fs.storage[-1]) / hash)
+    # data loading ------------------------------------------------------------
+
+    def _load_data(self, meta, pin_version_path):
+        """Return the data object stored by a pin (e.g. a DataFrame)."""
+        return load_data(
+            meta, self.fs, pin_version_path, allow_pickle_read=self.allow_pickle_read
+        )
+
+    # filesystem and cache methods --------------------------------------------
+
+    def _open_pin_meta(self, path):
+        f = self.fs.open(path)
+        self._touch_cache(path)
+
+        return f
+
+    def _get_cache_path(self, pin_name, version=None, fname=None):
+        version_part = [version] if version is not None else []
+        fname_part = [fname] if fname is not None else []
+        p_version = self.construct_path(
+            [self.path_to_pin(pin_name), *version_part, *fname_part]
+        )
+        return self.fs._check_file(p_version)
 
     def _touch_cache(self, path):
         from pins.cache import touch_access_time
@@ -586,8 +609,7 @@ class BaseBoard:
         if not hasattr(self.fs, "cached_files"):
             return
 
-        hash = self.fs.hash_name(path, True)
-        path_to_hashed = Path(self.fs.storage[-1]) / hash
+        path_to_hashed = self.fs._check_file(path)
         return touch_access_time(path_to_hashed)
 
 
@@ -610,9 +632,6 @@ class BoardManual(BaseBoard):
     0  1  a  3
     1  2  b  4
 
-
-
-
     """
 
     # TODO(question): is this class worth it? Or should the user just use fsspec?
@@ -621,6 +640,15 @@ class BoardManual(BaseBoard):
         super().__init__(*args, **kwargs)
 
         self.pin_paths = pin_paths
+
+    # def pin_read(self, *args, **kwargs):
+    #    if not get_feature_preview():
+    #        raise NotImplementedError(
+    #            "pin_read with BoardManual is currently unimplemented. "
+    #            "See https://github.com/machow/pins-python/issues/59."
+    #        )
+
+    #    return super().pin_read(*args, **kwargs)
 
     def pin_list(self):
         return list(self.pin_paths)
@@ -644,8 +672,11 @@ class BoardManual(BaseBoard):
             return self.meta_factory.create_raw(path_to_pin, type="file", name=pin_name)
 
         path_meta = self.construct_path([pin_name, meta_name])
-        f = self.fs.open(path_meta)
+        f = self._open_pin_meta(path_meta)
         meta = self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""))
+
+        # TODO(#59,#83): handle caching, and then re-enable pin_read.
+        # self._touch_cache(path_meta)
 
         return meta
 
@@ -653,11 +684,12 @@ class BoardManual(BaseBoard):
         meta = self.pin_meta(name, version)
 
         if isinstance(meta, MetaRaw):
-            return load_data(
-                meta, self.fs, None, allow_pickle_read=self.allow_pickle_read
-            )
 
-        raise NotImplementedError("TODO: allow download beyond MetaRaw.")
+            return self._load_data(meta, None)
+
+        raise NotImplementedError(
+            "TODO: pin_download currently can only read a url to a single file."
+        )
 
     def construct_path(self, elements):
         # TODO: in practice every call to construct_path has the first element of
@@ -673,6 +705,11 @@ class BoardManual(BaseBoard):
             # something is a pin version, rather than a single file. but since other
             # boards forbid a final /, we need to strip it off to join elements
             pin_path = pin_path.rstrip().rstrip("/")
+
+            # this is a bit hacky, but this board only aims at specific pins versions,
+            # so the metadata has the version as "", so we need to remove it.
+            if others[0] == "":
+                return super().construct_path([pin_path, *others[1:]])
 
         return super().construct_path([pin_path, *others])
 
@@ -776,6 +813,16 @@ class BoardRsConnect(BaseBoard):
         super().pin_versions_prune(*args, **kwargs)
 
     def validate_pin_name(self, name) -> None:
+        # this should be the default behavior, expecting a full pin name.
+        # but because the tests use short names, we allow it to be disabled via config
+        if not get_allow_rsc_short_name() and name.count("/") != 1:
+            raise ValueError(
+                f"Invalid pin name: {name}"
+                "\nRStudio Connect pin names must include user name. E.g. "
+                "\nsome_user/mtcars, for the user some_user."
+            )
+
+        # less strict test, that allows no slash: e.g. "mtcars"
         if name.count("/") > 1 or name.lstrip().startswith("/"):
             raise ValueError(f"Invalid pin name: {name}")
 

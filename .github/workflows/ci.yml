@@ -8,6 +8,10 @@ on:
   release:
     types: [published]
 
+env:
+  PINS_ALLOW_RSC_SHORT_NAME: 1
+  PINS_FEATURE_PREVIEW: 1
+
 jobs:
   tests:
     name: "Tests"

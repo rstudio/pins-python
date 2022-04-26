@@ -47,6 +47,16 @@ def protocol_to_string(protocol):
     return protocol[0]
 
 
+def prefix_cache(fs, board_base_path):
+    if isinstance(fs, str):
+        proto_name = fs
+    else:
+        proto_name = protocol_to_string(fs.protocol)
+    base_hash = hash_name(board_base_path, False)
+
+    return f"{proto_name}_{base_hash}"
+
+
 class PinsCache(SimpleCacheFileSystem):
     protocol = "pinscache"
 
@@ -80,15 +90,8 @@ class PinsCache(SimpleCacheFileSystem):
             if self.hash_prefix is not None:
                 # optionally make the name relative to a parent path
                 # using the hash of parent path as a prefix, to flatten a bit
-                suffix = Path(path).relative_to(Path(self.hash_prefix))
-                # TODO(compat): R pins uses xxh128 hash here, but fsspec uses sha256
-                prefix = hash_name(self.hash_prefix, False)
-
-                # TODO: hacky to automatically tack on protocol here
-                # but this is what R pins boards do. Could make a bool arg?
-                proto_name = protocol_to_string(self.fs.protocol)
-                full_prefix = "_".join([proto_name, prefix])
-                return str(full_prefix / suffix)
+                hash = Path(path).relative_to(Path(self.hash_prefix))
+                return hash
 
             return path
         else:
@@ -112,14 +115,8 @@ class PinsRscCache(PinsCache):
                 raise NotImplementedError()
 
             # change pin path of form <user>/<content> to <user>+<content>
-            suffix = path.replace("/", "+", 1)
-            prefix = hash_name(self.hash_prefix, False)
-
-            # TODO: hacky to automatically tack on protocol here
-            # but this is what R pins boards do. Could make a bool arg?
-            proto_name = protocol_to_string(self.fs.protocol)
-            full_prefix = "_".join([proto_name, prefix])
-            return str(full_prefix / Path(suffix))
+            hash = path.replace("/", "+", 1)
+            return hash
 
         else:
             raise NotImplementedError()
@@ -152,6 +149,33 @@ class PinsUrlCache(PinsCache):
         proto_name = protocol_to_string(self.fs.protocol)
         full_prefix = "_".join([proto_name, prefix])
         return str(Path(full_prefix) / PLACEHOLDER_VERSION / final_part)
+
+
+class PinsAccessTimeCache(SimpleCacheFileSystem):
+    name = "pinsaccesstimecache"
+
+    def hash_name(self, path, same_name):
+        if same_name:
+            raise NotImplementedError("same_name not implemented.")
+
+        # hash full path, and put anything after the final / at the end, just
+        # to make it easier to browse.
+        base_name = super().hash_name(path, same_name)
+        suffix = Path(path).name
+        return f"{base_name}_{suffix}"
+
+    def _open(self, path, mode="rb", **kwargs):
+        f = super()._open(path, mode=mode, **kwargs)
+        fn = self._check_file(path)
+
+        if fn is None:
+            raise ValueError(
+                f"Cached file should exist for path, but none found: {path}"
+            )
+
+        touch_access_time(fn)
+
+        return f
 
 
 class CachePruner:

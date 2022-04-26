@@ -15,7 +15,7 @@ from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
-from .utils import inform
+from .utils import inform, ExtendMethodDoc
 from .config import get_allow_rsc_short_name
 
 
@@ -732,7 +732,15 @@ class BoardRsConnect(BaseBoard):
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
 
-    def pin_write(self, *args, **kwargs):
+    @ExtendMethodDoc
+    def pin_write(self, *args, access_type=None, **kwargs):
+        """Write a pin.
+
+        Extends parent method in the following ways:
+
+        * Modifies content item to include any title and description changes.
+        * Adds access_type argument to specify who can see content. Defaults to "acl".
+        """
 
         # run parent function ---
 
@@ -757,6 +765,7 @@ class BoardRsConnect(BaseBoard):
 
         return meta
 
+    @ExtendMethodDoc
     def pin_search(self, search=None, as_df=True):
         from pins.rsconnect.api import RsConnectApiRequestError
 
@@ -793,6 +802,7 @@ class BoardRsConnect(BaseBoard):
 
         return res
 
+    @ExtendMethodDoc
     def pin_version_delete(self, *args, **kwargs):
         from pins.rsconnect.api import RsConnectApiRequestError
 
@@ -804,6 +814,7 @@ class BoardRsConnect(BaseBoard):
 
             raise PinsError("RStudio Connect cannot delete the latest pin version.")
 
+    @ExtendMethodDoc
     def pin_versions_prune(self, *args, **kwargs):
         sig = inspect.signature(super().pin_versions_prune)
         if sig.bind(*args, **kwargs).arguments.get("days") is not None:

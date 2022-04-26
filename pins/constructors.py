@@ -3,7 +3,7 @@ import os
 import tempfile
 
 from .boards import BaseBoard, BoardRsConnect, BoardManual
-from .cache import PinsCache, PinsUrlCache, PinsRscCache
+from .cache import PinsCache, PinsRscCache, PinsAccessTimeCache, prefix_cache
 from .config import get_data_dir, get_cache_dir
 
 
@@ -274,10 +274,10 @@ def board_urls(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None
     Example
     -------
 
-    >>> github_raw = "https://raw.githubusercontent.com/"
+    >>> github_raw = "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat"
     >>> pin_paths = {
-    ...     "df_csv": "df_csv/20220214T163720Z-9bfad",
-    ...     "df_arrow": "df_arrow/20220214T163720Z-ad0c1",
+    ...     "df_csv": "df_csv/20220214T163720Z-9bfad/",
+    ...     "df_arrow": "df_arrow/20220214T163720Z-ad0c1/",
     ... }
     >>> board = board_urls(github_raw, pin_paths)
     >>> board.pin_list()
@@ -289,8 +289,10 @@ def board_urls(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None
         # copied from board(). this ensures that paths in cache have the form:
         # <full_path_hash>/<version_placeholder>/<file_name>
         cache_dir = get_cache_dir()
-        fs = PinsUrlCache(
-            target_protocol="http", cache_storage=cache_dir, same_names=True
+        sub_dir = prefix_cache("http", path)
+        sub_cache = f"{cache_dir}/{sub_dir}"
+        fs = PinsAccessTimeCache(
+            target_protocol="http", cache_storage=sub_cache, same_names=False
         )
     else:
         raise NotImplementedError("Can't currently pass own cache object")

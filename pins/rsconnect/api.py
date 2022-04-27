@@ -304,7 +304,7 @@ class RsConnectApi:
         return Content(result)
 
     def post_content_item(
-        self, name, access_type, title: str = "", description: str = "", **kwargs
+        self, name, access_type: str, title: str = "", description: str = "", **kwargs
     ) -> Content:
         data = self._get_params(locals(), exclude={"kwargs"})
         result = self.query_v1("content", "POST", json={**data, **kwargs})

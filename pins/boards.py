@@ -15,7 +15,7 @@ from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
-from .utils import inform
+from .utils import inform, ExtendMethodDoc
 from .config import get_allow_rsc_short_name
 
 
@@ -650,12 +650,15 @@ class BoardManual(BaseBoard):
 
     #    return super().pin_read(*args, **kwargs)
 
+    @ExtendMethodDoc
     def pin_list(self):
         return list(self.pin_paths)
 
+    @ExtendMethodDoc
     def pin_versions(self, *args, **kwargs):
         raise NotImplementedError("This board does not support pin_versions.")
 
+    @ExtendMethodDoc
     def pin_meta(self, name, version=None):
         if version is not None:
             raise NotImplementedError()
@@ -680,6 +683,7 @@ class BoardManual(BaseBoard):
 
         return meta
 
+    @ExtendMethodDoc
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
         meta = self.pin_meta(name, version)
 
@@ -723,6 +727,7 @@ class BoardRsConnect(BaseBoard):
 
     # defaults work ----
 
+    @ExtendMethodDoc
     def pin_list(self):
         # lists all pin content on RStudio Connect server
         # we can't use fs.ls, because it will list *all content*
@@ -732,7 +737,15 @@ class BoardRsConnect(BaseBoard):
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
 
-    def pin_write(self, *args, **kwargs):
+    @ExtendMethodDoc
+    def pin_write(self, *args, access_type=None, **kwargs):
+        """Write a pin.
+
+        Extends parent method in the following ways:
+
+        * Modifies content item to include any title and description changes.
+        * Adds access_type argument to specify who can see content. Defaults to "acl".
+        """
 
         # run parent function ---
 
@@ -757,6 +770,7 @@ class BoardRsConnect(BaseBoard):
 
         return meta
 
+    @ExtendMethodDoc
     def pin_search(self, search=None, as_df=True):
         from pins.rsconnect.api import RsConnectApiRequestError
 
@@ -793,6 +807,7 @@ class BoardRsConnect(BaseBoard):
 
         return res
 
+    @ExtendMethodDoc
     def pin_version_delete(self, *args, **kwargs):
         from pins.rsconnect.api import RsConnectApiRequestError
 
@@ -804,6 +819,7 @@ class BoardRsConnect(BaseBoard):
 
             raise PinsError("RStudio Connect cannot delete the latest pin version.")
 
+    @ExtendMethodDoc
     def pin_versions_prune(self, *args, **kwargs):
         sig = inspect.signature(super().pin_versions_prune)
         if sig.bind(*args, **kwargs).arguments.get("days") is not None:

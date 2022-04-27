@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pins.BaseBoard.pin_list &#8212; Pins</title>
+    <title>pins.board &#8212; Pins</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet">
   <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -53,8 +53,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="pins.BaseBoard.pin_exists" href="pins.BaseBoard.pin_exists.html" />
-    <link rel="prev" title="pins.BaseBoard.pin_versions" href="pins.BaseBoard.pin_versions.html" />
+    <link rel="next" title="Board Methods" href="../boards.html" />
+    <link rel="prev" title="pins.board_rsconnect" href="pins.board_rsconnect.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -109,16 +109,16 @@ const thebe_selector_output = ".output, .cell_output"
    </i>
   </label>
   <ul class="current">
-   <li class="toctree-l2 has-children">
+   <li class="toctree-l2 current active has-children">
     <a class="reference internal" href="../constructors.html">
      Board Constructors
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
     <label for="toctree-checkbox-2">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul>
+    <ul class="current">
      <li class="toctree-l3">
       <a class="reference internal" href="pins.board_folder.html">
        pins.board_folder
@@ -144,23 +144,23 @@ const thebe_selector_output = ".output, .cell_output"
        pins.board_rsconnect
       </a>
      </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="pins.board.html">
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
        pins.board
       </a>
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 current active has-children">
+   <li class="toctree-l2 has-children">
     <a class="reference internal" href="../boards.html">
      Board Methods
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
     <label for="toctree-checkbox-3">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul class="current">
+    <ul>
      <li class="toctree-l3">
       <a class="reference internal" href="pins.BaseBoard.html">
        pins.BaseBoard
@@ -186,8 +186,8 @@ const thebe_selector_output = ".output, .cell_output"
        pins.BaseBoard.pin_versions
       </a>
      </li>
-     <li class="toctree-l3 current active">
-      <a class="current reference internal" href="#">
+     <li class="toctree-l3">
+      <a class="reference internal" href="pins.BaseBoard.pin_list.html">
        pins.BaseBoard.pin_list
       </a>
      </li>
@@ -308,7 +308,7 @@ const thebe_selector_output = ".output, .cell_output"
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/api/api_card/pins.BaseBoard.pin_list.rst"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/api/api_card/pins.board.rst"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.rst</button></a>
         <!-- Download PDF via print -->
@@ -328,7 +328,7 @@ const thebe_selector_output = ".output, .cell_output"
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/api_card/pins.BaseBoard.pin_list.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/api_card/pins.board.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -356,7 +356,7 @@ const thebe_selector_output = ".output, .cell_output"
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>pins.BaseBoard.pin_list</h1>
+                <h1>pins.board</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -367,15 +367,38 @@ const thebe_selector_output = ".output, .cell_output"
             
               <div>
                 
-  <div class="section" id="pins-baseboard-pin-list">
-<h1>pins.BaseBoard.pin_list<a class="headerlink" href="#pins-baseboard-pin-list" title="Permalink to this headline">¶</a></h1>
-<dl class="py method">
-<dt class="sig sig-object py" id="pins.BaseBoard.pin_list">
-<span class="sig-prename descclassname"><span class="pre">BaseBoard.</span></span><span class="sig-name descname"><span class="pre">pin_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pins.BaseBoard.pin_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>List names of all pins in a board.</p>
-<p class="rubric">Notes</p>
-<p>This is a low-level function; use pin_search() to get more data about
-each pin in a convenient form.</p>
+  <div class="section" id="pins-board">
+<h1>pins.board<a class="headerlink" href="#pins-board" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pins.board">
+<span class="sig-prename descclassname"><span class="pre">pins.</span></span><span class="sig-name descname"><span class="pre">board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache:</span> <span class="pre">DEFAULT</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'pins.constructors.DEFAULT'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pickle_read=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board_factory:</span> <span class="pre">callable</span> <span class="pre">|</span> <span class="pre">BaseBoard</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.board" title="Permalink to this definition">¶</a></dt>
+<dd><p>General function for constructing a pins board.</p>
+<p>Note that this is a lower-level function. For most use cases, use a more specific
+function like board_local(…), or board_s3(…).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protocol</strong> – File system protocol. E.g. file, s3, github, rsc (for RStudio Connect).
+See fsspec.filesystem for more information.</p></li>
+<li><p><strong>path</strong> – A base path the board should use. For example, the directory the board lives in,
+or the path to its s3 bucket.</p></li>
+<li><p><strong>versioned</strong> – Whether or not pins should be versioned.</p></li>
+<li><p><strong>cache</strong> – Whether to use a cache. By default, pins attempts to select the right cache
+directory, given your filesystem. If None is passed, then no cache will be
+used. You can set the cache using the PINS_CACHE_DIR environment variable.</p></li>
+<li><p><strong>allow_pickle_read</strong> (<em>optional</em><em>, </em><em>bool</em>) – <p>Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+and can execute arbitrary code. Only allow reading pickles if you trust the
+board to be able to execute python code on your computer.</p>
+<p>You can enable reading pickles by setting this to True, or by setting the
+environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument
+takes precedence.</p>
+</p></li>
+<li><p><strong>storage_options</strong> – Additional options passed to the underlying filesystem created by
+fsspec.filesystem.</p></li>
+<li><p><strong>board_factory</strong> – An optional board class to use as the constructor.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -405,17 +428,17 @@ each pin in a convenient form.</p>
             
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'> 
-    <a class='left-prev' id="prev-link" href="pins.BaseBoard.pin_versions.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="pins.board_rsconnect.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">pins.BaseBoard.pin_versions</p>
+            <p class="prev-next-title">pins.board_rsconnect</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="pins.BaseBoard.pin_exists.html" title="next page">
+    <a class='right-next' id="next-link" href="../boards.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pins.BaseBoard.pin_exists</p>
+        <p class="prev-next-title">Board Methods</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

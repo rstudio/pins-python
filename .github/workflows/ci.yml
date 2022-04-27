@@ -83,9 +83,13 @@ jobs:
     - uses: r-lib/actions/setup-r@v2
       with:
         r-version: '3.5.3'
-    - name: Install R dependencies
-      run: "install.packages('pins')"
-      shell: Rscript {0}
+    - uses: r-lib/actions/setup-r-dependencies@v2
+      extra-packages: |
+        any::pins
+
+    #- name: Install R dependencies
+    #  run: "install.packages('pins')"
+    #  shell: Rscript {0}
 
     # python ---
 

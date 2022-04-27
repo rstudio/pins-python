@@ -72,6 +72,41 @@ jobs:
         run: |
           pytest pins -m 'fs_rsc and not skip_on_github'
 
+  check-cross-compatibility:
+    name: "Check cross lib compatibility"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install libcurl on Linux
+      run: sudo apt-get update -y && sudo apt-get install -y libcurl4-openssl-dev
+
+    # r ---
+
+    - uses: r-lib/actions/setup-r@v2
+      with:
+        use-public-rspm: true
+
+    - name: Install R dependencies
+      run: "install.packages('pins')"
+      shell: Rscript {0}
+
+    # python ---
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install py dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements/dev.txt
+        python -m pip install -e .
+
+    # write and test ---
+
+    - name: Run script/ci-compat-check
+      run: make ci-compat-check
+
   build-docs:
     name: "Build Docs"
     runs-on: ubuntu-latest

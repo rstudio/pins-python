@@ -650,12 +650,15 @@ class BoardManual(BaseBoard):
 
     #    return super().pin_read(*args, **kwargs)
 
+    @ExtendMethodDoc
     def pin_list(self):
         return list(self.pin_paths)
 
+    @ExtendMethodDoc
     def pin_versions(self, *args, **kwargs):
         raise NotImplementedError("This board does not support pin_versions.")
 
+    @ExtendMethodDoc
     def pin_meta(self, name, version=None):
         if version is not None:
             raise NotImplementedError()
@@ -680,6 +683,7 @@ class BoardManual(BaseBoard):
 
         return meta
 
+    @ExtendMethodDoc
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
         meta = self.pin_meta(name, version)
 
@@ -723,6 +727,7 @@ class BoardRsConnect(BaseBoard):
 
     # defaults work ----
 
+    @ExtendMethodDoc
     def pin_list(self):
         # lists all pin content on RStudio Connect server
         # we can't use fs.ls, because it will list *all content*

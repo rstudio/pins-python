@@ -70,7 +70,11 @@ def board(
     storage_options: "dict | None" = None,
     board_factory: "callable | BaseBoard | None" = None,
 ):
-    """
+    """General function for constructing a pins board.
+
+    Note that this is a lower-level function. For most use cases, use a more specific
+    function like board_local(...), or board_s3(...).
+
     Parameters
     ----------
     protocol:

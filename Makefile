@@ -36,3 +36,7 @@ requirements/dev.txt: setup.cfg
 
 binder/requirements.txt: requirements/dev.txt
 	cp $< $@
+
+ci-compat-check:
+	# TODO: mark as dummy
+	$(MAKE) -C script/$@

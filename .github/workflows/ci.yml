@@ -22,7 +22,11 @@ jobs:
         python: ["3.7", "3.8", "3.9", "3.10"]
         os: ["ubuntu-latest"]
         pytest_ops: [""]
+        requirements: [""]
         include:
+          - os: "ubuntu-latest"
+            python: "3.7"
+            requirements: "requirements/minimum.txt"
           - os: "macos-latest"
             python: "3.10"
             # ignore doctests, as they involve calls to github, and all mac machines
@@ -36,6 +40,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+
+          # optionally install from requirements file
+          if [ $REQUIREMENTS ]; then
+            pip install -r $REQUIREMENTS
+          fi
+
           python -m pip install -e .[test]
       - name: Run tests
         run: |
@@ -44,7 +54,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "us-east-1"
-          PYTEST_OPTS: ${{ matrix.pytest_opts}}
+          PYTEST_OPTS: ${{ matrix.pytest_opts }}
+          REQUIREMENTS: ${{ matrix.requirements }}
 
   test-rsconnect:
     name: "Test RSConnect"

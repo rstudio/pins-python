@@ -1,1 +1,2 @@
-include pins/data/*.csv
+prune .*
+prune docs

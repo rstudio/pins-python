@@ -1,7 +1,7 @@
 # flake8: noqa
 
 # Set version ----
-from importlib.metadata import version as _v
+from importlib_metadata import version as _v
 
 __version__ = _v("pins")
 
@@ -9,8 +9,7 @@ del _v
 
 
 # Imports ----
-from .boards import BaseBoard
-from .cache import PinsCache, PinsUrlCache, cache_prune
+from .cache import cache_prune, cache_info
 from .constructors import (
     board_deparse,
     board_folder,
@@ -20,4 +19,5 @@ from .constructors import (
     board_urls,
     board_rsconnect,
     board_s3,
+    board,
 )

@@ -426,6 +426,25 @@ def test_rsconnect_fs_put_bundle(fs_short):
     assert f_index.read().decode() == (Path(path_to_example) / "index.html").read_text()
 
 
+def test_rsconnect_fs_put_bundle_all_access(fs_short):
+    import requests
+
+    # TODO: use pkg_resources to get this
+    path_to_example = "pins/tests/example-bundle"
+    fs_short.put(
+        path_to_example, "susan/test-content", recursive=True, access_type="all"
+    )
+
+    # access control is set at the content (not bundle) level. we need to get the
+    # content guid to recreate the "shareable" link
+    content = fs_short.info("susan/test-content")
+
+    r = requests.get(f"{fs_short.api.server_url}/content/{content['guid']}")
+    r.raise_for_status()
+
+    assert r.text == (Path(path_to_example) / "index.html").read_text()
+
+
 # fs.mkdir ----
 
 

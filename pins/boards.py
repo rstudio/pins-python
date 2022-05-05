@@ -5,20 +5,25 @@ import inspect
 import re
 
 from io import IOBase
-from functools import cached_property
 from pathlib import Path
 from importlib_resources import files
 from datetime import datetime, timedelta
 
-from typing import Protocol, Sequence, Optional, Mapping
+from typing import Sequence, Optional, Mapping
 
 from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
+from .utils import inform, ExtendMethodDoc
+from .config import get_allow_rsc_short_name
 
 
-class IFileSystem(Protocol):
+_log = logging.getLogger(__name__)
+
+
+# Note that once we drop python 3.7, we can make this a Protocol
+class IFileSystem:
     def ls(self, path: str) -> Sequence[str]:
         ...
 
@@ -150,11 +155,9 @@ class BaseBoard:
         meta_name = self.meta_factory.get_meta_name(*components)
 
         path_meta = self.construct_path([*components, meta_name])
-        f = self.fs.open(path_meta)
+        f = self._open_pin_meta(path_meta)
 
         meta = self.meta_factory.read_pin_yaml(f, pin_name, selected_version)
-
-        self._touch_cache(path_meta)
 
         return meta
 
@@ -208,11 +211,8 @@ class BaseBoard:
 
         pin_name = self.path_to_pin(name)
 
-        return load_data(
-            meta,
-            self.fs,
-            self.construct_path([pin_name, meta.version.version]),
-            allow_pickle_read=self.allow_pickle_read,
+        return self._load_data(
+            meta, self.construct_path([pin_name, meta.version.version])
         )
 
     def pin_write(
@@ -291,6 +291,8 @@ class BaseBoard:
                     "Attempting to write pin version to {dst_version_path}, "
                     "but that directory already exists."
                 )
+
+            inform(_log, f"Writing to pin {repr(pin_name)}")
 
             res = self.fs.put(tmp_dir, dst_version_path, recursive=True)
 
@@ -391,9 +393,9 @@ class BaseBoard:
         # TODO(question): how to pin_inform? Log or warning?
         if to_delete:
             str_vers = ", ".join([v.version for v in to_delete])
-            logging.info(f"Deleting versions: {str_vers}.")
+            inform(_log, f"Deleting versions: {str_vers}.")
         if not to_delete:
-            logging.info("No old versions to delete")
+            inform(_log, "No old versions to delete")
 
         for version in to_delete:
             self.pin_version_delete(name, version.version)
@@ -486,7 +488,13 @@ class BaseBoard:
 
         raise NotImplementedError()
 
+    # pin name internal methods -----------------------------------------------
+    # these methods are responsible for validating pin names, and converting
+    # names to their ultimate path on the file system.
+
     def validate_pin_name(self, name: str) -> None:
+        """Raise an error if a pin name is not valid."""
+
         if "/" in name:
             raise ValueError(f"Invalid pin name: {name}")
 
@@ -504,6 +512,8 @@ class BaseBoard:
 
     def keep_final_path_component(self, path):
         return path.split("/")[-1]
+
+    # version ordering, creation ----------------------------------------------
 
     def sort_pin_versions(self, versions):
         # assume filesystem returned them with most recent last
@@ -567,10 +577,29 @@ class BaseBoard:
         d["meta"] = meta
         return d
 
-    def _get_cache_path(self, pin_name, version):
-        p_version = self.construct_path([self.path_to_pin(pin_name), version])
-        hash = self.fs.hash_name(p_version, True)
-        return str(Path(self.fs.storage[-1]) / hash)
+    # data loading ------------------------------------------------------------
+
+    def _load_data(self, meta, pin_version_path):
+        """Return the data object stored by a pin (e.g. a DataFrame)."""
+        return load_data(
+            meta, self.fs, pin_version_path, allow_pickle_read=self.allow_pickle_read
+        )
+
+    # filesystem and cache methods --------------------------------------------
+
+    def _open_pin_meta(self, path):
+        f = self.fs.open(path)
+        self._touch_cache(path)
+
+        return f
+
+    def _get_cache_path(self, pin_name, version=None, fname=None):
+        version_part = [version] if version is not None else []
+        fname_part = [fname] if fname is not None else []
+        p_version = self.construct_path(
+            [self.path_to_pin(pin_name), *version_part, *fname_part]
+        )
+        return self.fs._check_file(p_version)
 
     def _touch_cache(self, path):
         from pins.cache import touch_access_time
@@ -580,8 +609,7 @@ class BaseBoard:
         if not hasattr(self.fs, "cached_files"):
             return
 
-        hash = self.fs.hash_name(path, True)
-        path_to_hashed = Path(self.fs.storage[-1]) / hash
+        path_to_hashed = self.fs._check_file(path)
         return touch_access_time(path_to_hashed)
 
 
@@ -604,9 +632,6 @@ class BoardManual(BaseBoard):
     0  1  a  3
     1  2  b  4
 
-
-
-
     """
 
     # TODO(question): is this class worth it? Or should the user just use fsspec?
@@ -616,12 +641,24 @@ class BoardManual(BaseBoard):
 
         self.pin_paths = pin_paths
 
+    # def pin_read(self, *args, **kwargs):
+    #    if not get_feature_preview():
+    #        raise NotImplementedError(
+    #            "pin_read with BoardManual is currently unimplemented. "
+    #            "See https://github.com/machow/pins-python/issues/59."
+    #        )
+
+    #    return super().pin_read(*args, **kwargs)
+
+    @ExtendMethodDoc
     def pin_list(self):
         return list(self.pin_paths)
 
+    @ExtendMethodDoc
     def pin_versions(self, *args, **kwargs):
         raise NotImplementedError("This board does not support pin_versions.")
 
+    @ExtendMethodDoc
     def pin_meta(self, name, version=None):
         if version is not None:
             raise NotImplementedError()
@@ -638,20 +675,25 @@ class BoardManual(BaseBoard):
             return self.meta_factory.create_raw(path_to_pin, type="file", name=pin_name)
 
         path_meta = self.construct_path([pin_name, meta_name])
-        f = self.fs.open(path_meta)
+        f = self._open_pin_meta(path_meta)
         meta = self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""))
+
+        # TODO(#59,#83): handle caching, and then re-enable pin_read.
+        # self._touch_cache(path_meta)
 
         return meta
 
+    @ExtendMethodDoc
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
         meta = self.pin_meta(name, version)
 
         if isinstance(meta, MetaRaw):
-            return load_data(
-                meta, self.fs, None, allow_pickle_read=self.allow_pickle_read
-            )
 
-        raise NotImplementedError("TODO: allow download beyond MetaRaw.")
+            return self._load_data(meta, None)
+
+        raise NotImplementedError(
+            "TODO: pin_download currently can only read a url to a single file."
+        )
 
     def construct_path(self, elements):
         # TODO: in practice every call to construct_path has the first element of
@@ -668,6 +710,11 @@ class BoardManual(BaseBoard):
             # boards forbid a final /, we need to strip it off to join elements
             pin_path = pin_path.rstrip().rstrip("/")
 
+            # this is a bit hacky, but this board only aims at specific pins versions,
+            # so the metadata has the version as "", so we need to remove it.
+            if others[0] == "":
+                return super().construct_path([pin_path, *others[1:]])
+
         return super().construct_path([pin_path, *others])
 
 
@@ -680,6 +727,7 @@ class BoardRsConnect(BaseBoard):
 
     # defaults work ----
 
+    @ExtendMethodDoc
     def pin_list(self):
         # lists all pin content on RStudio Connect server
         # we can't use fs.ls, because it will list *all content*
@@ -689,7 +737,15 @@ class BoardRsConnect(BaseBoard):
         names = [f"{cont['owner_username']}/{cont['name']}" for cont in results]
         return names
 
-    def pin_write(self, *args, **kwargs):
+    @ExtendMethodDoc
+    def pin_write(self, *args, access_type=None, **kwargs):
+        """Write a pin.
+
+        Extends parent method in the following ways:
+
+        * Modifies content item to include any title and description changes.
+        * Adds access_type argument to specify who can see content. Defaults to "acl".
+        """
 
         # run parent function ---
 
@@ -714,6 +770,7 @@ class BoardRsConnect(BaseBoard):
 
         return meta
 
+    @ExtendMethodDoc
     def pin_search(self, search=None, as_df=True):
         from pins.rsconnect.api import RsConnectApiRequestError
 
@@ -750,6 +807,7 @@ class BoardRsConnect(BaseBoard):
 
         return res
 
+    @ExtendMethodDoc
     def pin_version_delete(self, *args, **kwargs):
         from pins.rsconnect.api import RsConnectApiRequestError
 
@@ -761,6 +819,7 @@ class BoardRsConnect(BaseBoard):
 
             raise PinsError("RStudio Connect cannot delete the latest pin version.")
 
+    @ExtendMethodDoc
     def pin_versions_prune(self, *args, **kwargs):
         sig = inspect.signature(super().pin_versions_prune)
         if sig.bind(*args, **kwargs).arguments.get("days") is not None:
@@ -770,7 +829,17 @@ class BoardRsConnect(BaseBoard):
         super().pin_versions_prune(*args, **kwargs)
 
     def validate_pin_name(self, name) -> None:
-        if name.count("/") > 1:
+        # this should be the default behavior, expecting a full pin name.
+        # but because the tests use short names, we allow it to be disabled via config
+        if not get_allow_rsc_short_name() and name.count("/") != 1:
+            raise ValueError(
+                f"Invalid pin name: {name}"
+                "\nRStudio Connect pin names must include user name. E.g. "
+                "\nsome_user/mtcars, for the user some_user."
+            )
+
+        # less strict test, that allows no slash: e.g. "mtcars"
+        if name.count("/") > 1 or name.lstrip().startswith("/"):
             raise ValueError(f"Invalid pin name: {name}")
 
     def sort_pin_versions(self, versions) -> Sequence[VersionRaw]:
@@ -797,10 +866,18 @@ class BoardRsConnect(BaseBoard):
         # to fs.put to the <user>/<content_name>.
         return self.path_to_pin(name)
 
-    @cached_property
+    @property
     def user_name(self):
-        user = self.fs.api.get_user()
-        return user["username"]
+        # note that this is essentially the manual version of functools.cached_property
+        # since we support python 3.7
+        name = getattr(self, "_user_name", None)
+        if name is not None:
+            return name
+        else:
+            user = self.fs.api.get_user()
+            self._user_name = user["username"]
+
+            return self._user_name
 
     def prepare_pin_version(self, pin_dir_path, x, name: "str | None", *args, **kwargs):
 
@@ -824,7 +901,8 @@ class BoardRsConnect(BaseBoard):
             )
 
         # recursively copy all assets into prepped pin version dir
-        shutil.copytree(self.html_assets_dir, pin_dir_path, dirs_exist_ok=True)
+        # shutil.copytree(self.html_assets_dir, pin_dir_path, dirs_exist_ok=True)
+        _copytree(self.html_assets_dir, pin_dir_path)
 
         # render index.html ------------------------------------------------
 
@@ -870,3 +948,17 @@ class BoardRsConnect(BaseBoard):
         (Path(pin_dir_path) / "index.html").write_text(rendered)
 
         return meta
+
+
+# TODO: replace with shutil.copytree once py3.7 is dropped
+# copied from https://stackoverflow.com/a/12514470/1144523
+def _copytree(src, dst, symlinks=False, ignore=None):
+    import os
+
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            shutil.copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)

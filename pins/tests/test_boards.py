@@ -31,6 +31,16 @@ def board(backend):
     backend.teardown()
 
 
+# misc ========================================================================
+
+
+def test_board_validate_pin_name_root(board):
+    with pytest.raises(ValueError) as exc_info:
+        board.path_to_pin("/some_pin")
+
+    assert "Invalid pin name" in exc_info.value.args[0]
+
+
 # pin_write ===================================================================
 
 
@@ -384,6 +394,26 @@ def test_board_pin_meta_is_full_name(df, board_short):
 @pytest.mark.fs_rsc
 def test_board_rsc_path_to_pin_safe(board_short):
     assert board_short.path_to_pin("me/some_pin") == "me/some_pin"
+
+
+@pytest.mark.fs_rsc
+def test_board_rsc_require_full_pin_name(board_short):
+    # the tests set the special env var below to allow short pin names,
+    # but here we test this is not what should happen by default.
+    # we test that full names work with the RSC board above, so these two
+    # things should cover us.
+    from pins.config import PINS_ENV_ALLOW_RSC_SHORT_NAME
+
+    with rm_env(PINS_ENV_ALLOW_RSC_SHORT_NAME):
+        with pytest.raises(ValueError) as exc_info:
+            board_short.validate_pin_name("mtcars")
+
+        assert "Invalid pin name" in exc_info.value.args[0]
+
+        with pytest.raises(ValueError) as exc_info:
+            board_short.path_to_pin("mtcars")
+
+        assert "Invalid pin name" in exc_info.value.args[0]
 
 
 # Manual Board Specific =======================================================

@@ -10,6 +10,9 @@ from fsspec import register_implementation
 from pathlib import Path
 
 from .config import get_cache_dir
+from .utils import inform
+
+_log = logging.getLogger(__name__)
 
 
 # used if needed to preserve board path structure in the cache
@@ -44,6 +47,16 @@ def protocol_to_string(protocol):
     return protocol[0]
 
 
+def prefix_cache(fs, board_base_path):
+    if isinstance(fs, str):
+        proto_name = fs
+    else:
+        proto_name = protocol_to_string(fs.protocol)
+    base_hash = hash_name(board_base_path, False)
+
+    return f"{proto_name}_{base_hash}"
+
+
 class PinsCache(SimpleCacheFileSystem):
     protocol = "pinscache"
 
@@ -65,7 +78,7 @@ class PinsCache(SimpleCacheFileSystem):
         # note that this is called in ._open(), at the point it's known the file
         # will be cached
         fn = super()._make_local_details(path)
-        logging.info(f"cache file: {fn}")
+        _log.info(f"cache file: {fn}")
         Path(fn).parent.mkdir(parents=True, exist_ok=True)
 
         return fn
@@ -77,15 +90,8 @@ class PinsCache(SimpleCacheFileSystem):
             if self.hash_prefix is not None:
                 # optionally make the name relative to a parent path
                 # using the hash of parent path as a prefix, to flatten a bit
-                suffix = Path(path).relative_to(Path(self.hash_prefix))
-                # TODO(compat): R pins uses xxh128 hash here, but fsspec uses sha256
-                prefix = hash_name(self.hash_prefix, False)
-
-                # TODO: hacky to automatically tack on protocol here
-                # but this is what R pins boards do. Could make a bool arg?
-                proto_name = protocol_to_string(self.fs.protocol)
-                full_prefix = "_".join([proto_name, prefix])
-                return str(full_prefix / suffix)
+                hash = Path(path).relative_to(Path(self.hash_prefix))
+                return hash
 
             return path
         else:
@@ -109,14 +115,8 @@ class PinsRscCache(PinsCache):
                 raise NotImplementedError()
 
             # change pin path of form <user>/<content> to <user>+<content>
-            suffix = path.replace("/", "+", 1)
-            prefix = hash_name(self.hash_prefix, False)
-
-            # TODO: hacky to automatically tack on protocol here
-            # but this is what R pins boards do. Could make a bool arg?
-            proto_name = protocol_to_string(self.fs.protocol)
-            full_prefix = "_".join([proto_name, prefix])
-            return str(full_prefix / Path(suffix))
+            hash = path.replace("/", "+", 1)
+            return hash
 
         else:
             raise NotImplementedError()
@@ -149,6 +149,33 @@ class PinsUrlCache(PinsCache):
         proto_name = protocol_to_string(self.fs.protocol)
         full_prefix = "_".join([proto_name, prefix])
         return str(Path(full_prefix) / PLACEHOLDER_VERSION / final_part)
+
+
+class PinsAccessTimeCache(SimpleCacheFileSystem):
+    name = "pinsaccesstimecache"
+
+    def hash_name(self, path, same_name):
+        if same_name:
+            raise NotImplementedError("same_name not implemented.")
+
+        # hash full path, and put anything after the final / at the end, just
+        # to make it easier to browse.
+        base_name = super().hash_name(path, same_name)
+        suffix = Path(path).name
+        return f"{base_name}_{suffix}"
+
+    def _open(self, path, mode="rb", **kwargs):
+        f = super()._open(path, mode=mode, **kwargs)
+        fn = self._check_file(path)
+
+        if fn is None:
+            raise ValueError(
+                f"Cached file should exist for path, but none found: {path}"
+            )
+
+        touch_access_time(fn)
+
+        return f
 
 
 class CachePruner:
@@ -200,7 +227,7 @@ class CachePruner:
             for path in to_prune:
                 delete_version(to_prune)
 
-        logging.info("Skipping cache deletion")
+        _log.info("Skipping cache deletion")
 
 
 def delete_version(path: "str | Path"):
@@ -213,10 +240,28 @@ def disk_usage(path):
 
 
 def prompt_cache_prune(to_prune, size) -> bool:
-    logging.info(f"Pruning items: {to_prune}")
+    _log.info(f"Pruning items: {to_prune}")
     human_size = humanize.naturalsize(size, binary=True)
-    resp = input(f"Delete {len(to_prune)} pin versions, freeing {human_size}?")
-    return resp == "yes"
+    resp = input(
+        f"Delete {len(to_prune)} pin versions, freeing {human_size}?"
+        "\n1: Yes"
+        "\n2: No"
+        "\n\nSelection: "
+    )
+    return resp == "1"
+
+
+def cache_info():
+    cache_root = get_cache_dir()
+
+    cache_boards = list(Path(cache_root).glob("*"))
+
+    print(f"Cache info: {cache_root}")
+    for p_board in cache_boards:
+        du = disk_usage(p_board)
+        human_size = humanize.naturalsize(du, binary=True)
+        rel_path = p_board.relative_to(cache_root)
+        print(f"* {rel_path}: {human_size}")
 
 
 def cache_prune(days=30, cache_root=None, prompt=True):
@@ -230,32 +275,21 @@ def cache_prune(days=30, cache_root=None, prompt=True):
 
     size = sum(map(disk_usage, final_delete))
 
+    if not final_delete:
+        inform(_log, "No stale pins found")
+
     if prompt:
         confirmed = prompt_cache_prune(final_delete, size)
     else:
         confirmed = True
+
     if confirmed:
+        inform(_log, "Deleting pins from cache.")
         for p in final_delete:
             delete_version(p)
+    else:
+        inform(_log, "Skipping deletion of pins from cache.")
 
-
-# def prune_files(days = 30, path = None):
-#     if path is None:
-#         for p_cache in Path(get_cache_dir()).glob("*"):
-#             return prune_files(days=days, path=str(p_cache.absolute()))
-#
-#     expiry_time_sec = days * 60 * 60 * 24
-#     fs_cache = PinsCache(
-#         target_protocol=None,
-#         cache_storage=path,
-#         check_files=True,
-#         expiry_time=expiry_time_sec
-#     )
-#
-#     # note that fsspec considers only the last entry in cached_files deletable
-#     for hash_path, entry in fs_cache.cached_files[-1].items():
-#         if time.time() - detail["time"] > self.expiry:
-#             fs_cache.pop_from_cache(entry["original"])
 
 # TODO: swap to use entrypoint
 register_implementation("pinscache", PinsCache)

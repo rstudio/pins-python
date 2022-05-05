@@ -18,6 +18,8 @@ RSC_API_KEY = "CONNECT_API_KEY"
 RSC_CODE_OBJECT_DOES_NOT_EXIST = 4
 RSC_CODE_INVALID_NUMERIC_PATH = 3
 
+_log = logging.getLogger(__name__)
+
 
 def _download_file(response, local_fname):
     """Download a potentially large file. Note that this mutates the response.
@@ -222,7 +224,7 @@ class RsConnectApi:
 
         headers = self._get_headers()
 
-        logging.info(f"RSConnect API {method}: {url} -- {kwargs}")
+        _log.debug(f"RSConnect API {method}: {url} -- {kwargs}")
         r = self.session.request(method, url, headers=headers, **kwargs)
 
         if return_request:
@@ -302,7 +304,7 @@ class RsConnectApi:
         return Content(result)
 
     def post_content_item(
-        self, name, access_type, title: str = "", description: str = "", **kwargs
+        self, name, access_type: str, title: str = "", description: str = "", **kwargs
     ) -> Content:
         data = self._get_params(locals(), exclude={"kwargs"})
         result = self.query_v1("content", "POST", json={**data, **kwargs})

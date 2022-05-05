@@ -8,6 +8,10 @@ on:
   release:
     types: [published]
 
+env:
+  PINS_ALLOW_RSC_SHORT_NAME: 1
+  PINS_FEATURE_PREVIEW: 1
+
 jobs:
   tests:
     name: "Tests"
@@ -15,23 +19,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        python: ["3.7", "3.8", "3.9", "3.10"]
+        os: ["ubuntu-latest"]
+        pytest_ops: [""]
+        requirements: [""]
         include:
+          - os: "ubuntu-latest"
+            python: "3.7"
+            requirements: "requirements/minimum.txt"
           - os: "macos-latest"
+            python: "3.10"
             # ignore doctests, as they involve calls to github, and all mac machines
             # use the same IP address
             pytest_opts: "-k pins/tests"
-          - os: "ubuntu-latest"
-            pytest_opts:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements/dev.txt
-          python -m pip install -e .
+
+          # optionally install from requirements file
+          if [ $REQUIREMENTS ]; then
+            pip install -r $REQUIREMENTS
+          fi
+
+          python -m pip install -e .[test]
       - name: Run tests
         run: |
           pytest pins -m 'not fs_rsc and not skip_on_github' $PYTEST_OPTS
@@ -39,7 +54,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "us-east-1"
-          PYTEST_OPTS: ${{ matrix.pytest_opts}}
+          PYTEST_OPTS: ${{ matrix.pytest_opts }}
+          REQUIREMENTS: ${{ matrix.requirements }}
 
   test-rsconnect:
     name: "Test RSConnect"
@@ -66,6 +82,41 @@ jobs:
       - name: Run tests
         run: |
           pytest pins -m 'fs_rsc and not skip_on_github'
+
+  check-cross-compatibility:
+    name: "Check cross lib compatibility"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install libcurl on Linux
+      run: sudo apt-get update -y && sudo apt-get install -y libcurl4-openssl-dev
+
+    # r ---
+
+    - uses: r-lib/actions/setup-r@v2
+      with:
+        use-public-rspm: true
+
+    - name: Install R dependencies
+      run: "install.packages('pins')"
+      shell: Rscript {0}
+
+    # python ---
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install py dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements/dev.txt
+        python -m pip install -e .
+
+    # write and test ---
+
+    - name: Run script/ci-compat-check
+      run: make ci-compat-check
 
   build-docs:
     name: "Build Docs"

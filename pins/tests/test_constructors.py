@@ -65,12 +65,42 @@ def test_constructor_board_url_cache(tmp_cache, http_example_board_path, df_csv)
 
     assert len(http_dirs) == 1
 
+    # there are two files in the flat cache (metadata, and the csv)
     parent = http_dirs[0]
-    res = list(parent.rglob("**/*.csv"))
+    res = list(parent.rglob("*"))
+    assert len(res) == 2
+
+    # validate that it creates an empty metadata file
+    assert len(x for x in res if x.endswith("df_csv.csv")) == 1
+    assert len(x for x in res if x.endswith("data.txt")) == 1
+
+    assert len(list(parent.glob("**/*"))) == 2
+
+
+@pytest.mark.skip_on_github
+def test_constructor_board_url_file(tmp_cache, http_example_board_path):
+    # TODO: downloading a pin does not put files in the same directory, since
+    # in this case we are hashing on the full url.
+
+    board = c.board_urls(
+        http_example_board_path,
+        # could derive from example version path
+        pin_paths={"df_csv": "df_csv/20220214T163718Z-eceac/df_csv.csv"},
+    )
+
+    board.pin_download("df_csv")
+
+    # check cache ----
+    http_dirs = list(tmp_cache.glob("http_*"))
+
+    assert len(http_dirs) == 1
+
+    # there are two files in the flat cache (metadata, and the csv)
+    parent = http_dirs[0]
+    res = list(parent.rglob("*"))
     assert len(res) == 1
 
-    # has form: <pin>/<version>/<file>
-    check_cache_file_path(res[0], parent)
+    assert str(res[0]).endswith("df_csv.csv")
 
 
 @pytest.mark.skip_on_github

@@ -24,12 +24,12 @@ The pins package publishes data, models, and other R objects, making it easy to 
 You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Azure storage and ~Microsoft 365 (OneDrive and SharePoint)~.
 Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.
 
-## 🚧 Installation
+## Installation
 
 To try out the development version of pins you'll need to install from GitHub:
 
 ```shell
-python -m pip install git+https://github.com/machow/pins-python
+python -m pip install pins
 ```
 
 ## Usage

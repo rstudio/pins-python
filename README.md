@@ -20,6 +20,67 @@ python -m pip install pins
 
 See the [documentation](https://rstudio.github.io/pins-python) for getting started.
 
+To use the pins package, you must first create a pin board. A good place
+to start is `board_folder()`, which stores pins in a directory you
+specify. Here I’ll use a special version of `board_folder()` called
+`board_temp()` which creates a temporary board that’s automatically
+deleted when your R session ends. This is great for examples, but
+obviously you shouldn't use it for real work!
+
+```python
+import pins
+from pins.data import mtcars
+
+board = pins.board_temp()
+```
+
+You can “pin” (save) data to a board with the `.pin_write()` method. It requires three
+arguments: an object, a name, and a pin type:
+
+```python
+board.pin_write(mtcars.head(), "mtcars", type="csv")
+```
+
+Above, we saved the data as a CSV, but depending on
+what you’re saving and who else you want to read it, you might use the
+`type` argument to instead save it as a `joblib` or `arrow` file (NOTE: arrow is not yet supported).
+
+You can later retrieve the pinned data with `.pin_read()`:
+
+```python
+board.pin_read("mtcars")
+```
+
+A board on your computer is good place to start, but the real power of
+pins comes when you use a board that’s shared with multiple people. To
+get started, you can use `board_folder()` with a directory on a shared
+drive or in dropbox, or if you use [RStudio
+Connect](https://www.rstudio.com/products/connect/) you can use
+`board_rsconnect()`:
+
+```python
+# Note that this uses one approach to connecting,
+# the environment variables CONNECT_SERVER and CONNECT_API_KEY
+
+board = pins.board_rsconnect()
+board.pin_write(tidy_sales_data, "hadley/sales-summary", type="csv")
+```
+
+Then, someone else (or an automated report) can read and use your
+pin:
+
+```python
+board = board_rsconnect()
+board.pin_read("hadley/sales-summary")
+```
+
+You can easily control who gets to access the data using the RStudio
+Connect permissions pane.
+
+The pins package also includes boards that allow you to share data on
+services like Amazon’s S3 (`board_s3()`), with plans to support other backends--
+such as Azure's blob storage.
+
 ## Development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)

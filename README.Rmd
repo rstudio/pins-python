@@ -1,16 +1,9 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .Rmd
-      format_name: rmarkdown
-      format_version: '1.2'
-      jupytext_version: 1.13.6
-  kernelspec:
-    display_name: venv-pins-python
-    language: python
-    name: venv-pins-python
----
+```{python tags=c("hide-cell")}
+# this keeps the pandas dataframe repr from spitting out scoped style tags
+# which don't render on github
+import pandas as pd
+pd.set_option("display.notebook_repr_html", False)
+```
 
 # pins-python
 

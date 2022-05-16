@@ -416,6 +416,21 @@ def test_board_rsc_require_full_pin_name(board_short):
         assert "Invalid pin name" in exc_info.value.args[0]
 
 
+@pytest.mark.fs_rsc
+def test_board_rsc_pin_write_other_user_fails(df, board_short):
+    with pytest.raises(PinsError) as exc_info:
+        board_short.pin_write(df, "derek/mtcarszzzzz")
+
+    assert "a new piece of content for another user" in exc_info.value.args[0]
+
+
+@pytest.mark.fs_rsc
+def test_board_rsc_pin_write_acl(df, board_short):
+    board_short.pin_write(df, "susan/mtcars", type="csv", access_type="all")
+    content = board_short.fs.info("susan/mtcars")
+    assert content["access_type"] == "all"
+
+
 # Manual Board Specific =======================================================
 
 from pins.boards import BoardManual  # noqa

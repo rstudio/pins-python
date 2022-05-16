@@ -276,10 +276,12 @@ class BaseBoard:
             dst_pin_path = self.construct_path([pin_name])
             dst_version_path = self.path_to_deploy_version(name, meta.version.version)
 
-            try:
-                self.fs.mkdir(dst_pin_path)
-            except FileExistsError:
-                pass
+            if not self.fs.exists(dst_pin_path):
+                # equivalent to mkdirp, want to fail quietly in case of race conditions
+                try:
+                    self.fs.mkdir(dst_pin_path)
+                except FileExistsError:
+                    pass
 
             # put tmp pin dir onto backend filesystem
             # TODO: if we allow the rsc backend to fs.exists("<user>/<content>/latest")
@@ -747,25 +749,34 @@ class BoardRsConnect(BaseBoard):
         * Adds access_type argument to specify who can see content. Defaults to "acl".
         """
 
-        # run parent function ---
-
         f_super = super().pin_write
-        meta = f_super(*args, **kwargs)
 
-        # update content title to reflect what's in metadata ----
-
-        # TODO(question): R pins updates this info before writing the pin..?
         # bind the original signature to get pin name
         sig = inspect.signature(f_super)
         bind = sig.bind(*args, **kwargs)
-
         pin_name = self.path_to_pin(bind.arguments["name"])
+
+        if pin_name.split("/")[0] != self.user_name and not self.fs.exists(pin_name):
+            # TODO: fs.mkdir here would erroneously create content for the user calling the API
+            # even if they were trying to create a content item for another user. we catch it here,
+            # but should also fix things downstream.
+            raise PinsError(
+                f"You are connected as {self.user_name}, but you are trying to create a new piece"
+                f" of content for another user ({pin_name}). They must create the content before you"
+                " can write to it."
+            )
+
+        # run parent function ---
+        meta = f_super(*args, **kwargs)
+
+        # update content title to reflect what's in metadata ----
+        # TODO(question): R pins updates this info before writing the pin..?
         content = self.fs.info(pin_name)
         self.fs.api.patch_content_item(
             content["guid"],
             title=meta.title,
             description=meta.description or "",
-            # access_type = content.access_type
+            access_type=access_type or content["access_type"],
         )
 
         return meta

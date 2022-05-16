@@ -47,6 +47,14 @@ jobs:
           fi
 
           python -m pip install -e .[test]
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: siuba-tests
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
       - name: Run tests
         run: |
           pytest pins -m 'not fs_rsc and not skip_on_github' $PYTEST_OPTS

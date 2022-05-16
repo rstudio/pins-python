@@ -776,7 +776,7 @@ class BoardRsConnect(BaseBoard):
             content["guid"],
             title=meta.title,
             description=meta.description or "",
-            access_type=access_type or content.access_type,
+            access_type=access_type or content["access_type"],
         )
 
         return meta

@@ -358,3 +358,17 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     """
     # TODO: user should be able to specify storage options here?
     return board("s3", path, versioned, cache, allow_pickle_read)
+
+
+def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+    """Create a board to read and write pins from an AWS S3 bucket folder.
+
+    Parameters
+    ----------
+    path:
+        Path of form <bucket_name>/<optional>/<subdirectory>.
+    **kwargs:
+        Passed to the pins.board function.
+    """
+
+    return board("s3", path, versioned, cache, allow_pickle_read)

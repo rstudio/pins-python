@@ -19,5 +19,6 @@ from .constructors import (
     board_urls,
     board_rsconnect,
     board_s3,
+    board_gcs,
     board,
 )

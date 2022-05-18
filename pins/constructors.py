@@ -47,9 +47,9 @@ def board_deparse(board: BaseBoard):
     prot = board.fs.protocol
     if prot == "rsc":
         url = board.fs.api.server_url
-        return f"board_rsconnect(server_url={repr(url)})"
+        return f"board_rsconnect(server_url={repr(url)}, allow_pickle_read={board.allow_pickle_read})"
     elif prot == "file":
-        return f"board_folder({repr(board.board)})"
+        return f"board_folder({repr(board.board)}, allow_pickle_read={board.allow_pickle_read})"
     else:
         raise NotImplementedError(
             f"board deparsing currently not supported for protocol: {prot}"

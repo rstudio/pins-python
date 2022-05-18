@@ -652,6 +652,22 @@ But you can choose another option depending on your goals:</p>
 That said, most boards transmit pins over HTTP, and this is going to be slow and possibly unreliable for very large pins.
 As a general rule of thumb, we don’t recommend using pins with files over 500 MB.
 If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>If you are using the RStudio Connect board (`board_rsconnect`), then you must specify your pin name as
+`&lt;user_name&gt;/&lt;content_name&gt;`. For example, `hadely/sales-report`.
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  Input In [6]
+    If you are using the RStudio Connect board (`board_rsconnect`), then you must specify your pin name as
+       ^
+SyntaxError: invalid syntax
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="metadata">
 <h2>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h2>
@@ -659,11 +675,6 @@ If you find yourself routinely pinning data larger that this, you might need to 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_meta</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220516T170907Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 5, 16, 17, 9, 7), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div>
 </div>
 </div>
@@ -691,23 +702,10 @@ If you find yourself routinely pinning data larger that this, you might need to 
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing to pin &#39;mtcars2&#39;
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20220516T170907Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 5, 16, 17, 9, 7, 113274), hash=&#39;3b134bae183b50c9&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;})
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_meta</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220516T170907Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 5, 16, 17, 9, 7), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div>
 </div>
 </div>
@@ -751,67 +749,11 @@ The primary exception is <code class="docutils literal notranslate"><span class=
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing to pin &#39;x&#39;
-Writing to pin &#39;x&#39;
-Writing to pin &#39;x&#39;
-</pre></div>
-</div>
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>created</th>
-      <th>hash</th>
-      <th>version</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>2022-05-16 17:09:07</td>
-      <td>331fd</td>
-      <td>20220516T170907Z-331fd</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2022-05-16 17:09:07</td>
-      <td>40b4b</td>
-      <td>20220516T170907Z-40b4b</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2022-05-16 17:09:07</td>
-      <td>91544</td>
-      <td>20220516T170907Z-91544</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
 </div>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> will return the most recent version:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 2, 3, 4, 5]
 </pre></div>
 </div>
 </div>
@@ -821,11 +763,6 @@ Writing to pin &#39;x&#39;
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="n">board2</span><span class="o">.</span><span class="n">pin_versions</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">board2</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">version</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 2]
 </pre></div>
 </div>
 </div>
@@ -907,11 +844,6 @@ For example, this code creates a board containing a single pin, <code class="doc
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv&#39;]
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -921,157 +853,10 @@ For example, this code creates a board containing a single pin, <code class="doc
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>studyName</th>
-      <th>Sample Number</th>
-      <th>Species</th>
-      <th>Region</th>
-      <th>Island</th>
-      <th>Stage</th>
-      <th>Individual ID</th>
-      <th>Clutch Completion</th>
-      <th>Date Egg</th>
-      <th>Culmen Length (mm)</th>
-      <th>Culmen Depth (mm)</th>
-      <th>Flipper Length (mm)</th>
-      <th>Body Mass (g)</th>
-      <th>Sex</th>
-      <th>Delta 15 N (o/oo)</th>
-      <th>Delta 13 C (o/oo)</th>
-      <th>Comments</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>PAL0708</td>
-      <td>1</td>
-      <td>Adelie Penguin (Pygoscelis adeliae)</td>
-      <td>Anvers</td>
-      <td>Torgersen</td>
-      <td>Adult, 1 Egg Stage</td>
-      <td>N1A1</td>
-      <td>Yes</td>
-      <td>2007-11-11</td>
-      <td>39.1</td>
-      <td>18.7</td>
-      <td>181.0</td>
-      <td>3750.0</td>
-      <td>MALE</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Not enough blood for isotopes.</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>PAL0708</td>
-      <td>2</td>
-      <td>Adelie Penguin (Pygoscelis adeliae)</td>
-      <td>Anvers</td>
-      <td>Torgersen</td>
-      <td>Adult, 1 Egg Stage</td>
-      <td>N1A2</td>
-      <td>Yes</td>
-      <td>2007-11-11</td>
-      <td>39.5</td>
-      <td>17.4</td>
-      <td>186.0</td>
-      <td>3800.0</td>
-      <td>FEMALE</td>
-      <td>8.94956</td>
-      <td>-24.69454</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>PAL0708</td>
-      <td>3</td>
-      <td>Adelie Penguin (Pygoscelis adeliae)</td>
-      <td>Anvers</td>
-      <td>Torgersen</td>
-      <td>Adult, 1 Egg Stage</td>
-      <td>N2A1</td>
-      <td>Yes</td>
-      <td>2007-11-16</td>
-      <td>40.3</td>
-      <td>18.0</td>
-      <td>195.0</td>
-      <td>3250.0</td>
-      <td>FEMALE</td>
-      <td>8.36821</td>
-      <td>-25.33302</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>PAL0708</td>
-      <td>4</td>
-      <td>Adelie Penguin (Pygoscelis adeliae)</td>
-      <td>Anvers</td>
-      <td>Torgersen</td>
-      <td>Adult, 1 Egg Stage</td>
-      <td>N2A2</td>
-      <td>Yes</td>
-      <td>2007-11-16</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Adult not sampled.</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>PAL0708</td>
-      <td>5</td>
-      <td>Adelie Penguin (Pygoscelis adeliae)</td>
-      <td>Anvers</td>
-      <td>Torgersen</td>
-      <td>Adult, 1 Egg Stage</td>
-      <td>N3A1</td>
-      <td>Yes</td>
-      <td>2007-11-16</td>
-      <td>36.7</td>
-      <td>19.3</td>
-      <td>193.0</td>
-      <td>3450.0</td>
-      <td>FEMALE</td>
-      <td>8.76651</td>
-      <td>-25.32426</td>
-      <td>NaN</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_data</span><span class="o">.</span><span class="n">pin_download</span><span class="p">(</span><span class="s2">&quot;penguins&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv&#39;]
 </pre></div>
 </div>
 </div>

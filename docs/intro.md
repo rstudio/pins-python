@@ -75,7 +75,7 @@ from pins import board_rsconnect
 board = board_rsconnect()
 #> Connecting to RSC 1.9.0.1 at <https://connect.rstudioservices.com>
 
-board.pin_write(tidy_sales_data, "sales-summary", type = "csv")
+board.pin_write(tidy_sales_data, "hadley/sales-summary", type = "csv")
 #> Writing to pin 'hadley/sales-summary'
 ```
 

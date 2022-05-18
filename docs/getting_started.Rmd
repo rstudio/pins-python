@@ -89,6 +89,12 @@ As a general rule of thumb, we don't recommend using pins with files over 500 MB
 If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.
 
 
+```{note}
+If you are using the RStudio Connect board (`board_rsconnect`), then you must specify your pin name as
+`<user_name>/<content_name>`. For example, `hadely/sales-report`.
+```
+
+
 ## Metadata
 
 

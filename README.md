@@ -24,7 +24,7 @@ To use the pins package, you must first create a pin board. A good place
 to start is `board_folder()`, which stores pins in a directory you
 specify. Here I’ll use a special version of `board_folder()` called
 `board_temp()` which creates a temporary board that’s automatically
-deleted when your R session ends. This is great for examples, but
+deleted when your Python script or notebook session ends. This is great for examples, but
 obviously you shouldn't use it for real work!
 
 
@@ -49,7 +49,7 @@ board.pin_write(mtcars.head(), "mtcars", type="csv")
 
 
 
-    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20220513T174015Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2022, 5, 13, 17, 40, 15, 184665), hash='120a54f7e0818041'), name='mtcars', user={})
+    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20220518T150837Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2022, 5, 18, 15, 8, 37, 413288), hash='120a54f7e0818041'), name='mtcars', user={})
 
 
 

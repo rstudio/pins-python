@@ -31,7 +31,7 @@ To use the pins package, you must first create a pin board. A good place
 to start is `board_folder()`, which stores pins in a directory you
 specify. Here I’ll use a special version of `board_folder()` called
 `board_temp()` which creates a temporary board that’s automatically
-deleted when your R session ends. This is great for examples, but
+deleted when your Python script or notebook session ends. This is great for examples, but
 obviously you shouldn't use it for real work!
 
 ```{python}

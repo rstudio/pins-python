@@ -371,4 +371,4 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
         Passed to the pins.board function.
     """
 
-    return board("s3", path, versioned, cache, allow_pickle_read)
+    return board("gs", path, versioned, cache, allow_pickle_read)

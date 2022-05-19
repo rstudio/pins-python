@@ -20,6 +20,16 @@ dev-stop:
 $(RSC_API_KEYS): dev-start
 	python script/setup-rsconnect/dump_api_keys.py $@
 
+README.md: README.Rmd
+	jupytext --from Rmd --to ipynb --output - $^ \
+	| jupyter nbconvert \
+		--stdin --to markdown \
+		--execute \
+		--ExecutePreprocessor.kernel_name='venv-pins-python' \
+		--TagRemovePreprocessor.remove_all_outputs_tags='hide-cell' \
+		--TagRemovePreprocessor.remove_input_tags='hide-cell' \
+		--output $@
+
 test:
 	pytest
 

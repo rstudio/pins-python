@@ -150,9 +150,7 @@ class MetaV0:
 
 
 class MetaFactory:
-    """Responsible for creating and loading (e.g. from yaml) of meta objects.
-
-    """
+    """Responsible for creating and loading (e.g. from yaml) of meta objects."""
 
     def get_meta_name(self, *args, **kwargs) -> str:
         return META_FILENAME

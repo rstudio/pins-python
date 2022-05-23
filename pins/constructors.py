@@ -28,7 +28,7 @@ def board_deparse(board: BaseBoard):
 
     Examples
     --------
-    
+
     The example below deparses a board connected to RStudio Connect.
 
     >>> board_deparse(board_rsconnect(server_url="http://example.com", api_key="xxx"))
@@ -47,7 +47,7 @@ def board_deparse(board: BaseBoard):
     "board_folder('a/b/c', allow_pickle_read=True)"
     """
     if board.allow_pickle_read is not None:
-        allow_pickle = f", allow_pickle_read={repr(board.allow_pickle_read)}" 
+        allow_pickle = f", allow_pickle_read={repr(board.allow_pickle_read)}"
     else:
         allow_pickle = ""
 

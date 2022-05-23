@@ -42,14 +42,21 @@ def board_deparse(board: BaseBoard):
 
     >>> board_deparse(board_folder("a/b/c"))
     "board_folder('a/b/c')"
+
+    >>> board_deparse(board_folder(path="a/b/c", allow_pickle_read=True))
+    "board_folder('a/b/c', allow_pickle_read=True)"
     """
+    if board.allow_pickle_read is not None:
+        allow_pickle = f", allow_pickle_read={repr(board.allow_pickle_read)}"
+    else:
+        allow_pickle = ""
 
     prot = board.fs.protocol
     if prot == "rsc":
         url = board.fs.api.server_url
-        return f"board_rsconnect(server_url={repr(url)})"
+        return f"board_rsconnect(server_url={repr(url)}{allow_pickle})"
     elif prot == "file":
-        return f"board_folder({repr(board.board)})"
+        return f"board_folder({repr(board.board)}{allow_pickle})"
     else:
         raise NotImplementedError(
             f"board deparsing currently not supported for protocol: {prot}"

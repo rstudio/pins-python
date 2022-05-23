@@ -308,7 +308,10 @@ from pins.cache import PinsCache  # noqa
 def test_board_base_pin_meta_cache_touch(tmp_dir2, df):
 
     cache = fsspec.filesystem(
-        "pinscache", target_protocol="file", same_names=True, hash_prefix=str(tmp_dir2),
+        "pinscache",
+        target_protocol="file",
+        same_names=True,
+        hash_prefix=str(tmp_dir2),
     )
     board = BaseBoard(str(tmp_dir2), fs=cache)
 

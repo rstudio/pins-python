@@ -45,7 +45,7 @@ board.pin_write(mtcars.head(), "mtcars", type="csv")
 
 ```
 ## Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20220524T122819Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2022, 5, 24, 12, 28, 19, 765459), hash='120a54f7e0818041'), name='mtcars', user={})
-## 
+##
 ## Writing to pin 'mtcars'
 ```
 

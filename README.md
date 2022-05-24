@@ -35,7 +35,7 @@ from pins.data import mtcars
 board = pins.board_temp()
 ```
 
-You can “pin” (save) data to a board with the `.pin_write()` method. It requires three
+You can "pin" (save) data to a board with the `.pin_write()` method. It requires three
 arguments: an object, a name, and a pin type:
 
 
@@ -43,15 +43,11 @@ arguments: an object, a name, and a pin type:
 board.pin_write(mtcars.head(), "mtcars", type="csv")
 ```
 
-    Writing to pin 'mtcars'
-
-
-
-
-
-    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20220518T150837Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2022, 5, 18, 15, 8, 37, 413288), hash='120a54f7e0818041'), name='mtcars', user={})
-
-
+```
+## Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20220524T122819Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2022, 5, 24, 12, 28, 19, 765459), hash='120a54f7e0818041'), name='mtcars', user={})
+## 
+## Writing to pin 'mtcars'
+```
 
 Above, we saved the data as a CSV, but depending on
 what you’re saving and who else you want to read it, you might use the
@@ -64,22 +60,19 @@ You can later retrieve the pinned data with `.pin_read()`:
 board.pin_read("mtcars")
 ```
 
-
-
-
-        mpg  cyl   disp   hp  drat     wt   qsec  vs  am  gear  carb
-    0  21.0    6  160.0  110  3.90  2.620  16.46   0   1     4     4
-    1  21.0    6  160.0  110  3.90  2.875  17.02   0   1     4     4
-    2  22.8    4  108.0   93  3.85  2.320  18.61   1   1     4     1
-    3  21.4    6  258.0  110  3.08  3.215  19.44   1   0     3     1
-    4  18.7    8  360.0  175  3.15  3.440  17.02   0   0     3     2
-
-
+```
+##     mpg  cyl   disp   hp  drat     wt   qsec  vs  am  gear  carb
+## 0  21.0    6  160.0  110  3.90  2.620  16.46   0   1     4     4
+## 1  21.0    6  160.0  110  3.90  2.875  17.02   0   1     4     4
+## 2  22.8    4  108.0   93  3.85  2.320  18.61   1   1     4     1
+## 3  21.4    6  258.0  110  3.08  3.215  19.44   1   0     3     1
+## 4  18.7    8  360.0  175  3.15  3.440  17.02   0   0     3     2
+```
 
 A board on your computer is good place to start, but the real power of
 pins comes when you use a board that’s shared with multiple people. To
 get started, you can use `board_folder()` with a directory on a shared
-drive or in dropbox, or if you use [RStudio
+drive or in DropBox, or if you use [RStudio
 Connect](https://www.rstudio.com/products/connect/) you can use
 `board_rsconnect()`:
 

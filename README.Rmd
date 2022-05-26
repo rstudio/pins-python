@@ -9,7 +9,7 @@ pd.set_option("display.notebook_repr_html", False)
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/machow/pins-python/HEAD)
 
-The pins package publishes data, models, and other python objects, making it
+The pins package publishes data, models, and other Python objects, making it
 easy to share them across projects and with your colleagues. You can pin
 objects to a variety of pin *boards*, including folders (to share on a
 networked drive or with services like DropBox), RStudio Connect, and Amazon
@@ -41,7 +41,7 @@ from pins.data import mtcars
 board = pins.board_temp()
 ```
 
-You can “pin” (save) data to a board with the `.pin_write()` method. It requires three
+You can "pin" (save) data to a board with the `.pin_write()` method. It requires three
 arguments: an object, a name, and a pin type:
 
 ```{python}
@@ -61,7 +61,7 @@ board.pin_read("mtcars")
 A board on your computer is good place to start, but the real power of
 pins comes when you use a board that’s shared with multiple people. To
 get started, you can use `board_folder()` with a directory on a shared
-drive or in dropbox, or if you use [RStudio
+drive or in DropBox, or if you use [RStudio
 Connect](https://www.rstudio.com/products/connect/) you can use
 `board_rsconnect()`:
 

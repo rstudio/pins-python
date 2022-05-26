@@ -2,7 +2,7 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/machow/pins-python/HEAD)
 
-The pins package publishes data, models, and other python objects, making it
+The pins package publishes data, models, and other Python objects, making it
 easy to share them across projects and with your colleagues. You can pin
 objects to a variety of pin *boards*, including folders (to share on a
 networked drive or with services like DropBox), RStudio Connect, and Amazon
@@ -35,7 +35,7 @@ from pins.data import mtcars
 board = pins.board_temp()
 ```
 
-You can “pin” (save) data to a board with the `.pin_write()` method. It requires three
+You can "pin" (save) data to a board with the `.pin_write()` method. It requires three
 arguments: an object, a name, and a pin type:
 
 
@@ -49,7 +49,7 @@ board.pin_write(mtcars.head(), "mtcars", type="csv")
 
 
 
-    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20220518T150837Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2022, 5, 18, 15, 8, 37, 413288), hash='120a54f7e0818041'), name='mtcars', user={})
+    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20220526T165625Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2022, 5, 26, 16, 56, 25, 738735), hash='120a54f7e0818041'), name='mtcars', user={})
 
 
 
@@ -79,7 +79,7 @@ board.pin_read("mtcars")
 A board on your computer is good place to start, but the real power of
 pins comes when you use a board that’s shared with multiple people. To
 get started, you can use `board_folder()` with a directory on a shared
-drive or in dropbox, or if you use [RStudio
+drive or in DropBox, or if you use [RStudio
 Connect](https://www.rstudio.com/products/connect/) you can use
 `board_rsconnect()`:
 

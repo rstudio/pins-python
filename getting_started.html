@@ -151,17 +151,94 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2">
+   <li class="toctree-l2 has-children">
     <a class="reference internal" href="api/boards.html">
      Board Methods
     </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.html">
+       pins.boards.BaseBoard
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_read.html">
+       pins.boards.BaseBoard.pin_read
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_write.html">
+       pins.boards.BaseBoard.pin_write
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_meta.html">
+       pins.boards.BaseBoard.pin_meta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_versions.html">
+       pins.boards.BaseBoard.pin_versions
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_list.html">
+       pins.boards.BaseBoard.pin_list
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_exists.html">
+       pins.boards.BaseBoard.pin_exists
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_version_delete.html">
+       pins.boards.BaseBoard.pin_version_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_versions_prune.html">
+       pins.boards.BaseBoard.pin_versions_prune
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_delete.html">
+       pins.boards.BaseBoard.pin_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_search.html">
+       pins.boards.BaseBoard.pin_search
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_download.html">
+       pins.boards.BaseBoard.pin_download
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_upload.html">
+       pins.boards.BaseBoard.pin_upload
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_browse.html">
+       pins.boards.BaseBoard.pin_browse
+      </a>
+     </li>
+    </ul>
    </li>
    <li class="toctree-l2 has-children">
     <a class="reference internal" href="api/meta.html">
      Metadata
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -387,8 +464,8 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 <div class="tex2jax_ignore mathjax_ignore section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>The pins package helps you publish data sets, models, and other R objects, making it easy to share them across projects and with your colleagues.
-You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with dropbox), RStudio connect, Amazon S3, and more.
+<p>The pins package helps you publish data sets, models, and other Python objects, making it easy to share them across projects and with your colleagues.
+You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with DropBox), RStudio connect, Amazon S3, and more.
 This vignette will introduce you to the basics of pins.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -400,7 +477,7 @@ This vignette will introduce you to the basics of pins.</p>
 <div class="section" id="id1">
 <h2>Getting started<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>Every pin lives in a pin <em>board</em>, so you must start by creating a pin board.
-In this vignette I’ll use a temporary board which is automatically deleted when your python session is over:</p>
+In this vignette I’ll use a temporary board which is automatically deleted when your Python session is over:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">()</span>
@@ -408,7 +485,7 @@ In this vignette I’ll use a temporary board which is automatically deleted whe
 </div>
 </div>
 </div>
-<p>In real-life, you’d pick a board depending on how you want to share the data.
+<p>In real life, you’d pick a board depending on how you want to share the data.
 Here are a few options:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">board_local</span><span class="p">()</span> <span class="c1"># share data across R sessions on the same computer</span>
 <span class="n">board</span> <span class="o">=</span> <span class="n">board_folder</span><span class="p">(</span><span class="s2">&quot;~/Dropbox&quot;</span><span class="p">)</span> <span class="c1"># share data with others using dropbox</span>
@@ -419,7 +496,7 @@ Here are a few options:</p>
 </div>
 <div class="section" id="reading-and-writing-data">
 <h2>Reading and writing data<a class="headerlink" href="#reading-and-writing-data" title="Permalink to this headline">¶</a></h2>
-<p>Once you have a pin board, you can write data to it with <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code>:</p>
+<p>Once you have a pin board, you can write data to it with the <code class="docutils literal notranslate"><span class="pre">.pin_write()</span></code> method:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pins.data</span> <span class="kn">import</span> <span class="n">mtcars</span>
@@ -434,13 +511,13 @@ Here are a few options:</p>
 </div>
 </div>
 </div>
-<p>The first argument is the object to save (usually a data frame, but it can be any R object), and the second argument gives the “name” of the pin.
-The name is basically equivalent to a file name: you’ll use it when you later want to read the data from the pin.
+<p>The first argument is the object to save (usually a data frame, but it can be any Python object), and the second argument gives the “name” of the pin.
+The name is basically equivalent to a file name; you’ll use it when you later want to read the data from the pin.
 The only rule for a pin name is that it can’t contain slashes.</p>
-<p>As you can see from the output, pins has chosen to save this data to an <code class="docutils literal notranslate"><span class="pre">.rds</span></code> file.
+<p>Above, we saved the data as a CSV, but depending on what you’re saving and who else you want to read it, you might use the
 But you can choose another option depending on your goals:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;csv&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">write.csv()</span></code> to create a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file. CSVs can read by any application, but only support simple columns (e.g. numbers, strings, dates), can take up a lot of disk space, and can be slow to read.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;csv&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">to_csv()</span></code> from pandas to create a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file. CSVs can read by any application, but only support simple columns (e.g. numbers, strings, dates), can take up a lot of disk space, and can be slow to read.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;joblib&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">joblib.dump()</span></code> to create a binary python data file. See the <a class="reference external" href="https://joblib.readthedocs.io/en/latest/">joblib docs</a> for more information.</p></li>
 </ul>
 <p>🚧 Data formats TODO 🚧</p>
@@ -652,29 +729,23 @@ But you can choose another option depending on your goals:</p>
 That said, most boards transmit pins over HTTP, and this is going to be slow and possibly unreliable for very large pins.
 As a general rule of thumb, we don’t recommend using pins with files over 500 MB.
 If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>If you are using the RStudio Connect board (`board_rsconnect`), then you must specify your pin name as
-`&lt;user_name&gt;/&lt;content_name&gt;`. For example, `hadely/sales-report`.
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  Input In [6]
-    If you are using the RStudio Connect board (`board_rsconnect`), then you must specify your pin name as
-       ^
-SyntaxError: invalid syntax
-</pre></div>
-</div>
-</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are using the RStudio Connect board (<code class="docutils literal notranslate"><span class="pre">board_rsconnect</span></code>), then you must specify your pin name as
+<code class="docutils literal notranslate"><span class="pre">&lt;user_name&gt;/&lt;content_name&gt;</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">hadley/sales-report</span></code>.</p>
 </div>
 </div>
 <div class="section" id="metadata">
 <h2>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h2>
-<p>Every pin is accompanied by some metadata that you can access with pin_meta():</p>
+<p>Every pin is accompanied by some metadata that you can access with <code class="docutils literal notranslate"><span class="pre">pin_meta()</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_meta</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220526T211050Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 5, 26, 21, 10, 50), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div>
 </div>
 </div>
@@ -702,10 +773,23 @@ SyntaxError: invalid syntax
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing to pin &#39;mtcars2&#39;
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20220526T211050Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 5, 26, 21, 10, 50, 627966), hash=&#39;3b134bae183b50c9&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;})
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_meta</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220526T211050Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 5, 26, 21, 10, 50), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div>
 </div>
 </div>
@@ -718,7 +802,7 @@ SyntaxError: invalid syntax
 <div><p>⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and <strong>pickle files are not secure</strong>. Only read pickle files you trust. In order to read pickle files, set the <code class="docutils literal notranslate"><span class="pre">allow_pickle_read=True</span></code> argument. See: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">https://docs.python.org/3/library/pickle.html</a>.</p>
 </div></blockquote>
 <blockquote>
-<div><p>⚠️: versioning is not yet implemented. These docs are copied from R pins.</p>
+<div><p>⚠️: Turning off versioning is not yet implemented; all Python pins are versioned. These docs are copied from R pins.</p>
 </div></blockquote>
 <p>In many situations it’s useful to version pins, so that writing to an existing pin does not replace the existing data, but instead adds a new copy.
 There are two ways to turn versioning on:</p>
@@ -749,11 +833,67 @@ The primary exception is <code class="docutils literal notranslate"><span class=
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing to pin &#39;x&#39;
+Writing to pin &#39;x&#39;
+Writing to pin &#39;x&#39;
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>created</th>
+      <th>hash</th>
+      <th>version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2022-05-26 21:10:50</td>
+      <td>331fd</td>
+      <td>20220526T211050Z-331fd</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2022-05-26 21:10:50</td>
+      <td>40b4b</td>
+      <td>20220526T211050Z-40b4b</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2022-05-26 21:10:50</td>
+      <td>91544</td>
+      <td>20220526T211050Z-91544</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> will return the most recent version:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 2, 3, 4, 5]
 </pre></div>
 </div>
 </div>
@@ -766,10 +906,18 @@ The primary exception is <code class="docutils literal notranslate"><span class=
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 2]
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="reading-and-writing-files">
 <h2>🚧 Reading and writing files<a class="headerlink" href="#reading-and-writing-files" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>⚠️: <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> are not yet implemented in Python. These docs are copied from R pins.</p>
+</div></blockquote>
 <p>So far we’ve focussed on <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> which work with R objects.
 pins also provides the lower-level <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> which work with files on disk.
 You can use them to share types of data that are otherwise unsupported by pins.</p>
@@ -820,6 +968,9 @@ I’ll start by creating a few files in the temp directory:</p>
 </div>
 <div class="section" id="caching">
 <h2>Caching<a class="headerlink" href="#caching" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>⚠️: <code class="docutils literal notranslate"><span class="pre">board_url</span></code> is not yet implemented in Python. These docs are copied from R pins.</p>
+</div></blockquote>
 <p>The primary purpose of pins is to make it easy to share data.
 But pins is also designed to help you spend as little time as possible downloading data.
 <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> automatically cache remote pins: they maintain a local copy of the data (so it’s fast) but always check that it’s up-to-date (so your analysis doesn’t use stale data).</p>
@@ -844,6 +995,11 @@ For example, this code creates a board containing a single pin, <code class="doc
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv&#39;]
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -853,10 +1009,157 @@ For example, this code creates a board containing a single pin, <code class="doc
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>studyName</th>
+      <th>Sample Number</th>
+      <th>Species</th>
+      <th>Region</th>
+      <th>Island</th>
+      <th>Stage</th>
+      <th>Individual ID</th>
+      <th>Clutch Completion</th>
+      <th>Date Egg</th>
+      <th>Culmen Length (mm)</th>
+      <th>Culmen Depth (mm)</th>
+      <th>Flipper Length (mm)</th>
+      <th>Body Mass (g)</th>
+      <th>Sex</th>
+      <th>Delta 15 N (o/oo)</th>
+      <th>Delta 13 C (o/oo)</th>
+      <th>Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PAL0708</td>
+      <td>1</td>
+      <td>Adelie Penguin (Pygoscelis adeliae)</td>
+      <td>Anvers</td>
+      <td>Torgersen</td>
+      <td>Adult, 1 Egg Stage</td>
+      <td>N1A1</td>
+      <td>Yes</td>
+      <td>2007-11-11</td>
+      <td>39.1</td>
+      <td>18.7</td>
+      <td>181.0</td>
+      <td>3750.0</td>
+      <td>MALE</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Not enough blood for isotopes.</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PAL0708</td>
+      <td>2</td>
+      <td>Adelie Penguin (Pygoscelis adeliae)</td>
+      <td>Anvers</td>
+      <td>Torgersen</td>
+      <td>Adult, 1 Egg Stage</td>
+      <td>N1A2</td>
+      <td>Yes</td>
+      <td>2007-11-11</td>
+      <td>39.5</td>
+      <td>17.4</td>
+      <td>186.0</td>
+      <td>3800.0</td>
+      <td>FEMALE</td>
+      <td>8.94956</td>
+      <td>-24.69454</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PAL0708</td>
+      <td>3</td>
+      <td>Adelie Penguin (Pygoscelis adeliae)</td>
+      <td>Anvers</td>
+      <td>Torgersen</td>
+      <td>Adult, 1 Egg Stage</td>
+      <td>N2A1</td>
+      <td>Yes</td>
+      <td>2007-11-16</td>
+      <td>40.3</td>
+      <td>18.0</td>
+      <td>195.0</td>
+      <td>3250.0</td>
+      <td>FEMALE</td>
+      <td>8.36821</td>
+      <td>-25.33302</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PAL0708</td>
+      <td>4</td>
+      <td>Adelie Penguin (Pygoscelis adeliae)</td>
+      <td>Anvers</td>
+      <td>Torgersen</td>
+      <td>Adult, 1 Egg Stage</td>
+      <td>N2A2</td>
+      <td>Yes</td>
+      <td>2007-11-16</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Adult not sampled.</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PAL0708</td>
+      <td>5</td>
+      <td>Adelie Penguin (Pygoscelis adeliae)</td>
+      <td>Anvers</td>
+      <td>Torgersen</td>
+      <td>Adult, 1 Egg Stage</td>
+      <td>N3A1</td>
+      <td>Yes</td>
+      <td>2007-11-16</td>
+      <td>36.7</td>
+      <td>19.3</td>
+      <td>193.0</td>
+      <td>3450.0</td>
+      <td>FEMALE</td>
+      <td>8.76651</td>
+      <td>-25.32426</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_data</span><span class="o">.</span><span class="n">pin_download</span><span class="p">(</span><span class="s2">&quot;penguins&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv&#39;]
 </pre></div>
 </div>
 </div>

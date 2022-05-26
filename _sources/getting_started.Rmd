@@ -20,8 +20,8 @@ pd.options.display.max_rows = 25
 Getting Started
 ===============
 
-The pins package helps you publish data sets, models, and other R objects, making it easy to share them across projects and with your colleagues.
-You can pin objects to a variety of "boards", including local folders (to share on a networked drive or with dropbox), RStudio connect, Amazon S3, and more.
+The pins package helps you publish data sets, models, and other Python objects, making it easy to share them across projects and with your colleagues.
+You can pin objects to a variety of "boards", including local folders (to share on a networked drive or with DropBox), RStudio connect, Amazon S3, and more.
 This vignette will introduce you to the basics of pins.
 
 ```{python}
@@ -31,13 +31,13 @@ from pins import board_local, board_folder, board_temp, board_urls
 ## Getting started
 
 Every pin lives in a pin *board*, so you must start by creating a pin board.
-In this vignette I'll use a temporary board which is automatically deleted when your python session is over:
+In this vignette I'll use a temporary board which is automatically deleted when your Python session is over:
 
 ```{python}
 board = board_temp()
 ```
 
-In real-life, you'd pick a board depending on how you want to share the data.
+In real life, you'd pick a board depending on how you want to share the data.
 Here are a few options:
 
 
@@ -51,7 +51,7 @@ board = board_rsconnect() # share data with RStudio Connect
 
 ## Reading and writing data
 
-Once you have a pin board, you can write data to it with `pin_write()`:
+Once you have a pin board, you can write data to it with the `.pin_write()` method:
 
 ```{python}
 from pins.data import mtcars
@@ -59,15 +59,15 @@ from pins.data import mtcars
 meta = board.pin_write(mtcars, "mtcars", type="csv")
 ```
 
-The first argument is the object to save (usually a data frame, but it can be any R object), and the second argument gives the "name" of the pin.
-The name is basically equivalent to a file name: you'll use it when you later want to read the data from the pin.
+The first argument is the object to save (usually a data frame, but it can be any Python object), and the second argument gives the "name" of the pin.
+The name is basically equivalent to a file name; you'll use it when you later want to read the data from the pin.
 The only rule for a pin name is that it can't contain slashes.
 
 
-As you can see from the output, pins has chosen to save this data to an `.rds` file.
+Above, we saved the data as a CSV, but depending on what you’re saving and who else you want to read it, you might use the
 But you can choose another option depending on your goals:
 
--   `type = "csv"` uses `write.csv()` to create a `.csv` file. CSVs can read by any application, but only support simple columns (e.g. numbers, strings, dates), can take up a lot of disk space, and can be slow to read.
+-   `type = "csv"` uses `to_csv()` from pandas to create a `.csv` file. CSVs can read by any application, but only support simple columns (e.g. numbers, strings, dates), can take up a lot of disk space, and can be slow to read.
 -   `type = "joblib"` uses `joblib.dump()` to create a binary python data file. See the [joblib docs](https://joblib.readthedocs.io/en/latest/) for more information.
 
 🚧 Data formats TODO 🚧
@@ -88,17 +88,18 @@ That said, most boards transmit pins over HTTP, and this is going to be slow and
 As a general rule of thumb, we don't recommend using pins with files over 500 MB.
 If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.
 
-
+<!-- #region -->
 ```{note}
 If you are using the RStudio Connect board (`board_rsconnect`), then you must specify your pin name as
-`<user_name>/<content_name>`. For example, `hadely/sales-report`.
+`<user_name>/<content_name>`. For example, `hadley/sales-report`.
 ```
+<!-- #endregion -->
 
 
 ## Metadata
 
 
-Every pin is accompanied by some metadata that you can access with pin_meta():
+Every pin is accompanied by some metadata that you can access with `pin_meta()`:
 
 ```{python}
 board.pin_meta("mtcars")
@@ -139,7 +140,7 @@ While we’ll do our best to keep the automatically generated metadata consisten
 > ⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and **pickle files are not secure**. Only read pickle files you trust. In order to read pickle files, set the `allow_pickle_read=True` argument. See: https://docs.python.org/3/library/pickle.html.
 
 
-> ⚠️: versioning is not yet implemented. These docs are copied from R pins.
+> ⚠️: Turning off versioning is not yet implemented; all Python pins are versioned. These docs are copied from R pins.
 
 In many situations it's useful to version pins, so that writing to an existing pin does not replace the existing data, but instead adds a new copy.
 There are two ways to turn versioning on:
@@ -186,6 +187,7 @@ board2.pin_read("x", version = version)
 
 ## 🚧 Reading and writing files
 
+> ⚠️: `pin_upload()` and `pin_download()` are not yet implemented in Python. These docs are copied from R pins.
 
 So far we've focussed on `pin_write()` and `pin_read()` which work with R objects.
 pins also provides the lower-level `pin_upload()` and `pin_download()` which work with files on disk.
@@ -231,6 +233,7 @@ But you can `pin_download()` something that you've pinned with `pin_write()`:
 
 ## Caching
 
+> ⚠️: `board_url` is not yet implemented in Python. These docs are copied from R pins.
 
 The primary purpose of pins is to make it easy to share data.
 But pins is also designed to help you spend as little time as possible downloading data.

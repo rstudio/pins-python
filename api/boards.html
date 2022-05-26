@@ -53,7 +53,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Metadata" href="meta.html" />
+    <link rel="next" title="pins.boards.BaseBoard" href="api_card/pins.boards.BaseBoard.html" />
     <link rel="prev" title="pins.board" href="api_card/pins.board.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -151,17 +151,94 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 current active">
+   <li class="toctree-l2 current active has-children">
     <a class="current reference internal" href="#">
      Board Methods
     </a>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.html">
+       pins.boards.BaseBoard
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_read.html">
+       pins.boards.BaseBoard.pin_read
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_write.html">
+       pins.boards.BaseBoard.pin_write
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_meta.html">
+       pins.boards.BaseBoard.pin_meta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_versions.html">
+       pins.boards.BaseBoard.pin_versions
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_list.html">
+       pins.boards.BaseBoard.pin_list
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_exists.html">
+       pins.boards.BaseBoard.pin_exists
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_version_delete.html">
+       pins.boards.BaseBoard.pin_version_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_versions_prune.html">
+       pins.boards.BaseBoard.pin_versions_prune
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_delete.html">
+       pins.boards.BaseBoard.pin_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_search.html">
+       pins.boards.BaseBoard.pin_search
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_download.html">
+       pins.boards.BaseBoard.pin_download
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_upload.html">
+       pins.boards.BaseBoard.pin_upload
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_browse.html">
+       pins.boards.BaseBoard.pin_browse
+      </a>
+     </li>
+    </ul>
    </li>
    <li class="toctree-l2 has-children">
     <a class="reference internal" href="meta.html">
      Metadata
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -346,6 +423,9 @@ const thebe_selector_output = ".output, .cell_output"
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.html#pins.boards.BaseBoard" title="pins.boards.BaseBoard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseBoard</span></code></a>(board, fs[, versioned, meta_factory])</p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -357,6 +437,36 @@ const thebe_selector_output = ".output, .cell_output"
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_read.html#pins.boards.BaseBoard.pin_read" title="pins.boards.BaseBoard.pin_read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_read</span></code></a>(name[, version, hash])</p></td>
+<td><p>Return the data stored in a pin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_write.html#pins.boards.BaseBoard.pin_write" title="pins.boards.BaseBoard.pin_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_write</span></code></a>(x[, name, type, title, ...])</p></td>
+<td><p>Write a pin object to the board.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_meta.html#pins.boards.BaseBoard.pin_meta" title="pins.boards.BaseBoard.pin_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_meta</span></code></a>(name[, version])</p></td>
+<td><p>Return metadata about a pin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_versions.html#pins.boards.BaseBoard.pin_versions" title="pins.boards.BaseBoard.pin_versions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_versions</span></code></a>(name[, as_df])</p></td>
+<td><p>Return available versions of a pin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_list.html#pins.boards.BaseBoard.pin_list" title="pins.boards.BaseBoard.pin_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_list</span></code></a>()</p></td>
+<td><p>List names of all pins in a board.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_exists.html#pins.boards.BaseBoard.pin_exists" title="pins.boards.BaseBoard.pin_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_exists</span></code></a>(name)</p></td>
+<td><p>Determine if a pin exists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_version_delete.html#pins.boards.BaseBoard.pin_version_delete" title="pins.boards.BaseBoard.pin_version_delete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_version_delete</span></code></a>(name, version)</p></td>
+<td><p>Delete a single version of a pin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_versions_prune.html#pins.boards.BaseBoard.pin_versions_prune" title="pins.boards.BaseBoard.pin_versions_prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_versions_prune</span></code></a>(name[, n, days])</p></td>
+<td><p>Delete old versions of a pin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_delete.html#pins.boards.BaseBoard.pin_delete" title="pins.boards.BaseBoard.pin_delete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_delete</span></code></a>(names)</p></td>
+<td><p>Delete a pin (or pins), removing it from the board.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_search.html#pins.boards.BaseBoard.pin_search" title="pins.boards.BaseBoard.pin_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_search</span></code></a>([search, as_df])</p></td>
+<td><p>Search for pins.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -368,6 +478,15 @@ const thebe_selector_output = ".output, .cell_output"
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_download.html#pins.boards.BaseBoard.pin_download" title="pins.boards.BaseBoard.pin_download"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_download</span></code></a>(name[, version, hash])</p></td>
+<td><p>TODO: Download the files contained in a pin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_upload.html#pins.boards.BaseBoard.pin_upload" title="pins.boards.BaseBoard.pin_upload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_upload</span></code></a>(paths[, name, title, ...])</p></td>
+<td><p>TODO: Write a pin based on paths to one or more files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api_card/pins.boards.BaseBoard.pin_browse.html#pins.boards.BaseBoard.pin_browse" title="pins.boards.BaseBoard.pin_browse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_browse</span></code></a>(name[, version, local])</p></td>
+<td><p>TODO: Navigate to the home of a pin, either on the internet or locally.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -405,10 +524,10 @@ const thebe_selector_output = ".output, .cell_output"
             <p class="prev-next-title">pins.board</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="meta.html" title="next page">
+    <a class='right-next' id="next-link" href="api_card/pins.boards.BaseBoard.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Metadata</p>
+        <p class="prev-next-title">pins.boards.BaseBoard</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

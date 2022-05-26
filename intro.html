@@ -150,17 +150,94 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2">
+   <li class="toctree-l2 has-children">
     <a class="reference internal" href="api/boards.html">
      Board Methods
     </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.html">
+       pins.boards.BaseBoard
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_read.html">
+       pins.boards.BaseBoard.pin_read
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_write.html">
+       pins.boards.BaseBoard.pin_write
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_meta.html">
+       pins.boards.BaseBoard.pin_meta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_versions.html">
+       pins.boards.BaseBoard.pin_versions
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_list.html">
+       pins.boards.BaseBoard.pin_list
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_exists.html">
+       pins.boards.BaseBoard.pin_exists
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_version_delete.html">
+       pins.boards.BaseBoard.pin_version_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_versions_prune.html">
+       pins.boards.BaseBoard.pin_versions_prune
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_delete.html">
+       pins.boards.BaseBoard.pin_delete
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_search.html">
+       pins.boards.BaseBoard.pin_search
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_download.html">
+       pins.boards.BaseBoard.pin_download
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_upload.html">
+       pins.boards.BaseBoard.pin_upload
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.boards.BaseBoard.pin_browse.html">
+       pins.boards.BaseBoard.pin_browse
+      </a>
+     </li>
+    </ul>
    </li>
    <li class="toctree-l2 has-children">
     <a class="reference internal" href="api/meta.html">
      Metadata
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -349,11 +426,11 @@ const thebe_selector_output = ".output, .cell_output"
 <h1>Welcome<a class="headerlink" href="#welcome" title="Permalink to this headline">¶</a></h1>
 <a class="reference internal image-reference" href="_images/logo.png"><img alt="pins, a library for organizing and sharing data." class="align-right" src="_images/logo.png" style="height: 139px;" /></a>
 <p>The pins package publishes data, models, and other R objects, making it easy to share them across projects and with your colleagues.
-You can pin objects to a variety of pin <em>boards</em>, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Azure storage and ~Microsoft 365 (OneDrive and SharePoint)~.
+You can pin objects to a variety of pin <em>boards</em>, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Azure storage and ~~Microsoft 365 (OneDrive and SharePoint)~~.
 Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.</p>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>To try out the development version of pins you’ll need to install from GitHub:</p>
+<p>To install the released version from PyPI:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python -m pip install pins
 </pre></div>
 </div>
@@ -362,7 +439,7 @@ Pins can be automatically versioned, making it straightforward to track changes,
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p>To use the pins package, you must first create a pin board.
 A good place to start is <code class="docutils literal notranslate"><span class="pre">board_folder()</span></code>, which stores pins in a directory you specify.
-Here I’ll use a special version of <code class="docutils literal notranslate"><span class="pre">board_folder()</span></code> called <code class="docutils literal notranslate"><span class="pre">board_temp()</span></code> which creates a temporary board that’s automatically deleted when your R session ends.
+Here I’ll use a special version of <code class="docutils literal notranslate"><span class="pre">board_folder()</span></code> called <code class="docutils literal notranslate"><span class="pre">board_temp()</span></code> which creates a temporary board that’s automatically deleted when your Python session ends.
 This is great for examples, but obviously you shouldn’t use it for real work!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -375,13 +452,13 @@ This is great for examples, but obviously you shouldn’t use it for real work!<
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;pins.boards.BaseBoard at 0x7f9a3c588760&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;pins.boards.BaseBoard at 0x7f2e381b0760&gt;
 </pre></div>
 </div>
 </div>
 </div>
-<p>You can “pin” (save) data to a board with <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code>.
-It takes three arguments: the board to pin to, an object, and a name:</p>
+<p>You can “pin” (save) data to a board with the <code class="docutils literal notranslate"><span class="pre">.pin_write()</span></code> method.
+It requires three arguments: an object, a name, and a pin type:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_write</span><span class="p">(</span><span class="n">mtcars</span><span class="o">.</span><span class="n">head</span><span class="p">(),</span> <span class="s2">&quot;mtcars&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span>
@@ -392,13 +469,15 @@ It takes three arguments: the board to pin to, an object, and a name:</p>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing to pin &#39;mtcars&#39;
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 5 x 11 DataFrame&#39;, description=None, created=&#39;20220523T190536Z&#39;, pin_hash=&#39;120a54f7e0818041&#39;, file=&#39;mtcars.csv&#39;, file_size=249, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 5, 23, 19, 5, 36, 498267), hash=&#39;120a54f7e0818041&#39;), name=&#39;mtcars&#39;, user={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 5 x 11 DataFrame&#39;, description=None, created=&#39;20220526T211053Z&#39;, pin_hash=&#39;120a54f7e0818041&#39;, file=&#39;mtcars.csv&#39;, file_size=249, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 5, 26, 21, 10, 53, 424251), hash=&#39;120a54f7e0818041&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div>
 </div>
 </div>
 </div>
-<p>~As you can see, the data saved as an <code class="docutils literal notranslate"><span class="pre">.rds</span></code> by default~, but depending on what you’re saving and who else you want to read it, you might use the <code class="docutils literal notranslate"><span class="pre">type</span></code> argument to instead save it as a <code class="docutils literal notranslate"><span class="pre">csv</span></code>, ~<code class="docutils literal notranslate"><span class="pre">json</span></code>, or <code class="docutils literal notranslate"><span class="pre">arrow</span></code>~ file.</p>
-<p>You can later retrieve the pinned data with <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code>:</p>
+<p>Above, we saved the data as a CSV, but depending on
+what you’re saving and who else you want to read it, you might use the
+<code class="docutils literal notranslate"><span class="pre">type</span></code> argument to instead save it as a <code class="docutils literal notranslate"><span class="pre">joblib</span></code> or <code class="docutils literal notranslate"><span class="pre">arrow</span></code> file (NOTE: arrow is not yet supported).</p>
+<p>You can later retrieve the pinned data with <code class="docutils literal notranslate"><span class="pre">.pin_read()</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;mtcars&quot;</span><span class="p">)</span>
@@ -513,7 +592,7 @@ It takes three arguments: the board to pin to, an object, and a name:</p>
 </div></div></div>
 </div>
 <p>A board on your computer is good place to start, but the real power of pins comes when you use a board that’s shared with multiple people.
-To get started, you can use <code class="docutils literal notranslate"><span class="pre">board_folder()</span></code> with a directory on a shared drive or in dropbox, or if you use <a class="reference external" href="https://www.rstudio.com/products/connect/">RStudio Connect</a> you can use <code class="docutils literal notranslate"><span class="pre">board_rsconnect()</span></code>:</p>
+To get started, you can use <code class="docutils literal notranslate"><span class="pre">board_folder()</span></code> with a directory on a shared drive or in DropBox, or if you use <a class="reference external" href="https://www.rstudio.com/products/connect/">RStudio Connect</a> you can use <code class="docutils literal notranslate"><span class="pre">board_rsconnect()</span></code>:</p>
 <p>🚧 TODO: add informational messages shown in display below</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pins</span> <span class="kn">import</span> <span class="n">board_rsconnect</span>
 
@@ -524,13 +603,13 @@ To get started, you can use <code class="docutils literal notranslate"><span cla
 <span class="c1">#&gt; Writing to pin &#39;hadley/sales-summary&#39;</span>
 </pre></div>
 </div>
-<p>Then, someone else (or an automated Rmd report) can read and use your pin:</p>
+<p>Then, someone else (or an automated report) can read and use your pin:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">board_rsconnect</span><span class="p">()</span>
 <span class="n">board</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;hadley/sales-summary&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can easily control who gets to access the data using the RStudio Connect permissions pane.</p>
-<p>The pins package also includes boards that allow you to share data on services like Amazon’s S3 (<code class="docutils literal notranslate"><span class="pre">board_s3()</span></code>), Azure’s blob storage (<code class="docutils literal notranslate"><span class="pre">board_azure()</span></code>), and Microsoft SharePoint (<code class="docutils literal notranslate"><span class="pre">board_ms365()</span></code>).
+<p>The pins package also includes boards that allow you to share data on services like Amazon’s S3 (<code class="docutils literal notranslate"><span class="pre">board_s3()</span></code>) and Azure’s blob storage (<code class="docutils literal notranslate"><span class="pre">board_azure()</span></code>).
 Learn more in <a class="reference internal" href="getting_started.html"><span class="doc std std-doc">getting started</span></a>.</p>
 </div>
 <div class="toctree-wrapper compound">

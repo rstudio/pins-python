@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pins.versions.VersionRaw &#8212; Pins</title>
+    <title>pins.boards.BaseBoard &#8212; Pins</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet">
   <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -53,8 +53,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="pins.versions.Version" href="pins.versions.Version.html" />
-    <link rel="prev" title="pins.meta.MetaFactory" href="pins.meta.MetaFactory.html" />
+    <link rel="next" title="pins.boards.BaseBoard.pin_read" href="pins.boards.BaseBoard.pin_read.html" />
+    <link rel="prev" title="Board Methods" href="../boards.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -151,18 +151,18 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 has-children">
+   <li class="toctree-l2 current active has-children">
     <a class="reference internal" href="../boards.html">
      Board Methods
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
     <label for="toctree-checkbox-3">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul>
-     <li class="toctree-l3">
-      <a class="reference internal" href="pins.boards.BaseBoard.html">
+    <ul class="current">
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
        pins.boards.BaseBoard
       </a>
      </li>
@@ -233,16 +233,16 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 current active has-children">
+   <li class="toctree-l2 has-children">
     <a class="reference internal" href="../meta.html">
      Metadata
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
     <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul class="current">
+    <ul>
      <li class="toctree-l3">
       <a class="reference internal" href="pins.meta.Meta.html">
        pins.meta.Meta
@@ -253,8 +253,8 @@ const thebe_selector_output = ".output, .cell_output"
        pins.meta.MetaFactory
       </a>
      </li>
-     <li class="toctree-l3 current active">
-      <a class="current reference internal" href="#">
+     <li class="toctree-l3">
+      <a class="reference internal" href="pins.versions.VersionRaw.html">
        pins.versions.VersionRaw
       </a>
      </li>
@@ -308,7 +308,7 @@ const thebe_selector_output = ".output, .cell_output"
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/api/api_card/pins.versions.VersionRaw.rst"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/api/api_card/pins.boards.BaseBoard.rst"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.rst</button></a>
         <!-- Download PDF via print -->
@@ -328,7 +328,7 @@ const thebe_selector_output = ".output, .cell_output"
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/api_card/pins.versions.VersionRaw.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/api_card/pins.boards.BaseBoard.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -356,7 +356,7 @@ const thebe_selector_output = ".output, .cell_output"
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>pins.versions.VersionRaw</h1>
+                <h1>pins.boards.BaseBoard</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -367,14 +367,14 @@ const thebe_selector_output = ".output, .cell_output"
             
               <div>
                 
-  <div class="section" id="pins-versions-versionraw">
-<h1>pins.versions.VersionRaw<a class="headerlink" href="#pins-versions-versionraw" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="pins-boards-baseboard">
+<h1>pins.boards.BaseBoard<a class="headerlink" href="#pins-boards-baseboard" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pins.versions.VersionRaw">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pins.versions.</span></span><span class="sig-name descname"><span class="pre">VersionRaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.versions.VersionRaw" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pins.boards.BaseBoard">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pins.boards.</span></span><span class="sig-name descname"><span class="pre">BaseBoard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs:</span> <span class="pre">pins.boards.IFileSystem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_factory=&lt;pins.meta.MetaFactory</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pickle_read:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.boards.BaseBoard" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
-<dt class="sig sig-object py" id="pins.versions.VersionRaw.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pins.versions.VersionRaw.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pins.boards.BaseBoard.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs:</span> <span class="pre">pins.boards.IFileSystem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_factory=&lt;pins.meta.MetaFactory</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pickle_read:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.boards.BaseBoard.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -384,23 +384,71 @@ const thebe_selector_output = ".output, .cell_output"
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pins.versions.VersionRaw.__init__" title="pins.versions.VersionRaw.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(version)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pins.boards.BaseBoard.__init__" title="pins.boards.BaseBoard.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(board, fs[, versioned, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_path</span></code>(elements)</p></td>
 <td><p></p></td>
 </tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table class="autosummary longtable table autosummary">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">version</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keep_final_path_component</span></code>(path)</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">path_to_deploy_version</span></code>(name, version)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">path_to_pin</span></code>(name)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_browse.html#pins.boards.BaseBoard.pin_browse" title="pins.boards.BaseBoard.pin_browse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_browse</span></code></a>(name[, version, local])</p></td>
+<td><p>TODO: Navigate to the home of a pin, either on the internet or locally.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_delete.html#pins.boards.BaseBoard.pin_delete" title="pins.boards.BaseBoard.pin_delete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_delete</span></code></a>(names)</p></td>
+<td><p>Delete a pin (or pins), removing it from the board.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_download.html#pins.boards.BaseBoard.pin_download" title="pins.boards.BaseBoard.pin_download"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_download</span></code></a>(name[, version, hash])</p></td>
+<td><p>TODO: Download the files contained in a pin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_exists.html#pins.boards.BaseBoard.pin_exists" title="pins.boards.BaseBoard.pin_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_exists</span></code></a>(name)</p></td>
+<td><p>Determine if a pin exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_fetch</span></code>(name[, version])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_list.html#pins.boards.BaseBoard.pin_list" title="pins.boards.BaseBoard.pin_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_list</span></code></a>()</p></td>
+<td><p>List names of all pins in a board.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_meta.html#pins.boards.BaseBoard.pin_meta" title="pins.boards.BaseBoard.pin_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_meta</span></code></a>(name[, version])</p></td>
+<td><p>Return metadata about a pin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_read.html#pins.boards.BaseBoard.pin_read" title="pins.boards.BaseBoard.pin_read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_read</span></code></a>(name[, version, hash])</p></td>
+<td><p>Return the data stored in a pin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_search.html#pins.boards.BaseBoard.pin_search" title="pins.boards.BaseBoard.pin_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_search</span></code></a>([search, as_df])</p></td>
+<td><p>Search for pins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_upload.html#pins.boards.BaseBoard.pin_upload" title="pins.boards.BaseBoard.pin_upload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_upload</span></code></a>(paths[, name, title, ...])</p></td>
+<td><p>TODO: Write a pin based on paths to one or more files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_version_delete.html#pins.boards.BaseBoard.pin_version_delete" title="pins.boards.BaseBoard.pin_version_delete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_version_delete</span></code></a>(name, version)</p></td>
+<td><p>Delete a single version of a pin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_versions.html#pins.boards.BaseBoard.pin_versions" title="pins.boards.BaseBoard.pin_versions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_versions</span></code></a>(name[, as_df])</p></td>
+<td><p>Return available versions of a pin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_versions_prune.html#pins.boards.BaseBoard.pin_versions_prune" title="pins.boards.BaseBoard.pin_versions_prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_versions_prune</span></code></a>(name[, n, days])</p></td>
+<td><p>Delete old versions of a pin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="pins.boards.BaseBoard.pin_write.html#pins.boards.BaseBoard.pin_write" title="pins.boards.BaseBoard.pin_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pin_write</span></code></a>(x[, name, type, title, ...])</p></td>
+<td><p>Write a pin object to the board.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_pin_version</span></code>(pin_dir_path, x[, name, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_pin_versions</span></code>(versions)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_pin_name</span></code>(name)</p></td>
+<td><p>Raise an error if a pin name is not valid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -433,17 +481,17 @@ const thebe_selector_output = ".output, .cell_output"
             
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'> 
-    <a class='left-prev' id="prev-link" href="pins.meta.MetaFactory.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="../boards.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">pins.meta.MetaFactory</p>
+            <p class="prev-next-title">Board Methods</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="pins.versions.Version.html" title="next page">
+    <a class='right-next' id="next-link" href="pins.boards.BaseBoard.pin_read.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pins.versions.Version</p>
+        <p class="prev-next-title">pins.boards.BaseBoard.pin_read</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

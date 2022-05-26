@@ -5,6 +5,7 @@ import tempfile
 from .boards import BaseBoard, BoardRsConnect, BoardManual
 from .cache import PinsCache, PinsRscCache, PinsAccessTimeCache, prefix_cache
 from .config import get_data_dir, get_cache_dir
+from .rsconnect.fs import RsConnectFs
 
 
 class DEFAULT:
@@ -52,7 +53,8 @@ def board_deparse(board: BaseBoard):
         allow_pickle = ""
 
     prot = board.fs.protocol
-    if prot == "rsc":
+
+    if isinstance(board.fs, RsConnectFs):
         url = board.fs.api.server_url
         return f"board_rsconnect(server_url={repr(url)}{allow_pickle})"
     elif prot == "file":
@@ -72,10 +74,10 @@ def board(
     protocol: str,
     path: str = "",
     versioned: bool = True,
-    cache: "DEFAULT | None" = DEFAULT,
+    cache: "type[DEFAULT] | None" = DEFAULT,
     allow_pickle_read=None,
     storage_options: "dict | None" = None,
-    board_factory: "callable | BaseBoard | None" = None,
+    board_factory: "callable | type[BaseBoard] | None" = None,
 ):
     """General function for constructing a pins board.
 

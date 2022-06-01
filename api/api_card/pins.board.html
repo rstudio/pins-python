@@ -371,7 +371,7 @@ const thebe_selector_output = ".output, .cell_output"
 <h1>pins.board<a class="headerlink" href="#pins-board" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pins.board">
-<span class="sig-prename descclassname"><span class="pre">pins.</span></span><span class="sig-name descname"><span class="pre">board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache:</span> <span class="pre">type[DEFAULT]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'pins.constructors.DEFAULT'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pickle_read=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board_factory:</span> <span class="pre">callable</span> <span class="pre">|</span> <span class="pre">type[BaseBoard]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.board" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pins.</span></span><span class="sig-name descname"><span class="pre">board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache:</span> <span class="pre">DEFAULT</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'pins.constructors.DEFAULT'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pickle_read=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board_factory:</span> <span class="pre">callable</span> <span class="pre">|</span> <span class="pre">BaseBoard</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.board" title="Permalink to this definition">¶</a></dt>
 <dd><p>General function for constructing a pins board.</p>
 <p>Note that this is a lower-level function. For most use cases, use a more specific
 function like board_local(…), or board_s3(…).</p>
@@ -399,12 +399,6 @@ fsspec.filesystem.</p></li>
 </ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Many fsspec implementations of filesystems cache the searching of files, which may
-cause you to not see pins saved by other people. Disable this on these file systems
-with <cite>storage_options = {“cache_timeout”: 0}</cite>.</p>
-</div>
 </dd></dl>
 
 </div>

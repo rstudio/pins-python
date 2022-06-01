@@ -255,6 +255,8 @@ def board_github(
     Examples
     --------
 
+    >>> import pytest; pytest.skip()
+
     >>> import os
     >>> board = board_github("machow", "pins-python", "pins/tests/pins-compat")
     >>> board.pin_list()

@@ -14,6 +14,15 @@ UNSAFE_TYPES = frozenset(["joblib"])
 REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib", "file"])
 
 
+def _assert_is_pandas_df(x):
+    import pandas as pd
+
+    if not isinstance(x, pd.DataFrame):
+        raise NotImplementedError(
+            "Currently only pandas.DataFrame can be saved to a CSV."
+        )
+
+
 def load_data(
     meta: Meta,
     fs,
@@ -67,6 +76,16 @@ def load_data(
 
         return pd.read_csv(fs.open(path_to_file))
 
+    elif meta.type == "feather":
+        import pandas as pd
+
+        return pd.read_feather(fs.open(path_to_file))
+
+    elif meta.type == "parquet":
+        import pandas as pd
+
+        return pd.read_parquet(fs.open(path_to_file))
+
     elif meta.type == "table":
         import pandas as pd
 
@@ -93,28 +112,35 @@ def save_data(
     # TODO: would be useful to have singledispatch func for a "default saver"
     #       as argument to board, and then type dispatchers for explicit cases
     #       of saving / loading objects different ways.
+
+    if apply_suffix:
+        final_name = f"{fname}.{type}"
+    else:
+        final_name = fname
+
     if type == "csv":
-        import pandas as pd
+        _assert_is_pandas_df(obj)
 
-        if apply_suffix:
-            fname = f"{fname}.{type}"
+        obj.to_csv(final_name, index=False)
 
-        if not isinstance(obj, pd.DataFrame):
-            raise NotImplementedError(
-                "Currently only pandas.DataFrame can be saved to a CSV."
-            )
-        obj.to_csv(fname, index=False)
+    elif type == "feather":
+        _assert_is_pandas_df(obj)
+
+        obj.to_feather(final_name)
+
+    elif type == "parquet":
+        _assert_is_pandas_df(obj)
+
+        obj.to_parquet(final_name)
+
     elif type == "joblib":
         import joblib
 
-        if apply_suffix:
-            fname = f"{fname}.{type}"
-
-        joblib.dump(obj, fname)
+        joblib.dump(obj, final_name)
     else:
         raise NotImplementedError(f"Cannot save type: {type}")
 
-    return fname
+    return final_name
 
 
 def default_title(obj, name):

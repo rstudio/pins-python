@@ -52,6 +52,7 @@ def board_deparse(board: BaseBoard):
         allow_pickle = ""
 
     prot = board.fs.protocol
+
     if prot == "rsc":
         url = board.fs.api.server_url
         return f"board_rsconnect(server_url={repr(url)}{allow_pickle})"
@@ -72,10 +73,10 @@ def board(
     protocol: str,
     path: str = "",
     versioned: bool = True,
-    cache: "DEFAULT | None" = DEFAULT,
+    cache: "type[DEFAULT] | None" = DEFAULT,
     allow_pickle_read=None,
     storage_options: "dict | None" = None,
-    board_factory: "callable | BaseBoard | None" = None,
+    board_factory: "callable | type[BaseBoard] | None" = None,
 ):
     """General function for constructing a pins board.
 
@@ -109,10 +110,17 @@ def board(
         fsspec.filesystem.
     board_factory:
         An optional board class to use as the constructor.
+
+    Note
+    ----
+    Many fsspec implementations of filesystems cache the searching of files, which may
+    cause you to not see pins saved by other people. Disable this on these file systems
+    with `storage_options = {"cache_timeout": 0}`.
+
     """
 
     if storage_options is None:
-        storage_options = {}
+        storage_options = {"listings_expiry_time": 0}
 
     # TODO: at this point should just manually construct the rsc board directly
     # from board_rsconnect...
@@ -276,7 +284,7 @@ def board_github(
         versioned,
         cache,
         allow_pickle_read=allow_pickle_read,
-        storage_options={"org": org, "repo": repo},
+        storage_options={"org": org, "repo": repo, "listings_expiry_time": 0},
     )
 
 

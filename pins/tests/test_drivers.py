@@ -45,7 +45,15 @@ def test_default_title(obj, dst_title):
     assert res == dst_title
 
 
-def test_driver_roundtrip_csv(tmp_dir2):
+@pytest.mark.parametrize(
+    "type_",
+    [
+        "csv",
+        "feather",
+        "parquet",
+    ],
+)
+def test_driver_roundtrip(tmp_dir2, type_):
     # TODO: I think this test highlights the challenge of getting the flow
     # between metadata, drivers, and the metafactory right.
     # There is the name of the data (relative to the pin directory), and the full
@@ -55,14 +63,14 @@ def test_driver_roundtrip_csv(tmp_dir2):
     df = pd.DataFrame({"x": [1, 2, 3]})
 
     fname = "some_df"
-    type_ = "csv"
+    full_file = f"{fname}.{type_}"
 
     p_obj = tmp_dir2 / fname
     res_fname = save_data(df, p_obj, type_)
 
-    assert Path(res_fname).name == f"{fname}.csv"
+    assert Path(res_fname).name == full_file
 
-    meta = MetaRaw(f"{fname}.csv", type_, "my_pin")
+    meta = MetaRaw(full_file, type_, "my_pin")
     obj = load_data(meta, fsspec.filesystem("file"), tmp_dir2)
 
     assert df.equals(obj)

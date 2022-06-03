@@ -1,7 +1,7 @@
 Board Methods
 =============
 
-.. currentmodule:: pins
+.. currentmodule:: pins.boards
 
 Constructor
 -----------

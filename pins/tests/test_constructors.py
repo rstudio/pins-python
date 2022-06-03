@@ -28,6 +28,22 @@ def check_cache_file_path(p_file, p_cache):
     assert str(p_file.relative_to(p_cache)).count("/") == 2
 
 
+def construct_from_board(board):
+    prot = board.fs.protocol
+    fs_name = prot if isinstance(prot, str) else prot[0]
+
+    if fs_name == "file":
+        board = c.board_folder(board.board)
+    elif fs_name == "rsc":
+        board = c.board_rsconnect(
+            server_url=board.fs.api.server_url, api_key=board.fs.api.api_key
+        )
+    else:
+        board = getattr(c, f"board_{fs_name}")(board.board)
+
+    return board
+
+
 # End-to-end constructor tests
 
 # there are two facets of boards: reading and writing.
@@ -120,7 +136,7 @@ def test_constructor_board_github(tmp_cache, http_example_board_path, df_csv):
     check_cache_file_path(res[0], cache_dir)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def board(backend):
     # TODO: copied from test_compat.py
 
@@ -129,23 +145,12 @@ def board(backend):
     backend.teardown_board(board)
 
 
-def test_constructor_board(board, df_csv, tmp_cache):
+def test_constructor_boards(board, df_csv, tmp_cache):
     # TODO: would be nice to have fixtures for each board constructor
     # doesn't need to copy over pins-compat content
 
     # create board from constructor -------------------------------------------
-
-    prot = board.fs.protocol
-    fs_name = prot if isinstance(prot, str) else prot[0]
-
-    if fs_name == "file":
-        board = c.board_folder(board.board)
-    elif fs_name == "rsc":
-        board = c.board_rsconnect(
-            server_url=board.fs.api.server_url, api_key=board.fs.api.api_key
-        )
-    else:
-        board = getattr(c, f"board_{fs_name}")(board.board)
+    board = construct_from_board(board)
 
     # read a pin and check its contents ---------------------------------------
 
@@ -157,7 +162,7 @@ def test_constructor_board(board, df_csv, tmp_cache):
     # check the cache structure -----------------------------------------------
 
     # check cache
-    if fs_name == "file":
+    if board.fs.protocol == "file":
         # no caching for local file boards
         pass
     else:
@@ -185,6 +190,33 @@ def test_constructor_board(board, df_csv, tmp_cache):
         new_access = p_cache_meta.stat().st_atime
 
         assert orig_access < new_access
+
+
+@pytest.fixture(scope="function")
+def board2(backend):
+    board2 = backend.create_tmp_board()
+    yield board2
+    backend.teardown_board(board2)
+
+
+def test_constructor_boards_multi_user(board2, df_csv, tmp_cache):
+    prot = board2.fs.protocol
+    fs_name = prot if isinstance(prot, str) else prot[0]
+
+    if fs_name == "rsc":
+        # TODO: RSConnect writes pin names like <user>/<name>, so would need to
+        # modify test
+        pytest.skip()
+
+    first = construct_from_board(board2)
+
+    first.pin_write(df_csv, "df_csv", type="csv")
+    assert first.pin_list() == ["df_csv"]
+
+    second = construct_from_board(board2)
+    second.pin_write(df_csv, "another_df_csv", type="csv")
+
+    assert sorted(second.pin_list()) == sorted(["df_csv", "another_df_csv"])
 
 
 # Board particulars ===========================================================

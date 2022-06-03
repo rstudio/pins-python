@@ -42,14 +42,22 @@ def board_deparse(board: BaseBoard):
 
     >>> board_deparse(board_folder("a/b/c"))
     "board_folder('a/b/c')"
+
+    >>> board_deparse(board_folder(path="a/b/c", allow_pickle_read=True))
+    "board_folder('a/b/c', allow_pickle_read=True)"
     """
+    if board.allow_pickle_read is not None:
+        allow_pickle = f", allow_pickle_read={repr(board.allow_pickle_read)}"
+    else:
+        allow_pickle = ""
 
     prot = board.fs.protocol
+
     if prot == "rsc":
         url = board.fs.api.server_url
-        return f"board_rsconnect(server_url={repr(url)})"
+        return f"board_rsconnect(server_url={repr(url)}{allow_pickle})"
     elif prot == "file":
-        return f"board_folder({repr(board.board)})"
+        return f"board_folder({repr(board.board)}{allow_pickle})"
     else:
         raise NotImplementedError(
             f"board deparsing currently not supported for protocol: {prot}"
@@ -65,10 +73,10 @@ def board(
     protocol: str,
     path: str = "",
     versioned: bool = True,
-    cache: "DEFAULT | None" = DEFAULT,
+    cache: "type[DEFAULT] | None" = DEFAULT,
     allow_pickle_read=None,
     storage_options: "dict | None" = None,
-    board_factory: "callable | BaseBoard | None" = None,
+    board_factory: "callable | type[BaseBoard] | None" = None,
 ):
     """General function for constructing a pins board.
 
@@ -102,10 +110,17 @@ def board(
         fsspec.filesystem.
     board_factory:
         An optional board class to use as the constructor.
+
+    Note
+    ----
+    Many fsspec implementations of filesystems cache the searching of files, which may
+    cause you to not see pins saved by other people. Disable this on these file systems
+    with `storage_options = {"cache_timeout": 0}`.
+
     """
 
     if storage_options is None:
-        storage_options = {}
+        storage_options = {"listings_expiry_time": 0}
 
     # TODO: at this point should just manually construct the rsc board directly
     # from board_rsconnect...
@@ -248,6 +263,8 @@ def board_github(
     Examples
     --------
 
+    >>> import pytest; pytest.skip()
+
     >>> import os
     >>> board = board_github("machow", "pins-python", "pins/tests/pins-compat")
     >>> board.pin_list()
@@ -267,7 +284,7 @@ def board_github(
         versioned,
         cache,
         allow_pickle_read=allow_pickle_read,
-        storage_options={"org": org, "repo": repo},
+        storage_options={"org": org, "repo": repo, "listings_expiry_time": 0},
     )
 
 
@@ -355,6 +372,13 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
         Path of form <bucket_name>/<optional>/<subdirectory>.
     **kwargs:
         Passed to the pins.board function.
+
+    Note
+    ----
+    The s3 board uses the fsspec library (s3fs) to handle interacting with s3.
+    In order to authenticate, set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
+    and (optionally) AWS_REGION environment variables.
+
     """
     # TODO: user should be able to specify storage options here?
     return board("s3", path, versioned, cache, allow_pickle_read)

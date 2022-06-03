@@ -118,7 +118,7 @@ class BoardBuilder:
         return value
 
     def create_tmp_board(self, src_board=None) -> BaseBoard:
-        fs = filesystem(self.fs_name)
+        fs = filesystem(self.fs_name, listings_expiry_time=0)
         temp_name = str(uuid.uuid4())
 
         if isinstance(self.path, TemporaryDirectory):

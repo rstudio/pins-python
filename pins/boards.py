@@ -24,6 +24,9 @@ _log = logging.getLogger(__name__)
 
 # Note that once we drop python 3.7, we can make this a Protocol
 class IFileSystem:
+
+    protocol: "str | list"
+
     def ls(self, path: str) -> Sequence[str]:
         ...
 

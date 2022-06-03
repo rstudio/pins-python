@@ -393,6 +393,14 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
         Path of form <bucket_name>/<optional>/<subdirectory>.
     **kwargs:
         Passed to the pins.board function.
+
+    Note
+    ----
+    The gcs board uses the fsspec library (gcsfs) to handle interacting with
+    google cloud storage. Currently, its default mode of authentication
+    is supported.
+
+    See https://gcsfs.readthedocs.io/en/latest/#credentials
     """
 
-    return board("gs", path, versioned, cache, allow_pickle_read)
+    return board("gcs", path, versioned, cache, allow_pickle_read)

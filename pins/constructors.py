@@ -372,6 +372,13 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
         Path of form <bucket_name>/<optional>/<subdirectory>.
     **kwargs:
         Passed to the pins.board function.
+
+    Note
+    ----
+    The s3 board uses the fsspec library (s3fs) to handle interacting with s3.
+    In order to authenticate, set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
+    and (optionally) AWS_REGION environment variables.
+
     """
     # TODO: user should be able to specify storage options here?
     return board("s3", path, versioned, cache, allow_pickle_read)

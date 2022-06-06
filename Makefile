@@ -30,8 +30,13 @@ README.md: README.Rmd
 		--TagRemovePreprocessor.remove_input_tags='hide-cell' \
 		--output $@
 
-test:
-	pytest
+test: test-most test-rsc
+
+test-most:
+	pytest pins -m "not fs_rsc" --workers 4 --tests-per-worker 1
+
+test-rsc:
+	pytest pins -m "fs_rsc"
 
 docs-build:
 	jb build --builder html docs

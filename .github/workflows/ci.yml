@@ -65,6 +65,9 @@ jobs:
           AWS_REGION: "us-east-1"
           PYTEST_OPTS: ${{ matrix.pytest_opts }}
           REQUIREMENTS: ${{ matrix.requirements }}
+          # fixes error on macosx virtual machine with pytest-parallel
+          # https://github.com/browsertron/pytest-parallel/issues/93
+          no_proxy: "*"
 
   test-rsconnect:
     name: "Test RSConnect"

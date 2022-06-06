@@ -120,7 +120,7 @@ def board(
     """
 
     if storage_options is None:
-        storage_options = {"listings_expiry_time": 0}
+        storage_options = {}
 
     # TODO: at this point should just manually construct the rsc board directly
     # from board_rsconnect...
@@ -381,7 +381,9 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
 
     """
     # TODO: user should be able to specify storage options here?
-    return board("s3", path, versioned, cache, allow_pickle_read)
+
+    opts = {"listings_expiry_time": 0}
+    return board("s3", path, versioned, cache, allow_pickle_read, storage_options=opts)
 
 
 def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
@@ -403,4 +405,7 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     See https://gcsfs.readthedocs.io/en/latest/#credentials
     """
 
-    return board("gcs", path, versioned, cache, allow_pickle_read)
+    # GCSFS uses a different name for listings_expiry_time, and then
+    # fixes it under the hood
+    opts = {"cache_timeout": 0}
+    return board("gcs", path, versioned, cache, allow_pickle_read, storage_options=opts)

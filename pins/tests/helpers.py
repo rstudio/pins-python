@@ -118,7 +118,12 @@ class BoardBuilder:
         return value
 
     def create_tmp_board(self, src_board=None) -> BaseBoard:
-        fs = filesystem(self.fs_name, listings_expiry_time=0)
+        if self.fs_name == "gcs":
+            opts = {"cache_timeout": 0}
+        else:
+            opts = {"listings_expiry_time": 0}
+
+        fs = filesystem(self.fs_name, **opts)
         temp_name = str(uuid.uuid4())
 
         if isinstance(self.path, TemporaryDirectory):

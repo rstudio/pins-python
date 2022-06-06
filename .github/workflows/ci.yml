@@ -168,6 +168,65 @@ jobs:
           name: docs-html
           path: docs/_build/html/
 
+  preview-docs:
+    name: "Preview Docs:"
+    runs-on: ubuntu-latest
+    needs: ["build-docs"]
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: docs-html
+          path: docs-html
+
+      # Determine the release name ---
+
+      - name: Configure pull release name
+        if: ${{github.event_name == 'pull_request'}}
+        run: |
+          echo "RELEASE_NAME=pr-${PR_NUMBER}" >> $GITHUB_ENV
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+
+      # create deployment ----
+
+      - name: Create Github Deployment
+        uses: bobheadxi/deployments@v0.4.3
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ env.RELEASE_NAME }}
+          ref: ${{ github.head_ref }}
+          transient: true
+          logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+
+      # push docs ----
+
+      - name: Netlify docs preview
+        run: |
+          npm install -g netlify-cli
+          # push main branch to production, others to preview --
+          netlify deploy --dir=docs-html --alias="${ALIAS}"
+
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          ALIAS: ${{ steps.deployment.outputs.env }}
+
+      # update deployment ----
+
+      - name: Update Github Deployment
+        uses: bobheadxi/deployments@v0.4.3
+        if: ${{ always() }}
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: 'https://${{ steps.deployment.outputs.env }}--pins-python.netlify.app'
+          logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+
   publish-docs:
     name: "Publish Docs"
     runs-on: ubuntu-latest

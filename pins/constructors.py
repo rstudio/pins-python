@@ -115,7 +115,8 @@ def board(
     ----
     Many fsspec implementations of filesystems cache the searching of files, which may
     cause you to not see pins saved by other people. Disable this on these file systems
-    with `storage_options = {"cache_timeout": 0}`.
+    with `storage_options = {"listings_expiry_time": 0}` on s3, or `{"cache_timeout": 0}`
+    on google cloud storage.
 
     """
 

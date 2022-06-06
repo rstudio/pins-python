@@ -5,8 +5,8 @@
 The pins package publishes data, models, and other Python objects, making it
 easy to share them across projects and with your colleagues. You can pin
 objects to a variety of pin *boards*, including folders (to share on a
-networked drive or with services like DropBox), RStudio Connect, and Amazon
-S3.
+networked drive or with services like DropBox), RStudio Connect, Amazon S3,
+and Google Cloud Storage.
 Pins can be automatically versioned, making it straightforward to track changes,
 re-run analyses on historical data, and undo mistakes.
 
@@ -103,7 +103,7 @@ You can easily control who gets to access the data using the RStudio
 Connect permissions pane.
 
 The pins package also includes boards that allow you to share data on
-services like Amazon’s S3 (`board_s3()`), with plans to support other backends--
+services like Amazon’s S3 (`board_s3()`), and Google Cloud Storage (`board_gcs`), with plans to support other backends--
 such as Azure's blob storage.
 
 ## Development

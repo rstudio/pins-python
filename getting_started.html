@@ -140,6 +140,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="api/api_card/pins.board_gcs.html">
+       pins.board_gcs
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="api/api_card/pins.board_rsconnect.html">
        pins.board_rsconnect
       </a>
@@ -465,7 +470,8 @@ const thebe_selector_output = ".output, .cell_output"
 <div class="tex2jax_ignore mathjax_ignore section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>The pins package helps you publish data sets, models, and other Python objects, making it easy to share them across projects and with your colleagues.
-You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with DropBox), RStudio connect, Amazon S3, and more.
+You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with DropBox), RStudio connect, Amazon S3,
+Google Cloud Storage, and more.
 This vignette will introduce you to the basics of pins.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -506,7 +512,9 @@ Here are a few options:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing to pin &#39;mtcars&#39;
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
+Name: &#39;mtcars&#39;
+Version: 20220608T225047Z-3b134
 </pre></div>
 </div>
 </div>
@@ -745,7 +753,7 @@ If you find yourself routinely pinning data larger that this, you might need to 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220606T210512Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 6, 6, 21, 5, 12), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220608T225047Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 6, 8, 22, 50, 47), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div>
 </div>
 </div>
@@ -774,10 +782,12 @@ If you find yourself routinely pinning data larger that this, you might need to 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing to pin &#39;mtcars2&#39;
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
+Name: &#39;mtcars2&#39;
+Version: 20220608T225047Z-3b134
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20220606T210512Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 6, 6, 21, 5, 12, 907404), hash=&#39;3b134bae183b50c9&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20220608T225047Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 6, 8, 22, 50, 47, 881635), hash=&#39;3b134bae183b50c9&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;})
 </pre></div>
 </div>
 </div>
@@ -789,7 +799,7 @@ If you find yourself routinely pinning data larger that this, you might need to 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220606T210512Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 6, 6, 21, 5, 12), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20220608T225047Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 6, 8, 22, 50, 47), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={})
 </pre></div>
 </div>
 </div>
@@ -834,9 +844,15 @@ The primary exception is <code class="docutils literal notranslate"><span class=
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing to pin &#39;x&#39;
-Writing to pin &#39;x&#39;
-Writing to pin &#39;x&#39;
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
+Name: &#39;x&#39;
+Version: 20220608T225047Z-91544
+Writing pin:
+Name: &#39;x&#39;
+Version: 20220608T225047Z-331fd
+Writing pin:
+Name: &#39;x&#39;
+Version: 20220608T225047Z-40b4b
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -865,21 +881,21 @@ Writing to pin &#39;x&#39;
   <tbody>
     <tr>
       <th>0</th>
-      <td>2022-06-06 21:05:12</td>
+      <td>2022-06-08 22:50:47</td>
       <td>331fd</td>
-      <td>20220606T210512Z-331fd</td>
+      <td>20220608T225047Z-331fd</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2022-06-06 21:05:12</td>
+      <td>2022-06-08 22:50:47</td>
       <td>40b4b</td>
-      <td>20220606T210512Z-40b4b</td>
+      <td>20220608T225047Z-40b4b</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2022-06-06 21:05:12</td>
+      <td>2022-06-08 22:50:47</td>
       <td>91544</td>
-      <td>20220606T210512Z-91544</td>
+      <td>20220608T225047Z-91544</td>
     </tr>
   </tbody>
 </table>

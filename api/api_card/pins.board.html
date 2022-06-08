@@ -140,6 +140,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="pins.board_gcs.html">
+       pins.board_gcs
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="pins.board_rsconnect.html">
        pins.board_rsconnect
       </a>
@@ -403,7 +408,8 @@ fsspec.filesystem.</p></li>
 <p class="admonition-title">Note</p>
 <p>Many fsspec implementations of filesystems cache the searching of files, which may
 cause you to not see pins saved by other people. Disable this on these file systems
-with <cite>storage_options = {“cache_timeout”: 0}</cite>.</p>
+with <cite>storage_options = {“listings_expiry_time”: 0}</cite> on s3, or <cite>{“cache_timeout”: 0}</cite>
+on google cloud storage.</p>
 </div>
 </dd></dl>
 

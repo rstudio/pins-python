@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pins.boards.BaseBoard.pin_version_delete &#8212; Pins</title>
+    <title>pins.board_gcs &#8212; Pins</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet">
   <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -53,8 +53,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="pins.boards.BaseBoard.pin_versions_prune" href="pins.boards.BaseBoard.pin_versions_prune.html" />
-    <link rel="prev" title="pins.boards.BaseBoard.pin_exists" href="pins.boards.BaseBoard.pin_exists.html" />
+    <link rel="next" title="pins.board_rsconnect" href="pins.board_rsconnect.html" />
+    <link rel="prev" title="pins.board_s3" href="pins.board_s3.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -109,16 +109,16 @@ const thebe_selector_output = ".output, .cell_output"
    </i>
   </label>
   <ul class="current">
-   <li class="toctree-l2 has-children">
+   <li class="toctree-l2 current active has-children">
     <a class="reference internal" href="../constructors.html">
      Board Constructors
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
     <label for="toctree-checkbox-2">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul>
+    <ul class="current">
      <li class="toctree-l3">
       <a class="reference internal" href="pins.board_folder.html">
        pins.board_folder
@@ -139,8 +139,8 @@ const thebe_selector_output = ".output, .cell_output"
        pins.board_s3
       </a>
      </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="pins.board_gcs.html">
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
        pins.board_gcs
       </a>
      </li>
@@ -156,16 +156,16 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 current active has-children">
+   <li class="toctree-l2 has-children">
     <a class="reference internal" href="../boards.html">
      Board Methods
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
     <label for="toctree-checkbox-3">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul class="current">
+    <ul>
      <li class="toctree-l3">
       <a class="reference internal" href="pins.boards.BaseBoard.html">
        pins.boards.BaseBoard
@@ -201,8 +201,8 @@ const thebe_selector_output = ".output, .cell_output"
        pins.boards.BaseBoard.pin_exists
       </a>
      </li>
-     <li class="toctree-l3 current active">
-      <a class="current reference internal" href="#">
+     <li class="toctree-l3">
+      <a class="reference internal" href="pins.boards.BaseBoard.pin_version_delete.html">
        pins.boards.BaseBoard.pin_version_delete
       </a>
      </li>
@@ -313,7 +313,7 @@ const thebe_selector_output = ".output, .cell_output"
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/api/api_card/pins.boards.BaseBoard.pin_version_delete.rst"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/api/api_card/pins.board_gcs.rst"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.rst</button></a>
         <!-- Download PDF via print -->
@@ -333,7 +333,7 @@ const thebe_selector_output = ".output, .cell_output"
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/api_card/pins.boards.BaseBoard.pin_version_delete.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/api_card/pins.board_gcs.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -361,7 +361,7 @@ const thebe_selector_output = ".output, .cell_output"
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>pins.boards.BaseBoard.pin_version_delete</h1>
+                <h1>pins.board_gcs</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -372,20 +372,27 @@ const thebe_selector_output = ".output, .cell_output"
             
               <div>
                 
-  <div class="section" id="pins-boards-baseboard-pin-version-delete">
-<h1>pins.boards.BaseBoard.pin_version_delete<a class="headerlink" href="#pins-boards-baseboard-pin-version-delete" title="Permalink to this headline">¶</a></h1>
-<dl class="py method">
-<dt class="sig sig-object py" id="pins.boards.BaseBoard.pin_version_delete">
-<span class="sig-prename descclassname"><span class="pre">BaseBoard.</span></span><span class="sig-name descname"><span class="pre">pin_version_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.boards.BaseBoard.pin_version_delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete a single version of a pin.</p>
+  <div class="section" id="pins-board-gcs">
+<h1>pins.board_gcs<a class="headerlink" href="#pins-board-gcs" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pins.board_gcs">
+<span class="sig-prename descclassname"><span class="pre">pins.</span></span><span class="sig-name descname"><span class="pre">board_gcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache=&lt;class</span> <span class="pre">'pins.constructors.DEFAULT'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pickle_read=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.board_gcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a board to read and write pins from an AWS S3 bucket folder.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> – Pin name.</p></li>
-<li><p><strong>version</strong> – Version identifier.</p></li>
+<li><p><strong>path</strong> – Path of form &lt;bucket_name&gt;/&lt;optional&gt;/&lt;subdirectory&gt;.</p></li>
+<li><p><strong>**kwargs</strong> – Passed to the pins.board function.</p></li>
 </ul>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The gcs board uses the fsspec library (gcsfs) to handle interacting with
+google cloud storage. Currently, its default mode of authentication
+is supported.</p>
+<p>See <a class="reference external" href="https://gcsfs.readthedocs.io/en/latest/#credentials">https://gcsfs.readthedocs.io/en/latest/#credentials</a></p>
+</div>
 </dd></dl>
 
 </div>
@@ -415,17 +422,17 @@ const thebe_selector_output = ".output, .cell_output"
             
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'> 
-    <a class='left-prev' id="prev-link" href="pins.boards.BaseBoard.pin_exists.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="pins.board_s3.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">pins.boards.BaseBoard.pin_exists</p>
+            <p class="prev-next-title">pins.board_s3</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="pins.boards.BaseBoard.pin_versions_prune.html" title="next page">
+    <a class='right-next' id="next-link" href="pins.board_rsconnect.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pins.boards.BaseBoard.pin_versions_prune</p>
+        <p class="prev-next-title">pins.board_rsconnect</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

@@ -24,6 +24,7 @@ RSC_KEYS_FNAME = "pins/tests/rsconnect_api_keys.json"
 BOARD_CONFIG = {
     "file": {"path": ["PINS_TEST_FILE__PATH", None]},
     "s3": {"path": ["PINS_TEST_S3__PATH", "ci-pins"]},
+    "gcs": {"path": ["PINS_TEST_GCS__PATH", "ci-pins"]},
     "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},
     # TODO(question): R pins has the whole server a board
     # but it's a bit easier to test by (optionally) allowing a user
@@ -117,7 +118,12 @@ class BoardBuilder:
         return value
 
     def create_tmp_board(self, src_board=None) -> BaseBoard:
-        fs = filesystem(self.fs_name, listings_expiry_time=0)
+        if self.fs_name == "gcs":
+            opts = {"cache_timeout": 0}
+        else:
+            opts = {"listings_expiry_time": 0}
+
+        fs = filesystem(self.fs_name, **opts)
         temp_name = str(uuid.uuid4())
 
         if isinstance(self.path, TemporaryDirectory):

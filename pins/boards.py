@@ -277,7 +277,8 @@ class BaseBoard:
             # move pin to destination ----
             # create pin version folder
             dst_pin_path = self.construct_path([pin_name])
-            dst_version_path = self.path_to_deploy_version(name, meta.version.version)
+            dst_version = meta.version.version
+            dst_version_path = self.path_to_deploy_version(name, dst_version)
 
             if not self.fs.exists(dst_pin_path):
                 # equivalent to mkdirp, want to fail quietly in case of race conditions
@@ -297,7 +298,9 @@ class BaseBoard:
                     "but that directory already exists."
                 )
 
-            inform(_log, f"Writing to pin {repr(pin_name)}")
+            inform(
+                _log, f"Writing pin:\nName: {repr(pin_name)}\nVersion: {dst_version}"
+            )
 
             res = self.fs.put(tmp_dir, dst_version_path, recursive=True)
 

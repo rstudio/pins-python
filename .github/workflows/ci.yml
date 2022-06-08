@@ -48,15 +48,26 @@ jobs:
           fi
 
           python -m pip install -e .[test]
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: siuba-tests
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
       - name: Run tests
         run: |
-          pytest pins -m 'not fs_rsc and not skip_on_github' $PYTEST_OPTS
+          pytest pins -m 'not fs_rsc and not skip_on_github' --workers 4 --tests-per-worker 1 $PYTEST_OPTS
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "us-east-1"
           PYTEST_OPTS: ${{ matrix.pytest_opts }}
           REQUIREMENTS: ${{ matrix.requirements }}
+          # fixes error on macosx virtual machine with pytest-parallel
+          # https://github.com/browsertron/pytest-parallel/issues/93
+          no_proxy: "*"
 
   test-rsconnect:
     name: "Test RSConnect"

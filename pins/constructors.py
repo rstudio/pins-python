@@ -115,12 +115,13 @@ def board(
     ----
     Many fsspec implementations of filesystems cache the searching of files, which may
     cause you to not see pins saved by other people. Disable this on these file systems
-    with `storage_options = {"cache_timeout": 0}`.
+    with `storage_options = {"listings_expiry_time": 0}` on s3, or `{"cache_timeout": 0}`
+    on google cloud storage.
 
     """
 
     if storage_options is None:
-        storage_options = {"listings_expiry_time": 0}
+        storage_options = {}
 
     # TODO: at this point should just manually construct the rsc board directly
     # from board_rsconnect...
@@ -381,4 +382,31 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
 
     """
     # TODO: user should be able to specify storage options here?
-    return board("s3", path, versioned, cache, allow_pickle_read)
+
+    opts = {"listings_expiry_time": 0}
+    return board("s3", path, versioned, cache, allow_pickle_read, storage_options=opts)
+
+
+def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+    """Create a board to read and write pins from an AWS S3 bucket folder.
+
+    Parameters
+    ----------
+    path:
+        Path of form <bucket_name>/<optional>/<subdirectory>.
+    **kwargs:
+        Passed to the pins.board function.
+
+    Note
+    ----
+    The gcs board uses the fsspec library (gcsfs) to handle interacting with
+    google cloud storage. Currently, its default mode of authentication
+    is supported.
+
+    See https://gcsfs.readthedocs.io/en/latest/#credentials
+    """
+
+    # GCSFS uses a different name for listings_expiry_time, and then
+    # fixes it under the hood
+    opts = {"cache_timeout": 0}
+    return board("gcs", path, versioned, cache, allow_pickle_read, storage_options=opts)

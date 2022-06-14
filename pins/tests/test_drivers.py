@@ -76,6 +76,21 @@ def test_driver_roundtrip(tmp_dir2, type_):
     assert df.equals(obj)
 
 
+def test_driver_arrow_write_error(tmp_dir2):
+    import pandas as pd
+
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    fname = "some_df"
+
+    p_obj = tmp_dir2 / fname
+
+    with pytest.raises(NotImplementedError) as exc_info:
+        save_data(df, p_obj, "arrow")
+
+    assert "'arrow' is unsupported." in exc_info.value.args[0]
+
+
 @pytest.mark.skip("TODO: complete once driver story is fleshed out")
 def test_driver_roundtrip_joblib(tmp_dir2):
     pass

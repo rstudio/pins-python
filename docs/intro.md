@@ -20,7 +20,7 @@ kernelspec:
 :alt: pins, a library for organizing and sharing data.
 ```
 
-The pins package publishes data, models, and other R objects, making it easy to share them across projects and with your colleagues.
+The pins package publishes data, models, and other Python objects, making it easy to share them across projects and with your colleagues.
 You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Azure storage and ~~Microsoft 365 (OneDrive and SharePoint)~~.
 Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.
 

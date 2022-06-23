@@ -388,7 +388,7 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
 
 
 def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
-    """Create a board to read and write pins from an AWS S3 bucket folder.
+    """Create a board to read and write pins from an Google Cloud Storage bucket folder.
 
     Parameters
     ----------

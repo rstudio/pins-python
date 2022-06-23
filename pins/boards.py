@@ -943,13 +943,21 @@ class BoardRsConnect(BaseBoard):
 
         if isinstance(x, pd.DataFrame):
             # TODO(compat) is 100 hard-coded?
+            # Note that we go df -> json -> dict, to take advantage of pandas type conversions
             data = json.loads(x.head(100).to_json(orient="records"))
             columns = [
                 {"name": [col], "label": [col], "align": ["left"], "type": [""]}
                 for col in x
             ]
 
-            context["data_preview"] = json.dumps({"data": data, "columns": columns})
+            # this reproduces R pins behavior, by omitting entries that would be null
+            data_no_nulls = [
+                {k: v for k, v in row.items() if v is not None} for row in data
+            ]
+
+            context["data_preview"] = json.dumps(
+                {"data": data_no_nulls, "columns": columns}
+            )
         else:
             # TODO(compat): set display none in index.html
             context["data_preview"] = json.dumps({})

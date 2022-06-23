@@ -100,7 +100,7 @@ def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
     if board.fs.protocol != "rsc":
         pytest.skip()
 
-    df = pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
+    df = pd.DataFrame({"x": [1, 2, None], "y": ["a", "b", "c"]})
 
     pin_name = "test_rsc_pin"
 

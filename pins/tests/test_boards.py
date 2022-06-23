@@ -113,7 +113,6 @@ def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
         description="some description",
         created=DEFAULT_CREATION_DATE,
     )
-    assert False
 
     snapshot.assert_equal_dir(tmp_dir2)
 

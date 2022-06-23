@@ -131,15 +131,16 @@ def save_data(
     elif type == "arrow":
         # NOTE: R pins accepts the type arrow, and saves it as feather.
         #       we allow reading this type, but raise an error for writing.
-        raise NotImplementedError(
-            "Writing pin type 'arrow' is unsupported. "
-            "Use 'feather' or 'parquet' instead."
-        )
+        _assert_is_pandas_df(obj)
+
+        obj.to_feather(final_name)
 
     elif type == "feather":
         _assert_is_pandas_df(obj)
 
-        obj.to_feather(final_name)
+        raise NotImplementedError(
+            'Saving data as type "feather" no longer supported. Use type arrow instead.'
+        )
 
     elif type == "parquet":
         _assert_is_pandas_df(obj)

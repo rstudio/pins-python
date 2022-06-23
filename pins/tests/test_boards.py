@@ -96,6 +96,13 @@ def test_board_pin_write_type_error(board):
     assert "MY_TYPE" in exc_info.value.args[0]
 
 
+def test_board_pin_write_feather_deprecated(board):
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    with pytest.warns(DeprecationWarning):
+        board.pin_write(df, "cool_pin", type="feather")
+
+
 def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
     if board.fs.protocol != "rsc":
         pytest.skip()

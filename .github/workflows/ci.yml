@@ -114,7 +114,7 @@ jobs:
       - name: Run tests
         run: |
           # TODO: better way to disable all cloud backend tests?
-          pytest pins -m 'not fs_rsc and not fs_s3 and not skip_on_github'
+          pytest pins -m 'not fs_rsc and not fs_s3 and not fs_gcs and not skip_on_github'
 
 
   check-cross-compatibility:

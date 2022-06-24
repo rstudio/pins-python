@@ -905,6 +905,8 @@ class BoardRsConnect(BaseBoard):
             return self._user_name
 
     def prepare_pin_version(self, pin_dir_path, x, name: "str | None", *args, **kwargs):
+        # TODO: should move board_deparse into utils, to avoid circular import
+        from .constructors import board_deparse
 
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
@@ -939,6 +941,7 @@ class BoardRsConnect(BaseBoard):
             "pin_name": self.path_to_pin(name),
             "pin_files": pin_files,
             "pin_metadata": meta,
+            "board_deparse": board_deparse(self),
         }
 
         # data preview ----

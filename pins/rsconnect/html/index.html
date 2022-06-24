@@ -49,16 +49,12 @@
     <section>
     <h3>Code</h3>
 
-    <!-- TODO: how to handle this?
-
-      <pre id="pin-r" class="pin-code"><code class="r">library(pins)
-board <- {{board_deparse}}
-pin_read(board, "{{pin_name}}")</code></pre>
-
-    !-->
+    <pre id="pin-python" class="pin-code"><code class="python">from pins import board_rsconnect
+board = {{board_deparse}}
+board.pin_read("{{pin_name}}")</code></pre>
 
     <script type="text/javascript">
-      hljs.registerLanguage("r", highlight_r);
+      hljs.registerLanguage("python", highlight_python);
       hljs.initHighlightingOnLoad();
     </script>
     </section>

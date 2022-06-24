@@ -139,7 +139,7 @@ def save_data(
         _assert_is_pandas_df(obj)
 
         raise NotImplementedError(
-            'Saving data as type "feather" no longer supported. Use type arrow instead.'
+            'Saving data as type "feather" no longer supported. Use type "arrow" instead.'
         )
 
     elif type == "parquet":

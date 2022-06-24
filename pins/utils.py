@@ -2,6 +2,7 @@ import sys
 
 from functools import update_wrapper
 from types import MethodType
+from warnings import warn
 
 from .config import pins_options
 
@@ -12,6 +13,10 @@ def inform(log, msg):
 
     if not pins_options.quiet:
         print(msg, file=sys.stderr)
+
+
+def warn_deprecated(msg):
+    warn(msg, DeprecationWarning)
 
 
 class ExtendMethodDoc:

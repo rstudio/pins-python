@@ -15,7 +15,7 @@ from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
 from .drivers import load_data, save_data, default_title
-from .utils import inform, ExtendMethodDoc
+from .utils import inform, warn_deprecated, ExtendMethodDoc
 from .config import get_allow_rsc_short_name
 
 
@@ -254,6 +254,14 @@ class BaseBoard:
             A date to store in the Meta.created field. This field may be used as
             part of the pin version name.
         """
+
+        if type == "feather":
+            warn_deprecated(
+                'Writing pin type "feather" is unsupported. Switching type to "arrow".'
+                " This produces the exact same behavior, and also works with R pins."
+                ' Please switch to pin_write using type="arrow".'
+            )
+            type = "arrow"
 
         pin_name = self.path_to_pin(name)
 

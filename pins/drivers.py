@@ -76,6 +76,11 @@ def load_data(
 
         return pd.read_csv(fs.open(path_to_file))
 
+    elif meta.type == "arrow":
+        import pandas as pd
+
+        return pd.read_feather(fs.open(path_to_file))
+
     elif meta.type == "feather":
         import pandas as pd
 
@@ -123,10 +128,19 @@ def save_data(
 
         obj.to_csv(final_name, index=False)
 
-    elif type == "feather":
+    elif type == "arrow":
+        # NOTE: R pins accepts the type arrow, and saves it as feather.
+        #       we allow reading this type, but raise an error for writing.
         _assert_is_pandas_df(obj)
 
         obj.to_feather(final_name)
+
+    elif type == "feather":
+        _assert_is_pandas_df(obj)
+
+        raise NotImplementedError(
+            'Saving data as type "feather" no longer supported. Use type "arrow" instead.'
+        )
 
     elif type == "parquet":
         _assert_is_pandas_df(obj)

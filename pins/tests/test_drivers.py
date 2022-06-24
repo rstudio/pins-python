@@ -49,8 +49,9 @@ def test_default_title(obj, dst_title):
     "type_",
     [
         "csv",
-        "feather",
+        "arrow",
         "parquet",
+        "joblib",
     ],
 )
 def test_driver_roundtrip(tmp_dir2, type_):
@@ -71,14 +72,41 @@ def test_driver_roundtrip(tmp_dir2, type_):
     assert Path(res_fname).name == full_file
 
     meta = MetaRaw(full_file, type_, "my_pin")
-    obj = load_data(meta, fsspec.filesystem("file"), tmp_dir2)
+    obj = load_data(meta, fsspec.filesystem("file"), tmp_dir2, allow_pickle_read=True)
 
     assert df.equals(obj)
 
 
-@pytest.mark.skip("TODO: complete once driver story is fleshed out")
-def test_driver_roundtrip_joblib(tmp_dir2):
-    pass
+def test_driver_feather_write_error(tmp_dir2):
+    import pandas as pd
+
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    fname = "some_df"
+
+    p_obj = tmp_dir2 / fname
+
+    with pytest.raises(NotImplementedError) as exc_info:
+        save_data(df, p_obj, "feather")
+
+    assert '"feather" no longer supported.' in exc_info.value.args[0]
+
+
+def test_driver_feather_read_backwards_compat(tmp_dir2):
+    import pandas as pd
+
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    fname = "some_df"
+    full_file = f"{fname}.feather"
+
+    df.to_feather(tmp_dir2 / full_file)
+
+    obj = load_data(
+        MetaRaw(full_file, "feather", "my_pin"), fsspec.filesystem("file"), tmp_dir2
+    )
+
+    assert df.equals(obj)
 
 
 def test_driver_pickle_read_fail_explicit(some_joblib):

@@ -14,13 +14,14 @@ EXAMPLE_PIN_NAME = "df_csv"
 
 
 # Based on https://github.com/machow/siuba/blob/main/siuba/tests/helpers.py
-BACKEND_MARKS = ["fs_s3", "fs_file", "fs_gcs", "fs_rsc"]
+BACKEND_MARKS = ["fs_s3", "fs_file", "fs_gcs", "fs_azure", "fs_rsc"]
 
 # parameters that can be used more than once per session
 params_safe = [
     pytest.param(lambda: BoardBuilder("file"), id="file", marks=m.fs_file),
     pytest.param(lambda: BoardBuilder("s3"), id="s3", marks=m.fs_s3),
-    pytest.param(lambda: BoardBuilder("gcs"), id="s3", marks=m.fs_gcs),
+    pytest.param(lambda: BoardBuilder("gcs"), id="gcs", marks=m.fs_gcs),
+    pytest.param(lambda: BoardBuilder("az"), id="azure", marks=m.fs_azure),
 ]
 
 # rsc should only be used once, because users are created at docker setup time

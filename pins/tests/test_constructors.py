@@ -38,6 +38,8 @@ def construct_from_board(board):
         board = c.board_rsconnect(
             server_url=board.fs.api.server_url, api_key=board.fs.api.api_key
         )
+    elif fs_name == "abfs":
+        board = c.board_azure(board.board)
     else:
         board = getattr(c, f"board_{fs_name}")(board.board)
 
@@ -207,6 +209,8 @@ def test_constructor_boards_multi_user(board2, df_csv, tmp_cache):
         # TODO: RSConnect writes pin names like <user>/<name>, so would need to
         # modify test
         pytest.skip()
+    elif fs_name == "abfs":
+        fs_name = "azure"
 
     first = construct_from_board(board2)
 

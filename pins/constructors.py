@@ -410,3 +410,8 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     # fixes it under the hood
     opts = {"cache_timeout": 0}
     return board("gcs", path, versioned, cache, allow_pickle_read, storage_options=opts)
+
+
+def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+    opts = {"use_listings_cache": False}
+    return board("az", path, versioned, cache, allow_pickle_read, storage_options=opts)

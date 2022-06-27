@@ -25,11 +25,8 @@ BOARD_CONFIG = {
     "file": {"path": ["PINS_TEST_FILE__PATH", None]},
     "s3": {"path": ["PINS_TEST_S3__PATH", "ci-pins"]},
     "gcs": {"path": ["PINS_TEST_GCS__PATH", "ci-pins"]},
+    "az": {"path": ["PINS_TEST_AZURE__PATH", "ci-pins"]},
     "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},
-    # TODO(question): R pins has the whole server a board
-    # but it's a bit easier to test by (optionally) allowing a user
-    # or something else to be a board
-    # "rsc": {"path": ["PINS_TEST_RSC__PATH", ""]}
 }
 
 # TODO: Backend initialization should be independent of helpers, but these
@@ -121,7 +118,7 @@ class BoardBuilder:
         if self.fs_name == "gcs":
             opts = {"cache_timeout": 0}
         else:
-            opts = {"listings_expiry_time": 0}
+            opts = {"use_listings_cache": False}
 
         fs = filesystem(self.fs_name, **opts)
         temp_name = str(uuid.uuid4())

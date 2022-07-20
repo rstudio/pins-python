@@ -33,6 +33,10 @@ jobs:
             # ignore doctests, as they involve calls to github, and all mac machines
             # use the same IP address
             pytest_opts: "-k pins/tests"
+          - os: "windows-latest"
+            python: "3.10"
+            # ignore doctests
+            pytest_opts: "-k pins/tests"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2

@@ -637,7 +637,7 @@ class BoardManual(BaseBoard):
     >>> import fsspec
     >>> import os
     >>> fs = fsspec.filesystem("github", org = "machow", repo = "pins-python")
-    >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad"}
+    >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad/"}
     >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
 
     >>> board.pin_list()
@@ -690,7 +690,9 @@ class BoardManual(BaseBoard):
             # create metadata, rather than read from a file
             return self.meta_factory.create_raw(path_to_pin, type="file", name=pin_name)
 
-        path_meta = self.construct_path([pin_name, meta_name])
+        # note that pins on this board should point to versions, so we use an
+        # empty string to mark version (it ultimately is ignored)
+        path_meta = self.construct_path([pin_name, "", meta_name])
         f = self._open_pin_meta(path_meta)
         meta = self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""))
 
@@ -717,21 +719,30 @@ class BoardManual(BaseBoard):
         pin_name, *others = elements
         pin_path = self.pin_paths[pin_name]
 
-        if self.board.strip() == "":
-            return pin_path
+        pre_components = [] if not self.board else [self.board]
 
-        if len(others):
-            # this is confusing, but R pins url board has a final "/" indicate that
-            # something is a pin version, rather than a single file. but since other
-            # boards forbid a final /, we need to strip it off to join elements
-            pin_path = pin_path.rstrip().rstrip("/")
+        # note that for paths where version is specified, it gets omitted,
+        # since pin_path should point to a pin version
+        if not pin_path.endswith("/"):
+            if len(others):
+                raise ValueError(
+                    f"pin path {pin_path} does not end in '/' so is assumed to be a"
+                    f" single file. Cannot construct a path to elements {elements}."
+                )
+            return "/".join(pre_components + [pin_path])
+        elif len(others) == 0:
+            return "/".join(pre_components + [pin_path])
+        elif len(others) == 1:
+            version = others[0]
+            return "/".join(pre_components + [pin_path])
+        elif len(others) == 2:
+            version, meta = others
 
-            # this is a bit hacky, but this board only aims at specific pins versions,
-            # so the metadata has the version as "", so we need to remove it.
-            if others[0] == "":
-                return super().construct_path([pin_path, *others[1:]])
+            return "/".join(pre_components + [pin_path, meta])
 
-        return super().construct_path([pin_path, *others])
+        raise NotImplementedError(
+            f"Unable to construct path from these elements: {elements}"
+        )
 
 
 class BoardRsConnect(BaseBoard):

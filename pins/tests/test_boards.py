@@ -441,6 +441,23 @@ def test_board_rsc_pin_write_acl(df, board_short):
     assert content["access_type"] == "all"
 
 
+@pytest.mark.fs_rsc
+def test_board_rsc_pin_read_public(df, board_short):
+    from pins.boards import BoardManual
+
+    board_short.pin_write(df, "susan/mtcars", type="csv", access_type="all")
+
+    # note that users can also get this from the web ui
+    content_url = board_short.fs.info("susan/mtcars")["content_url"]
+
+    # shouldn't be a key set in env, but remove just in case
+    fs = fsspec.filesystem("http")
+    board_url = BoardManual("", fs, pin_paths={"rsc_public": content_url})
+
+    df_no_key = board_url.pin_read("rsc_public")
+    assert df_no_key.equals(df)
+
+
 # Manual Board Specific =======================================================
 
 from pins.boards import BoardManual  # noqa

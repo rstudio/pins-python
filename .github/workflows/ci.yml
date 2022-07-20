@@ -22,7 +22,7 @@ jobs:
       matrix:
         python: ["3.7", "3.8", "3.9", "3.10"]
         os: ["ubuntu-latest"]
-        pytest_ops: [""]
+        pytest_opts: ["--workers 4 --tests-per-worker 1"]
         requirements: [""]
         include:
           - os: "ubuntu-latest"
@@ -32,7 +32,7 @@ jobs:
             python: "3.10"
             # ignore doctests, as they involve calls to github, and all mac machines
             # use the same IP address
-            pytest_opts: "-k pins/tests"
+            pytest_opts: "--workers 4 --tests-per-worker 1 -k pins/tests"
           - os: "windows-latest"
             python: "3.10"
             # ignore doctests
@@ -64,13 +64,14 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          pytest pins -m 'not fs_rsc and not skip_on_github' --workers 4 --tests-per-worker 1 $PYTEST_OPTS
+          pytest pins -m 'not fs_rsc and not skip_on_github' $PYTEST_OPTS
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "us-east-1"
           PYTEST_OPTS: ${{ matrix.pytest_opts }}
           REQUIREMENTS: ${{ matrix.requirements }}
+          ACTION_OS: ${{ matrix.os }}
           # fixes error on macosx virtual machine with pytest-parallel
           # https://github.com/browsertron/pytest-parallel/issues/93
           no_proxy: "*"

@@ -43,6 +43,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
+        shell: bash
         run: |
           python -m pip install --upgrade pip
 
@@ -61,6 +62,7 @@ jobs:
           export_default_credentials: true
 
       - name: Run tests
+        shell: bash
         run: |
           pytest pins -m 'not fs_rsc and not skip_on_github' --workers 4 --tests-per-worker 1 $PYTEST_OPTS
         env:

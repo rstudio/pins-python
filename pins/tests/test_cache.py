@@ -15,13 +15,16 @@ from pathlib import Path
 # NOTE: windows time.time() implementation appears to have 16 millisecond precision, so
 # we need to add a small delay, in order to avoid prune checks appearing to happen at the
 # exact same moment something earlier was created / accessed.
+# see: https://stackoverflow.com/a/1938096/1144523
 
 
 # Utilities ===================================================================
 
 
 def _sleep():
-    time.sleep(0.2)
+    # time-based issues keep arising erratically in windows checks, so try to shoot
+    # well past
+    time.sleep(0.3)
 
 
 @pytest.fixture
@@ -153,6 +156,8 @@ def test_cache_pruner_old_versions_some(a_cache, pin1_v1, pin1_v2):
 
 
 def test_cache_pruner_old_versions_multi_pins(a_cache, pin1_v2, pin2_v3):
+    _sleep()
+
     pruner = CachePruner(a_cache)
     old = pruner.old_versions(days=1)
 

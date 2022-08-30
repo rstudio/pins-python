@@ -18,6 +18,7 @@ from .constructors import (
     board_github,
     board_urls,
     board_rsconnect,
+    board_azure,
     board_s3,
     board_gcs,
     board,

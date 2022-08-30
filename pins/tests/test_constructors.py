@@ -38,7 +38,7 @@ def construct_from_board(board):
         board = c.board_rsconnect(
             server_url=board.fs.api.server_url, api_key=board.fs.api.api_key
         )
-    elif fs_name == "abfs":
+    elif fs_name == "adl":
         board = c.board_azure(board.board)
     else:
         board = getattr(c, f"board_{fs_name}")(board.board)

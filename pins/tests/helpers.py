@@ -25,7 +25,7 @@ BOARD_CONFIG = {
     "file": {"path": ["PINS_TEST_FILE__PATH", None]},
     "s3": {"path": ["PINS_TEST_S3__PATH", "ci-pins"]},
     "gcs": {"path": ["PINS_TEST_GCS__PATH", "ci-pins"]},
-    "az": {"path": ["PINS_TEST_AZURE__PATH", "ci-pins"]},
+    "adl": {"path": ["PINS_TEST_AZURE__PATH", "ci-pins"]},
     "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},
 }
 

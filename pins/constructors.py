@@ -380,6 +380,8 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     In order to authenticate, set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
     and (optionally) AWS_REGION environment variables.
 
+    See https://github.com/fsspec/s3fs
+
     """
     # TODO: user should be able to specify storage options here?
 

@@ -25,7 +25,14 @@ def check_dir_writable(p_dir):
 
 
 def check_cache_file_path(p_file, p_cache):
-    assert str(p_file.relative_to(p_cache)).count("/") == 2
+    rel_path = p_file.relative_to(p_cache)
+
+    # parents has every entry you'd get if you called .parents all the way to some root.
+    # for a relative path, the root is likely ".", so we subtract 1 to get the number
+    # of parent directories.
+    # note this essentially counts slashes, in a inter-OS friendly way.
+    n_parents = len(rel_path.parents) - 1
+    assert n_parents == 2
 
 
 def construct_from_board(board):

@@ -10,6 +10,7 @@ from pins.cache import (
 )
 
 from fsspec import filesystem
+from pathlib import Path
 
 
 # Utilities ===================================================================
@@ -55,9 +56,14 @@ def test_pins_cache_url_hash_name():
     cache = PinsUrlCache(fs=filesystem("file"))
     hashed = cache.hash_name("http://example.com/a.txt", True)
 
+    p_hash = Path(hashed)
+
     # should have form <url_hash>/<version_placeholder>/<filename>
-    assert hashed.endswith("/a.txt")
-    assert hashed.count("/") == 2
+    assert p_hash.name == "a.txt"
+
+    # count parent dirs, excluding root (e.g. "." or "/")
+    n_parents = len(p_hash.parents) - 1
+    assert n_parents == 2
 
 
 @pytest.mark.skip("TODO")

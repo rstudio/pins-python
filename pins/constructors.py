@@ -425,11 +425,13 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     Notes
     -----
     The azure board uses the fsspec library (adlfs) to handle interacting with
-    Azure Datalake Filesystem (adl). Currently, its default mode of authentication
+    Azure Datalake Filesystem (abfs). Currently, its default mode of authentication
     is supported.
 
     See https://github.com/fsspec/adlfs
     """
 
     opts = {"use_listings_cache": False}
-    return board("adl", path, versioned, cache, allow_pickle_read, storage_options=opts)
+    return board(
+        "abfs", path, versioned, cache, allow_pickle_read, storage_options=opts
+    )

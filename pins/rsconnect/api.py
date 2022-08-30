@@ -371,15 +371,13 @@ class RsConnectApi:
         if p.is_dir() and gzip:
             import tarfile
 
-            with tempfile.NamedTemporaryFile(mode="wb", suffix=".tar.gz") as tmp:
-                with tarfile.open(fileobj=tmp.file, mode="w:gz") as tar:
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                p_archive = Path(tmp_dir) / "bundle.tar.gz"
+
+                with tarfile.open(p_archive, mode="w:gz") as tar:
                     tar.add(str(p.absolute()), arcname="")
 
-                # close the underlying file. note we don't call the top-level
-                # close method, since that would delete the temporary file
-                tmp.file.close()
-
-                with open(tmp.name, "rb") as f:
+                with open(p_archive, "rb") as f:
                     result = f_request(data=f)
         else:
             with open(str(p.absolute()), "rb") as f:

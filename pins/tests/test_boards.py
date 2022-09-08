@@ -331,6 +331,8 @@ def test_board_base_pin_meta_cache_touch(tmp_dir2, df):
 
     orig_access = p_cache_meta.stat().st_atime
 
+    sleep(0.3)
+
     board.pin_meta("some_df")
 
     new_access = p_cache_meta.stat().st_atime

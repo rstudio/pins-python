@@ -111,8 +111,8 @@ def board(
     board_factory:
         An optional board class to use as the constructor.
 
-    Note
-    ----
+    Notes
+    -----
     Many fsspec implementations of filesystems cache the searching of files, which may
     cause you to not see pins saved by other people. Disable this on these file systems
     with `storage_options = {"listings_expiry_time": 0}` on s3, or `{"cache_timeout": 0}`
@@ -256,8 +256,8 @@ def board_github(
     **kwargs:
         Passed to the pins.board function.
 
-    Note
-    ----
+    Notes
+    -----
     This board is read only.
 
 
@@ -374,11 +374,13 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     **kwargs:
         Passed to the pins.board function.
 
-    Note
-    ----
+    Notes
+    -----
     The s3 board uses the fsspec library (s3fs) to handle interacting with s3.
     In order to authenticate, set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
     and (optionally) AWS_REGION environment variables.
+
+    See https://github.com/fsspec/s3fs
 
     """
     # TODO: user should be able to specify storage options here?
@@ -397,8 +399,8 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     **kwargs:
         Passed to the pins.board function.
 
-    Note
-    ----
+    Notes
+    -----
     The gcs board uses the fsspec library (gcsfs) to handle interacting with
     google cloud storage. Currently, its default mode of authentication
     is supported.
@@ -410,3 +412,28 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     # fixes it under the hood
     opts = {"cache_timeout": 0}
     return board("gcs", path, versioned, cache, allow_pickle_read, storage_options=opts)
+
+
+def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+    """Create a board to read and write pins from an Google Cloud Storage bucket folder.
+
+    Parameters
+    ----------
+    path:
+        Path of form <bucket_name>/<optional>/<subdirectory>.
+    **kwargs:
+        Passed to the pins.board function.
+
+    Notes
+    -----
+    The azure board uses the fsspec library (adlfs) to handle interacting with
+    Azure Datalake Filesystem (abfs). Currently, its default mode of authentication
+    is supported.
+
+    See https://github.com/fsspec/adlfs
+    """
+
+    opts = {"use_listings_cache": False}
+    return board(
+        "abfs", path, versioned, cache, allow_pickle_read, storage_options=opts
+    )

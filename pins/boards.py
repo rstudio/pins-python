@@ -238,7 +238,8 @@ class BaseBoard:
         name:
             Pin name.
         type:
-            File type used to save ``x`` to disk.
+            File type used to save ``x`` to disk. May be "csv", "arrow", "parquet",
+            "joblib", or "file".
         title:
             A title for the pin; most important for shared boards so that others
             can understand what the pin contains. If omitted, a brief description
@@ -249,7 +250,7 @@ class BaseBoard:
             A dictionary containing additional metadata to store with the pin.
             This gets stored on the Meta.user field.
         versioned:
-            Whether the pin should be versioned.
+            Whether the pin should be versioned. Defaults to versioning.
         created:
             A date to store in the Meta.created field. This field may be used as
             part of the pin version name.
@@ -265,9 +266,6 @@ class BaseBoard:
 
         pin_name = self.path_to_pin(name)
 
-        # TODO(docs): describe options for type argument
-        # TODO(docs): elaborate on default behavior for versioned parameter
-        # TODO(compat): python pins added a created parameter above
         with tempfile.TemporaryDirectory() as tmp_dir:
             # create all pin data (e.g. data.txt, save object)
             meta = self.prepare_pin_version(

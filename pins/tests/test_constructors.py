@@ -268,9 +268,6 @@ def test_board_constructor_folder(tmp_dir2, df):
 
 def test_board_deparse(board):
     prot = board.fs.protocol
-    if prot not in ["rsc", "file", ["s3", "s3a"]]:
-        # not implemented for other boards
-        pytest.xfail()
 
     with rm_env("CONNECT_API_KEY"):
         if prot == "rsc":

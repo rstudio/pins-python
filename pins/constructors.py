@@ -289,7 +289,18 @@ def board_github(
     )
 
 
-def board_urls(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None):
+def board_urls(*args, **kwargs):
+    """DEPRECATED: This board has been renamed to board_url."""
+    from .utils import warn_deprecated
+
+    warn_deprecated(
+        "board_urls has been renamed to board_url. Please use board_url instead."
+    )
+
+    return board_url(*args, **kwargs)
+
+
+def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None):
     """Create a board from individual urls.
 
     Parameters
@@ -309,7 +320,7 @@ def board_urls(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None
     ...     "df_csv": "df_csv/20220214T163720Z-9bfad/",
     ...     "df_arrow": "df_arrow/20220214T163720Z-ad0c1/",
     ... }
-    >>> board = board_urls(github_raw, pin_paths)
+    >>> board = board_url(github_raw, pin_paths)
     >>> board.pin_list()
     ['df_csv', 'df_arrow']
     """
@@ -350,6 +361,31 @@ def board_rsconnect(
         CONNECT_API_KEY environment variable.
     **kwargs:
         Passed to the pins.board function.
+
+    Examples
+    --------
+    Use a server url or set the CONNECT_SERVER environt variable to connect:
+
+    ::
+
+       server_url = "https://connect.rstudioservices.com"
+       board = board_rsconnect(server_url)
+
+    In order to read a public pin, use board_manual with the public pin url.
+
+    ::
+
+       # for a pin at https://connect.rstudioservices.com/content/3004/
+       board = board_url(
+           "https://connect.rstudioservices.com/content",
+           {"my_df": "3004/"}
+       )
+       board.pin_read("my_df")
+
+    See Also
+    --------
+    board_url : board for connecting to individual pins, using a url or path.
+
     """
 
     # TODO: api_key can be passed in to underlying RscApi, equiv to R's manual mode

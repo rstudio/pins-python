@@ -201,7 +201,6 @@ class RsConnectFs(AbstractFileSystem):
         except RsConnectApiMissingContentError:
             # TODO: this could be seen as analogous to mkdir (which gets
             # called by pins anyway)
-            # TODO: hard-coded acl bad?
             content = self.api.post_content_item(parsed.content, access_type)
 
         # Create bundle (with manifest.json inserted if missing) ----

@@ -443,6 +443,23 @@ def test_board_rsc_pin_write_acl(df, board_short):
     assert content["access_type"] == "all"
 
 
+@pytest.mark.fs_rsc
+def test_board_rsc_pin_read_public(df, board_short):
+    from pins.boards import BoardManual
+
+    board_short.pin_write(df, "susan/mtcars", type="csv", access_type="all")
+
+    # note that users can also get this from the web ui
+    content_url = board_short.fs.info("susan/mtcars")["content_url"]
+
+    # shouldn't be a key set in env, but remove just in case
+    fs = fsspec.filesystem("http")
+    board_url = BoardManual("", fs, pin_paths={"rsc_public": content_url})
+
+    df_no_key = board_url.pin_read("rsc_public")
+    assert df_no_key.equals(df)
+
+
 # Manual Board Specific =======================================================
 
 from pins.boards import BoardManual  # noqa
@@ -491,3 +508,41 @@ def test_board_manual_pin_read():
 
     # do a somewhat data-framey check
     assert df.shape[0] > 1
+
+
+def test_board_manual_construct_path():
+    fs = fsspec.filesystem("file")
+    root = "pins/tests/pins-compat"
+    path_df_csv = "df_csv/20220214T163718Z-eceac/"
+    path_df_csv_v2 = "df_csv/20220214T163720Z-9bfad/df_csv.csv"
+
+    board = BoardManual(
+        root,
+        fs,
+        pin_paths={
+            "df_csv": path_df_csv,
+            "df_csv2_v2": path_df_csv_v2,
+        },
+    )
+
+    # path to pin folder ----
+    # creates path to pin, ignores version, can include data.txt
+    assert board.construct_path(["df_csv"]) == f"{root}/{path_df_csv}"
+    assert board.construct_path(["df_csv", "v"]) == f"{root}/{path_df_csv}"
+    assert (
+        board.construct_path(["df_csv", "v", "data.txt"])
+        == f"{root}/{path_df_csv}data.txt"
+    )
+
+    with pytest.raises(NotImplementedError) as exc_info:
+        board.construct_path(["df_csv", "v", "data.txt", "too_much"])
+
+    assert "Unable to construct path" in exc_info.value.args[0]
+
+    # path to individual file ----
+    assert board.construct_path(["df_csv2_v2"]) == f"{root}/{path_df_csv_v2}"
+
+    with pytest.raises(ValueError) as exc_info:
+        board.construct_path(["df_csv2_v2", "v"])
+
+    assert "assumed to be a single file" in exc_info.value.args[0]

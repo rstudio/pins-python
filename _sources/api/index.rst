@@ -38,6 +38,10 @@ Boards abstract over different storage backends, making it easy to share data in
      - Use RStudio Connect as a board
    * - :func:`.board_s3`
      - Use an S3 bucket as a board
+   * - :func:`.board_gcs`
+     - Use an Google Cloud Storage bucket as a board
+   * - :func:`.board_azure`
+     - Use an Azure Datalake storage container as a board.
    * - :func:`.board`
      - Generic board constructor
 

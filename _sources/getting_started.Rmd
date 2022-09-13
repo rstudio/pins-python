@@ -22,7 +22,7 @@ Getting Started
 
 The pins package helps you publish data sets, models, and other Python objects, making it easy to share them across projects and with your colleagues.
 You can pin objects to a variety of "boards", including local folders (to share on a networked drive or with DropBox), RStudio connect, Amazon S3,
-Google Cloud Storage, and more.
+Google Cloud Storage, Azure Datalake, and more.
 This vignette will introduce you to the basics of pins.
 
 ```{python}

@@ -16,7 +16,8 @@ from .constructors import (
     board_temp,
     board_local,
     board_github,
-    board_urls,
+    board_urls,  # DEPRECATED
+    board_url,
     board_rsconnect,
     board_s3,
     board_gcs,

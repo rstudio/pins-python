@@ -366,21 +366,21 @@ def board_rsconnect(
     --------
     Use a server url or set the CONNECT_SERVER environt variable to connect:
 
-    ```python
-    server_url = "https://connect.rstudioservices.com"
-    board = board_rsconnect(server_url)
-    ```
+    ::
+
+       server_url = "https://connect.rstudioservices.com"
+       board = board_rsconnect(server_url)
 
     In order to read a public pin, use board_manual with the public pin url.
 
-    ```python
-    # for a pin at https://connect.rstudioservices.com/content/3004/
-    board = board_url(
-        "https://connect.rstudioservices.com/content",
-        {"my_df": "3004/"}
-    )
-    board.pin_read("my_df")
-    ```
+    ::
+
+       # for a pin at https://connect.rstudioservices.com/content/3004/
+       board = board_url(
+           "https://connect.rstudioservices.com/content",
+           {"my_df": "3004/"}
+       )
+       board.pin_read("my_df")
 
     See Also
     --------

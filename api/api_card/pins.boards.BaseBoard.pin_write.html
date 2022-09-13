@@ -393,14 +393,15 @@ const thebe_selector_output = ".output, .cell_output"
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – An object (e.g. a pandas DataFrame) to pin.</p></li>
 <li><p><strong>name</strong> – Pin name.</p></li>
-<li><p><strong>type</strong> – File type used to save <code class="docutils literal notranslate"><span class="pre">x</span></code> to disk.</p></li>
+<li><p><strong>type</strong> – File type used to save <code class="docutils literal notranslate"><span class="pre">x</span></code> to disk. May be “csv”, “arrow”, “parquet”,
+“joblib”, or “file”.</p></li>
 <li><p><strong>title</strong> – A title for the pin; most important for shared boards so that others
 can understand what the pin contains. If omitted, a brief description
 of the contents will be automatically generated.</p></li>
 <li><p><strong>description</strong> – A detailed description of the pin contents.</p></li>
 <li><p><strong>metadata</strong> – A dictionary containing additional metadata to store with the pin.
 This gets stored on the Meta.user field.</p></li>
-<li><p><strong>versioned</strong> – Whether the pin should be versioned.</p></li>
+<li><p><strong>versioned</strong> – Whether the pin should be versioned. Defaults to versioning.</p></li>
 <li><p><strong>created</strong> – A date to store in the Meta.created field. This field may be used as
 part of the pin version name.</p></li>
 </ul>

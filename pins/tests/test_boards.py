@@ -506,3 +506,41 @@ def test_board_manual_pin_read():
 
     # do a somewhat data-framey check
     assert df.shape[0] > 1
+
+
+def test_board_manual_construct_path():
+    fs = fsspec.filesystem("file")
+    root = "pins/tests/pins-compat"
+    path_df_csv = "df_csv/20220214T163718Z-eceac/"
+    path_df_csv_v2 = "df_csv/20220214T163720Z-9bfad/df_csv.csv"
+
+    board = BoardManual(
+        root,
+        fs,
+        pin_paths={
+            "df_csv": path_df_csv,
+            "df_csv2_v2": path_df_csv_v2,
+        },
+    )
+
+    # path to pin folder ----
+    # creates path to pin, ignores version, can include data.txt
+    assert board.construct_path(["df_csv"]) == f"{root}/{path_df_csv}"
+    assert board.construct_path(["df_csv", "v"]) == f"{root}/{path_df_csv}"
+    assert (
+        board.construct_path(["df_csv", "v", "data.txt"])
+        == f"{root}/{path_df_csv}data.txt"
+    )
+
+    with pytest.raises(NotImplementedError) as exc_info:
+        board.construct_path(["df_csv", "v", "data.txt", "too_much"])
+
+    assert "Unable to construct path" in exc_info.value.args[0]
+
+    # path to individual file ----
+    assert board.construct_path(["df_csv2_v2"]) == f"{root}/{path_df_csv_v2}"
+
+    with pytest.raises(ValueError) as exc_info:
+        board.construct_path(["df_csv2_v2", "v"])
+
+    assert "assumed to be a single file" in exc_info.value.args[0]

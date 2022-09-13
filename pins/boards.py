@@ -730,7 +730,11 @@ class BoardManual(BaseBoard):
                     f" single file. Cannot construct a path to elements {elements}."
                 )
             return "/".join(pre_components + [pin_path])
-        elif len(others) == 0:
+
+        # handle paths to pins (i.e. end with /) ----
+        stripped = pin_path[:-1]
+
+        if len(others) == 0:
             return "/".join(pre_components + [pin_path])
         elif len(others) == 1:
             version = others[0]
@@ -738,7 +742,7 @@ class BoardManual(BaseBoard):
         elif len(others) == 2:
             version, meta = others
 
-            return "/".join(pre_components + [pin_path, meta])
+            return "/".join(pre_components + [stripped, meta])
 
         raise NotImplementedError(
             f"Unable to construct path from these elements: {elements}"

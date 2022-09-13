@@ -5,7 +5,7 @@
 ### Install pins with dev dependencies
 
 ```shell
-python -m pip install -e .[dev]
+python -m pip install -e .[test]
 ```
 
 ### Install pre-commit hooks

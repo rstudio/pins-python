@@ -21,7 +21,7 @@ kernelspec:
 ```
 
 The pins package publishes data, models, and other Python objects, making it easy to share
-You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, and Google Cloud Storage.
+You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Google Cloud Storage, and Azure Datalake.
 Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.
 
 ## Installation
@@ -96,5 +96,6 @@ board.pin_read("hadley/sales-summary")
 
 You can easily control who gets to access the data using the RStudio Connect permissions pane.
 
-The pins package also includes boards that allow you to share data on services like Amazon's S3 (`board_s3()`) and Google Cloud Storage (`board_gcs()`).
+The pins package also includes boards that allow you to share data on services like
+Amazon's S3 (`board_s3()`), Google Cloud Storage (`board_gcs()`), and Azure Datalake (`board_azure()`).
 Learn more in [getting started](getting_started.Rmd).

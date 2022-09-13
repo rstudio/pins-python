@@ -10,9 +10,21 @@ from pins.cache import (
 )
 
 from fsspec import filesystem
+from pathlib import Path
+
+# NOTE: windows time.time() implementation appears to have 16 millisecond precision, so
+# we need to add a small delay, in order to avoid prune checks appearing to happen at the
+# exact same moment something earlier was created / accessed.
+# see: https://stackoverflow.com/a/1938096/1144523
 
 
 # Utilities ===================================================================
+
+
+def _sleep():
+    # time-based issues keep arising erratically in windows checks, so try to shoot
+    # well past
+    time.sleep(0.3)
 
 
 @pytest.fixture
@@ -34,7 +46,7 @@ def test_touch_access_time_manual(some_file):
 def test_touch_access_time_auto(some_file):
     orig_access = some_file.stat().st_atime
 
-    time.sleep(0.2)
+    _sleep()
     new_time = touch_access_time(some_file)
 
     assert some_file.stat().st_atime == new_time
@@ -55,9 +67,14 @@ def test_pins_cache_url_hash_name():
     cache = PinsUrlCache(fs=filesystem("file"))
     hashed = cache.hash_name("http://example.com/a.txt", True)
 
+    p_hash = Path(hashed)
+
     # should have form <url_hash>/<version_placeholder>/<filename>
-    assert hashed.endswith("/a.txt")
-    assert hashed.count("/") == 2
+    assert p_hash.name == "a.txt"
+
+    # count parent dirs, excluding root (e.g. "." or "/")
+    n_parents = len(p_hash.parents) - 1
+    assert n_parents == 2
 
 
 @pytest.mark.skip("TODO")
@@ -106,6 +123,8 @@ def pin2_v3(a_cache):
 
 
 def test_cache_pruner_old_versions_none(a_cache, pin1_v1):
+    _sleep()
+
     pruner = CachePruner(a_cache)
 
     old = pruner.old_versions(days=1)
@@ -114,6 +133,8 @@ def test_cache_pruner_old_versions_none(a_cache, pin1_v1):
 
 
 def test_cache_pruner_old_versions_days0(a_cache, pin1_v1):
+    _sleep()
+
     pruner = CachePruner(a_cache)
     old = pruner.old_versions(days=0)
 
@@ -122,6 +143,8 @@ def test_cache_pruner_old_versions_days0(a_cache, pin1_v1):
 
 
 def test_cache_pruner_old_versions_some(a_cache, pin1_v1, pin1_v2):
+    _sleep()
+
     # create: tmp_dir/pin1/version1
 
     pruner = CachePruner(a_cache)
@@ -133,6 +156,8 @@ def test_cache_pruner_old_versions_some(a_cache, pin1_v1, pin1_v2):
 
 
 def test_cache_pruner_old_versions_multi_pins(a_cache, pin1_v2, pin2_v3):
+    _sleep()
+
     pruner = CachePruner(a_cache)
     old = pruner.old_versions(days=1)
 
@@ -141,6 +166,8 @@ def test_cache_pruner_old_versions_multi_pins(a_cache, pin1_v2, pin2_v3):
 
 
 def test_cache_prune_prompt(a_cache, pin1_v1, pin2_v3, monkeypatch):
+    _sleep()
+
     cache_prune(days=1, cache_root=a_cache.parent, prompt=False)
 
     versions = list(a_cache.glob("*/*"))

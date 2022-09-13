@@ -25,7 +25,14 @@ def check_dir_writable(p_dir):
 
 
 def check_cache_file_path(p_file, p_cache):
-    assert str(p_file.relative_to(p_cache)).count("/") == 2
+    rel_path = p_file.relative_to(p_cache)
+
+    # parents has every entry you'd get if you called .parents all the way to some root.
+    # for a relative path, the root is likely ".", so we subtract 1 to get the number
+    # of parent directories.
+    # note this essentially counts slashes, in a inter-OS friendly way.
+    n_parents = len(rel_path.parents) - 1
+    assert n_parents == 2
 
 
 def construct_from_board(board):
@@ -38,6 +45,8 @@ def construct_from_board(board):
         board = c.board_rsconnect(
             server_url=board.fs.api.server_url, api_key=board.fs.api.api_key
         )
+    elif fs_name == "abfs":
+        board = c.board_azure(board.board)
     else:
         board = getattr(c, f"board_{fs_name}")(board.board)
 
@@ -207,6 +216,8 @@ def test_constructor_boards_multi_user(board2, df_csv, tmp_cache):
         # TODO: RSConnect writes pin names like <user>/<name>, so would need to
         # modify test
         pytest.skip()
+    elif fs_name == "abfs":
+        fs_name = "azure"
 
     first = construct_from_board(board2)
 

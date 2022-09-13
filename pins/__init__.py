@@ -19,6 +19,7 @@ from .constructors import (
     board_urls,  # DEPRECATED
     board_url,
     board_rsconnect,
+    board_azure,
     board_s3,
     board_gcs,
     board,

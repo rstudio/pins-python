@@ -58,6 +58,12 @@ def board_deparse(board: BaseBoard):
         return f"board_rsconnect(server_url={repr(url)}{allow_pickle})"
     elif prot == "file":
         return f"board_folder({repr(board.board)}{allow_pickle})"
+    elif prot == ["s3", "s3a"]:
+        return f"board_s3({repr(board.board)}{allow_pickle})"
+    elif prot == "abfs":
+        return f"board_azure({repr(board.board)}{allow_pickle})"
+    elif prot == ("gcs", "gs"):
+        return f"board_gcs({repr(board.board)}{allow_pickle})"
     else:
         raise NotImplementedError(
             f"board deparsing currently not supported for protocol: {prot}"

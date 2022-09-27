@@ -62,7 +62,7 @@ def board_deparse(board: BaseBoard):
         return f"board_s3({repr(board.board)}{allow_pickle})"
     elif prot == "abfs":
         return f"board_azure({repr(board.board)}{allow_pickle})"
-    elif prot == "gcs":
+    elif prot == ("gcs", "gs"):
         return f"board_gcs({repr(board.board)}{allow_pickle})"
     else:
         raise NotImplementedError(

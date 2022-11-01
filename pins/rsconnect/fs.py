@@ -115,6 +115,9 @@ class RsConnectFs(AbstractFileSystem):
         else:
             self.api = RsConnectApi(server_url, **kwargs)
 
+        self._user_name_cache = {}
+        self._content_name_cache = {}
+
     def ls(
         self, path, details=False, **kwargs
     ) -> "Sequence[BaseEntity] | Sequence[str]":
@@ -390,7 +393,11 @@ class RsConnectFs(AbstractFileSystem):
             raise err(
                 f"Expecting 1 content entry, but found {len(contents)}: {contents}"
             )
-        return contents[0]
+
+        res = contents[0]
+
+        self._content_name_cache[(user_guid, content_name)] = res["guid"]
+        return res
 
     def _get_content_bundle(self, content_guid, bundle_id):
         """Fetch a content bundle."""
@@ -410,7 +417,10 @@ class RsConnectFs(AbstractFileSystem):
         """Fetch a single user entity from user name."""
         users = self.api.get_users(prefix=name)
         try:
-            user_guid = next(iter([x for x in users if x["username"] == name]))
-            return user_guid
+            user = next(iter([x for x in users if x["username"] == name]))
+
+            self._user_name_cache[user["username"]] = user["guid"]
+
+            return user
         except StopIteration:
             raise ValueError(f"No user named {name} found.")

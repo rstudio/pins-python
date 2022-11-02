@@ -880,7 +880,11 @@ class BoardRsConnect(BaseBoard):
         user_guid = self.fs._user_name_cache[user_name]
         content_guid = self.fs._content_name_cache[(user_guid, content_name)]
 
-        local = {"content_id": content_guid, "version": bundle_id}
+        local = {
+            "content_id": content_guid,
+            "version": bundle_id,
+            "url": f"{self.fs.api.server_url}/content/{content_guid}/",
+        }
 
         return f, local
 

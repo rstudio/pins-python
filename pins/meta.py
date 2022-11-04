@@ -57,6 +57,9 @@ class Meta:
         TODO - where is this in R pins?
     user:
         A dictionary of additional metadata that may be specified by the user.
+    local:
+        A dictionary of additional metadata that may be added by the board, depending
+        on the backend used. E.g. RStudio Connect content id, url, etc..
 
     """
 

@@ -57,6 +57,9 @@ class Meta:
         TODO - where is this in R pins?
     user:
         A dictionary of additional metadata that may be specified by the user.
+    local:
+        A dictionary of additional metadata that may be added by the board, depending
+        on the backend used. E.g. RStudio Connect content id, url, etc..
 
     """
 
@@ -81,6 +84,7 @@ class Meta:
 
     name: Optional[str] = None
     user: Mapping = field(default_factory=dict)
+    local: Mapping = field(default_factory=dict)
 
     def to_dict(self) -> Mapping:
         data = asdict(self)
@@ -89,18 +93,22 @@ class Meta:
 
     def to_pin_dict(self):
         d = self.to_dict()
+
         del d["name"]
         del d["version"]
+        del d["local"]
+
         return d
 
     @classmethod
-    def from_pin_dict(cls, data, pin_name, version) -> "Meta":
+    def from_pin_dict(cls, data, pin_name, version, local=None) -> "Meta":
 
         # TODO: re-arrange Meta argument positions to reflect what's been
         # learned about default arguments. e.g. title was not used at some
         # point in api_version 1
         extra = {"title": None} if "title" not in data else {}
-        return cls(**data, **extra, name=pin_name, version=version)
+        local = {} if local is None else local
+        return cls(**data, **extra, name=pin_name, version=version, local=local)
 
     def to_pin_yaml(self, f: Optional[IOBase] = None) -> "str | None":
         data = self.to_pin_dict()
@@ -121,6 +129,7 @@ class MetaV0:
     # holds raw data.txt contents
     original_fields: dict = field(default_factory=dict)
     user: dict = field(default_factory=dict, init=False)
+    local: Mapping = field(default_factory=dict)
 
     title: ClassVar[None] = None
     created: ClassVar[None] = None
@@ -132,7 +141,7 @@ class MetaV0:
         return asdict(self)
 
     @classmethod
-    def from_pin_dict(cls, data, pin_name, version) -> "MetaV0":
+    def from_pin_dict(cls, data, pin_name, version, local=None) -> "MetaV0":
         # could infer from dataclasses.fields(), but seems excessive.
         req_fields = {"type", "description"}
 
@@ -140,7 +149,14 @@ class MetaV0:
         req_inputs = {k: data.get(k) for k in req_fields}
         req_inputs["file"] = data["path"]
 
-        return cls(**req_inputs, name=pin_name, original_fields=data, version=version)
+        local = {} if local is None else local
+        return cls(
+            **req_inputs,
+            name=pin_name,
+            original_fields=data,
+            version=version,
+            local=local,
+        )
 
     def to_pin_dict(self):
         raise NotImplementedError("v0 pins metadata are read only.")
@@ -216,7 +232,11 @@ class MetaFactory:
         return MetaRaw(files, type, name)
 
     def read_pin_yaml(
-        self, f: IOBase, pin_name: str, version: "str | VersionRaw"
+        self,
+        f: IOBase,
+        pin_name: str,
+        version: "str | VersionRaw",
+        local=None,
     ) -> Meta:
         if isinstance(version, str):
             version_obj = guess_version(version)
@@ -235,4 +255,4 @@ class MetaFactory:
         else:
             cls_meta = Meta
 
-        return cls_meta.from_pin_dict(data, pin_name, version=version_obj)
+        return cls_meta.from_pin_dict(data, pin_name, version=version_obj, local=local)

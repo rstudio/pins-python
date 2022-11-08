@@ -241,7 +241,7 @@ class BaseBoard:
             Pin name.
         type:
             File type used to save ``x`` to disk. May be "csv", "arrow", "parquet",
-            "joblib", or "file".
+            "joblib", "json", or "file".
         title:
             A title for the pin; most important for shared boards so that others
             can understand what the pin contains. If omitted, a brief description

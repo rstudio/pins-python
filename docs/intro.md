@@ -67,8 +67,6 @@ board.pin_read("mtcars")
 A board on your computer is good place to start, but the real power of pins comes when you use a board that's shared with multiple people.
 To get started, you can use `board_folder()` with a directory on a shared drive or in DropBox, or if you use [RStudio Connect](https://www.rstudio.com/products/connect/) you can use `board_rsconnect()`:
 
-🚧 TODO: add informational messages shown in display below
-
 +++
 
 ```python

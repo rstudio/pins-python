@@ -75,10 +75,11 @@ To get started, you can use `board_folder()` with a directory on a shared drive 
 from pins import board_rsconnect
 
 board = board_rsconnect()
-#> Connecting to RSC 1.9.0.1 at <https://connect.rstudioservices.com>
 
 board.pin_write(tidy_sales_data, "hadley/sales-summary", type = "csv")
-#> Writing to pin 'hadley/sales-summary'
+#> Writing pin:
+#> Name: 'hadley/sales-summary'
+#> Version: ...
 ```
 
 +++

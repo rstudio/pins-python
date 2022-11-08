@@ -77,6 +77,30 @@ def test_driver_roundtrip(tmp_dir2, type_):
     assert df.equals(obj)
 
 
+@pytest.mark.parametrize(
+    "type_",
+    [
+        "json",
+    ],
+)
+def test_driver_roundtrip_json(tmp_dir2, type_):
+
+    df = {"x": [1, 2, 3]}
+
+    fname = "some_df"
+    full_file = f"{fname}.{type_}"
+
+    p_obj = tmp_dir2 / fname
+    res_fname = save_data(df, p_obj, type_)
+
+    assert Path(res_fname).name == full_file
+
+    meta = MetaRaw(full_file, type_, "my_pin")
+    obj = load_data(meta, fsspec.filesystem("file"), tmp_dir2, allow_pickle_read=True)
+
+    assert df == obj
+
+
 def test_driver_feather_write_error(tmp_dir2):
     import pandas as pd
 

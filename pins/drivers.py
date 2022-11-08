@@ -105,6 +105,11 @@ def load_data(
         # TODO: update to handle multiple files
         return [str(Path(fs.open(path_to_file).name).absolute())]
 
+    elif meta.type == "json":
+        import json
+
+        return json.load(fs.open(path_to_file))
+
     raise NotImplementedError(f"No driver for type {meta.type}")
 
 
@@ -151,6 +156,12 @@ def save_data(
         import joblib
 
         joblib.dump(obj, final_name)
+
+    elif type == "json":
+        import json
+
+        json.dump(obj, open(final_name, "w"))
+
     else:
         raise NotImplementedError(f"Cannot save type: {type}")
 

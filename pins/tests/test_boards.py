@@ -128,7 +128,13 @@ def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
 
 
 @parametrize(
-    "obj, type_", [(df, "csv"), (df, "joblib"), ({"a": 1, "b": [2, 3]}, "joblib")]
+    "obj, type_",
+    [
+        (df, "csv"),
+        (df, "joblib"),
+        ({"a": 1, "b": [2, 3]}, "joblib"),
+        ({"a": 1, "b": [2, 3]}, "json"),
+    ],
 )
 def test_board_pin_write_type(board, obj, type_, request):
     with rm_env(PINS_ENV_INSECURE_READ):

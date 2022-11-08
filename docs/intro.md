@@ -24,6 +24,8 @@ The pins package publishes data, models, and other Python objects, making it eas
 You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Google Cloud Storage, and Azure Datalake.
 Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.
 
+You can use pins from R as well as Python. For example, you can use one language to read a pin created with the other. Learn more about [pins for R](pins.rstudio.com).
+
 ## Installation
 
 To install the released version from PyPI:

@@ -137,10 +137,10 @@ While we’ll do our best to keep the automatically generated metadata consisten
 Every `pin_write()` will create a new version:
 
 ```{python}
-board2 = board_temp(versioned = True, allow_pickle_read=True)
-board2.pin_write([1,2,3,4,5], name = "x", type = "joblib", title="TODO")
-board2.pin_write([1,2,3], name = "x", type = "joblib", title="TODO")
-board2.pin_write([1,2], name = "x", type = "joblib", title="TODO")
+board2 = board_temp()
+board2.pin_write([1,2,3,4,5], name = "x", type = "json")
+board2.pin_write([1,2,3], name = "x", type = "json")
+board2.pin_write([1,2], name = "x", type = "json")
 board2.pin_versions("x")
 ```
 
@@ -156,6 +156,34 @@ But you can request an older version by supplying the `version` argument:
 version = board2.pin_versions("x").version[1]
 board2.pin_read("x", version = version)
 ```
+
+## Storing models
+
+> ⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and **pickle files are not secure**. Only read pickle files you trust. In order to read pickle files, set the `allow_pickle_read=True` argument. See: https://docs.python.org/3/library/pickle.html.
+
+You can write a pin with `type="joblib"` to store arbitrary python objects, including fitted models from packages like [scikit-learn](https://scikit-learn.org/).
+
+For example, suppose you wanted to store a custom `namedtuple` object.
+
+```{python}
+from collections import namedtuple
+
+board3 = board_temp(allow_pickle_read=True)
+
+Coords = namedtuple("Coords", ["x", "y"])
+coords = Coords(1, 2)
+
+coords
+```
+
+Using `type="joblib"` lets you store and read back the custom `coords` object.
+
+```{python}
+board.pin_write("my_coords", coords, type="joblib")
+
+board.pin_read("my_coords")
+```
+
 
 ## Caching
 

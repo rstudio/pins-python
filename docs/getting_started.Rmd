@@ -179,9 +179,9 @@ coords
 Using `type="joblib"` lets you store and read back the custom `coords` object.
 
 ```{python}
-board.pin_write("my_coords", coords, type="joblib")
+board3.pin_write(coords, "my_coords", type="joblib")
 
-board.pin_read("my_coords")
+board3.pin_read("my_coords")
 ```
 
 

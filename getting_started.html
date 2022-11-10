@@ -403,12 +403,12 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#versioning">
-   🚧 Versioning
+   Versioning
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#reading-and-writing-files">
-   🚧 Reading and writing files
+  <a class="reference internal nav-link" href="#storing-models">
+   Storing models
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -453,12 +453,12 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#versioning">
-   🚧 Versioning
+   Versioning
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#reading-and-writing-files">
-   🚧 Reading and writing files
+  <a class="reference internal nav-link" href="#storing-models">
+   Storing models
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -524,7 +524,7 @@ Here are a few options:</p>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
 Name: &#39;mtcars&#39;
-Version: 20221108T165901Z-3b134
+Version: 20221110T225635Z-3b134
 </pre></div>
 </div>
 </div>
@@ -538,10 +538,7 @@ But you can choose another option depending on your goals:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;csv&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">to_csv()</span></code> from pandas to create a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file. CSVs can read by any application, but only support simple columns (e.g. numbers, strings, dates), can take up a lot of disk space, and can be slow to read.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;joblib&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">joblib.dump()</span></code> to create a binary python data file. See the <a class="reference external" href="https://joblib.readthedocs.io/en/latest/">joblib docs</a> for more information.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;arrow&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">pyarrow</span></code> to create an arrow/feather file. <a class="reference external" href="https://arrow.apache.org">Arrow</a> is a modern, language-independent, high-performance file format designed for data science. Not every tool can read arrow files, but support is growing rapidly.</p></li>
-</ul>
-<p>🚧 Data formats TODO 🚧</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;json&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">jsonlite::write_json()</span></code> to create a <code class="docutils literal notranslate"><span class="pre">.json</span></code> file. Pretty much every programming language can read json files, but they only work well for nested lists.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;json&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">json.dump()</span></code> to create a <code class="docutils literal notranslate"><span class="pre">.json</span></code> file. Pretty much every programming language can read json files, but they only work well for nested lists.</p></li>
 </ul>
 <p>After you’ve pinned an object, you can read it back with <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code>:</p>
 <div class="cell docutils container">
@@ -763,7 +760,7 @@ If you find yourself routinely pinning data larger that this, you might need to 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20221108T165901Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 11, 8, 16, 59, 1), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={}, local={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20221110T225635Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 11, 10, 22, 56, 35), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={}, local={})
 </pre></div>
 </div>
 </div>
@@ -794,10 +791,10 @@ If you find yourself routinely pinning data larger that this, you might need to 
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
 Name: &#39;mtcars2&#39;
-Version: 20221108T165901Z-3b134
+Version: 20221110T225635Z-3b134
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20221108T165901Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 11, 8, 16, 59, 1, 451190), hash=&#39;3b134bae183b50c9&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;}, local={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20221110T225635Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 11, 10, 22, 56, 35, 258251), hash=&#39;3b134bae183b50c9&#39;), name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;}, local={})
 </pre></div>
 </div>
 </div>
@@ -809,7 +806,7 @@ Version: 20221108T165901Z-3b134
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20221108T165901Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 11, 8, 16, 59, 1), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={}, local={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20221110T225635Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2022, 11, 10, 22, 56, 35), hash=&#39;3b134&#39;), name=&#39;mtcars&#39;, user={}, local={})
 </pre></div>
 </div>
 </div>
@@ -817,38 +814,14 @@ Version: 20221108T165901Z-3b134
 <p>While we’ll do our best to keep the automatically generated metadata consistent over time, I’d recommend manually capturing anything you really care about in metadata.</p>
 </div>
 <div class="section" id="versioning">
-<h2>🚧 Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and <strong>pickle files are not secure</strong>. Only read pickle files you trust. In order to read pickle files, set the <code class="docutils literal notranslate"><span class="pre">allow_pickle_read=True</span></code> argument. See: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">https://docs.python.org/3/library/pickle.html</a>.</p>
-</div></blockquote>
-<blockquote>
-<div><p>⚠️: Turning off versioning is not yet implemented; all Python pins are versioned. These docs are copied from R pins.</p>
-</div></blockquote>
-<p>In many situations it’s useful to version pins, so that writing to an existing pin does not replace the existing data, but instead adds a new copy.
-There are two ways to turn versioning on:</p>
-<ul>
-<li><p>When you create a board you can turn versioning on for every pin in that board:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">(</span><span class="n">versioned</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
-</pre></div>
-</div>
-</li>
-<li><p>When you write a pin, you can specifically request that versioning be turned on for that pin:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">()</span>
-<span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span> <span class="n">versioned</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
-</pre></div>
-</div>
-</li>
-</ul>
-<p>Most boards have versioning on by default.
-The primary exception is <code class="docutils literal notranslate"><span class="pre">board_folder()</span></code> since that stores data on your computer, and there’s no automated way to clean up the data your saving.</p>
-<p>Once you have turned versioning on, every <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> will create a new version:</p>
+<h2>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h2>
+<p>Every <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> will create a new version:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">(</span><span class="n">versioned</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">allow_pickle_read</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;joblib&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;TODO&quot;</span><span class="p">)</span>
-<span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;joblib&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;TODO&quot;</span><span class="p">)</span>
-<span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;joblib&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;TODO&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board2</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">()</span>
+<span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span><span class="p">)</span>
+<span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span><span class="p">)</span>
+<span class="n">board2</span><span class="o">.</span><span class="n">pin_write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span><span class="p">)</span>
 <span class="n">board2</span><span class="o">.</span><span class="n">pin_versions</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -856,13 +829,13 @@ The primary exception is <code class="docutils literal notranslate"><span class=
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
 Name: &#39;x&#39;
-Version: 20221108T165901Z-91544
+Version: 20221110T225635Z-2bc5d
 Writing pin:
 Name: &#39;x&#39;
-Version: 20221108T165901Z-331fd
+Version: 20221110T225635Z-c24c0
 Writing pin:
 Name: &#39;x&#39;
-Version: 20221108T165901Z-40b4b
+Version: 20221110T225635Z-91d9a
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -891,21 +864,21 @@ Version: 20221108T165901Z-40b4b
   <tbody>
     <tr>
       <th>0</th>
-      <td>2022-11-08 16:59:01</td>
-      <td>331fd</td>
-      <td>20221108T165901Z-331fd</td>
+      <td>2022-11-10 22:56:35</td>
+      <td>2bc5d</td>
+      <td>20221110T225635Z-2bc5d</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2022-11-08 16:59:01</td>
-      <td>40b4b</td>
-      <td>20221108T165901Z-40b4b</td>
+      <td>2022-11-10 22:56:35</td>
+      <td>91d9a</td>
+      <td>20221110T225635Z-91d9a</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2022-11-08 16:59:01</td>
-      <td>91544</td>
-      <td>20221108T165901Z-91544</td>
+      <td>2022-11-10 22:56:35</td>
+      <td>c24c0</td>
+      <td>20221110T225635Z-c24c0</td>
     </tr>
   </tbody>
 </table>
@@ -919,7 +892,7 @@ Version: 20221108T165901Z-40b4b
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 2, 3, 4, 5]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 2, 3]
 </pre></div>
 </div>
 </div>
@@ -939,54 +912,48 @@ Version: 20221108T165901Z-40b4b
 </div>
 </div>
 </div>
-<div class="section" id="reading-and-writing-files">
-<h2>🚧 Reading and writing files<a class="headerlink" href="#reading-and-writing-files" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="storing-models">
+<h2>Storing models<a class="headerlink" href="#storing-models" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>⚠️: <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> are not yet implemented in Python. These docs are copied from R pins.</p>
+<div><p>⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and <strong>pickle files are not secure</strong>. Only read pickle files you trust. In order to read pickle files, set the <code class="docutils literal notranslate"><span class="pre">allow_pickle_read=True</span></code> argument. See: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">https://docs.python.org/3/library/pickle.html</a>.</p>
 </div></blockquote>
-<p>So far we’ve focussed on <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> which work with R objects.
-pins also provides the lower-level <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> which work with files on disk.
-You can use them to share types of data that are otherwise unsupported by pins.</p>
-<p><code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code> works like <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code> but instead of an R object you give it a vector of paths.
-I’ll start by creating a few files in the temp directory:</p>
+<p>You can write a pin with <code class="docutils literal notranslate"><span class="pre">type=&quot;joblib&quot;</span></code> to store arbitrary python objects, including fitted models from packages like <a class="reference external" href="https://scikit-learn.org/">scikit-learn</a>.</p>
+<p>For example, suppose you wanted to store a custom <code class="docutils literal notranslate"><span class="pre">namedtuple</span></code> object.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># paths = file.path(tempdir(), c(&quot;mtcars.csv&quot;, &quot;alphabet.txt&quot;))</span>
-<span class="c1"># write.csv(mtcars, paths[[1]])</span>
-<span class="c1"># writeLines(letters, paths[[2]])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="n">board3</span> <span class="o">=</span> <span class="n">board_temp</span><span class="p">(</span><span class="n">allow_pickle_read</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">Coords</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Coords&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="n">Coords</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">coords</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Coords(x=1, y=2)
 </pre></div>
 </div>
 </div>
 </div>
-<p>Now I can upload those to the board:</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">type=&quot;joblib&quot;</span></code> lets you store and read back the custom <code class="docutils literal notranslate"><span class="pre">coords</span></code> object.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_upload(paths, &quot;example&quot;)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">board3</span><span class="o">.</span><span class="n">pin_write</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="s2">&quot;my_coords&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;joblib&quot;</span><span class="p">)</span>
+
+<span class="n">board3</span><span class="o">.</span><span class="n">pin_read</span><span class="p">(</span><span class="s2">&quot;my_coords&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> returns a vector of paths:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_download(&quot;example&quot;)</span>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
+Name: &#39;my_coords&#39;
+Version: 20221110T225635Z-d5e4a
 </pre></div>
 </div>
-</div>
-</div>
-<p>You should treat these paths as internal implementation details — never modify them and never save them for use outside of pins.</p>
-<p>Note that you can’t <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> something you pinned with <code class="docutils literal notranslate"><span class="pre">pin_upload()</span></code>:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_read(&quot;example&quot;)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>But you can <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> something that you’ve pinned with <code class="docutils literal notranslate"><span class="pre">pin_write()</span></code>:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># board.pin_download(&quot;mtcars&quot;)</span>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Coords(x=1, y=2)
 </pre></div>
 </div>
 </div>
@@ -994,9 +961,6 @@ I’ll start by creating a few files in the temp directory:</p>
 </div>
 <div class="section" id="caching">
 <h2>Caching<a class="headerlink" href="#caching" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>⚠️: <code class="docutils literal notranslate"><span class="pre">board_url</span></code> is not yet implemented in Python. These docs are copied from R pins.</p>
-</div></blockquote>
 <p>The primary purpose of pins is to make it easy to share data.
 But pins is also designed to help you spend as little time as possible downloading data.
 <code class="docutils literal notranslate"><span class="pre">pin_read()</span></code> and <code class="docutils literal notranslate"><span class="pre">pin_download()</span></code> automatically cache remote pins: they maintain a local copy of the data (so it’s fast) but always check that it’s up-to-date (so your analysis doesn’t use stale data).</p>

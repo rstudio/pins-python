@@ -71,10 +71,7 @@ But you can choose another option depending on your goals:
 -   `type = "csv"` uses `to_csv()` from pandas to create a `.csv` file. CSVs can read by any application, but only support simple columns (e.g. numbers, strings, dates), can take up a lot of disk space, and can be slow to read.
 -   `type = "joblib"` uses `joblib.dump()` to create a binary python data file. See the [joblib docs](https://joblib.readthedocs.io/en/latest/) for more information.
 -   `type = "arrow"` uses `pyarrow` to create an arrow/feather file. [Arrow](https://arrow.apache.org) is a modern, language-independent, high-performance file format designed for data science. Not every tool can read arrow files, but support is growing rapidly.
-
-🚧 Data formats TODO 🚧
-
--   `type = "json"` uses `jsonlite::write_json()` to create a `.json` file. Pretty much every programming language can read json files, but they only work well for nested lists.
+-   `type = "json"` uses `json.dump()` to create a `.json` file. Pretty much every programming language can read json files, but they only work well for nested lists.
 
 After you've pinned an object, you can read it back with `pin_read()`:
 
@@ -135,41 +132,15 @@ board.pin_meta("mtcars")
 While we’ll do our best to keep the automatically generated metadata consistent over time, I’d recommend manually capturing anything you really care about in metadata.
 
 
-## 🚧 Versioning
+## Versioning
 
-
-> ⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and **pickle files are not secure**. Only read pickle files you trust. In order to read pickle files, set the `allow_pickle_read=True` argument. See: https://docs.python.org/3/library/pickle.html.
-
-
-> ⚠️: Turning off versioning is not yet implemented; all Python pins are versioned. These docs are copied from R pins.
-
-In many situations it's useful to version pins, so that writing to an existing pin does not replace the existing data, but instead adds a new copy.
-There are two ways to turn versioning on:
-
--   When you create a board you can turn versioning on for every pin in that board:
-
-    ```python
-    board2 = board_temp(versioned = TRUE)
-    ```
-
--   When you write a pin, you can specifically request that versioning be turned on for that pin:
-
-    ```python
-    board2 = board_temp()
-    board2.pin_write(mtcars, versioned = TRUE)
-    ```
-
-Most boards have versioning on by default.
-The primary exception is `board_folder()` since that stores data on your computer, and there's no automated way to clean up the data your saving.
-
-Once you have turned versioning on, every `pin_write()` will create a new version:
+Every `pin_write()` will create a new version:
 
 ```{python}
-board2 = board_temp(versioned = True, allow_pickle_read=True)
-
-board2.pin_write([1,2,3,4,5], name = "x", type = "joblib", title="TODO")
-board2.pin_write([1,2,3], name = "x", type = "joblib", title="TODO")
-board2.pin_write([1,2], name = "x", type = "joblib", title="TODO")
+board2 = board_temp()
+board2.pin_write([1,2,3,4,5], name = "x", type = "json")
+board2.pin_write([1,2,3], name = "x", type = "json")
+board2.pin_write([1,2], name = "x", type = "json")
 board2.pin_versions("x")
 ```
 
@@ -186,55 +157,35 @@ version = board2.pin_versions("x").version[1]
 board2.pin_read("x", version = version)
 ```
 
-## 🚧 Reading and writing files
+## Storing models
 
-> ⚠️: `pin_upload()` and `pin_download()` are not yet implemented in Python. These docs are copied from R pins.
+> ⚠️: Warning the examples in this section use joblib to read and write data. Joblib uses the pickle format, and **pickle files are not secure**. Only read pickle files you trust. In order to read pickle files, set the `allow_pickle_read=True` argument. See: https://docs.python.org/3/library/pickle.html.
 
-So far we've focussed on `pin_write()` and `pin_read()` which work with R objects.
-pins also provides the lower-level `pin_upload()` and `pin_download()` which work with files on disk.
-You can use them to share types of data that are otherwise unsupported by pins.
+You can write a pin with `type="joblib"` to store arbitrary python objects, including fitted models from packages like [scikit-learn](https://scikit-learn.org/).
 
-`pin_upload()` works like `pin_write()` but instead of an R object you give it a vector of paths.
-I'll start by creating a few files in the temp directory:
-
+For example, suppose you wanted to store a custom `namedtuple` object.
 
 ```{python}
-# paths = file.path(tempdir(), c("mtcars.csv", "alphabet.txt"))
-# write.csv(mtcars, paths[[1]])
-# writeLines(letters, paths[[2]])
+from collections import namedtuple
+
+board3 = board_temp(allow_pickle_read=True)
+
+Coords = namedtuple("Coords", ["x", "y"])
+coords = Coords(1, 2)
+
+coords
 ```
 
-Now I can upload those to the board:
+Using `type="joblib"` lets you store and read back the custom `coords` object.
 
 ```{python}
-# board.pin_upload(paths, "example")
+board3.pin_write(coords, "my_coords", type="joblib")
+
+board3.pin_read("my_coords")
 ```
 
-`pin_download()` returns a vector of paths:
-
-```{python}
-# board.pin_download("example")
-```
-
-
-You should treat these paths as internal implementation details --- never modify them and never save them for use outside of pins.
-
-Note that you can't `pin_read()` something you pinned with `pin_upload()`:
-
-
-```{python}
-# board.pin_read("example")
-```
-
-But you can `pin_download()` something that you've pinned with `pin_write()`:
-
-```{python}
-# board.pin_download("mtcars")
-```
 
 ## Caching
-
-> ⚠️: `board_url` is not yet implemented in Python. These docs are copied from R pins.
 
 The primary purpose of pins is to make it easy to share data.
 But pins is also designed to help you spend as little time as possible downloading data.

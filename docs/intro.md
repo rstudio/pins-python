@@ -24,6 +24,8 @@ The pins package publishes data, models, and other Python objects, making it eas
 You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Google Cloud Storage, and Azure Datalake.
 Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.
 
+You can use pins from R as well as Python. For example, you can use one language to read a pin created with the other. Learn more about [pins for R](https://pins.rstudio.com).
+
 ## Installation
 
 To install the released version from PyPI:
@@ -67,18 +69,17 @@ board.pin_read("mtcars")
 A board on your computer is good place to start, but the real power of pins comes when you use a board that's shared with multiple people.
 To get started, you can use `board_folder()` with a directory on a shared drive or in DropBox, or if you use [RStudio Connect](https://www.rstudio.com/products/connect/) you can use `board_rsconnect()`:
 
-🚧 TODO: add informational messages shown in display below
-
 +++
 
 ```python
 from pins import board_rsconnect
 
 board = board_rsconnect()
-#> Connecting to RSC 1.9.0.1 at <https://connect.rstudioservices.com>
 
 board.pin_write(tidy_sales_data, "hadley/sales-summary", type = "csv")
-#> Writing to pin 'hadley/sales-summary'
+#> Writing pin:
+#> Name: 'hadley/sales-summary'
+#> Version: ...
 ```
 
 +++

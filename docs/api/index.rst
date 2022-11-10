@@ -9,19 +9,19 @@ Board Pin Methods
 
    ===========================================  =======================================================
     :meth:`.pin_read`, :meth:`.pin_write`        |read-write|
-    :meth:`.pin_meta`                            |arrange|
-    :meth:`.pin_download`, :meth:`.pin_upload`   |select|
-    :meth:`.pin_versions`, TODO complete         |mutate|
-    :meth:`.pin_list`                            |summarize|
-    :meth:`.pin_search`                          |group_by|
+    :meth:`.pin_meta`                            |meta|
+    :meth:`.pin_download`, :meth:`.pin_upload`   |download|
+    :meth:`.pin_versions`                        |versions|
+    :meth:`.pin_list`                            |list|
+    :meth:`.pin_search`                          |search|
    ===========================================  =======================================================
 
 .. |read-write| replace:: Read and write objects to and from a board
-.. |arrange| replace:: Retrieve metadata for a pin
-.. |select| replace:: Upload and download files to and from a board
-.. |mutate| replace:: List, delete, and prune pin versions
-.. |summarize| replace:: List all pins
-.. |group_by| replace:: Search for pins
+.. |meta| replace:: Retrieve metadata for a pin
+.. |download| replace:: Upload and download files to and from a board
+.. |versions| replace:: List, delete, and prune pin versions
+.. |list| replace:: List all pins
+.. |search| replace:: Search for pins
 
 
 Board Constructors

@@ -302,7 +302,7 @@ class BaseBoard:
                 # note that we only raise an error if version path is a subdir
                 # of the pin path.
                 raise PinsError(
-                    "Attempting to write pin version to {dst_version_path}, "
+                    f"Attempting to write pin version to {dst_version_path}, "
                     "but that directory already exists."
                 )
 

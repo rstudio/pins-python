@@ -31,8 +31,8 @@ def board_deparse(board: BaseBoard):
 
     The example below deparses a board connected to RStudio Connect.
 
-    >>> board_deparse(board_rsconnect(server_url="http://example.com", api_key="xxx"))
-    "board_rsconnect(server_url='http://example.com')"
+    >>> board_deparse(board_connect(server_url="http://example.com", api_key="xxx"))
+    "board_connect(server_url='http://example.com')"
 
     Note that the deparsing an RStudio Connect board does not keep the api_key,
     which is sensitive information. In this case, you can set the CONNECT_API_KEY
@@ -55,7 +55,7 @@ def board_deparse(board: BaseBoard):
 
     if prot == "rsc":
         url = board.fs.api.server_url
-        return f"board_rsconnect(server_url={repr(url)}{allow_pickle})"
+        return f"board_connect(server_url={repr(url)}{allow_pickle})"
     elif prot == "file":
         return f"board_folder({repr(board.board)}{allow_pickle})"
     elif prot == ["s3", "s3a"]:
@@ -353,7 +353,7 @@ def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None)
     )
 
 
-def board_rsconnect(
+def board_connect(
     server_url=None, versioned=True, api_key=None, cache=DEFAULT, allow_pickle_read=None
 ):
     """Create a board to read and write pins from an RStudio Connect instance.
@@ -375,7 +375,7 @@ def board_rsconnect(
     ::
 
        server_url = "https://connect.rstudioservices.com"
-       board = board_rsconnect(server_url)
+       board = board_connect(server_url)
 
     In order to read a public pin, use board_manual with the public pin url.
 
@@ -404,6 +404,9 @@ def board_rsconnect(
     return board(
         "rsc", None, versioned, cache, allow_pickle_read, storage_options=kwargs
     )
+
+
+board_rsconnect = board_connect
 
 
 def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):

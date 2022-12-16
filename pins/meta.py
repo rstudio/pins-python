@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from typing import Mapping, Union, Sequence, Optional
+from typing import Mapping, Union, Sequence, Optional, List
 
 from .versions import VersionRaw, Version, guess_version
 from ._types import StrOrFile, IOBase
@@ -41,6 +41,8 @@ class Meta:
         A title for the pin.
     description:
         A detailed description of the pin contents.
+    tags:
+        Optional tags applied to the pin.
     created:
         Datetime the pin was created (TODO: document format).
     pin_hash:
@@ -82,6 +84,7 @@ class Meta:
     # pin_hash, created, etc.."
     version: VersionRaw
 
+    tags: Optional[List[str]] = None
     name: Optional[str] = None
     user: Mapping = field(default_factory=dict)
     local: Mapping = field(default_factory=dict)
@@ -97,6 +100,9 @@ class Meta:
         del d["name"]
         del d["version"]
         del d["local"]
+
+        # TODO: once tag writing is implemented, should keep tags field
+        del d["tags"]
 
         return d
 

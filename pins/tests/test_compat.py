@@ -169,7 +169,7 @@ def test_board_pin_write_manifest_name_error(board_manifest):
 
 
 def test_board_manifest_pin_list_no_internal_name(board_manifest):
-    assert board_manifest.pin_list() == ["x", "y"]
+    assert set(board_manifest.pin_list()) == {"x", "y"}
 
 
 def test_board_manifest_pin_exist_internal_name_errors(board_manifest):

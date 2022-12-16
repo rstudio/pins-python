@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      r_pins_tag:
+        description: "Tag or commit from pins-r (e.g. v1.0.3)"
+        default: "__cran__"
+  push:
+    branches: ['main', 'dev-*']
+  pull_request:
+  release:
+    types: [published]
+
+env:
+  PINS_ALLOW_RSC_SHORT_NAME: 1
+  PINS_FEATURE_PREVIEW: 1
+
+jobs:
+  check-cross-compatibility:
+    name: "Check cross lib compatibility"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install libcurl on Linux
+      run: sudo apt-get update -y && sudo apt-get install -y libcurl4-openssl-dev
+
+    # r ---
+
+    - uses: r-lib/actions/setup-r@v2
+      with:
+        use-public-rspm: true
+
+    - name: Install R dependencies (from CRAN)
+      run: "install.packages('pins')"
+      shell: Rscript {0}
+      if: ${{ inputs.r_pins_tag == '__cran__' }}
+
+    - name: Install R dependencies (from github)
+      run: "remotes::install_github(paste0('rstudio/pins-r@', Sys.getenv('R_PINS_TAG')))"
+      shell: Rscript {0}
+      env:
+        R_PINS_TAG: ${{ inputs.r_pins_tag }}
+      if: ${{ inputs.r_pins_tag != '__cran__' }}
+
+    # python ---
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install py dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements/dev.txt
+        python -m pip install -e .
+
+    # write and test ---
+
+    - name: Run script/ci-compat-check
+      run: make ci-compat-check

@@ -180,7 +180,7 @@ class RsConnectApi:
         api_key = self._get_api_key()
         rsc_xsrf = self.session.cookies.get("RSC-XSRF")
 
-        d_key = {"Authorization": f"key {api_key}"} if api_key is not None else {}
+        d_key = {"Authorization": f"Key {api_key}"} if api_key is not None else {}
         d_rsc = {"X-RSC-XSRF": rsc_xsrf} if rsc_xsrf is not None else {}
 
         return {**d_key, **d_rsc}

@@ -53,6 +53,8 @@ class IFileSystem:
 
 
 class BaseBoard:
+    reserved_pin_names = {"_pins.yaml"}
+
     def __init__(
         self,
         board: "str | Path",
@@ -174,8 +176,11 @@ class BaseBoard:
         This is a low-level function; use pin_search() to get more data about
         each pin in a convenient form.
         """
+
         full_paths = self.fs.ls(self.board)
-        return list(map(self.keep_final_path_component, full_paths))
+        pin_names = map(self.keep_final_path_component, full_paths)
+
+        return [name for name in pin_names if name not in self.reserved_pin_names]
 
     def pin_fetch(self, name: str, version: Optional[str] = None) -> Meta:
         meta = self.pin_meta(name, version)
@@ -513,6 +518,8 @@ class BaseBoard:
 
         if "/" in name:
             raise ValueError(f"Invalid pin name: {name}")
+        elif name in self.reserved_pin_names:
+            raise ValueError(f"The pin name '{name}' is reserved for internal use.")
 
     def path_to_pin(self, name: str) -> str:
         self.validate_pin_name(name)

@@ -12,6 +12,7 @@ PATH_TO_EXAMPLE_BOARD = files("pins") / "tests/pins-compat"
 PATH_TO_EXAMPLE_VERSION = PATH_TO_EXAMPLE_BOARD / "df_csv/20220214T163720Z-9bfad/"
 EXAMPLE_PIN_NAME = "df_csv"
 
+PATH_TO_MANIFEST_BOARD = files("pins") / "tests/pin-board"
 
 # Based on https://github.com/machow/siuba/blob/main/siuba/tests/helpers.py
 BACKEND_MARKS = ["fs_s3", "fs_file", "fs_gcs", "fs_abfs", "fs_rsc"]

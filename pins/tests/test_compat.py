@@ -162,7 +162,7 @@ def test_board_pin_write_manifest_name_error(board_manifest):
     if board_manifest.fs.protocol == "rsc":
         pytest.skip()
 
-    with pytest.raises(PinsError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         board_manifest.pin_write([1], "_pins.yaml", type="json")
 
     assert "name '_pins.yaml' is reserved for internal use." in exc_info.value.args[0]
@@ -173,14 +173,14 @@ def test_board_manifest_pin_list_no_internal_name(board_manifest):
 
 
 def test_board_manifest_pin_exist_internal_name_errors(board_manifest):
-    with pytest.raises(PinsError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         board_manifest.pin_exists("_pins.yaml")
 
     assert "reserved for internal use." in exc_info.value.args[0]
 
 
 def test_board_manifest_pin_read_internal_errors(board_manifest):
-    with pytest.raises(PinsError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         board_manifest.pin_read("_pins.yaml")
 
     assert "reserved for internal use." in exc_info.value.args[0]

@@ -6,6 +6,7 @@ on:
       r_pins_tag:
         description: "Tag or commit from pins-r (e.g. v1.0.3)"
         default: "__cran__"
+        required: true
   push:
     branches: ['main', 'dev-*']
   pull_request:
@@ -35,14 +36,14 @@ jobs:
     - name: Install R dependencies (from CRAN)
       run: "install.packages('pins')"
       shell: Rscript {0}
-      if: ${{ github.events.inputs.r_pins_tag == '__cran__' }}
+      if: ${{ inputs.r_pins_tag == '__cran__' }}
 
     - name: Install R dependencies (from github)
       run: "remotes::install_github(paste0('rstudio/pins-r@', Sys.getenv('R_PINS_TAG')))"
       shell: Rscript {0}
       env:
         R_PINS_TAG: ${{ inputs.r_pins_tag }}
-      if: ${{ github.events.inputs.r_pins_tag != '__cran__' }}
+      if: ${{ inputs.r_pins_tag != '__cran__' }}
 
     # python ---
 

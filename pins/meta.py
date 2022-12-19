@@ -115,6 +115,9 @@ class Meta:
         for k in self._excluded:
             del d[k]
 
+        # TODO: once tag writing is implemented, delete this line
+        del d["tags"]
+
         return d
 
     @classmethod

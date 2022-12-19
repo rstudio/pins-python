@@ -1,5 +1,6 @@
 import pytest
 import tempfile
+import yaml
 
 from datetime import datetime
 from io import StringIO
@@ -37,6 +38,18 @@ def test_meta_to_pin_dict_roundtrip(meta):
     assert meta == meta2
 
 
+def test_meta_unknown_fields():
+    m = Meta(**META_DEFAULTS, unknown_fields={"some_other_field": 1})
+
+    assert m.some_other_field == 1
+
+    with pytest.raises(AttributeError):
+        m.should_not_exist_here
+
+    assert "unknown_fields" not in m.to_pin_dict()
+    assert "some_other_field" not in m.to_pin_dict()
+
+
 def test_meta_factory_create():
     mf = MetaFactory()
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -72,3 +85,17 @@ def test_meta_factory_read_yaml_roundtrip(meta):
     meta2 = mf.read_pin_yaml(StringIO(pin_yaml), meta.name, meta.version)
 
     assert meta == meta2
+
+
+def test_meta_factory_roundtrip_unknown(meta):
+    meta_dict = meta.to_pin_dict()
+    meta_dict["some_other_field"] = 1
+
+    pin_yaml = yaml.dump(meta_dict)
+
+    mf = MetaFactory()
+
+    meta2 = mf.read_pin_yaml(StringIO(pin_yaml), meta.name, meta.version)
+
+    assert meta2 == meta
+    assert meta2.some_other_field == 1

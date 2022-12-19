@@ -1,5 +1,5 @@
 from typing import ClassVar
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict, field, fields, InitVar
 from pathlib import Path
 
 import yaml
@@ -65,6 +65,8 @@ class Meta:
 
     """
 
+    _excluded: ClassVar["set[str]"] = {"name", "version", "local"}
+
     title: Optional[str]
     description: Optional[str]
 
@@ -89,6 +91,19 @@ class Meta:
     user: Mapping = field(default_factory=dict)
     local: Mapping = field(default_factory=dict)
 
+    unknown_fields: InitVar["dict | None"] = None
+
+    def __post_init__(self, unknown_fields: "dict | None"):
+        unknown_fields = {} if unknown_fields is None else unknown_fields
+
+        self._unknown_fields = unknown_fields
+
+    def __getattr__(self, k):
+        try:
+            return self._unknown_fields[k]
+        except KeyError:
+            raise AttributeError(f"No metadata field not found: {k}")
+
     def to_dict(self) -> Mapping:
         data = asdict(self)
 
@@ -97,24 +112,34 @@ class Meta:
     def to_pin_dict(self):
         d = self.to_dict()
 
-        del d["name"]
-        del d["version"]
-        del d["local"]
-
-        # TODO: once tag writing is implemented, should keep tags field
-        del d["tags"]
+        for k in self._excluded:
+            del d[k]
 
         return d
 
     @classmethod
     def from_pin_dict(cls, data, pin_name, version, local=None) -> "Meta":
-
         # TODO: re-arrange Meta argument positions to reflect what's been
         # learned about default arguments. e.g. title was not used at some
         # point in api_version 1
+        all_field_names = {entry.name for entry in fields(Meta)}
+
+        keep_fields = all_field_names - cls._excluded
+
         extra = {"title": None} if "title" not in data else {}
         local = {} if local is None else local
-        return cls(**data, **extra, name=pin_name, version=version, local=local)
+
+        meta_data = {k: v for k, v in data.items() if k in keep_fields}
+        unknown = {k: v for k, v in data.items() if k not in keep_fields}
+
+        return cls(
+            **meta_data,
+            **extra,
+            name=pin_name,
+            version=version,
+            local=local,
+            unknown_fields=unknown,
+        )
 
     def to_pin_yaml(self, f: Optional[IOBase] = None) -> "str | None":
         data = self.to_pin_dict()

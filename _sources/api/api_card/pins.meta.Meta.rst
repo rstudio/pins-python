@@ -28,6 +28,8 @@
    .. autosummary::
    
       ~Meta.name
+      ~Meta.tags
+      ~Meta.unknown_fields
       ~Meta.title
       ~Meta.description
       ~Meta.created

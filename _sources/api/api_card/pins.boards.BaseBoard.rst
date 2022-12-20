@@ -40,4 +40,10 @@
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseBoard.reserved_pin_names
+   
    

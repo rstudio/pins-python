@@ -4,7 +4,7 @@ import datetime
 
 from pins.errors import PinsError
 from pins.tests.helpers import xfail_fs
-from pins.tests.conftest import PATH_TO_EXAMPLE_BOARD
+from pins.tests.conftest import PATH_TO_EXAMPLE_BOARD, PATH_TO_MANIFEST_BOARD
 
 
 NOT_A_PIN = "not_a_pin_abcdefg"
@@ -16,6 +16,20 @@ PIN_CSV = "df_csv"
 @pytest.fixture(scope="session")
 def board(backend):
     board = backend.create_tmp_board(str(PATH_TO_EXAMPLE_BOARD.absolute()))
+
+    yield board
+
+    backend.teardown_board(board)
+
+
+@pytest.fixture(scope="session")
+def board_manifest(backend):
+    # skip on rsconnect, since it can't add a manifest and the pin names
+    # are too short for use to upload (rsc requires names > 3 characters)
+    if backend.fs_name == "rsc":
+        pytest.skip()
+
+    board = backend.create_tmp_board(str(PATH_TO_MANIFEST_BOARD.absolute()))
 
     yield board
 
@@ -145,3 +159,40 @@ def test_compat_pin_read_supported(board):
 
 
 # pin_write ----
+
+# manifest -----
+
+
+def test_board_pin_write_manifest_name_error(board_manifest):
+    if board_manifest.fs.protocol == "rsc":
+        pytest.skip()
+
+    with pytest.raises(ValueError) as exc_info:
+        board_manifest.pin_write([1], "_pins.yaml", type="json")
+
+    assert "name '_pins.yaml' is reserved for internal use." in exc_info.value.args[0]
+
+
+def test_board_manifest_pin_list_no_internal_name(board_manifest):
+    assert set(board_manifest.pin_list()) == {"x", "y"}
+
+
+def test_board_manifest_pin_exist_internal_name_errors(board_manifest):
+    with pytest.raises(ValueError) as exc_info:
+        board_manifest.pin_exists("_pins.yaml")
+
+    assert "reserved for internal use." in exc_info.value.args[0]
+
+
+def test_board_manifest_pin_read_internal_errors(board_manifest):
+    with pytest.raises(ValueError) as exc_info:
+        board_manifest.pin_read("_pins.yaml")
+
+    assert "reserved for internal use." in exc_info.value.args[0]
+
+
+def test_board_manifest_pin_search(board_manifest):
+    res = board_manifest.pin_search("x", as_df=False)
+
+    assert len(res) == 1
+    assert res[0].name == "x"

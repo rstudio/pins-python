@@ -3,16 +3,16 @@ import os
 import requests
 import tempfile
 import json
+import time
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields, field, asdict
 from pathlib import Path
 from functools import partial
 from io import IOBase
 from urllib.parse import urlencode
 
 from collections.abc import Mapping
-from typing import Sequence, TypeVar, Generic
-
+from typing import Sequence, TypeVar, Generic, Any
 
 RSC_API_KEY = "CONNECT_API_KEY"
 RSC_CODE_OBJECT_DOES_NOT_EXIST = 4
@@ -115,6 +115,50 @@ class Task(BaseEntity):
         return self._d["id"]
 
 
+class Job(BaseEntity):
+    """A content job execution (e.g. a notebook re-render)."""
+
+    def _fmt_times(self):
+        from datetime import datetime
+
+        return {
+            "start_time": datetime.fromtimestamp(self._d["start_time"]),
+            "end_time": datetime.fromtimestamp(self._d["end_time"]),
+        }
+
+
+class Application(BaseEntity):
+    """An application (e.g. a deployed server, or notebook environment that could be rendered.)"""
+
+
+@dataclass
+class Schedule:
+    app_id: int
+    variant_id: int
+    activate: bool
+    email: bool
+    type: str  # e.g. day, month, year
+    start_time: str  # datetime
+    timezone: str  # e.g. America/Los_Angeles
+    schedule: str  # JSON encoded e.g. "{\"N\":1}"
+    next_run: str  # datetime
+    id: "int | None" = None
+
+    # Note that this field is to soak up any unanticipated fields / API changes.
+    extra: "dict[str, Any]" = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, d) -> "Schedule":
+        arg_names = [field.name for field in fields(cls) if field.name != "extra"]
+
+        extra = {k: v for k, v in d.items() if k not in arg_names}
+
+        obj = cls(**d)
+        obj.extra = extra
+
+        return obj
+
+
 # Pagination result container ----
 
 T = TypeVar("T")
@@ -208,12 +252,12 @@ class RsConnectApi:
             # fallback to at least raising status errors
             r.raise_for_status()
 
-    def query_v1(self, route, method="GET", return_request=False, **kwargs):
+    def query_v1(self, route, method="GET", return_request=False, **kwargs) -> Any:
         endpoint = f"{self.base_v1_url}/{route}"
 
         return self._raw_query(endpoint, method, return_request, **kwargs)
 
-    def query(self, route, method="GET", return_request=False, **kwargs):
+    def query(self, route, method="GET", return_request=False, **kwargs) -> Any:
         endpoint = f"{self.server_url}/__api__/{route}"
 
         return self._raw_query(endpoint, method, return_request, **kwargs)
@@ -343,6 +387,23 @@ class RsConnectApi:
 
         self._validate_delete_response(r)
 
+    def get_content_item_jobs(self, guid: str) -> "list[Job]":
+        res = self.query_v1(f"content/{guid}/jobs")
+        return [Job(entry) for entry in res]
+
+    def get_content_item_jobs_item(self, guid: str, key: str) -> Job:
+        res = self.query_v1(f"content/{guid}/jobs/{key}")
+
+        return Job(res)
+
+    def get_content_item_jobs_item_log(self, guid: str, key: str):
+        return self.query_v1(f"content/{guid}/jobs/{key}/log")
+
+    def get_content_item_jobs_item_tail(self, guid: str, key: str):
+        return self.query_v1(
+            f"content/{guid}/jobs/{key}/tail", return_request=True, stream=True
+        )
+
     # bundles ----
 
     def get_content_bundles(self, guid: str) -> Sequence[Bundle]:
@@ -401,6 +462,80 @@ class RsConnectApi:
             json = self.get_tasks(id, json["last"], wait)
 
         return json
+
+    def wait_for_task(self, id: str):
+        start = 0
+        while True:
+            res = self.query(f"tasks/{id}", params={"first_status": start})
+            if len(res["status"]) > 0:
+                map(_log.info, res["status"])
+                start = res["last_status"]
+
+            if res["finished"]:
+                return res
+
+            time.sleep(1)
+
+    # apps -------------------------------------------------------------------------------
+
+    # schedules ----
+
+    def post_schedules_item(self, schedule: Schedule) -> Schedule:
+        if Schedule.id is not None:
+            raise ValueError(
+                "schedule object has id set. "
+                "Use .patch_schedules_item() to update an existing schedule."
+            )
+
+        params = {k: v for k, v in asdict(schedule).items() if k != "extra"}
+        res = self.query("schedules", "POST", json=params)
+
+        return Schedule.from_dict(res)
+
+    def patch_schedules_item(self, schedule: Schedule) -> Schedule:
+        if schedule.id is None:
+            raise ValueError("schedule object must have an id.")
+        # Note that this is--unlike for content items--not a PATCH call
+        params = {k: v for k, v in asdict(schedule).items() if k != "extra"}
+
+        res = self.query(f"schedules/{schedule.id}", "POST", json=params)
+
+        return Schedule.from_dict(res)
+
+    def get_variant_schedules(self, variant_id: int) -> "list[Schedule]":
+        res = self.query(f"variants/{variant_id}/schedules")
+        return [Schedule.from_dict(entry) for entry in res]
+
+    def post_variant_render(self, variant_id: int) -> "dict[str, Any]":
+        # note that the id field is the task id
+        return self.query(
+            f"variants/{variant_id}/render", "POST", params={"activate": True}
+        )
+
+    # jobs ----
+
+    def get_applications_item_jobs(self, id: int) -> "list[Job]":
+        res = self.query(f"applications/{id}/jobs")
+
+        return [Job(entry) for entry in res]
+
+    def get_applications_item_jobs_item_tail(self, id: int, key: str):
+        return self.query(
+            f"applications/{id}/jobs/{key}/tail", return_request=True, stream=True
+        )
+
+    def get_applications_item_jobs_item_log(self, id: int, key: str):
+        return self.query_v1(f"applications/{id}/jobs/{key}/log")
+
+    def get_applications_item(self, id: int) -> Application:
+        res = self.query(f"applications/{id}")
+
+        return Application(res)
+
+    def get_applications_item_variants(self, id: int) -> "list[dict[str, Any]]":
+        res = self.query(f"applications/{id}/variants")
+
+        return res
 
     # non-api endpointsmisc ----
 

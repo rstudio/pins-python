@@ -370,6 +370,10 @@ class RsConnectApi:
 
         return Content(result)
 
+    def put_content_item_environment(self, guid: str, data: "dict[str, str]"):
+        body = [{"name": k, "value": v} for k, v in data.items()]
+        return self.query_v1(f"content/{guid}/environment", "PUT", json=body)
+
     def delete_content_item(self, guid: str) -> None:
         """Delete content.
 

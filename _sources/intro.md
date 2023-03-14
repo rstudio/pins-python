@@ -21,7 +21,7 @@ kernelspec:
 ```
 
 The pins package publishes data, models, and other Python objects, making it easy to share
-You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), RStudio Connect, Amazon S3, Google Cloud Storage, and Azure Datalake.
+You can pin objects to a variety of pin *boards*, including folders (to share on a networked drive or with services like DropBox), Posit Connect, Amazon S3, Google Cloud Storage, and Azure Datalake.
 Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.
 
 You can use pins from R as well as Python. For example, you can use one language to read a pin created with the other. Learn more about [pins for R](https://pins.rstudio.com).
@@ -67,14 +67,14 @@ board.pin_read("mtcars")
 ```
 
 A board on your computer is good place to start, but the real power of pins comes when you use a board that's shared with multiple people.
-To get started, you can use `board_folder()` with a directory on a shared drive or in DropBox, or if you use [RStudio Connect](https://www.rstudio.com/products/connect/) you can use `board_rsconnect()`:
+To get started, you can use `board_folder()` with a directory on a shared drive or in DropBox, or if you use [Posit Connect](https://www.posit.co/products/connect/) you can use `board_connect()`:
 
 +++
 
 ```python
-from pins import board_rsconnect
+from pins import board_connect
 
-board = board_rsconnect()
+board = board_connect()
 
 board.pin_write(tidy_sales_data, "hadley/sales-summary", type = "csv")
 #> Writing pin:
@@ -89,13 +89,13 @@ Then, someone else (or an automated report) can read and use your pin:
 +++
 
 ```python
-board = board_rsconnect()
+board = board_connect()
 board.pin_read("hadley/sales-summary")
 ```
 
 +++
 
-You can easily control who gets to access the data using the RStudio Connect permissions pane.
+You can easily control who gets to access the data using the Posit Connect permissions pane.
 
 The pins package also includes boards that allow you to share data on services like
 Amazon's S3 (`board_s3()`), Google Cloud Storage (`board_gcs()`), and Azure Datalake (`board_azure()`).

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pins.board_rsconnect &#8212; Pins</title>
+    <title>pins.board_connect &#8212; Pins</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet">
   <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -151,7 +151,7 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
      <li class="toctree-l3 current active">
       <a class="current reference internal" href="#">
-       pins.board_rsconnect
+       pins.board_connect
       </a>
      </li>
      <li class="toctree-l3">
@@ -323,7 +323,7 @@ const thebe_selector_output = ".output, .cell_output"
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/api/api_card/pins.board_rsconnect.rst"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/api/api_card/pins.board_connect.rst"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.rst</button></a>
         <!-- Download PDF via print -->
@@ -343,7 +343,7 @@ const thebe_selector_output = ".output, .cell_output"
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/api_card/pins.board_rsconnect.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/machow/pins-python/issues/new?title=Issue%20on%20page%20%2Fapi/api_card/pins.board_connect.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -371,7 +371,7 @@ const thebe_selector_output = ".output, .cell_output"
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>pins.board_rsconnect</h1>
+                <h1>pins.board_connect</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -382,11 +382,11 @@ const thebe_selector_output = ".output, .cell_output"
             
               <div>
                 
-  <div class="section" id="pins-board-rsconnect">
-<h1>pins.board_rsconnect<a class="headerlink" href="#pins-board-rsconnect" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="pins-board-connect">
+<h1>pins.board_connect<a class="headerlink" href="#pins-board-connect" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="pins.board_rsconnect">
-<span class="sig-prename descclassname"><span class="pre">pins.</span></span><span class="sig-name descname"><span class="pre">board_rsconnect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server_url=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache=&lt;class</span> <span class="pre">'pins.constructors.DEFAULT'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pickle_read=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.board_rsconnect" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pins.board_connect">
+<span class="sig-prename descclassname"><span class="pre">pins.</span></span><span class="sig-name descname"><span class="pre">board_connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server_url=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache=&lt;class</span> <span class="pre">'pins.constructors.DEFAULT'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pickle_read=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.board_connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a board to read and write pins from an RStudio Connect instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -401,7 +401,7 @@ CONNECT_API_KEY environment variable.</p></li>
 <p class="rubric">Examples</p>
 <p>Use a server url or set the CONNECT_SERVER environt variable to connect:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;https://connect.rstudioservices.com&quot;</span>
-<span class="n">board</span> <span class="o">=</span> <span class="n">board_rsconnect</span><span class="p">(</span><span class="n">server_url</span><span class="p">)</span>
+<span class="n">board</span> <span class="o">=</span> <span class="n">board_connect</span><span class="p">(</span><span class="n">server_url</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In order to read a public pin, use board_manual with the public pin url.</p>

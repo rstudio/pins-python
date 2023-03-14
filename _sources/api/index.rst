@@ -36,8 +36,10 @@ Boards abstract over different storage backends, making it easy to share data in
      - Use an Azure storage container as a board
    * - :func:`.board_folder`, :func:`.board_local`, :func:`.board_temp`
      - Use a local folder as a board
+   * - :func:`.board_connect`
+     - Use Posit Connect as a board
    * - :func:`.board_rsconnect`
-     - Use RStudio Connect as a board
+     - Alias for Posit Connect board (it was formerly called RStudio Connect)
    * - :func:`.board_s3`
      - Use an S3 bucket as a board
    * - :func:`.board_gcs`

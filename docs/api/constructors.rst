@@ -12,6 +12,6 @@ Board Constructors
    ~board_s3
    ~board_gcs
    ~board_azure
-   ~board_rsconnect
+   ~board_connect
    ~board_url
    ~board

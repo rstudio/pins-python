@@ -46,7 +46,7 @@ Here are a few options:
 board = board_local() # share data across R sessions on the same computer
 board = board_folder("~/Dropbox") # share data with others using dropbox
 board = board_folder("Z:\\my-team\pins") # share data using a shared network drive
-board = board_rsconnect() # share data with RStudio Connect
+board = board_connect() # share data with Posit Connect
 ```
 
 
@@ -88,7 +88,7 @@ If you find yourself routinely pinning data larger that this, you might need to 
 
 <!-- #region -->
 ```{note}
-If you are using the RStudio Connect board (`board_rsconnect`), then you must specify your pin name as
+If you are using the Posit Connect board (`board_connect`), then you must specify your pin name as
 `<user_name>/<content_name>`. For example, `hadley/sales-report`.
 ```
 <!-- #endregion -->

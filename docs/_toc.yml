@@ -5,4 +5,5 @@ format: jb-book
 root: intro
 chapters:
 - file: getting_started
+- file: articles/index.rst
 - file: api/index.rst

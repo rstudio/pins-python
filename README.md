@@ -5,10 +5,12 @@
 The pins package publishes data, models, and other Python objects, making it
 easy to share them across projects and with your colleagues. You can pin
 objects to a variety of pin *boards*, including folders (to share on a
-networked drive or with services like DropBox), RStudio Connect, Amazon S3,
-and Google Cloud Storage.
+networked drive or with services like DropBox), Posit Connect, and Amazon
+S3, and Google Cloud Storage.
 Pins can be automatically versioned, making it straightforward to track changes,
 re-run analyses on historical data, and undo mistakes.
+
+See the [documentation](https://rstudio.github.io/pins-python) for getting started.
 
 ## Installation
 
@@ -43,19 +45,21 @@ arguments: an object, a name, and a pin type:
 board.pin_write(mtcars.head(), "mtcars", type="csv")
 ```
 
-    Writing to pin 'mtcars'
+    Writing pin:
+    Name: 'mtcars'
+    Version: 20230316T105526Z-120a5
 
 
 
 
 
-    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20220526T165625Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2022, 5, 26, 16, 56, 25, 738735), hash='120a54f7e0818041'), name='mtcars', user={})
+    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20230316T105526Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 3, 16, 10, 55, 26, 770168), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})
 
 
 
 Above, we saved the data as a CSV, but depending on
 what you’re saving and who else you want to read it, you might use the
-`type` argument to instead save it as a `joblib` or `arrow` file.
+`type` argument to instead save it as a `joblib`, `parquet`, or `json` file.
 
 You can later retrieve the pinned data with `.pin_read()`:
 
@@ -79,7 +83,7 @@ board.pin_read("mtcars")
 A board on your computer is good place to start, but the real power of
 pins comes when you use a board that’s shared with multiple people. To
 get started, you can use `board_folder()` with a directory on a shared
-drive or in DropBox, or if you use [RStudio
+drive or in DropBox, or if you use [Posit
 Connect](https://www.rstudio.com/products/connect/) you can use
 `board_rsconnect()`:
 
@@ -99,12 +103,12 @@ board = board_rsconnect()
 board.pin_read("hadley/sales-summary")
 ```
 
-You can easily control who gets to access the data using the RStudio
+You can easily control who gets to access the data using the Posit
 Connect permissions pane.
 
 The pins package also includes boards that allow you to share data on
-services like Amazon’s S3 (`board_s3()`), and Google Cloud Storage (`board_gcs`), with plans to support other backends--
-such as Azure's blob storage.
+services like Amazon’s S3 (`board_s3()`), Google Cloud Storage (`board_gcs()`),
+and Azure blob storage (`board_azure()`).
 
 ## Development
 

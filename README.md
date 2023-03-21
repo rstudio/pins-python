@@ -5,7 +5,7 @@
 The pins package publishes data, models, and other Python objects, making it
 easy to share them across projects and with your colleagues. You can pin
 objects to a variety of pin *boards*, including folders (to share on a
-networked drive or with services like DropBox), Posit Connect, and Amazon
+networked drive or with services like DropBox), Posit Connect, Amazon
 S3, and Google Cloud Storage.
 Pins can be automatically versioned, making it straightforward to track changes,
 re-run analyses on historical data, and undo mistakes.
@@ -47,13 +47,13 @@ board.pin_write(mtcars.head(), "mtcars", type="csv")
 
     Writing pin:
     Name: 'mtcars'
-    Version: 20230316T105526Z-120a5
+    Version: 20230321T151326Z-120a5
 
 
 
 
 
-    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20230316T105526Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 3, 16, 10, 55, 26, 770168), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})
+    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20230321T151326Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 3, 21, 15, 13, 26, 362951), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})
 
 
 

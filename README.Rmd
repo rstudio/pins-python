@@ -12,7 +12,7 @@ pd.set_option("display.notebook_repr_html", False)
 The pins package publishes data, models, and other Python objects, making it
 easy to share them across projects and with your colleagues. You can pin
 objects to a variety of pin *boards*, including folders (to share on a
-networked drive or with services like DropBox), Posit Connect, and Amazon
+networked drive or with services like DropBox), Posit Connect, Amazon
 S3, and Google Cloud Storage.
 Pins can be automatically versioned, making it straightforward to track changes,
 re-run analyses on historical data, and undo mistakes.

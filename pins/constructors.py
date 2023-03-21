@@ -29,12 +29,12 @@ def board_deparse(board: BaseBoard):
     Examples
     --------
 
-    The example below deparses a board connected to RStudio Connect.
+    The example below deparses a board connected to Posit Connect.
 
     >>> board_deparse(board_connect(server_url="http://example.com", api_key="xxx"))
     "board_connect(server_url='http://example.com')"
 
-    Note that the deparsing an RStudio Connect board does not keep the api_key,
+    Note that the deparsing a Posit Connect board does not keep the api_key,
     which is sensitive information. In this case, you can set the CONNECT_API_KEY
     environment variable to connect.
 
@@ -92,7 +92,7 @@ def board(
     Parameters
     ----------
     protocol:
-        File system protocol. E.g. file, s3, github, rsc (for RStudio Connect).
+        File system protocol. E.g. file, s3, github, rsc (for Posit Connect).
         See fsspec.filesystem for more information.
     path:
         A base path the board should use. For example, the directory the board lives in,
@@ -356,12 +356,12 @@ def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None)
 def board_connect(
     server_url=None, versioned=True, api_key=None, cache=DEFAULT, allow_pickle_read=None
 ):
-    """Create a board to read and write pins from an RStudio Connect instance.
+    """Create a board to read and write pins from an Posit Connect instance.
 
     Parameters
     ----------
     server_url:
-        Url to the RStudio Connect server.
+        Url to the Posit Connect server.
     api_key:
         API key for server. If not specified, pins will attempt to read it from
         CONNECT_API_KEY environment variable.

@@ -354,7 +354,7 @@ class RsConnectFs(AbstractFileSystem):
             raise ValueError(f"Unable to parse path: {path}")
 
     def _get_entity_from_path(self, path):
-        parsed = self.parse_path(path)
+        parsed = self.parse_path(self._strip_protocol(path))
 
         # guard against empty paths
         if isinstance(parsed, EmptyPath):

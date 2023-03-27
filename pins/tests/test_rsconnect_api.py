@@ -363,6 +363,12 @@ def test_rsconnect_fs_info_root_ok(fs_short):
     assert susan == fs_short.info("susan")
 
 
+def test_rsconnect_fs_strips_protocol(fs_short):
+    # the critical thing here is that we can include the protocol (rsc://)
+    info = fs_short.info("rsc://susan")
+    assert info["username"] == "susan"
+
+
 # fs.exists ----
 
 

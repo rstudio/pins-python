@@ -1,4 +1,4 @@
-# Who maintains Vetiver
+# Who maintains pins
 
 The pins-python package was created by and is currently maintained by Michael Chow <michael.chow@posit.co>. [Posit Software, PBC](https://posit.co/products/open-source/) is a copyright holder and funder of the vetiver package.
 

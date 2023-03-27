@@ -94,4 +94,4 @@ def pin_read_cat_json(board, name, version=None, hash=None, **kwargs):
 pin_read_cat_json(board, "some-cat")
 ```
 
-For an example of how this approach is used in a real project, look at how
+For an example of how this approach is used in a real project, look at look at how the vetiver package wraps these functions to [write](https://github.com/rstudio/vetiver-python/blob/main/vetiver/pin_read_write.py) and [read](https://github.com/rstudio/vetiver-python/blob/main/vetiver/vetiver_model.py) model binaries as pins.

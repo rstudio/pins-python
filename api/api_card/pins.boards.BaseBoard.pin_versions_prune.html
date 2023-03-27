@@ -99,12 +99,29 @@ const thebe_selector_output = ".output, .cell_output"
    Getting Started
   </a>
  </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../articles/index.html">
+   Articles
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../articles/customize-pins-metadata.html">
+     Using custom metadata
+    </a>
+   </li>
+  </ul>
+ </li>
  <li class="toctree-l1 current active has-children">
   <a class="reference internal" href="../index.html">
    Reference
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -113,8 +130,8 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="../constructors.html">
      Board Constructors
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-    <label for="toctree-checkbox-2">
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -170,8 +187,8 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="../boards.html">
      Board Methods
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -252,8 +269,8 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="../meta.html">
      Metadata
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-    <label for="toctree-checkbox-4">
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -386,7 +403,7 @@ const thebe_selector_output = ".output, .cell_output"
 <h1>pins.boards.BaseBoard.pin_versions_prune<a class="headerlink" href="#pins-boards-baseboard-pin-versions-prune" title="Permalink to this headline">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="pins.boards.BaseBoard.pin_versions_prune">
-<span class="sig-prename descclassname"><span class="pre">BaseBoard.</span></span><span class="sig-name descname"><span class="pre">pin_versions_prune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.boards.BaseBoard.pin_versions_prune" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">BaseBoard.</span></span><span class="sig-name descname"><span class="pre">pin_versions_prune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pins.boards.BaseBoard.pin_versions_prune" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete old versions of a pin.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -454,9 +471,9 @@ the most recent version.</p>
     <footer class="footer">
   <p>
     
-      By RStudio Inc.<br/>
+      By Posit Software, PBC<br/>
     
-        &copy; Copyright 2021.<br/>
+        &copy; Copyright 2023.<br/>
   </p>
 </footer>
 </main>

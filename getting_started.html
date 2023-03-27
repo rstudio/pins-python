@@ -53,7 +53,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Reference" href="api/index.html" />
+    <link rel="next" title="Articles" href="articles/index.html" />
     <link rel="prev" title="Welcome" href="intro.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -100,11 +100,28 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="api/index.html">
-   Reference
+  <a class="reference internal" href="articles/index.html">
+   Articles
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="articles/customize-pins-metadata.html">
+     Using custom metadata
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="api/index.html">
+   Reference
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -113,8 +130,8 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="api/constructors.html">
      Board Constructors
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-    <label for="toctree-checkbox-2">
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -170,8 +187,8 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="api/boards.html">
      Board Methods
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -252,8 +269,8 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="api/meta.html">
      Metadata
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-    <label for="toctree-checkbox-4">
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -524,7 +541,7 @@ Here are a few options:</p>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
 Name: &#39;mtcars&#39;
-Version: 20230321T194158Z-3b134
+Version: 20230327T161810Z-3b134
 </pre></div>
 </div>
 </div>
@@ -760,7 +777,7 @@ If you find yourself routinely pinning data larger that this, you might need to 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20230321T194158Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2023, 3, 21, 19, 41, 58), hash=&#39;3b134&#39;), tags=None, name=&#39;mtcars&#39;, user={}, local={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20230327T161810Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2023, 3, 27, 16, 18, 10), hash=&#39;3b134&#39;), tags=None, name=&#39;mtcars&#39;, user={}, local={})
 </pre></div>
 </div>
 </div>
@@ -791,10 +808,10 @@ If you find yourself routinely pinning data larger that this, you might need to 
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
 Name: &#39;mtcars2&#39;
-Version: 20230321T194158Z-3b134
+Version: 20230327T161810Z-3b134
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20230321T194158Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2023, 3, 21, 19, 41, 58, 612026), hash=&#39;3b134bae183b50c9&#39;), tags=None, name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;}, local={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars2: a pinned 32 x 11 DataFrame&#39;, description=&#39;Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).&#39;, created=&#39;20230327T161810Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars2.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2023, 3, 27, 16, 18, 10, 489257), hash=&#39;3b134bae183b50c9&#39;), tags=None, name=&#39;mtcars2&#39;, user={&#39;source&#39;: &#39;Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.&#39;}, local={})
 </pre></div>
 </div>
 </div>
@@ -806,7 +823,7 @@ Version: 20230321T194158Z-3b134
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20230321T194158Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2023, 3, 21, 19, 41, 58), hash=&#39;3b134&#39;), tags=None, name=&#39;mtcars&#39;, user={}, local={})
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Meta(title=&#39;mtcars: a pinned 32 x 11 DataFrame&#39;, description=None, created=&#39;20230327T161810Z&#39;, pin_hash=&#39;3b134bae183b50c9&#39;, file=&#39;mtcars.csv&#39;, file_size=1333, type=&#39;csv&#39;, api_version=1, version=Version(created=datetime.datetime(2023, 3, 27, 16, 18, 10), hash=&#39;3b134&#39;), tags=None, name=&#39;mtcars&#39;, user={}, local={})
 </pre></div>
 </div>
 </div>
@@ -829,13 +846,13 @@ Version: 20230321T194158Z-3b134
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
 Name: &#39;x&#39;
-Version: 20230321T194158Z-2bc5d
+Version: 20230327T161810Z-2bc5d
 Writing pin:
 Name: &#39;x&#39;
-Version: 20230321T194158Z-c24c0
+Version: 20230327T161810Z-c24c0
 Writing pin:
 Name: &#39;x&#39;
-Version: 20230321T194158Z-91d9a
+Version: 20230327T161810Z-91d9a
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -864,21 +881,21 @@ Version: 20230321T194158Z-91d9a
   <tbody>
     <tr>
       <th>0</th>
-      <td>2023-03-21 19:41:58</td>
+      <td>2023-03-27 16:18:10</td>
       <td>2bc5d</td>
-      <td>20230321T194158Z-2bc5d</td>
+      <td>20230327T161810Z-2bc5d</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2023-03-21 19:41:58</td>
+      <td>2023-03-27 16:18:10</td>
       <td>91d9a</td>
-      <td>20230321T194158Z-91d9a</td>
+      <td>20230327T161810Z-91d9a</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2023-03-21 19:41:58</td>
+      <td>2023-03-27 16:18:10</td>
       <td>c24c0</td>
-      <td>20230321T194158Z-c24c0</td>
+      <td>20230327T161810Z-c24c0</td>
     </tr>
   </tbody>
 </table>
@@ -950,7 +967,7 @@ Version: 20230321T194158Z-91d9a
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Writing pin:
 Name: &#39;my_coords&#39;
-Version: 20230321T194158Z-d5e4a
+Version: 20230327T161810Z-d5e4a
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Coords(x=1, y=2)
@@ -1196,10 +1213,10 @@ For real code I’d recommend using <code class="docutils literal notranslate"><
             <p class="prev-next-title">Welcome</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="api/index.html" title="next page">
+    <a class='right-next' id="next-link" href="articles/index.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Reference</p>
+        <p class="prev-next-title">Articles</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
@@ -1210,9 +1227,9 @@ For real code I’d recommend using <code class="docutils literal notranslate"><
     <footer class="footer">
   <p>
     
-      By RStudio Inc.<br/>
+      By Posit Software, PBC<br/>
     
-        &copy; Copyright 2021.<br/>
+        &copy; Copyright 2023.<br/>
   </p>
 </footer>
 </main>

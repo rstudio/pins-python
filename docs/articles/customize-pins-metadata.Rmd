@@ -44,7 +44,7 @@ some_cat = pd.Categorical(["a", "a", "b"])
 some_cat.categories
 ```
 
-Notice that categories is just the unique values in the categorical.
+Notice that the categories attribute is just the unique values in the categorical.
 
 We can write a function wrapping `pin_write()` that holds the categories in metadata, so we can easily re-create the categorical with them.
 

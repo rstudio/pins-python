@@ -3,6 +3,7 @@
 
 title: Pins
 author: "Posit Software, PBC"
+copyright: 2023
 #logo: logo.png
 
 # Force re-execution of notebooks on each build.

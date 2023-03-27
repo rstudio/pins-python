@@ -26,6 +26,8 @@ We'll begin by creating a temporary board for demonstration:
 import pins
 import pandas as pd
 
+from pprint import pprint
+
 board = pins.board_temp()
 ```
 
@@ -76,7 +78,9 @@ board.pin_read("some-cat")
 However, notice that if we use `board.pin_meta()`, the information we stored on categories is in the `.user` field.
 
 ```{python}
-board.pin_meta("some-cat")
+pprint(
+    board.pin_meta("some-cat")
+)
 ```
 
 This enables us to write a special function for reading, to reconstruct the categorical, using the categories stashed in metadata:

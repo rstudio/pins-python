@@ -2,7 +2,8 @@
 # Learn more at https://jupyterbook.org/customize/config.html
 
 title: Pins
-author: RStudio Inc.
+author: "Posit Software, PBC"
+copyright: 2023
 #logo: logo.png
 
 # Force re-execution of notebooks on each build.

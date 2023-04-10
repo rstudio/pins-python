@@ -1,7 +1,5 @@
 # pins-python
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/machow/pins-python/HEAD)
-
 The pins package publishes data, models, and other Python objects, making it
 easy to share them across projects and with your colleagues. You can pin
 objects to a variety of pin *boards*, including folders (to share on a
@@ -47,13 +45,13 @@ board.pin_write(mtcars.head(), "mtcars", type="csv")
 
     Writing pin:
     Name: 'mtcars'
-    Version: 20230321T151326Z-120a5
+    Version: 20230410T151442Z-120a5
 
 
 
 
 
-    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20230321T151326Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 3, 21, 15, 13, 26, 362951), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})
+    Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20230410T151442Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 4, 10, 15, 14, 42, 55001), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})
 
 
 
@@ -84,14 +82,14 @@ A board on your computer is good place to start, but the real power of
 pins comes when you use a board that’s shared with multiple people. To
 get started, you can use `board_folder()` with a directory on a shared
 drive or in DropBox, or if you use [Posit
-Connect](https://www.rstudio.com/products/connect/) you can use
-`board_rsconnect()`:
+Connect](https://posit.co/products/enterprise/connect/) you can use
+`board_connect()`:
 
 ```python
 # Note that this uses one approach to connecting,
 # the environment variables CONNECT_SERVER and CONNECT_API_KEY
 
-board = pins.board_rsconnect()
+board = pins.board_connect()
 board.pin_write(tidy_sales_data, "hadley/sales-summary", type="csv")
 ```
 
@@ -99,7 +97,7 @@ Then, someone else (or an automated report) can read and use your
 pin:
 
 ```python
-board = board_rsconnect()
+board = board_connect()
 board.pin_read("hadley/sales-summary")
 ```
 

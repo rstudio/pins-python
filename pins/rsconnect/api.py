@@ -420,6 +420,15 @@ class RsConnectApi:
 
         _download_file(r, f_obj)
 
+    def misc_get_content_bundle_file_info(self, guid: str, id: str, name: str):
+
+        route = f"{self.server_url}/content/{guid}/_rev{id}/{name}"
+
+        r = self._raw_query(route, return_request=True)
+        r.raise_for_status()
+
+        return r.headers
+
     def misc_get_applications(
         self, filter: str, count: int = 1000, search: str = None
     ) -> Paginated[Sequence[Content]]:

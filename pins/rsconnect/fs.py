@@ -1,3 +1,5 @@
+import logging
+
 from dataclasses import dataclass, asdict, field, fields
 from pathlib import Path
 
@@ -17,6 +19,10 @@ from .api import (
     RsConnectApiRequestError,
     RSC_CODE_OBJECT_DOES_NOT_EXIST,
 )
+
+
+_log = logging.getLogger(__name__)
+
 
 # Misc ----
 
@@ -131,6 +137,8 @@ class RsConnectFs(AbstractFileSystem):
             "<username>/<content>" -> user content bundles
         """
 
+        _log.debug("ls")
+
         if isinstance(self.parse_path(path), EmptyPath):
             # root path specified, so list users
             all_results = self.api.get_users()
@@ -183,6 +191,8 @@ class RsConnectFs(AbstractFileSystem):
 
         """
 
+        _log.debug("put")
+
         parsed = self.parse_path(rpath)
 
         if len(args) or len(kwargs):
@@ -232,6 +242,8 @@ class RsConnectFs(AbstractFileSystem):
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
         """Open a file inside an RStudio Connect bundle."""
 
+        _log.debug("open")
+
         if mode != "rb":
             raise NotImplementedError()
 
@@ -260,6 +272,9 @@ class RsConnectFs(AbstractFileSystem):
 
     def get(self, rpath, lpath, recursive=False, *args, **kwargs) -> None:
         """Fetch a bundle or file from RStudio Connect."""
+
+        _log.debug("get")
+
         parsed = self.parse_path(rpath)
 
         if recursive:
@@ -278,6 +293,9 @@ class RsConnectFs(AbstractFileSystem):
             )
 
     def exists(self, path: str, **kwargs) -> bool:
+
+        _log.debug("exists")
+
         try:
             self.info(path)
             return True
@@ -287,6 +305,9 @@ class RsConnectFs(AbstractFileSystem):
     def mkdir(
         self, path, create_parents=True, *args, access_type="acl", **kwargs
     ) -> None:
+
+        _log.debug("mkdir")
+
         parsed = self.parse_path(path)
 
         if len(args) or len(kwargs):
@@ -302,12 +323,18 @@ class RsConnectFs(AbstractFileSystem):
         self.api.post_content_item(parsed.content, access_type, **kwargs)
 
     def info(self, path, **kwargs) -> "User | Content | Bundle":
+
+        _log.debug(f"info: {path}")
+
         # TODO: source of fsspec info uses self._parent to check cache?
         # S3 encodes refresh (for local cache) and version_id arguments
 
         return self._get_entity_from_path(path)
 
     def rm(self, path, recursive=False, maxdepth=None) -> None:
+
+        _log.debug("rm")
+
         parsed = self.parse_path(path)
 
         # guards ----
@@ -374,7 +401,12 @@ class RsConnectFs(AbstractFileSystem):
 
         if isinstance(parsed, BundlePath):
             content_guid = content["guid"]
-            crnt = self._get_content_bundle(content_guid, parsed.bundle)
+            crnt = bundle = self._get_content_bundle(content_guid, parsed.bundle)
+
+        if isinstance(parsed, BundleFilePath):
+            crnt = self._get_content_bundle_file_info(
+                content["guid"], bundle["id"], parsed.file_name
+            )
 
         return crnt
 
@@ -412,6 +444,22 @@ class RsConnectFs(AbstractFileSystem):
             raise e
 
         return bundle
+
+    def _get_content_bundle_file_info(
+        self, content_guid: str, bundle_id: str, fname: str
+    ):
+        headers = self.api.misc_get_content_bundle_file_info(
+            content_guid, bundle_id, fname
+        )
+
+        # convert result into something that looks like what fsspec's s3
+        # implementation returns
+        return {
+            "name": fname,
+            "type": "file",
+            "size": headers["Content-Length"],
+            "ContentType": headers["Content-Type"],
+        }
 
     def _get_user_from_name(self, name):
         """Fetch a single user entity from user name."""

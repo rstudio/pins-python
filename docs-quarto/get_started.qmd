@@ -75,12 +75,10 @@ That said, most boards transmit pins over HTTP, and this is going to be slow and
 As a general rule of thumb, we don't recommend using pins with files over 500 MB.
 If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.
 
-<!-- #region -->
-```{note}
-If you are using the Posit Connect board (`board_connect`), then you must specify your pin name as
-`<user_name>/<content_name>`. For example, `hadley/sales-report`.
-```
-<!-- #endregion -->
+::: {.callout-note}
+If you are using the Posit Connect board (`board_connect()`), then you must specify your pin name as
+`"<user_name>/<content_name>"`. For example, `"hadley/sales-report"`.
+:::
 
 
 ## Metadata

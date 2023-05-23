@@ -10,7 +10,7 @@ website:
   page-navigation: true
   favicon: "docs-quarto/favicon.ico"
   page-footer:
-    left: |
+    center: |
       Proudly supported by
       [![](https://www.rstudio.com/assets/img/posit-logo-fullcolor-TM.svg){fig-alt="Posit PBC" width=65px}](https://posit.co/)
     right:
@@ -33,6 +33,10 @@ website:
           - text: "pins for R"
             href: https://pins.rstudio.com
             target: _blank
+    right:
+      - icon: github
+        href: https://github.com/rstudio/vetiver-python
+        aria-label: Vetiver python GitHub
 
 quartodoc:
   package: pins

@@ -13,10 +13,6 @@ website:
     center: |
       Proudly supported by
       [![](https://www.rstudio.com/assets/img/posit-logo-fullcolor-TM.svg){fig-alt="Posit PBC" width=65px}](https://posit.co/)
-    right:
-      - icon: github
-        href: https://github.com/rstudio/pins-python
-        aria-label: Vetiver Python GitHub
   navbar:
     background: light
     pinned: true

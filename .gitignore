@@ -137,3 +137,7 @@ dmypy.json
 # RStudio
 .Rproj.user
 *.Rproj
+
+# Quarto
+/.quarto/
+_site/

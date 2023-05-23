@@ -1,11 +1,16 @@
-```{python tags=c("hide-cell")}
+---
+format: gfm
+---
+
+```{python}
+#| include: false
 # this keeps the pandas dataframe repr from spitting out scoped style tags
 # which don't render on github
 import pandas as pd
 pd.set_option("display.notebook_repr_html", False)
 ```
 
-# pins-python
+# pins <a href="https://rstudio.github.io/pins-python/"><img src="docs/logo.png" align="right" height="138" /></a>
 
 The pins package publishes data, models, and other Python objects, making it
 easy to share them across projects and with your colleagues. You can pin
@@ -17,15 +22,25 @@ re-run analyses on historical data, and undo mistakes.
 
 See the [documentation](https://rstudio.github.io/pins-python) for getting started.
 
+You can use pins from R as well as Python. For example, you can use one language 
+to read a pin created with the other. Learn more about 
+[pins for R](https://pins.rstudio.com).
+
 ## Installation
+
+You can install the released version of vetiver from [PyPI](https://pypi.org/project/pins/):
 
 ```shell
 python -m pip install pins
 ```
 
-## Usage
+And the development version from [GitHub](https://github.com/rstudio/pins-python) with:
 
-See the [documentation](https://rstudio.github.io/pins-python) for getting started.
+```shell
+python -m pip install git+https://github.com/rstudio/pins-python
+```
+
+## Usage
 
 To use the pins package, you must first create a pin board. A good place
 to start is `board_folder()`, which stores pins in a directory you
@@ -88,6 +103,8 @@ The pins package also includes boards that allow you to share data on
 services like Amazon’s S3 (`board_s3()`), Google Cloud Storage (`board_gcs()`),
 and Azure blob storage (`board_azure()`).
 
-## Development
+## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+- This project is released with a [Contributor Code of Conduct](https://www.contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+
+- If you think you have encountered a bug, please [submit an issue](https://github.com/rstudio/pins-python/issues).

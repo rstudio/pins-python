@@ -1,0 +1,65 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - docs-quarto
+
+website:
+  title: "pins for Python"
+  description: "Pin, Discover, and Share Resources"
+  page-navigation: true
+  favicon: "docs-quarto/favicon.ico"
+  page-footer:
+    left: |
+      Proudly supported by
+      [![](https://www.rstudio.com/assets/img/posit-logo-fullcolor-TM.svg){fig-alt="Posit PBC" width=65px}](https://posit.co/)
+    right:
+      - icon: github
+        href: https://github.com/rstudio/pins-python
+        aria-label: Vetiver Python GitHub
+  navbar:
+    background: light
+    pinned: true
+    logo: docs-quarto/logo.png
+    left:
+      - text: "Get started"
+        file: docs-quarto/get_started.qmd
+      - text: "Reference"
+        file: docs-quarto/reference/index.qmd
+      - text: Learn more
+        menu:
+          - text: "Create consistent metadata for pins"
+            file: docs-quarto/customize-pins-metadata.qmd
+          - text: "pins for R"
+            href: https://pins.rstudio.com
+            target: _blank
+
+quartodoc:
+  package: pins
+  sections:
+    - title: Boards
+      desc: ""
+      contents:
+        - board_folder
+        - board_local
+        - board_temp
+        - board_s3
+        - board_gcs
+        - board_azure
+        - board_connect
+        - board_url
+        - board
+    - title: Pins
+      desc: ""
+      package: pins.boards.BaseBoard
+      contents:
+        - pin_read
+        - pin_write
+        - pin_meta
+        - pin_versions
+        - pin_list
+        - pin_exists
+        - pin_version_delete
+        - pin_versions_prune
+        - pin_delete
+        - pin_search

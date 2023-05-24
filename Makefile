@@ -20,15 +20,8 @@ dev-stop:
 $(RSC_API_KEYS): dev-start
 	python script/setup-rsconnect/dump_api_keys.py $@
 
-README.md: README.Rmd
-	jupytext --from Rmd --to ipynb --output - $^ \
-	| jupyter nbconvert \
-		--stdin --to markdown \
-		--execute \
-		--ExecutePreprocessor.kernel_name='venv-pins-python' \
-		--TagRemovePreprocessor.remove_all_outputs_tags='hide-cell' \
-		--TagRemovePreprocessor.remove_input_tags='hide-cell' \
-		--output $@
+README.md: README.qmd
+  quarto render $@
 
 test: test-most test-rsc
 
@@ -39,7 +32,8 @@ test-rsc:
 	pytest pins -m "fs_rsc"
 
 docs-build:
-	jb build --builder html docs
+	python -m quartodoc build --verbose
+	quarto render
 
 docs-clean:
 	rm -rf docs/_build docs/api/api_card

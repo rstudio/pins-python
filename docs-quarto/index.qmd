@@ -13,7 +13,7 @@ Pins can be automatically versioned, making it straightforward to track changes,
 re-run analyses on historical data, and undo mistakes.
 
 You can use pins from R as well as Python. For example, you can use one language
-to read a pin created with the other. Learn more about 
+to read a pin created with the other. Learn more about
 [pins for R](https://pins.rstudio.com).
 
 ## Installation

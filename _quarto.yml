@@ -3,6 +3,7 @@ project:
   output-dir: _site
   render:
     - docs-quarto
+    - reference
 
 website:
   title: "pins for Python"
@@ -21,7 +22,7 @@ website:
       - text: "Get started"
         file: docs-quarto/get_started.qmd
       - text: "Reference"
-        file: docs-quarto/reference/index.qmd
+        file: reference/index.qmd
       - text: Learn more
         menu:
           - text: "Create consistent metadata for pins"

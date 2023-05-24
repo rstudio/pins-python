@@ -32,8 +32,7 @@ test-rsc:
 	pytest pins -m "fs_rsc"
 
 docs-build:
-	python -m quartodoc build --verbose
-	quarto render
+	$(MAKE) -C docs-quarto docs-quarto
 
 docs-clean:
 	rm -rf docs/_build docs/api/api_card

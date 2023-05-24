@@ -342,14 +342,14 @@ def board_urls(*args, **kwargs):
 
 
 def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None):
-    """Create a board from individual urls.
+    """Create a board from individual URLs.
 
     Parameters
     ----------
     path:
-        A base url to prefix all individual pin urls with.
+        A base URL to prefix all individual pin URLs with.
     pin_paths: Mapping
-        A dictionary mapping pin name to pin url .
+        A dictionary mapping pin name to pin URL.
     cache:
         Whether to use a cache. By default, pins attempts to select the right cache
         directory, given your filesystem. If `None` is passed, then no cache will be
@@ -407,12 +407,12 @@ def board_connect(
     Parameters
     ----------
     server_url:
-        Url to the Posit Connect server.
+        URL to the Posit Connect server.
     versioned:
         Whether or not pins should be versioned.
     api_key:
         API key for server. If not specified, pins will attempt to read it from
-        CONNECT_API_KEY environment variable.
+        `CONNECT_API_KEY` environment variable.
     cache:
         Whether to use a cache. By default, pins attempts to select the right cache
         directory, given your filesystem. If `None` is passed, then no cache will be
@@ -449,7 +449,7 @@ def board_connect(
 
     See Also
     --------
-    board_url : board for connecting to individual pins, using a url or path.
+    board_url : Board for connecting to individual pins, using a URL or path.
 
     """
 
@@ -474,7 +474,7 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     Parameters
     ----------
     path:
-        Path of form <bucket_name>/<optional>/<subdirectory>.
+        Path of form `<bucket_name>/<optional>/<subdirectory>`.
     versioned:
         Whether or not pins should be versioned.
     cache:
@@ -492,11 +492,11 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
 
     Notes
     -----
-    The s3 board uses the fsspec library (s3fs) to handle interacting with s3.
-    In order to authenticate, set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
-    and (optionally) AWS_REGION environment variables.
+    The s3 board uses the fsspec library (s3fs) to handle interacting with AWS S3.
+    In order to authenticate, set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
+    and (optionally) `AWS_REGION` environment variables.
 
-    See https://github.com/fsspec/s3fs
+    See <https://github.com/fsspec/s3fs>
 
     """
     # TODO: user should be able to specify storage options here?
@@ -511,7 +511,7 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     Parameters
     ----------
     path:
-        Path of form <bucket_name>/<optional>/<subdirectory>.
+        Path of form `<bucket_name>/<optional>/<subdirectory>`.
     versioned:
         Whether or not pins should be versioned.
     cache:
@@ -530,10 +530,10 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     Notes
     -----
     The gcs board uses the fsspec library (gcsfs) to handle interacting with
-    google cloud storage. Currently, its default mode of authentication
+    Google Cloud Storage. Currently, its default mode of authentication
     is supported.
 
-    See https://gcsfs.readthedocs.io/en/latest/#credentials
+    See <https://gcsfs.readthedocs.io/#credentials>
     """
 
     # GCSFS uses a different name for listings_expiry_time, and then
@@ -548,7 +548,7 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     Parameters
     ----------
     path:
-        Path of form <bucket_name>/<optional>/<subdirectory>.
+        Path of form `<bucket_name>/<optional>/<subdirectory>`.
     versioned:
         Whether or not pins should be versioned.
     cache:
@@ -570,7 +570,7 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     Azure Datalake Filesystem (abfs). Currently, its default mode of authentication
     is supported.
 
-    See https://github.com/fsspec/adlfs
+    See <https://github.com/fsspec/adlfs>
     """
 
     opts = {"use_listings_cache": False}

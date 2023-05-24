@@ -173,7 +173,7 @@ class BaseBoard:
 
         Notes
         -----
-        This is a low-level function; use pin_search() to get more data about
+        This is a low-level function; use `pin_search()` to get more data about
         each pin in a convenient form.
         """
 
@@ -383,13 +383,13 @@ class BaseBoard:
         name:
             Pin name.
         n, days:
-            Pick one of n or days to choose how many versions to keep. n = 3 will
-            keep the last three versions, days = 14 will keep all the versions in
+            Pick one of `n` or `days` to choose how many versions to keep. `n = 3` will
+            keep the last three versions; `days = 14` will keep all the versions in
             the last 14 days.
 
         Notes
         -----
-        Regardless of what values you set, pin_versions_prune() will never delete
+        Regardless of what values you set, `pin_versions_prune()` will never delete
         the most recent version.
 
         """

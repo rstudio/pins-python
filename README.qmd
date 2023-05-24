@@ -22,7 +22,7 @@ re-run analyses on historical data, and undo mistakes.
 
 See the [documentation](https://rstudio.github.io/pins-python) for getting started.
 
-You can use pins from R as well as Python. For example, you can use one language 
+You can use pins from R as well as Python. For example, you can use one language
 to read a pin created with the other. Learn more about 
 [pins for R](https://pins.rstudio.com).
 

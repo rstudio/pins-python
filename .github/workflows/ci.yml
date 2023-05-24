@@ -149,7 +149,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: docs-html
-          path: docs/_site
+          path: _site
 
   preview-docs:
     name: "Preview Docs:"
@@ -161,7 +161,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: docs-html
-          path: docs-html
+          path: _site
 
       # Determine the release name ---
 
@@ -191,7 +191,7 @@ jobs:
         run: |
           npm install -g netlify-cli
           # push main branch to production, others to preview --
-          netlify deploy --dir=docs-html --alias="${ALIAS}"
+          netlify deploy --dir=_site --alias="${ALIAS}"
 
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -220,11 +220,11 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: docs-html
-          path: docs-html
+          path: _site
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs-html
+          publish_dir: _site
 
   release-pypi:
     name: "Release to pypi"

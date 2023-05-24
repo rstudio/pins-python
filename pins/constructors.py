@@ -364,17 +364,21 @@ def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None)
         takes precedence.
 
 
-    Example
-    -------
+    Examples
+    --------
 
-    >>> github_raw = "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat"
-    >>> pin_paths = {
-    ...     "df_csv": "df_csv/20220214T163720Z-9bfad/",
-    ...     "df_arrow": "df_arrow/20220214T163720Z-ad0c1/",
-    ... }
-    >>> board = board_url(github_raw, pin_paths)
-    >>> board.pin_list()
+    ```python
+    github_raw = "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat"
+    pin_paths = {
+      "df_csv": "df_csv/20220214T163720Z-9bfad/",
+      "df_arrow": "df_arrow/20220214T163720Z-ad0c1/",
+      }
+    board = board_url(github_raw, pin_paths)
+    board.pin_list()
+    ```
+    ```
     ['df_csv', 'df_arrow']
+    ```
     """
 
     # TODO(compat): R pins' version is named board_url (no s)
@@ -429,27 +433,27 @@ def board_connect(
 
     Examples
     --------
-    Use a server url or set the CONNECT_SERVER environt variable to connect:
+    Use a server URL or set the `CONNECT_SERVER` environt variable to connect:
 
-    ::
+    ```python
+    server_url = "https://connect.rstudioservices.com"
+    board = board_connect(server_url)
+    ```
 
-       server_url = "https://connect.rstudioservices.com"
-       board = board_connect(server_url)
+    In order to read a public pin, use `board_url()` with the public pin URL:
 
-    In order to read a public pin, use board_manual with the public pin url.
-
-    ::
-
-       # for a pin at https://connect.rstudioservices.com/content/3004/
-       board = board_url(
-           "https://connect.rstudioservices.com/content",
-           {"my_df": "3004/"}
-       )
-       board.pin_read("my_df")
+    ```python
+    # for a pin at https://connect.rstudioservices.com/content/3004/
+    board = board_url(
+      "https://connect.rstudioservices.com/content",
+      {"my_df": "3004/"}
+    )
+    board.pin_read("my_df")
+    ```
 
     See Also
     --------
-    board_url : Board for connecting to individual pins, using a URL or path.
+    `board_url()` : Board for connecting to individual pins, using a URL or path.
 
     """
 

@@ -20,8 +20,8 @@ dev-stop:
 $(RSC_API_KEYS): dev-start
 	python script/setup-rsconnect/dump_api_keys.py $@
 
-README.md: README.qmd
-  quarto render $^
+README.md:
+	quarto render README.qmd
 
 test: test-most test-rsc
 

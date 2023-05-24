@@ -1,15 +1,12 @@
 project:
   type: website
   output-dir: _site
-  render:
-    - docs-quarto
-    - reference
 
 website:
   title: "pins for Python"
   description: "Pin, Discover, and Share Resources"
   page-navigation: true
-  favicon: "docs-quarto/favicon.ico"
+  favicon: "favicon.ico"
   page-footer:
     center: |
       Proudly supported by
@@ -17,16 +14,16 @@ website:
   navbar:
     background: light
     pinned: true
-    logo: docs-quarto/logo.png
+    logo: logo.png
     left:
       - text: "Get started"
-        file: docs-quarto/get_started.qmd
+        file: get_started.qmd
       - text: "Reference"
         file: reference/index.qmd
       - text: Learn more
         menu:
           - text: "Create consistent metadata for pins"
-            file: docs-quarto/customize-pins-metadata.qmd
+            file: customize-pins-metadata.qmd
           - text: "pins for R"
             href: https://pins.rstudio.com
             target: _blank

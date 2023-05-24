@@ -141,3 +141,6 @@ dmypy.json
 # Quarto
 /.quarto/
 _site/
+objects.json
+reference/
+src/

@@ -149,7 +149,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: docs-html
-          path: docs/_build/html/
+          path: docs/_site
 
   preview-docs:
     name: "Preview Docs:"

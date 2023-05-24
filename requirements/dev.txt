@@ -91,6 +91,8 @@ decorator==5.1.1
     #   ipython
 executing==1.2.0
     # via stack-data
+fastjsonschema==2.17.1
+    # via nbformat
 fastparquet==2023.4.0
     # via pins (setup.cfg)
 frozenlist==1.3.3
@@ -163,13 +165,19 @@ jmespath==1.0.1
 joblib==1.2.0
     # via pins (setup.cfg)
 jsonschema==4.17.3
-    # via sphobjinv
+    # via
+    #   nbformat
+    #   sphobjinv
 jupyter-client==8.2.0
-    # via ipykernel
+    # via
+    #   ipykernel
+    #   nbclient
 jupyter-core==5.3.0
     # via
     #   ipykernel
     #   jupyter-client
+    #   nbclient
+    #   nbformat
 makefun==1.15.1
     # via
     #   decopatch
@@ -191,6 +199,12 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
+nbclient==0.8.0
+    # via pins (setup.cfg)
+nbformat==5.8.0
+    # via
+    #   nbclient
+    #   pins (setup.cfg)
 nest-asyncio==1.5.6
     # via ipykernel
 numpy==1.24.3
@@ -341,6 +355,8 @@ traitlets==5.9.0
     #   jupyter-client
     #   jupyter-core
     #   matplotlib-inline
+    #   nbclient
+    #   nbformat
 typing-extensions==4.6.1
     # via
     #   aioitertools

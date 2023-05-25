@@ -32,7 +32,39 @@ website:
         href: https://github.com/rstudio/vetiver-python
         aria-label: Vetiver python GitHub
   sidebar:
-  - id: dummy
+    - id: dummy
+    - id: reference
+      title: Function reference
+      collapse-level: 2
+      style: "floating"
+      align: left
+      contents:
+      - reference/index.qmd
+      - contents:
+        - reference/board_folder.qmd
+        - reference/board_local.qmd
+        - reference/board_temp.qmd
+        - reference/board_s3.qmd
+        - reference/board_gcs.qmd
+        - reference/board_azure.qmd
+        - reference/board_connect.qmd
+        - reference/board_url.qmd
+        - reference/board.qmd
+        section: Boards
+      - contents:
+        - reference/pin_read.qmd
+        - reference/pin_write.qmd
+        - reference/pin_meta.qmd
+        - reference/pin_download.qmd
+        - reference/pin_upload.qmd
+        - reference/pin_versions.qmd
+        - reference/pin_list.qmd
+        - reference/pin_exists.qmd
+        - reference/pin_version_delete.qmd
+        - reference/pin_versions_prune.qmd
+        - reference/pin_delete.qmd
+        - reference/pin_search.qmd
+        section: Pins
 
 quartodoc:
   package: pins
@@ -65,9 +97,6 @@ quartodoc:
         - pin_versions_prune
         - pin_delete
         - pin_search
-
-metadata-files:
-  - _sidebar.yml
 
 filters:
   - interlinks

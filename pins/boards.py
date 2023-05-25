@@ -173,7 +173,7 @@ class BaseBoard:
 
         Notes
         -----
-        This is a low-level function; use `pin_search()` to get more data about
+        This is a low-level function; use [](`~pins.boards.BaseBoard.pin_search`) to get more data about
         each pin in a convenient form.
         """
 
@@ -205,7 +205,7 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the ``pin_hash`` field retrived by ``pin_meta()``.
+            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.meta`).
 
         """
         meta = self.pin_fetch(name, version)
@@ -245,7 +245,7 @@ class BaseBoard:
         name:
             Pin name.
         type:
-            File type used to save ``x`` to disk. May be "csv", "arrow", "parquet",
+            File type used to save `x` to disk. May be "csv", "arrow", "parquet",
             "joblib", "json", or "file".
         title:
             A title for the pin; most important for shared boards so that others
@@ -330,7 +330,7 @@ class BaseBoard:
         """TODO: Download the files contained in a pin.
 
         This method only downloads the files in a pin. In order to read and load
-        pin data as an object (e.g. a pandas DataFrame), use ``pin_read()``.
+        pin data as an object (e.g. a pandas DataFrame), use `pin_read()`.
 
         Parameters
         ----------
@@ -350,7 +350,7 @@ class BaseBoard:
         """TODO: Write a pin based on paths to one or more files.
 
         This method simply uploads the files given, so they can be downloaded later
-        using ``pin_download()``.
+        using `pin_download()`.
         """
         # TODO(question): why does this method exist? Isn't it equiv to a user
         # doing this?: pin_write(board, c("filea.txt", "fileb.txt"), type="file")
@@ -389,7 +389,7 @@ class BaseBoard:
 
         Notes
         -----
-        Regardless of what values you set, `pin_versions_prune()` will never delete
+        Regardless of what values you set, `pin_versions_prune` will never delete
         the most recent version.
 
         """
@@ -640,7 +640,7 @@ class BaseBoard:
 
 
 class BoardManual(BaseBoard):
-    """Simple board that accepts a dictionary of form pin_name: path.
+    """Simple board that accepts a dictionary of form `pin_name: path`.
 
     Examples
     --------

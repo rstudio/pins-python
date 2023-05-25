@@ -87,7 +87,7 @@ def board(
     """General function for constructing a pins board.
 
     Note that this is a lower-level function. For most use cases, use a more specific
-    function like `board_local()`, or `board_s3()`.
+    function like [](`~pins.board_local`), or [](`~pins.board_s3`).
 
     Parameters
     ----------
@@ -276,13 +276,13 @@ def board_github(
     Parameters
     ----------
     org:
-        Name of the github org (e.g. user account).
+        Name of the GitHub org (e.g. user account).
     repo:
         Name of the repo.
     path:
-        A subfolder in the github repo holding the board.
+        A subfolder in the GitHub repo holding the board.
     token:
-        An optional github token.
+        An optional GitHub token.
     cache:
         Whether to use a cache. By default, pins attempts to select the right cache
         directory, given your filesystem. If `None` is passed, then no cache will be
@@ -453,7 +453,7 @@ def board_connect(
 
     See Also
     --------
-    `board_url()` : Board for connecting to individual pins, using a URL or path.
+    [](`~pins.board_url`) : Board for connecting to individual pins, using a URL or path.
 
     """
 

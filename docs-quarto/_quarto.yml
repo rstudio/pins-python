@@ -61,3 +61,9 @@ quartodoc:
         - pin_versions_prune
         - pin_delete
         - pin_search
+
+filters:
+  - interlinks
+
+interlinks:
+  sources: {}

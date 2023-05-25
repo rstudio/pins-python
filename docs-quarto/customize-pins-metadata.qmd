@@ -5,7 +5,7 @@ jupyter: python3
 
 The `metadata` argument in pins is flexible and can hold any kind of metadata that you can formulate as a `dict` (convertable to JSON).
 In some situations, you may want to read and write with _consistent_ customized metadata;
-you can create functions to wrap `pin_write()` and `pin_read()` for your particular use case.
+you can create functions to wrap [](`~pins.boards.BaseBoard.pin_write`) and [](`~pins.boards.BaseBoard.pin_read`) for your particular use case.
 
 We'll begin by creating a temporary board for demonstration:
 
@@ -33,7 +33,7 @@ some_cat.categories
 
 Notice that the categories attribute is just the unique values in the categorical.
 
-We can write a function wrapping `pin_write()` that holds the categories in metadata, so we can easily re-create the categorical with them.
+We can write a function wrapping [](`~pins.boards.BaseBoard.pin_write`) that holds the categories in metadata, so we can easily re-create the categorical with them.
 
 ```{python}
 def pin_write_cat_json(
@@ -56,13 +56,13 @@ pin_write_cat_json(board, some_cat, name = "some-cat")
 
 ## A function to read categoricals
 
-It's possible to read this pin using the regular `pin_read()` function, but the object we get is no longer a categorical!
+It's possible to read this pin using the regular [](`~pins.boards.BaseBoard.pin_read`) function, but the object we get is no longer a categorical!
 
 ```{python}
 board.pin_read("some-cat")
 ```
 
-However, notice that if we use `board.pin_meta()`, the information we stored on categories is in the `.user` field.
+However, notice that if we use [](`~pins.boards.BaseBoard.pin_meta`), the information we stored on categories is in the `.user` field.
 
 ```{python}
 pprint(

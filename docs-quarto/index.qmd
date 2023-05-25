@@ -33,9 +33,9 @@ python -m pip install git+https://github.com/rstudio/pins-python
 ## Usage
 
 To use the pins package, you must first create a pin board. A good place
-to start is [](`~pins.boards.board_folder`), which stores pins in a directory you
-specify. Here we'll use a special version of [](`~pins.boards.board_folder`) called
-[](`~pins.boards.board_temp`) which creates a temporary board that’s automatically
+to start is [](`~pins.board_folder`), which stores pins in a directory you
+specify. Here we'll use a special version of [](`~pins.board_folder`) called
+[](`~pins.board_temp`) which creates a temporary board that’s automatically
 deleted when your Python script or notebook session ends. This is great for examples, but
 obviously you shouldn't use it for real work!
 
@@ -65,10 +65,10 @@ board.pin_read("mtcars")
 
 A board on your computer is good place to start, but the real power of
 pins comes when you use a board that’s shared with multiple people. To
-get started, you can use [](`~pins.boards.board_folder`) with a directory on a shared
+get started, you can use [](`~pins.board_folder`) with a directory on a shared
 drive or in DropBox, or if you use [Posit
 Connect](https://posit.co/products/enterprise/connect/) you can use
-[](`~pins.boards.board_connect`):
+[](`~pins.board_connect`):
 
 ```python
 # Note that this uses one approach to connecting,
@@ -90,8 +90,8 @@ You can easily control who gets to access the data using the Posit
 Connect permissions pane.
 
 The pins package also includes boards that allow you to share data on
-services like Amazon’s S3 ([](`~pins.boards.board_s3`)), Google Cloud Storage ([](`~pins.boards.board_gcs`)),
-and Azure blob storage ([](`~pins.boards.board_azure`)).
+services like Amazon’s S3 ([](`~pins.board_s3`)), Google Cloud Storage ([](`~pins.board_gcs`)),
+and Azure blob storage ([](`~pins.board_azure`)).
 
 ## Contributing
 

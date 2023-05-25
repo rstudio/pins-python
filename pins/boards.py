@@ -127,7 +127,7 @@ class BaseBoard:
 
         See Also
         --------
-        BaseBoard.pin_versions
+        [](`~pins.boards.BaseBoard.pin_versions`)
 
         """
 
@@ -205,7 +205,7 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.meta`).
+            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
 
         """
         meta = self.pin_fetch(name, version)
@@ -327,10 +327,10 @@ class BaseBoard:
         return meta
 
     def pin_download(self, name, version=None, hash=None):
-        """TODO: Download the files contained in a pin.
+        """Download the files contained in a pin.
 
         This method only downloads the files in a pin. In order to read and load
-        pin data as an object (e.g. a pandas DataFrame), use `pin_read()`.
+        pin data as an object (e.g. a pandas DataFrame), use [](`~pins.boards.BaseBoard.pin_read`).
 
         Parameters
         ----------
@@ -340,17 +340,17 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the ``pin_hash`` field retrived by ``pin_meta()``.
+            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
 
 
         """
         raise NotImplementedError()
 
     def pin_upload(self, paths, name=None, title=None, description=None, metadata=None):
-        """TODO: Write a pin based on paths to one or more files.
+        """Write a pin based on paths to one or more files.
 
         This method simply uploads the files given, so they can be downloaded later
-        using `pin_download()`.
+        using [](`~pins.boards.BaseBoard.pin_download`).
         """
         # TODO(question): why does this method exist? Isn't it equiv to a user
         # doing this?: pin_write(board, c("filea.txt", "fileb.txt"), type="file")

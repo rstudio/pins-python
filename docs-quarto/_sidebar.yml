@@ -22,6 +22,8 @@ website:
         - reference/pin_read.qmd
         - reference/pin_write.qmd
         - reference/pin_meta.qmd
+        - reference/pin_download.qmd
+        - reference/pin_upload.qmd
         - reference/pin_versions.qmd
         - reference/pin_list.qmd
         - reference/pin_exists.qmd

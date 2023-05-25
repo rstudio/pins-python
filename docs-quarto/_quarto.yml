@@ -76,6 +76,8 @@ quartodoc:
         - pin_read
         - pin_write
         - pin_meta
+        - pin_download
+        - pin_upload
         - pin_versions
         - pin_list
         - pin_exists

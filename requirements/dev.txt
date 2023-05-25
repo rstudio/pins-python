@@ -152,8 +152,10 @@ iniconfig==2.0.0
     # via pytest
 ipykernel==6.23.1
     # via pins (setup.cfg)
-ipython==8.13.2
-    # via ipykernel
+ipython==8.12.0
+    # via
+    #   ipykernel
+    #   pins (setup.cfg)
 isodate==0.6.1
     # via azure-storage-blob
 jedi==0.18.2
@@ -357,7 +359,7 @@ traitlets==5.9.0
     #   matplotlib-inline
     #   nbclient
     #   nbformat
-typing-extensions==4.6.1
+typing-extensions==4.6.2
     # via
     #   aioitertools
     #   azure-core

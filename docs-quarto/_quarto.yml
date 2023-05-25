@@ -18,7 +18,7 @@ website:
     left:
       - text: "Get started"
         file: get_started.qmd
-      - text: "Reference"
+      - text: "Function reference"
         file: reference/index.qmd
       - text: Learn more
         menu:
@@ -32,8 +32,30 @@ website:
         href: https://github.com/rstudio/vetiver-python
         aria-label: Vetiver python GitHub
 
+  sidebar:
+    - id: function-reference
+      title: Get Started
+      collapse-level: 2
+      style: "floating"
+      align: left
+      contents:
+        - href: get-started/index.qmd
+        - href: get-started/version.qmd
+        - href: get-started/deploy.qmd
+        - href: get-started/monitor.qmd
+
+    - id: learn-more
+      title: Learn More
+      collapse-level: 3
+      align: left
+      contents:
+        - href: learn-more/parity-checklist.qmd
+        - href: learn-more/model-card.qmd
+        - href: learn-more/deploy-with-docker.qmd
+
 quartodoc:
   package: pins
+  sidebar: "_sidebar.yml"
   sections:
     - title: Boards
       desc: ""
@@ -61,6 +83,9 @@ quartodoc:
         - pin_versions_prune
         - pin_delete
         - pin_search
+
+metadata-files:
+  - _sidebar.yml
 
 filters:
   - interlinks

@@ -79,20 +79,20 @@ jobs:
           no_proxy: "*"
 
   test-rsconnect:
-    name: "Test RSConnect"
+    name: "Test Posit Connect"
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.head.repo.fork }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements/dev.txt
           python -m pip install -e .[test]
-      - name: run RStudio Connect
+      - name: run Posit Connect
         run: |
           docker-compose up --build -d
           make dev

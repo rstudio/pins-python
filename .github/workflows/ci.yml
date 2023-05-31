@@ -93,9 +93,6 @@ jobs:
           python -m pip install -r requirements/dev.txt
           python -m pip install -e .[test]
 
-          # TODO: this is  to test this PR on quartodoc -----------------------
-          # we should merge it in quartodoc, and remove this
-          python -m pip install git+https://github.com/machow/quartodoc.git@dev-pins
       - name: run Posit Connect
         run: |
           docker-compose up --build -d
@@ -144,6 +141,10 @@ jobs:
           python -m pip install -r requirements/dev.txt
           python -m pip install -e .
           python -m ipykernel install --user
+
+          # TODO: this is  to test this PR on quartodoc -----------------------
+          # we should merge it in quartodoc, and remove this
+          python -m pip install git+https://github.com/machow/quartodoc.git@dev-pins
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
       - name: Build docs

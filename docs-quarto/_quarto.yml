@@ -41,7 +41,8 @@ website:
       contents:
       - reference/index.qmd
       - contents:
-        - reference/board_folder.qmd
+        - text: "`board_folder`"
+          href: reference/board_folder.qmd
         - reference/board_local.qmd
         - reference/board_temp.qmd
         - reference/board_s3.qmd
@@ -70,7 +71,7 @@ quartodoc:
   package: pins
   sections:
     - title: Boards
-      desc: ""
+      desc: "Constructors for board objects"
       contents:
         - board_folder
         - board_local
@@ -82,7 +83,7 @@ quartodoc:
         - board_url
         - board
     - title: Pins
-      desc: ""
+      desc: "Pin methods for your board"
       package: pins.boards.BaseBoard
       contents:
         - pin_read

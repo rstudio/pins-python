@@ -20,13 +20,13 @@ to read a pin created with the other. Learn more about
 
 You can install the released version of vetiver from [PyPI](https://pypi.org/project/pins/):
 
-```shell
+```bash
 python -m pip install pins
 ```
 
 And the development version from [GitHub](https://github.com/rstudio/pins-python) with:
 
-```shell
+```bash
 python -m pip install git+https://github.com/rstudio/pins-python
 ```
 

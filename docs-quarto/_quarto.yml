@@ -90,8 +90,8 @@ website:
 quartodoc:
   package: pins
   sections:
-    - title: Boards
-      desc: "Constructors for board objects"
+    - title: Board constructors
+      desc: ""
       contents:
         - board_folder
         - board_local
@@ -102,8 +102,8 @@ quartodoc:
         - board_connect
         - board_url
         - board
-    - title: Pins
-      desc: "Pin methods for your board"
+    - title: Pin methods
+      desc: ""
       package: pins.boards.BaseBoard
       contents:
         - pin_read

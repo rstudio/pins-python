@@ -18,7 +18,7 @@ website:
     left:
       - text: "Get started"
         file: get_started.qmd
-      - text: "Function reference"
+      - text: "Reference"
         file: reference/index.qmd
       - text: Learn more
         menu:
@@ -87,6 +87,7 @@ format:
     sidebar: false
 
 quartodoc:
+  title: Reference
   package: pins
   sections:
     - title: Board constructors

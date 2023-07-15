@@ -103,6 +103,21 @@ def test_board_pin_write_feather_deprecated(board):
         board.pin_write(df, "cool_pin", type="feather")
 
 
+def test_board_pin_write_file(board, tmp_path):
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path.joinpath("data.csv")
+    df.to_csv(path, index=False)
+
+    meta = board.pin_write(path, "cool_pin", type="file")
+    assert meta.type == "file"
+    assert meta.name == "cool_pin"
+
+    pin_path, = board.pin_read("cool_pin")
+    df = pd.read_csv(pin_path)
+    assert df.x.tolist() == [1, 2, 3]
+
+
 def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
     if board.fs.protocol != "rsc":
         pytest.skip()

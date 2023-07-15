@@ -124,9 +124,14 @@ def save_data(
     #       of saving / loading objects different ways.
 
     if apply_suffix:
-        final_name = f"{fname}.{type}"
+        if type == "file":
+            suffix = "".join(Path(obj).suffixes)
+        else:
+            suffix = f".{type}"
     else:
-        final_name = fname
+        suffix = ""
+
+    final_name = f"{fname}{suffix}"
 
     if type == "csv":
         _assert_is_pandas_df(obj)
@@ -161,6 +166,14 @@ def save_data(
         import json
 
         json.dump(obj, open(final_name, "w"))
+
+    elif type == "file":
+        import contextlib
+        import shutil
+
+        # ignore the case where the source is the same as the target
+        with contextlib.suppress(shutil.SameFileError):
+            shutil.copyfile(str(obj), final_name)
 
     else:
         raise NotImplementedError(f"Cannot save type: {type}")

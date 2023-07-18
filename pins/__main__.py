@@ -50,7 +50,7 @@ def pin_write(args):
         import pyarrow.parquet as pq
 
         data = pq.read_table(data).to_pandas()
-    elif type == "parquet":
+    elif type == "json":
         import pyarrow.json as pj
 
         data = pj.read_json(data).to_pandas()

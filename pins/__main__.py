@@ -13,9 +13,8 @@ BOARD_PATH = Path(pins.config.get_config_dir()) / "cli" / "current_board.json"
 
 
 def pin_list(args):
-    raw_pattern = args.pattern
     board = pin_get_board()
-    pattern = re.compile(".*" if raw_pattern is None else raw_pattern)
+    pattern = re.compile(args.pattern)
     for pin in filter(pattern.search, board.pin_list()):
         print(pin)
 
@@ -85,13 +84,17 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        prog="pins", description="Manage pins from the command line."
+        prog="pins",
+        description="Manage pins from the command line.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     subparsers = parser.add_subparsers(required=True)
 
     pin_set_board_parser = subparsers.add_parser(
-        "set-board", description="Set the board to use for subcommands."
+        "set-board",
+        description="Set the board to use for subcommands.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     pin_set_board_parser.add_argument("board", help="The name of the board")
     pin_set_board_parser.add_argument(
@@ -102,14 +105,20 @@ if __name__ == "__main__":
     )
     pin_set_board_parser.set_defaults(func=pin_set_board)
 
-    pin_list_parser = subparsers.add_parser("list", description="List all pins.")
+    pin_list_parser = subparsers.add_parser(
+        "list",
+        description="List all pins.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     pin_list_parser.add_argument(
-        "-p", "--pattern", help="Pattern to match pins against", default=None
+        "-p", "--pattern", help="Pattern to match pins against", default=".*"
     )
     pin_list_parser.set_defaults(func=pin_list)
 
     pin_meta_parser = subparsers.add_parser(
-        "meta", description="Get metadata for a pin."
+        "meta",
+        description="Get metadata for a pin.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     pin_meta_parser.add_argument("pin", help="The name of the pin")
     pin_meta_parser.add_argument(
@@ -122,14 +131,16 @@ if __name__ == "__main__":
     pin_meta_parser.set_defaults(func=pin_meta)
 
     pin_write_parser = subparsers.add_parser(
-        "write", description="Write data to a pin."
+        "write",
+        description="Write data to a pin.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     pin_write_parser.add_argument("pin", help="The name of the pin")
     pin_write_parser.add_argument("data", help="Path to the data to write")
     pin_write_parser.add_argument(
         "-t",
         "--type",
-        choices=("parquet", "csv", "file", "json"),
+        choices=("file", "csv", "parquet", "json"),
         help="Pin data format",
         default="file",
     )

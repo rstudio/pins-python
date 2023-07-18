@@ -6,6 +6,7 @@ from types import SimpleNamespace
 PINS_NAME = "pins-py"
 PINS_ENV_DATA_DIR = "PINS_DATA_DIR"
 PINS_ENV_CACHE_DIR = "PINS_CACHE_DIR"
+PINS_ENV_CONFIG_DIR = "PINS_CONFIG_DIR"
 PINS_ENV_INSECURE_READ = "PINS_ALLOW_PICKLE_READ"
 PINS_ENV_ALLOW_RSC_SHORT_NAME = "PINS_ALLOW_RSC_SHORT_NAME"
 PINS_ENV_FEATURE_PREVIEW = "PINS_FEATURE_PREVIEW"
@@ -32,6 +33,10 @@ def get_data_dir():
 
 def get_cache_dir():
     return os.environ.get(PINS_ENV_CACHE_DIR, appdirs.user_cache_dir(PINS_NAME))
+
+
+def get_config_dir():
+    return os.environ.get(PINS_ENV_CONFIG_DIR, appdirs.user_config_dir(PINS_NAME))
 
 
 def get_allow_pickle_read(flag):

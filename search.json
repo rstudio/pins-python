@@ -1,0 +1,464 @@
+[
+  {
+    "objectID": "get_started.html",
+    "href": "get_started.html",
+    "title": "Get started with pins",
+    "section": "",
+    "text": "The pins package helps you publish data sets, models, and other Python objects, making it easy to share them across projects and with your colleagues. You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with DropBox), Posit Connect, Amazon S3, Google Cloud Storage, Azure, and more. This vignette will introduce you to the basics of pins.\nfrom pins import board_local, board_folder, board_temp, board_url"
+  },
+  {
+    "objectID": "get_started.html#getting-started",
+    "href": "get_started.html#getting-started",
+    "title": "Get started with pins",
+    "section": "Getting started",
+    "text": "Getting started\nEvery pin lives in a pin board, so you must start by creating a pin board. In this vignette I’ll use a temporary board which is automatically deleted when your Python session is over:\n\nboard = board_temp()\n\nIn real life, you’d pick a board depending on how you want to share the data. Here are a few options:\nboard = board_local() # share data across R sessions on the same computer\nboard = board_folder(\"~/Dropbox\") # share data with others using dropbox\nboard = board_folder(\"Z:\\\\my-team\\pins\") # share data using a shared network drive\nboard = board_connect() # share data with Posit Connect"
+  },
+  {
+    "objectID": "get_started.html#reading-and-writing-data",
+    "href": "get_started.html#reading-and-writing-data",
+    "title": "Get started with pins",
+    "section": "Reading and writing data",
+    "text": "Reading and writing data\nOnce you have a pin board, you can write data to it with the pin_write method:\n\nfrom pins.data import mtcars\n\nmeta = board.pin_write(mtcars, \"mtcars\", type=\"csv\")\n\nWriting pin:\nName: 'mtcars'\nVersion: 20230725T210628Z-3b134\n\n\nThe first argument is the object to save (usually a data frame, but it can be any Python object), and the second argument gives the “name” of the pin. The name is basically equivalent to a file name; you’ll use it when you later want to read the data from the pin. The only rule for a pin name is that it can’t contain slashes.\nAbove, we saved the data as a CSV, but you can choose another option depending on your goals:\n\ntype = \"csv\" uses to_csv() from pandas to create a CSV file. CSVs are plain text and can be read easily by many applications, but they only support simple columns (e.g. numbers, strings), can take up a lot of disk space, and can be slow to read.\ntype = \"parquet\" uses to_parquet() from pandas to create a Parquet file. Parquet is a modern, language-independent, column-oriented file format for efficient data storage and retrieval. Parquet is an excellent choice for storing tabular data.\ntype = \"arrow\" uses to_feather() from pandas to create an Arrow/Feather file.\ntype = \"joblib\" uses joblib.dump() to create a binary Python data file, such as for storing a trained model. See the joblib docs for more information.\ntype = \"json\" uses json.dump() to create a JSON file. Pretty much every programming language can read JSON files, but they only work well for nested lists.\n\nAfter you’ve pinned an object, you can read it back with pin_read:\n\nboard.pin_read(\"mtcars\")\n\n\n\n\n\n\n\n\nmpg\ncyl\ndisp\nhp\ndrat\nwt\nqsec\nvs\nam\ngear\ncarb\n\n\n\n\n0\n21.0\n6\n160.0\n110\n3.90\n2.620\n16.46\n0\n1\n4\n4\n\n\n1\n21.0\n6\n160.0\n110\n3.90\n2.875\n17.02\n0\n1\n4\n4\n\n\n2\n22.8\n4\n108.0\n93\n3.85\n2.320\n18.61\n1\n1\n4\n1\n\n\n3\n21.4\n6\n258.0\n110\n3.08\n3.215\n19.44\n1\n0\n3\n1\n\n\n4\n18.7\n8\n360.0\n175\n3.15\n3.440\n17.02\n0\n0\n3\n2\n\n\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n\n\n27\n30.4\n4\n95.1\n113\n3.77\n1.513\n16.90\n1\n1\n5\n2\n\n\n28\n15.8\n8\n351.0\n264\n4.22\n3.170\n14.50\n0\n1\n5\n4\n\n\n29\n19.7\n6\n145.0\n175\n3.62\n2.770\n15.50\n0\n1\n5\n6\n\n\n30\n15.0\n8\n301.0\n335\n3.54\n3.570\n14.60\n0\n1\n5\n8\n\n\n31\n21.4\n4\n121.0\n109\n4.11\n2.780\n18.60\n1\n1\n4\n2\n\n\n\n\n32 rows × 11 columns\n\n\n\nYou don’t need to supply the file type when reading data from a pin because pins automatically stores the file type in the metadata, the topic of the next section.\nNote that when the data lives elsewhere, pins takes care of downloading and caching so that it’s only re-downloaded when needed. That said, most boards transmit pins over HTTP, and this is going to be slow and possibly unreliable for very large pins. As a general rule of thumb, we don’t recommend using pins with files over 500 MB. If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.\n\n\n\n\n\n\nNote\n\n\n\nIf you are using the Posit Connect board board_connect, then you must specify your pin name as \"user_name/content_name\". For example, \"hadley/sales-report\"."
+  },
+  {
+    "objectID": "get_started.html#metadata",
+    "href": "get_started.html#metadata",
+    "title": "Get started with pins",
+    "section": "Metadata",
+    "text": "Metadata\nEvery pin is accompanied by some metadata that you can access with pin_meta:\n\nboard.pin_meta(\"mtcars\")\n\nMeta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20230725T210628Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 7, 25, 21, 6, 28), hash='3b134'), tags=None, name='mtcars', user={}, local={})\n\n\nThis shows you the metadata that’s generated by default. This includes:\n\ntitle, a brief textual description of the dataset.\nan optional description, where you can provide more details.\nthe date-time when the pin was created.\nthe file_size, in bytes, of the underlying files.\na unique pin_hash that you can supply to pin_read to ensure that you’re reading exactly the data that you expect.\n\nWhen creating the pin, you can override the default description or provide additional metadata that is stored with the data:\n\nboard.pin_write(\n    mtcars,\n    name=\"mtcars2\",\n    type=\"csv\",\n    description = \"Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).\",\n    metadata = {\n        \"source\": \"Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.\"\n    }\n)\n\nWriting pin:\nName: 'mtcars2'\nVersion: 20230725T210628Z-3b134\n\n\nMeta(title='mtcars2: a pinned 32 x 11 DataFrame', description='Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).', created='20230725T210628Z', pin_hash='3b134bae183b50c9', file='mtcars2.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 7, 25, 21, 6, 28, 891367), hash='3b134bae183b50c9'), tags=None, name='mtcars2', user={'source': 'Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.'}, local={})\n\n\n\nboard.pin_meta(\"mtcars\")\n\nMeta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20230725T210628Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 7, 25, 21, 6, 28), hash='3b134'), tags=None, name='mtcars', user={}, local={})\n\n\nWhile we’ll do our best to keep the automatically generated metadata consistent over time, I’d recommend manually capturing anything you really care about in metadata."
+  },
+  {
+    "objectID": "get_started.html#versioning",
+    "href": "get_started.html#versioning",
+    "title": "Get started with pins",
+    "section": "Versioning",
+    "text": "Versioning\nEvery pin_write will create a new version:\n\nboard2 = board_temp()\nboard2.pin_write([1,2,3,4,5], name = \"x\", type = \"json\")\nboard2.pin_write([1,2,3], name = \"x\", type = \"json\")\nboard2.pin_write([1,2], name = \"x\", type = \"json\")\nboard2.pin_versions(\"x\")\n\nWriting pin:\nName: 'x'\nVersion: 20230725T210628Z-2bc5d\nWriting pin:\nName: 'x'\nVersion: 20230725T210628Z-c24c0\nWriting pin:\nName: 'x'\nVersion: 20230725T210628Z-91d9a\n\n\n\n\n\n\n\n\n\ncreated\nhash\nversion\n\n\n\n\n0\n2023-07-25 21:06:28\n2bc5d\n20230725T210628Z-2bc5d\n\n\n1\n2023-07-25 21:06:28\n91d9a\n20230725T210628Z-91d9a\n\n\n2\n2023-07-25 21:06:28\nc24c0\n20230725T210628Z-c24c0\n\n\n\n\n\n\n\nBy default, pin_read will return the most recent version:\n\nboard2.pin_read(\"x\")\n\n[1, 2, 3]\n\n\nBut you can request an older version by supplying the version argument:\n\nversion = board2.pin_versions(\"x\").version[1]\nboard2.pin_read(\"x\", version = version)\n\n[1, 2]"
+  },
+  {
+    "objectID": "get_started.html#storing-models",
+    "href": "get_started.html#storing-models",
+    "title": "Get started with pins",
+    "section": "Storing models",
+    "text": "Storing models\n\n\n\n\n\n\nWarning\n\n\n\nThe examples in this section use joblib to read and write data. Joblib uses the pickle format, and pickle files are not secure. Only read pickle files you trust. In order to read pickle files, set the allow_pickle_read=True argument. Learn more about pickling.\n\n\nYou can write a pin with type=\"joblib\" to store arbitrary python objects, including fitted models from packages like scikit-learn.\nFor example, suppose you wanted to store a custom namedtuple object.\n\nfrom collections import namedtuple\n\nboard3 = board_temp(allow_pickle_read=True)\n\nCoords = namedtuple(\"Coords\", [\"x\", \"y\"])\ncoords = Coords(1, 2)\n\ncoords\n\nCoords(x=1, y=2)\n\n\nUsing type=\"joblib\" lets you store and read back the custom coords object.\n\nboard3.pin_write(coords, \"my_coords\", type=\"joblib\")\n\nboard3.pin_read(\"my_coords\")\n\nWriting pin:\nName: 'my_coords'\nVersion: 20230725T210629Z-d5e4a\n\n\nCoords(x=1, y=2)"
+  },
+  {
+    "objectID": "get_started.html#caching",
+    "href": "get_started.html#caching",
+    "title": "Get started with pins",
+    "section": "Caching",
+    "text": "Caching\nThe primary purpose of pins is to make it easy to share data. But pins is also designed to help you spend as little time as possible downloading data. pin_read and pin_download automatically cache remote pins: they maintain a local copy of the data (so it’s fast) but always check that it’s up-to-date (so your analysis doesn’t use stale data).\nWouldn’t it be nice if you could take advantage of this feature for any dataset on the internet? That’s the idea behind board_url; you can assemble your own board from datasets, wherever they live on the internet. For example, this code creates a board containing a single pin, penguins, that refers to some fun data I found on GitHub:\n\nmy_data = board_url(\"\", {\n  \"penguins\": \"https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins_raw.csv\"\n})\n\nYou can read this data by combining pin_download with read_csv from pandas:\n\nfname = my_data.pin_download(\"penguins\")\n\nfname\n\n['/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv']\n\n\n\nimport pandas as pd\n\npd.read_csv(fname[0]).head()\n\n\n\n\n\n\n\n\nstudyName\nSample Number\nSpecies\nRegion\nIsland\nStage\nIndividual ID\nClutch Completion\nDate Egg\nCulmen Length (mm)\nCulmen Depth (mm)\nFlipper Length (mm)\nBody Mass (g)\nSex\nDelta 15 N (o/oo)\nDelta 13 C (o/oo)\nComments\n\n\n\n\n0\nPAL0708\n1\nAdelie Penguin (Pygoscelis adeliae)\nAnvers\nTorgersen\nAdult, 1 Egg Stage\nN1A1\nYes\n2007-11-11\n39.1\n18.7\n181.0\n3750.0\nMALE\nNaN\nNaN\nNot enough blood for isotopes.\n\n\n1\nPAL0708\n2\nAdelie Penguin (Pygoscelis adeliae)\nAnvers\nTorgersen\nAdult, 1 Egg Stage\nN1A2\nYes\n2007-11-11\n39.5\n17.4\n186.0\n3800.0\nFEMALE\n8.94956\n-24.69454\nNaN\n\n\n2\nPAL0708\n3\nAdelie Penguin (Pygoscelis adeliae)\nAnvers\nTorgersen\nAdult, 1 Egg Stage\nN2A1\nYes\n2007-11-16\n40.3\n18.0\n195.0\n3250.0\nFEMALE\n8.36821\n-25.33302\nNaN\n\n\n3\nPAL0708\n4\nAdelie Penguin (Pygoscelis adeliae)\nAnvers\nTorgersen\nAdult, 1 Egg Stage\nN2A2\nYes\n2007-11-16\nNaN\nNaN\nNaN\nNaN\nNaN\nNaN\nNaN\nAdult not sampled.\n\n\n4\nPAL0708\n5\nAdelie Penguin (Pygoscelis adeliae)\nAnvers\nTorgersen\nAdult, 1 Egg Stage\nN3A1\nYes\n2007-11-16\n36.7\n19.3\n193.0\n3450.0\nFEMALE\n8.76651\n-25.32426\nNaN\n\n\n\n\n\n\n\n\nmy_data.pin_download(\"penguins\")\n\n['/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv']"
+  },
+  {
+    "objectID": "reference/board_s3.html",
+    "href": "reference/board_s3.html",
+    "title": "board_s3",
+    "section": "",
+    "text": "board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None)\nCreate a board to read and write pins from an AWS S3 bucket folder.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npath\n\nPath of form &lt;bucket_name&gt;/&lt;optional&gt;/&lt;subdirectory&gt;.\nrequired\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone\n\n\n\n\n\n\nThe s3 board uses the fsspec library (s3fs) to handle interacting with AWS S3. In order to authenticate, set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and (optionally) AWS_REGION environment variables.\nSee https://github.com/fsspec/s3fs"
+  },
+  {
+    "objectID": "reference/board_s3.html#parameters",
+    "href": "reference/board_s3.html#parameters",
+    "title": "board_s3",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\npath\n\nPath of form &lt;bucket_name&gt;/&lt;optional&gt;/&lt;subdirectory&gt;.\nrequired\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/board_s3.html#notes",
+    "href": "reference/board_s3.html#notes",
+    "title": "board_s3",
+    "section": "",
+    "text": "The s3 board uses the fsspec library (s3fs) to handle interacting with AWS S3. In order to authenticate, set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and (optionally) AWS_REGION environment variables.\nSee https://github.com/fsspec/s3fs"
+  },
+  {
+    "objectID": "reference/pin_meta.html",
+    "href": "reference/pin_meta.html",
+    "title": "pin_meta",
+    "section": "",
+    "text": "boards.BaseBoard.pin_meta(self, name, version=None)\nReturn metadata about a pin.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\n\nPin name.\nrequired\n\n\nversion\nstr\nA specific pin version to retrieve.\nNone\n\n\n\n\n\n\npin_versions"
+  },
+  {
+    "objectID": "reference/pin_meta.html#parameters",
+    "href": "reference/pin_meta.html#parameters",
+    "title": "pin_meta",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nname\n\nPin name.\nrequired\n\n\nversion\nstr\nA specific pin version to retrieve.\nNone"
+  },
+  {
+    "objectID": "reference/pin_meta.html#see-also",
+    "href": "reference/pin_meta.html#see-also",
+    "title": "pin_meta",
+    "section": "",
+    "text": "pin_versions"
+  },
+  {
+    "objectID": "reference/pin_versions.html",
+    "href": "reference/pin_versions.html",
+    "title": "pin_versions",
+    "section": "",
+    "text": "boards.BaseBoard.pin_versions(self, name, as_df=True)\nReturn available versions of a pin.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nPin name.\nrequired"
+  },
+  {
+    "objectID": "reference/pin_versions.html#parameters",
+    "href": "reference/pin_versions.html#parameters",
+    "title": "pin_versions",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nPin name.\nrequired"
+  },
+  {
+    "objectID": "reference/pin_version_delete.html",
+    "href": "reference/pin_version_delete.html",
+    "title": "pin_version_delete",
+    "section": "",
+    "text": "boards.BaseBoard.pin_version_delete(self, name, version)\nDelete a single version of a pin.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nPin name.\nrequired\n\n\nversion\nstr\nVersion identifier.\nrequired"
+  },
+  {
+    "objectID": "reference/pin_version_delete.html#parameters",
+    "href": "reference/pin_version_delete.html#parameters",
+    "title": "pin_version_delete",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nPin name.\nrequired\n\n\nversion\nstr\nVersion identifier.\nrequired"
+  },
+  {
+    "objectID": "reference/board_local.html",
+    "href": "reference/board_local.html",
+    "title": "board_local",
+    "section": "",
+    "text": "board_local(versioned=True, allow_pickle_read=None)\nUse a local folder as a board.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/board_local.html#parameters",
+    "href": "reference/board_local.html#parameters",
+    "title": "board_local",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/pin_upload.html",
+    "href": "reference/pin_upload.html",
+    "title": "pin_upload",
+    "section": "",
+    "text": "pin_upload\nboards.BaseBoard.pin_upload(self, paths, name=None, title=None, description=None, metadata=None)\nWrite a pin based on paths to one or more files.\nThis method simply uploads the files given, so they can be downloaded later using pin_download."
+  },
+  {
+    "objectID": "reference/pin_list.html",
+    "href": "reference/pin_list.html",
+    "title": "pin_list",
+    "section": "",
+    "text": "boards.BaseBoard.pin_list(self)\n\n\nThis is a low-level function; use pin_search to get more data about each pin in a convenient form."
+  },
+  {
+    "objectID": "reference/pin_list.html#notes",
+    "href": "reference/pin_list.html#notes",
+    "title": "pin_list",
+    "section": "",
+    "text": "This is a low-level function; use pin_search to get more data about each pin in a convenient form."
+  },
+  {
+    "objectID": "reference/board_folder.html",
+    "href": "reference/board_folder.html",
+    "title": "board_folder",
+    "section": "",
+    "text": "board_folder(path, versioned=True, allow_pickle_read=None)\nUse a local folder as a board.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npath\nstr\nThe folder that will hold the board.\nrequired\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/board_folder.html#parameters",
+    "href": "reference/board_folder.html#parameters",
+    "title": "board_folder",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\npath\nstr\nThe folder that will hold the board.\nrequired\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/pin_read.html",
+    "href": "reference/pin_read.html",
+    "title": "pin_read",
+    "section": "",
+    "text": "boards.BaseBoard.pin_read(self, name, version=None, hash=None)\nReturn the data stored in a pin.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\n\nPin name.\nrequired\n\n\nversion\ntyping.Optional[str]\nA specific pin version to retrieve.\nNone\n\n\nhash\ntyping.Optional[str]\nA hash used to validate the retrieved pin data. If specified, it is compared against the pin_hash field retrived by pin_meta.\nNone"
+  },
+  {
+    "objectID": "reference/pin_read.html#parameters",
+    "href": "reference/pin_read.html#parameters",
+    "title": "pin_read",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nname\n\nPin name.\nrequired\n\n\nversion\ntyping.Optional[str]\nA specific pin version to retrieve.\nNone\n\n\nhash\ntyping.Optional[str]\nA hash used to validate the retrieved pin data. If specified, it is compared against the pin_hash field retrived by pin_meta.\nNone"
+  },
+  {
+    "objectID": "reference/board_connect.html",
+    "href": "reference/board_connect.html",
+    "title": "board_connect",
+    "section": "",
+    "text": "board_connect(server_url=None, versioned=True, api_key=None, cache=DEFAULT, allow_pickle_read=None)\nCreate a board to read and write pins from a Posit Connect server.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nserver_url\n\nURL to the Posit Connect server.\nNone\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\napi_key\n\nAPI key for server. If not specified, pins will attempt to read it from CONNECT_API_KEY environment variable.\nNone\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone\n\n\n\n\n\n\nUse a server URL or set the CONNECT_SERVER environt variable to connect:\nserver_url = \"https://connect.rstudioservices.com\"\nboard = board_connect(server_url)\nIn order to read a public pin, use board_url() with the public pin URL:\n# for a pin at https://connect.rstudioservices.com/content/3004/\nboard = board_url(\n  \"https://connect.rstudioservices.com/content\",\n  {\"my_df\": \"3004/\"}\n)\nboard.pin_read(\"my_df\")\n\n\n\nboard_url : Board for connecting to individual pins, using a URL or path."
+  },
+  {
+    "objectID": "reference/board_connect.html#parameters",
+    "href": "reference/board_connect.html#parameters",
+    "title": "board_connect",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nserver_url\n\nURL to the Posit Connect server.\nNone\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\napi_key\n\nAPI key for server. If not specified, pins will attempt to read it from CONNECT_API_KEY environment variable.\nNone\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/board_connect.html#examples",
+    "href": "reference/board_connect.html#examples",
+    "title": "board_connect",
+    "section": "",
+    "text": "Use a server URL or set the CONNECT_SERVER environt variable to connect:\nserver_url = \"https://connect.rstudioservices.com\"\nboard = board_connect(server_url)\nIn order to read a public pin, use board_url() with the public pin URL:\n# for a pin at https://connect.rstudioservices.com/content/3004/\nboard = board_url(\n  \"https://connect.rstudioservices.com/content\",\n  {\"my_df\": \"3004/\"}\n)\nboard.pin_read(\"my_df\")"
+  },
+  {
+    "objectID": "reference/board_connect.html#see-also",
+    "href": "reference/board_connect.html#see-also",
+    "title": "board_connect",
+    "section": "",
+    "text": "board_url : Board for connecting to individual pins, using a URL or path."
+  },
+  {
+    "objectID": "reference/board_azure.html",
+    "href": "reference/board_azure.html",
+    "title": "board_azure",
+    "section": "",
+    "text": "board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None)\nCreate a board to read and write pins from an Azure Datalake Filesystem folder.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npath\n\nPath of form &lt;bucket_name&gt;/&lt;optional&gt;/&lt;subdirectory&gt;.\nrequired\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone\n\n\n\n\n\n\nThe azure board uses the fsspec library (adlfs) to handle interacting with Azure Datalake Filesystem (abfs). Currently, its default mode of authentication is supported.\nSee https://github.com/fsspec/adlfs"
+  },
+  {
+    "objectID": "reference/board_azure.html#parameters",
+    "href": "reference/board_azure.html#parameters",
+    "title": "board_azure",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\npath\n\nPath of form &lt;bucket_name&gt;/&lt;optional&gt;/&lt;subdirectory&gt;.\nrequired\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/board_azure.html#notes",
+    "href": "reference/board_azure.html#notes",
+    "title": "board_azure",
+    "section": "",
+    "text": "The azure board uses the fsspec library (adlfs) to handle interacting with Azure Datalake Filesystem (abfs). Currently, its default mode of authentication is supported.\nSee https://github.com/fsspec/adlfs"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "pins ",
+    "section": "",
+    "text": "The pins package publishes data, models, and other Python objects, making it easy to share them across projects and with your colleagues. You can pin objects to a variety of pin boards, including folders (to share on a networked drive or with services like DropBox), Posit Connect, Amazon S3, and Google Cloud Storage. Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.\nYou can use pins from R as well as Python. For example, you can use one language to read a pin created with the other. Learn more about pins for R."
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "pins ",
+    "section": "Installation",
+    "text": "Installation\nYou can install the released version of vetiver from PyPI:\npython -m pip install pins\nAnd the development version from GitHub with:\npython -m pip install git+https://github.com/rstudio/pins-python"
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "pins ",
+    "section": "Usage",
+    "text": "Usage\nTo use the pins package, you must first create a pin board. A good place to start is board_folder, which stores pins in a directory you specify. Here we’ll use a special version of board_folder called board_temp which creates a temporary board that’s automatically deleted when your Python script or notebook session ends. This is great for examples, but obviously you shouldn’t use it for real work!\n\nimport pins\nfrom pins.data import mtcars\n\nboard = pins.board_temp()\n\nYou can “pin” (save) data to a board with the pin_write method. It requires three arguments: an object, a name, and a pin type:\n\nboard.pin_write(mtcars.head(), \"mtcars\", type=\"csv\")\n\nWriting pin:\nName: 'mtcars'\nVersion: 20230725T210608Z-120a5\n\n\nMeta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20230725T210608Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 7, 25, 21, 6, 8, 200017), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})\n\n\nAbove, we saved the data as a CSV, but depending on what you’re saving and who else you want to read it, you might use the type argument to instead save it as a joblib, parquet, or json file.\nYou can later retrieve the pinned data with pin_read:\n\nboard.pin_read(\"mtcars\")\n\n\n\n\n\n\n\n\nmpg\ncyl\ndisp\nhp\ndrat\nwt\nqsec\nvs\nam\ngear\ncarb\n\n\n\n\n0\n21.0\n6\n160.0\n110\n3.90\n2.620\n16.46\n0\n1\n4\n4\n\n\n1\n21.0\n6\n160.0\n110\n3.90\n2.875\n17.02\n0\n1\n4\n4\n\n\n2\n22.8\n4\n108.0\n93\n3.85\n2.320\n18.61\n1\n1\n4\n1\n\n\n3\n21.4\n6\n258.0\n110\n3.08\n3.215\n19.44\n1\n0\n3\n1\n\n\n4\n18.7\n8\n360.0\n175\n3.15\n3.440\n17.02\n0\n0\n3\n2\n\n\n\n\n\n\n\nA board on your computer is good place to start, but the real power of pins comes when you use a board that’s shared with multiple people. To get started, you can use board_folder with a directory on a shared drive or in DropBox, or if you use Posit Connect you can use board_connect:\n# Note that this uses one approach to connecting,\n# the environment variables CONNECT_SERVER and CONNECT_API_KEY\n\nboard = pins.board_connect()\nboard.pin_write(tidy_sales_data, \"hadley/sales-summary\", type=\"csv\")\nThen, someone else (or an automated report) can read and use your pin:\nboard = board_connect()\nboard.pin_read(\"hadley/sales-summary\")\nYou can easily control who gets to access the data using the Posit Connect permissions pane.\nThe pins package also includes boards that allow you to share data on services like Amazon’s S3 (board_s3), Google Cloud Storage (board_gcs), and Azure blob storage (board_azure)."
+  },
+  {
+    "objectID": "index.html#contributing",
+    "href": "index.html#contributing",
+    "title": "pins ",
+    "section": "Contributing",
+    "text": "Contributing\n\nThis project is released with a Contributor Code of Conduct. By contributing to this project, you agree to abide by its terms.\nIf you think you have encountered a bug, please submit an issue."
+  },
+  {
+    "objectID": "reference/index.html",
+    "href": "reference/index.html",
+    "title": "Reference",
+    "section": "",
+    "text": "Functions to create a board object\n\n\n\nboard_folder\nUse a local folder as a board.\n\n\nboard_local\nUse a local folder as a board.\n\n\nboard_temp\nUse a local temporary directory as a board.\n\n\nboard_s3\nCreate a board to read and write pins from an AWS S3 bucket folder.\n\n\nboard_gcs\nCreate a board to read and write pins from a Google Cloud Storage bucket folder.\n\n\nboard_azure\nCreate a board to read and write pins from an Azure Datalake Filesystem folder.\n\n\nboard_connect\nCreate a board to read and write pins from a Posit Connect server.\n\n\nboard_url\nCreate a board from individual URLs.\n\n\nboard\nGeneral function for constructing a pins board.\n\n\n\n\n\n\nMethods to handle pins on your board\n\n\n\npin_read\nReturn the data stored in a pin.\n\n\npin_write\nWrite a pin object to the board.\n\n\npin_meta\nReturn metadata about a pin.\n\n\npin_download\nDownload the files contained in a pin.\n\n\npin_upload\nWrite a pin based on paths to one or more files.\n\n\npin_versions\nReturn available versions of a pin.\n\n\npin_list\nList names of all pins in a board.\n\n\npin_exists\nDetermine if a pin exists.\n\n\npin_version_delete\nDelete a single version of a pin.\n\n\npin_versions_prune\nDelete old versions of a pin.\n\n\npin_delete\nDelete a pin (or pins), removing it from the board.\n\n\npin_search\nSearch for pins."
+  },
+  {
+    "objectID": "reference/index.html#board-constructors",
+    "href": "reference/index.html#board-constructors",
+    "title": "Reference",
+    "section": "",
+    "text": "Functions to create a board object\n\n\n\nboard_folder\nUse a local folder as a board.\n\n\nboard_local\nUse a local folder as a board.\n\n\nboard_temp\nUse a local temporary directory as a board.\n\n\nboard_s3\nCreate a board to read and write pins from an AWS S3 bucket folder.\n\n\nboard_gcs\nCreate a board to read and write pins from a Google Cloud Storage bucket folder.\n\n\nboard_azure\nCreate a board to read and write pins from an Azure Datalake Filesystem folder.\n\n\nboard_connect\nCreate a board to read and write pins from a Posit Connect server.\n\n\nboard_url\nCreate a board from individual URLs.\n\n\nboard\nGeneral function for constructing a pins board."
+  },
+  {
+    "objectID": "reference/index.html#pin-methods",
+    "href": "reference/index.html#pin-methods",
+    "title": "Reference",
+    "section": "",
+    "text": "Methods to handle pins on your board\n\n\n\npin_read\nReturn the data stored in a pin.\n\n\npin_write\nWrite a pin object to the board.\n\n\npin_meta\nReturn metadata about a pin.\n\n\npin_download\nDownload the files contained in a pin.\n\n\npin_upload\nWrite a pin based on paths to one or more files.\n\n\npin_versions\nReturn available versions of a pin.\n\n\npin_list\nList names of all pins in a board.\n\n\npin_exists\nDetermine if a pin exists.\n\n\npin_version_delete\nDelete a single version of a pin.\n\n\npin_versions_prune\nDelete old versions of a pin.\n\n\npin_delete\nDelete a pin (or pins), removing it from the board.\n\n\npin_search\nSearch for pins."
+  },
+  {
+    "objectID": "reference/pin_search.html",
+    "href": "reference/pin_search.html",
+    "title": "pin_search",
+    "section": "",
+    "text": "boards.BaseBoard.pin_search(self, search=None, as_df=True)\nSearch for pins.\nThe underlying search method depends on the board implementation, but most will search for text in the pin name and title.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nsearch\n\nA string to search for. By default returns all pins.\nNone\n\n\nas_df\n\nWhether to return a pandas DataFrame.\nTrue"
+  },
+  {
+    "objectID": "reference/pin_search.html#parameters",
+    "href": "reference/pin_search.html#parameters",
+    "title": "pin_search",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nsearch\n\nA string to search for. By default returns all pins.\nNone\n\n\nas_df\n\nWhether to return a pandas DataFrame.\nTrue"
+  },
+  {
+    "objectID": "reference/pin_exists.html",
+    "href": "reference/pin_exists.html",
+    "title": "pin_exists",
+    "section": "",
+    "text": "boards.BaseBoard.pin_exists(self, name)\nDetermine if a pin exists.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nPin name.\nrequired"
+  },
+  {
+    "objectID": "reference/pin_exists.html#parameters",
+    "href": "reference/pin_exists.html#parameters",
+    "title": "pin_exists",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nPin name.\nrequired"
+  },
+  {
+    "objectID": "reference/pin_write.html",
+    "href": "reference/pin_write.html",
+    "title": "pin_write",
+    "section": "",
+    "text": "boards.BaseBoard.pin_write(self, x, name=None, type=None, title=None, description=None, metadata=None, versioned=None, created=None)\nWrite a pin object to the board.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nx\n\nAn object (e.g. a pandas DataFrame) to pin.\nrequired\n\n\nname\ntyping.Optional[str]\nPin name.\nNone\n\n\ntype\ntyping.Optional[str]\nFile type used to save x to disk. May be “csv”, “arrow”, “parquet”, “joblib”, “json”, or “file”.\nNone\n\n\ntitle\ntyping.Optional[str]\nA title for the pin; most important for shared boards so that others can understand what the pin contains. If omitted, a brief description of the contents will be automatically generated.\nNone\n\n\ndescription\ntyping.Optional[str]\nA detailed description of the pin contents.\nNone\n\n\nmetadata\ntyping.Optional[typing.Mapping]\nA dictionary containing additional metadata to store with the pin. This gets stored on the Meta.user field.\nNone\n\n\nversioned\ntyping.Optional[bool]\nWhether the pin should be versioned. Defaults to versioning.\nNone\n\n\ncreated\ntyping.Optional[datetime.datetime]\nA date to store in the Meta.created field. This field may be used as part of the pin version name.\nNone"
+  },
+  {
+    "objectID": "reference/pin_write.html#parameters",
+    "href": "reference/pin_write.html#parameters",
+    "title": "pin_write",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nx\n\nAn object (e.g. a pandas DataFrame) to pin.\nrequired\n\n\nname\ntyping.Optional[str]\nPin name.\nNone\n\n\ntype\ntyping.Optional[str]\nFile type used to save x to disk. May be “csv”, “arrow”, “parquet”, “joblib”, “json”, or “file”.\nNone\n\n\ntitle\ntyping.Optional[str]\nA title for the pin; most important for shared boards so that others can understand what the pin contains. If omitted, a brief description of the contents will be automatically generated.\nNone\n\n\ndescription\ntyping.Optional[str]\nA detailed description of the pin contents.\nNone\n\n\nmetadata\ntyping.Optional[typing.Mapping]\nA dictionary containing additional metadata to store with the pin. This gets stored on the Meta.user field.\nNone\n\n\nversioned\ntyping.Optional[bool]\nWhether the pin should be versioned. Defaults to versioning.\nNone\n\n\ncreated\ntyping.Optional[datetime.datetime]\nA date to store in the Meta.created field. This field may be used as part of the pin version name.\nNone"
+  },
+  {
+    "objectID": "reference/board.html",
+    "href": "reference/board.html",
+    "title": "board",
+    "section": "",
+    "text": "board(protocol, path='', versioned=True, cache=DEFAULT, allow_pickle_read=None, storage_options=None, board_factory=None)\nGeneral function for constructing a pins board.\nNote that this is a lower-level function. For most use cases, use a more specific function like board_local, or board_s3.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nprotocol\nstr\nFile system protocol. E.g. file, s3, github, rsc (for Posit Connect). See fsspec.filesystem for more information.\nrequired\n\n\npath\nstr\nA base path the board should use. For example, the directory the board lives in, or the path to its S3 bucket.\n''\n\n\nversioned\nbool\nWhether or not pins should be versioned.\nTrue\n\n\ncache\ntype[pins.constructors.DEFAULT] | None\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone\n\n\nstorage_options\ndict | None\nAdditional options passed to the underlying filesystem created by fsspec.filesystem.\nNone\n\n\nboard_factory\ncallable | type[pins.boards.BaseBoard] | None\nAn optional board class to use as the constructor.\nNone\n\n\n\n\n\n\nMany fsspec implementations of filesystems cache the searching of files, which may cause you to not see pins saved by other people. Disable this on these file systems with storage_options = {\"listings_expiry_time\": 0} on S3, or {\"cache_timeout\": 0} on Google Cloud Storage."
+  },
+  {
+    "objectID": "reference/board.html#parameters",
+    "href": "reference/board.html#parameters",
+    "title": "board",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nprotocol\nstr\nFile system protocol. E.g. file, s3, github, rsc (for Posit Connect). See fsspec.filesystem for more information.\nrequired\n\n\npath\nstr\nA base path the board should use. For example, the directory the board lives in, or the path to its S3 bucket.\n''\n\n\nversioned\nbool\nWhether or not pins should be versioned.\nTrue\n\n\ncache\ntype[pins.constructors.DEFAULT] | None\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone\n\n\nstorage_options\ndict | None\nAdditional options passed to the underlying filesystem created by fsspec.filesystem.\nNone\n\n\nboard_factory\ncallable | type[pins.boards.BaseBoard] | None\nAn optional board class to use as the constructor.\nNone"
+  },
+  {
+    "objectID": "reference/board.html#notes",
+    "href": "reference/board.html#notes",
+    "title": "board",
+    "section": "",
+    "text": "Many fsspec implementations of filesystems cache the searching of files, which may cause you to not see pins saved by other people. Disable this on these file systems with storage_options = {\"listings_expiry_time\": 0} on S3, or {\"cache_timeout\": 0} on Google Cloud Storage."
+  },
+  {
+    "objectID": "reference/pin_versions_prune.html",
+    "href": "reference/pin_versions_prune.html",
+    "title": "pin_versions_prune",
+    "section": "",
+    "text": "boards.BaseBoard.pin_versions_prune(self, name, n=None, days=None)\nDelete old versions of a pin.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\n\nPin name.\nrequired\n\n\nn\nint | None\nPick one of n or days to choose how many versions to keep. n = 3 will keep the last three versions; days = 14 will keep all the versions in the last 14 days.\nNone\n\n\ndays\nint | None\nPick one of n or days to choose how many versions to keep. n = 3 will keep the last three versions; days = 14 will keep all the versions in the last 14 days.\nNone\n\n\n\n\n\n\nRegardless of what values you set, pin_versions_prune will never delete the most recent version."
+  },
+  {
+    "objectID": "reference/pin_versions_prune.html#parameters",
+    "href": "reference/pin_versions_prune.html#parameters",
+    "title": "pin_versions_prune",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nname\n\nPin name.\nrequired\n\n\nn\nint | None\nPick one of n or days to choose how many versions to keep. n = 3 will keep the last three versions; days = 14 will keep all the versions in the last 14 days.\nNone\n\n\ndays\nint | None\nPick one of n or days to choose how many versions to keep. n = 3 will keep the last three versions; days = 14 will keep all the versions in the last 14 days.\nNone"
+  },
+  {
+    "objectID": "reference/pin_versions_prune.html#notes",
+    "href": "reference/pin_versions_prune.html#notes",
+    "title": "pin_versions_prune",
+    "section": "",
+    "text": "Regardless of what values you set, pin_versions_prune will never delete the most recent version."
+  },
+  {
+    "objectID": "reference/pin_delete.html",
+    "href": "reference/pin_delete.html",
+    "title": "pin_delete",
+    "section": "",
+    "text": "boards.BaseBoard.pin_delete(self, names)\nDelete a pin (or pins), removing it from the board.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nnames\nstr | typing.Sequence[str]\nThe names of one or more pins to delete.\nrequired"
+  },
+  {
+    "objectID": "reference/pin_delete.html#parameters",
+    "href": "reference/pin_delete.html#parameters",
+    "title": "pin_delete",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nnames\nstr | typing.Sequence[str]\nThe names of one or more pins to delete.\nrequired"
+  },
+  {
+    "objectID": "reference/board_url.html",
+    "href": "reference/board_url.html",
+    "title": "board_url",
+    "section": "",
+    "text": "board_url(path, pin_paths, cache=DEFAULT, allow_pickle_read=None)\nCreate a board from individual URLs.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npath\nstr\nA base URL to prefix all individual pin URLs with.\nrequired\n\n\npin_paths\ndict\nA dictionary mapping pin name to pin URL.\nrequired\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone\n\n\n\n\n\n\ngithub_raw = \"https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat\"\npin_paths = {\n  \"df_csv\": \"df_csv/20220214T163720Z-9bfad/\",\n  \"df_arrow\": \"df_arrow/20220214T163720Z-ad0c1/\",\n  }\nboard = board_url(github_raw, pin_paths)\nboard.pin_list()\n['df_csv', 'df_arrow']"
+  },
+  {
+    "objectID": "reference/board_url.html#parameters",
+    "href": "reference/board_url.html#parameters",
+    "title": "board_url",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\npath\nstr\nA base URL to prefix all individual pin URLs with.\nrequired\n\n\npin_paths\ndict\nA dictionary mapping pin name to pin URL.\nrequired\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/board_url.html#examples",
+    "href": "reference/board_url.html#examples",
+    "title": "board_url",
+    "section": "",
+    "text": "github_raw = \"https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat\"\npin_paths = {\n  \"df_csv\": \"df_csv/20220214T163720Z-9bfad/\",\n  \"df_arrow\": \"df_arrow/20220214T163720Z-ad0c1/\",\n  }\nboard = board_url(github_raw, pin_paths)\nboard.pin_list()\n['df_csv', 'df_arrow']"
+  },
+  {
+    "objectID": "reference/board_gcs.html",
+    "href": "reference/board_gcs.html",
+    "title": "board_gcs",
+    "section": "",
+    "text": "board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None)\nCreate a board to read and write pins from a Google Cloud Storage bucket folder.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npath\n\nPath of form &lt;bucket_name&gt;/&lt;optional&gt;/&lt;subdirectory&gt;.\nrequired\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone\n\n\n\n\n\n\nThe gcs board uses the fsspec library (gcsfs) to handle interacting with Google Cloud Storage. Currently, its default mode of authentication is supported.\nSee https://gcsfs.readthedocs.io/#credentials"
+  },
+  {
+    "objectID": "reference/board_gcs.html#parameters",
+    "href": "reference/board_gcs.html#parameters",
+    "title": "board_gcs",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\npath\n\nPath of form &lt;bucket_name&gt;/&lt;optional&gt;/&lt;subdirectory&gt;.\nrequired\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\ncache\n\nWhether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If None is passed, then no cache will be used. You can set the cache using the PINS_CACHE_DIR environment variable.\nDEFAULT\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/board_gcs.html#notes",
+    "href": "reference/board_gcs.html#notes",
+    "title": "board_gcs",
+    "section": "",
+    "text": "The gcs board uses the fsspec library (gcsfs) to handle interacting with Google Cloud Storage. Currently, its default mode of authentication is supported.\nSee https://gcsfs.readthedocs.io/#credentials"
+  },
+  {
+    "objectID": "reference/pin_download.html",
+    "href": "reference/pin_download.html",
+    "title": "pin_download",
+    "section": "",
+    "text": "boards.BaseBoard.pin_download(self, name, version=None, hash=None)\nDownload the files contained in a pin.\nThis method only downloads the files in a pin. In order to read and load pin data as an object (e.g. a pandas DataFrame), use pin_read.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\n\nPin name.\nrequired\n\n\nversion\n\nA specific pin version to retrieve.\nNone\n\n\nhash\n\nA hash used to validate the retrieved pin data. If specified, it is compared against the pin_hash field retrived by pin_meta.\nNone"
+  },
+  {
+    "objectID": "reference/pin_download.html#parameters",
+    "href": "reference/pin_download.html#parameters",
+    "title": "pin_download",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nname\n\nPin name.\nrequired\n\n\nversion\n\nA specific pin version to retrieve.\nNone\n\n\nhash\n\nA hash used to validate the retrieved pin data. If specified, it is compared against the pin_hash field retrived by pin_meta.\nNone"
+  },
+  {
+    "objectID": "reference/board_temp.html",
+    "href": "reference/board_temp.html",
+    "title": "board_temp",
+    "section": "",
+    "text": "board_temp(versioned=True, allow_pickle_read=None)\nUse a local temporary directory as a board.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "reference/board_temp.html#parameters",
+    "href": "reference/board_temp.html#parameters",
+    "title": "board_temp",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nversioned\n\nWhether or not pins should be versioned.\nTrue\n\n\nallow_pickle_read\n\nWhether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to True, or by setting the environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument takes precedence.\nNone"
+  },
+  {
+    "objectID": "customize-pins-metadata.html",
+    "href": "customize-pins-metadata.html",
+    "title": "Create consistent metadata for pins",
+    "section": "",
+    "text": "The metadata argument in pins is flexible and can hold any kind of metadata that you can formulate as a dict (convertable to JSON). In some situations, you may want to read and write with consistent customized metadata; you can create functions to wrap pin_write and pin_read for your particular use case.\nWe’ll begin by creating a temporary board for demonstration:\nimport pins\nimport pandas as pd\n\nfrom pprint import pprint\n\nboard = pins.board_temp()"
+  },
+  {
+    "objectID": "customize-pins-metadata.html#a-function-to-read-categoricals",
+    "href": "customize-pins-metadata.html#a-function-to-read-categoricals",
+    "title": "Create consistent metadata for pins",
+    "section": "A function to read categoricals",
+    "text": "A function to read categoricals\nIt’s possible to read this pin using the regular pin_read function, but the object we get is no longer a categorical!\n\nboard.pin_read(\"some-cat\")\n\n['a', 'a', 'b', 'c']\n\n\nHowever, notice that if we use pin_meta, the information we stored on categories is in the .user field.\n\npprint(\n    board.pin_meta(\"some-cat\")\n)\n\nMeta(title='some-cat: a pinned list object',\n     description=None,\n     created='20230725T210624Z',\n     pin_hash='6ce8eaa9de0dfd54',\n     file='some-cat.json',\n     file_size=20,\n     type='json',\n     api_version=1,\n     version=Version(created=datetime.datetime(2023, 7, 25, 21, 6, 24),\n                     hash='6ce8e'),\n     tags=None,\n     name='some-cat',\n     user={'categories': ['a', 'b', 'c']},\n     local={})\n\n\nThis enables us to write a special function for reading, to reconstruct the categorical, using the categories stashed in metadata:\n\ndef pin_read_cat_json(board, name, version=None, hash=None, **kwargs):\n  data = board.pin_read(name = name, version = version, hash = hash, **kwargs)\n  meta = board.pin_meta(name = name, version = version, **kwargs)\n  return pd.Categorical(data, categories=meta.user[\"categories\"])\n\npin_read_cat_json(board, \"some-cat\")\n\n['a', 'a', 'b', 'c']\nCategories (3, object): ['a', 'b', 'c']\n\n\nFor an example of how this approach is used in a real project, look at look at how the vetiver package wraps these functions to write and read model binaries as pins."
+  }
+]

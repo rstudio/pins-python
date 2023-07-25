@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>pins for Python</title>
+<title>pins for Python – board_connect</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,22 +57,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./favicon.ico" rel="icon">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../reference/board_url.html" rel="next">
+<link href="../reference/board_azure.html" rel="prev">
+<link href="../favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -93,9 +95,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -107,10 +106,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./logo.png" alt="" class="navbar-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../logo.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">pins for Python</span>
     </a>
   </div>
@@ -121,11 +120,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./get_started.html" rel="" target="">
+    <a class="nav-link" href="../get_started.html" rel="" target="">
  <span class="menu-text">Get started</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./reference/index.html" rel="" target="">
+    <a class="nav-link" href="../reference/index.html" rel="" target="">
  <span class="menu-text">Reference</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -134,7 +133,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-learn-more">    
         <li>
-    <a class="dropdown-item" href="./customize-pins-metadata.html" rel="" target="">
+    <a class="dropdown-item" href="../customize-pins-metadata.html" rel="" target="">
  <span class="dropdown-text">Create consistent metadata for pins</span></a>
   </li>  
         <li>
@@ -165,175 +164,82 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">pins <a href="https://rstudio.github.io/pins-python/"><img src="logo.png" align="right" height="138"></a></h1>
-</div>
 
 
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-</header>
-
-<p>The pins package publishes data, models, and other Python objects, making it easy to share them across projects and with your colleagues. You can pin objects to a variety of pin <em>boards</em>, including folders (to share on a networked drive or with services like DropBox), Posit Connect, Amazon S3, and Google Cloud Storage. Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.</p>
-<p>You can use pins from R as well as Python. For example, you can use one language to read a pin created with the other. Learn more about <a href="https://pins.rstudio.com">pins for R</a>.</p>
-<section id="installation" class="level2">
-<h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>You can install the released version of vetiver from <a href="https://pypi.org/project/pins/">PyPI</a>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install pins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>And the development version from <a href="https://github.com/rstudio/pins-python">GitHub</a> with:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install git+https://github.com/rstudio/pins-python</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="usage" class="level2">
-<h2 class="anchored" data-anchor-id="usage">Usage</h2>
-<p>To use the pins package, you must first create a pin board. A good place to start is <a href="./reference/board_folder.html#pins.board_folder"><code>board_folder</code></a>, which stores pins in a directory you specify. Here we’ll use a special version of <a href="./reference/board_folder.html#pins.board_folder"><code>board_folder</code></a> called <a href="./reference/board_temp.html#pins.board_temp"><code>board_temp</code></a> which creates a temporary board that’s automatically deleted when your Python script or notebook session ends. This is great for examples, but obviously you shouldn’t use it for real work!</p>
-<div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pins</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins.data <span class="im">import</span> mtcars</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> pins.board_temp()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>You can “pin” (save) data to a board with the <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> method. It requires three arguments: an object, a name, and a pin type:</p>
-<div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>board.pin_write(mtcars.head(), <span class="st">"mtcars"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Writing pin:
-Name: 'mtcars'
-Version: 20230725T210608Z-120a5</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20230725T210608Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 7, 25, 21, 6, 8, 200017), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})</code></pre>
-</div>
-</div>
-<p>Above, we saved the data as a CSV, but depending on what you’re saving and who else you want to read it, you might use the <code>type</code> argument to instead save it as a <code>joblib</code>, <code>parquet</code>, or <code>json</code> file.</p>
-<p>You can later retrieve the pinned data with <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a>:</p>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"mtcars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div>
-
-
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<section id="pins.board_connect" class="level1">
+<h1>board_connect</h1>
+<p><code>board_connect(server_url=None, versioned=True, api_key=None, cache=DEFAULT, allow_pickle_read=None)</code></p>
+<p>Create a board to read and write pins from a Posit Connect server.</p>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<table class="table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 1%">
+<col style="width: 90%">
+<col style="width: 2%">
+</colgroup>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">mpg</th>
-<th data-quarto-table-cell-role="th">cyl</th>
-<th data-quarto-table-cell-role="th">disp</th>
-<th data-quarto-table-cell-role="th">hp</th>
-<th data-quarto-table-cell-role="th">drat</th>
-<th data-quarto-table-cell-role="th">wt</th>
-<th data-quarto-table-cell-role="th">qsec</th>
-<th data-quarto-table-cell-role="th">vs</th>
-<th data-quarto-table-cell-role="th">am</th>
-<th data-quarto-table-cell-role="th">gear</th>
-<th data-quarto-table-cell-role="th">carb</th>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>21.0</td>
-<td>6</td>
-<td>160.0</td>
-<td>110</td>
-<td>3.90</td>
-<td>2.620</td>
-<td>16.46</td>
-<td>0</td>
-<td>1</td>
-<td>4</td>
-<td>4</td>
+<td><code>server_url</code></td>
+<td></td>
+<td>URL to the Posit Connect server.</td>
+<td><code>None</code></td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>21.0</td>
-<td>6</td>
-<td>160.0</td>
-<td>110</td>
-<td>3.90</td>
-<td>2.875</td>
-<td>17.02</td>
-<td>0</td>
-<td>1</td>
-<td>4</td>
-<td>4</td>
+<td><code>versioned</code></td>
+<td></td>
+<td>Whether or not pins should be versioned.</td>
+<td><code>True</code></td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>22.8</td>
-<td>4</td>
-<td>108.0</td>
-<td>93</td>
-<td>3.85</td>
-<td>2.320</td>
-<td>18.61</td>
-<td>1</td>
-<td>1</td>
-<td>4</td>
-<td>1</td>
+<td><code>api_key</code></td>
+<td></td>
+<td>API key for server. If not specified, pins will attempt to read it from <code>CONNECT_API_KEY</code> environment variable.</td>
+<td><code>None</code></td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>21.4</td>
-<td>6</td>
-<td>258.0</td>
-<td>110</td>
-<td>3.08</td>
-<td>3.215</td>
-<td>19.44</td>
-<td>1</td>
-<td>0</td>
-<td>3</td>
-<td>1</td>
+<td><code>cache</code></td>
+<td></td>
+<td>Whether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If <code>None</code> is passed, then no cache will be used. You can set the cache using the <code>PINS_CACHE_DIR</code> environment variable.</td>
+<td><code>DEFAULT</code></td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
-<td>18.7</td>
-<td>8</td>
-<td>360.0</td>
-<td>175</td>
-<td>3.15</td>
-<td>3.440</td>
-<td>17.02</td>
-<td>0</td>
-<td>0</td>
-<td>3</td>
-<td>2</td>
+<td><code>allow_pickle_read</code></td>
+<td></td>
+<td>Whether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to <code>True</code>, or by setting the environment variable <code>PINS_ALLOW_PICKLE_READ</code>. If both are set, this argument takes precedence.</td>
+<td><code>None</code></td>
 </tr>
 </tbody>
 </table>
-
-</div>
-</div>
-</div>
-<p>A board on your computer is good place to start, but the real power of pins comes when you use a board that’s shared with multiple people. To get started, you can use <a href="./reference/board_folder.html#pins.board_folder"><code>board_folder</code></a> with a directory on a shared drive or in DropBox, or if you use <a href="https://posit.co/products/enterprise/connect/">Posit Connect</a> you can use <a href="./reference/board_connect.html#pins.board_connect"><code>board_connect</code></a>:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that this uses one approach to connecting,</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the environment variables CONNECT_SERVER and CONNECT_API_KEY</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> pins.board_connect()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>board.pin_write(tidy_sales_data, <span class="st">"hadley/sales-summary"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Then, someone else (or an automated report) can read and use your pin:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect()</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"hadley/sales-summary"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can easily control who gets to access the data using the Posit Connect permissions pane.</p>
-<p>The pins package also includes boards that allow you to share data on services like Amazon’s S3 (<a href="./reference/board_s3.html#pins.board_s3"><code>board_s3</code></a>), Google Cloud Storage (<a href="./reference/board_gcs.html#pins.board_gcs"><code>board_gcs</code></a>), and Azure blob storage (<a href="./reference/board_azure.html#pins.board_azure"><code>board_azure</code></a>).</p>
 </section>
-<section id="contributing" class="level2">
-<h2 class="anchored" data-anchor-id="contributing">Contributing</h2>
-<ul>
-<li><p>This project is released with a <a href="https://www.contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p></li>
-<li><p>If you think you have encountered a bug, please <a href="https://github.com/rstudio/pins-python/issues">submit an issue</a>.</p></li>
-</ul>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<p>Use a server URL or set the <code>CONNECT_SERVER</code> environt variable to connect:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>server_url <span class="op">=</span> <span class="st">"https://connect.rstudioservices.com"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect(server_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In order to read a public pin, use <code>board_url()</code> with the public pin URL:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for a pin at https://connect.rstudioservices.com/content/3004/</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_url(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://connect.rstudioservices.com/content"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"my_df"</span>: <span class="st">"3004/"</span>}</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"my_df"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<p><a href="../reference/board_url.html#pins.board_url"><code>board_url</code></a> : Board for connecting to individual pins, using a URL or path.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -570,6 +476,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../reference/board_azure.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><code>board_azure</code></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../reference/board_url.html" class="pagination-link">
+        <span class="nav-page-text"><code>board_url</code></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

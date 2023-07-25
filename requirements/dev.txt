@@ -6,9 +6,9 @@
 #
 adlfs==2022.2.0
     # via pins (setup.cfg)
-aiobotocore==2.5.0
+aiobotocore==2.5.2
     # via s3fs
-aiohttp==3.8.4
+aiohttp==3.8.5
     # via
     #   adlfs
     #   aiobotocore
@@ -33,8 +33,9 @@ attrs==23.1.0
     #   aiohttp
     #   jsonschema
     #   pytest
+    #   referencing
     #   sphobjinv
-azure-core==1.27.1
+azure-core==1.28.0
     # via
     #   adlfs
     #   azure-identity
@@ -43,19 +44,19 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.13.0
     # via adlfs
-azure-storage-blob==12.16.0
+azure-storage-blob==12.17.0
     # via adlfs
 backcall==0.2.0
     # via ipython
-beartype==0.14.1
+beartype==0.15.0
     # via plum-dispatch
-botocore==1.29.76
+botocore==1.29.161
     # via aiobotocore
 build==0.10.0
     # via pip-tools
 cachetools==5.3.1
     # via google-auth
-certifi==2023.5.7
+certifi==2023.7.22
     # via
     #   requests
     #   sphobjinv
@@ -63,19 +64,21 @@ cffi==1.15.1
     # via
     #   azure-datalake-store
     #   cryptography
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via
     #   aiohttp
     #   requests
-click==8.1.3
-    # via pip-tools
+click==8.1.6
+    # via
+    #   pip-tools
+    #   quartodoc
 colorama==0.4.6
     # via griffe
 comm==0.1.3
     # via ipykernel
 cramjam==2.6.2
     # via fastparquet
-cryptography==41.0.1
+cryptography==41.0.2
     # via
     #   azure-identity
     #   azure-storage-blob
@@ -91,11 +94,11 @@ decorator==5.1.1
     #   ipython
 executing==1.2.0
     # via stack-data
-fastjsonschema==2.17.1
+fastjsonschema==2.18.0
     # via nbformat
-fastparquet==2023.4.0
+fastparquet==2023.7.0
     # via pins (setup.cfg)
-frozenlist==1.3.3
+frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
@@ -112,7 +115,7 @@ google-api-core==2.11.1
     # via
     #   google-cloud-core
     #   google-cloud-storage
-google-auth==2.20.0
+google-auth==2.22.0
     # via
     #   gcsfs
     #   google-api-core
@@ -121,9 +124,9 @@ google-auth==2.20.0
     #   google-cloud-storage
 google-auth-oauthlib==1.0.0
     # via gcsfs
-google-cloud-core==2.3.2
+google-cloud-core==2.3.3
     # via google-cloud-storage
-google-cloud-storage==2.9.0
+google-cloud-storage==2.10.0
     # via gcsfs
 google-crc32c==1.5.0
     # via google-resumable-media
@@ -131,25 +134,25 @@ google-resumable-media==2.5.0
     # via google-cloud-storage
 googleapis-common-protos==1.59.1
     # via google-api-core
-griffe==0.29.1
+griffe==0.32.3
     # via quartodoc
-humanize==4.6.0
+humanize==4.7.0
     # via pins (setup.cfg)
 idna==3.4
     # via
     #   requests
     #   yarl
-importlib-metadata==6.7.0
+importlib-metadata==6.8.0
     # via
     #   pins (setup.cfg)
     #   quartodoc
-importlib-resources==5.12.0
+importlib-resources==6.0.0
     # via
     #   pins (setup.cfg)
     #   quartodoc
 iniconfig==2.0.0
     # via pytest
-ipykernel==6.23.2
+ipykernel==6.25.0
     # via pins (setup.cfg)
 ipython==8.12.0
     # via
@@ -163,13 +166,15 @@ jinja2==3.1.2
     # via pins (setup.cfg)
 jmespath==1.0.1
     # via botocore
-joblib==1.2.0
+joblib==1.3.1
     # via pins (setup.cfg)
-jsonschema==4.17.3
+jsonschema==4.18.4
     # via
     #   nbformat
     #   sphobjinv
-jupyter-client==8.2.0
+jsonschema-specifications==2023.7.1
+    # via jsonschema
+jupyter-client==8.3.0
     # via
     #   ipykernel
     #   nbclient
@@ -189,7 +194,7 @@ matplotlib-inline==0.1.6
     # via
     #   ipykernel
     #   ipython
-msal==1.22.0
+msal==1.23.0
     # via
     #   azure-datalake-store
     #   azure-identity
@@ -202,13 +207,13 @@ multidict==6.0.4
     #   yarl
 nbclient==0.8.0
     # via pins (setup.cfg)
-nbformat==5.9.0
+nbformat==5.9.1
     # via
     #   nbclient
     #   pins (setup.cfg)
 nest-asyncio==1.5.6
     # via ipykernel
-numpy==1.25.0
+numpy==1.25.1
     # via
     #   fastparquet
     #   pandas
@@ -221,7 +226,7 @@ packaging==23.1
     #   fastparquet
     #   ipykernel
     #   pytest
-pandas==2.0.2
+pandas==2.0.3
     # via
     #   fastparquet
     #   pins (setup.cfg)
@@ -231,19 +236,19 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-pip-tools==6.13.0
+pip-tools==7.1.0
     # via pins (setup.cfg)
-platformdirs==3.7.0
+platformdirs==3.9.1
     # via jupyter-core
 pluggy==1.2.0
     # via pytest
-plum-dispatch==2.1.0
+plum-dispatch==2.1.1
     # via quartodoc
 portalocker==2.7.0
     # via msal-extensions
-prompt-toolkit==3.0.38
+prompt-toolkit==3.0.39
     # via ipython
-protobuf==4.23.3
+protobuf==4.23.4
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -265,16 +270,14 @@ pyasn1-modules==0.3.0
     # via google-auth
 pycparser==2.21
     # via cffi
-pydantic==1.10.9
+pydantic==1.10.12
     # via quartodoc
 pygments==2.15.1
     # via ipython
-pyjwt[crypto]==2.7.0
+pyjwt[crypto]==2.8.0
     # via msal
 pyproject-hooks==1.0.0
     # via build
-pyrsistent==0.19.3
-    # via jsonschema
 pytest==7.1.3
     # via
     #   pins (setup.cfg)
@@ -295,14 +298,20 @@ python-dotenv==1.0.0
     # via pytest-dotenv
 pytz==2023.3
     # via pandas
-pyyaml==6.0
-    # via pins (setup.cfg)
+pyyaml==6.0.1
+    # via
+    #   pins (setup.cfg)
+    #   quartodoc
 pyzmq==25.1.0
     # via
     #   ipykernel
     #   jupyter-client
-quartodoc==0.3.3
+quartodoc==0.4.1
     # via pins (setup.cfg)
+referencing==0.30.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 requests==2.31.0
     # via
     #   azure-core
@@ -315,6 +324,10 @@ requests==2.31.0
     #   requests-oauthlib
 requests-oauthlib==1.3.1
     # via google-auth-oauthlib
+rpds-py==0.9.2
+    # via
+    #   jsonschema
+    #   referencing
 rsa==4.9
     # via google-auth
 s3fs==2023.6.0
@@ -333,7 +346,7 @@ stack-data==0.6.2
     # via ipython
 tabulate==0.9.0
     # via quartodoc
-tblib==1.7.0
+tblib==2.0.0
     # via pytest-parallel
 tomli==2.0.1
     # via pytest
@@ -351,7 +364,7 @@ traitlets==5.9.0
     #   matplotlib-inline
     #   nbclient
     #   nbformat
-typing-extensions==4.6.3
+typing-extensions==4.7.1
     # via
     #   azure-core
     #   azure-storage-blob
@@ -364,9 +377,11 @@ urllib3==1.26.16
     #   botocore
     #   google-auth
     #   requests
+watchdog==3.0.0
+    # via quartodoc
 wcwidth==0.2.6
     # via prompt-toolkit
-wheel==0.40.0
+wheel==0.41.0
     # via pip-tools
 wrapt==1.15.0
     # via aiobotocore
@@ -374,7 +389,7 @@ xxhash==3.2.0
     # via pins (setup.cfg)
 yarl==1.9.2
     # via aiohttp
-zipp==3.15.0
+zipp==3.16.2
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

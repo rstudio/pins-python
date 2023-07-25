@@ -87,33 +87,33 @@ def board(
     """General function for constructing a pins board.
 
     Note that this is a lower-level function. For most use cases, use a more specific
-    function like board_local(...), or board_s3(...).
+    function like [](`~pins.board_local`), or [](`~pins.board_s3`).
 
     Parameters
     ----------
     protocol:
         File system protocol. E.g. file, s3, github, rsc (for Posit Connect).
-        See fsspec.filesystem for more information.
+        See `fsspec.filesystem` for more information.
     path:
         A base path the board should use. For example, the directory the board lives in,
-        or the path to its s3 bucket.
+        or the path to its S3 bucket.
     versioned:
         Whether or not pins should be versioned.
     cache:
         Whether to use a cache. By default, pins attempts to select the right cache
-        directory, given your filesystem. If None is passed, then no cache will be
-        used. You can set the cache using the PINS_CACHE_DIR environment variable.
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
     allow_pickle_read: optional, bool
         Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
         and can execute arbitrary code. Only allow reading pickles if you trust the
-        board to be able to execute python code on your computer.
+        board to execute Python code on your computer.
 
-        You can enable reading pickles by setting this to True, or by setting the
-        environment variable PINS_ALLOW_PICKLE_READ. If both are set, this argument
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
         takes precedence.
     storage_options:
         Additional options passed to the underlying filesystem created by
-        fsspec.filesystem.
+        `fsspec.filesystem`.
     board_factory:
         An optional board class to use as the constructor.
 
@@ -121,8 +121,8 @@ def board(
     -----
     Many fsspec implementations of filesystems cache the searching of files, which may
     cause you to not see pins saved by other people. Disable this on these file systems
-    with `storage_options = {"listings_expiry_time": 0}` on s3, or `{"cache_timeout": 0}`
-    on google cloud storage.
+    with `storage_options = {"listings_expiry_time": 0}` on S3, or `{"cache_timeout": 0}`
+    on Google Cloud Storage.
 
     """
 
@@ -185,14 +185,22 @@ def board(
 
 
 def board_folder(path: str, versioned=True, allow_pickle_read=None):
-    """Create a pins board inside a folder.
+    """Use a local folder as a board.
 
     Parameters
     ----------
     path:
         The folder that will hold the board.
-    **kwargs:
-        Passed to the pins.board function.
+    versioned:
+        Whether or not pins should be versioned.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
     """
 
     return board(
@@ -201,12 +209,20 @@ def board_folder(path: str, versioned=True, allow_pickle_read=None):
 
 
 def board_temp(versioned=True, allow_pickle_read=None):
-    """Create a pins board in a temporary directory.
+    """Use a local temporary directory as a board.
 
     Parameters
     ----------
-    **kwargs:
-        Passed to the pins.board function.
+    versioned:
+        Whether or not pins should be versioned.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
     """
 
     tmp_dir = tempfile.TemporaryDirectory()
@@ -224,12 +240,20 @@ def board_temp(versioned=True, allow_pickle_read=None):
 
 
 def board_local(versioned=True, allow_pickle_read=None):
-    """Create a board in a system data directory.
+    """Use a local folder as a board.
 
     Parameters
     ----------
-    **kwargs:
-        Passed to the pins.board function.
+    versioned:
+        Whether or not pins should be versioned.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
     """
     path = get_data_dir()
 
@@ -247,20 +271,31 @@ def board_github(
     cache=DEFAULT,
     allow_pickle_read=None,
 ):
-    """Returns a github pin board.
+    """Create a board to read and write pins from GitHub.
 
     Parameters
     ----------
     org:
-        Name of the github org (e.g. user account).
+        Name of the GitHub org (e.g. user account).
     repo:
         Name of the repo.
     path:
-        A subfolder in the github repo holding the board.
+        A subfolder in the GitHub repo holding the board.
     token:
-        An optional github token.
-    **kwargs:
-        Passed to the pins.board function.
+        An optional GitHub token.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
+
 
     Notes
     -----
@@ -307,28 +342,43 @@ def board_urls(*args, **kwargs):
 
 
 def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None):
-    """Create a board from individual urls.
+    """Create a board from individual URLs.
 
     Parameters
     ----------
     path:
-        A base url to prefix all individual pin urls with.
+        A base URL to prefix all individual pin URLs with.
     pin_paths: Mapping
-        A dictionary mapping pin name to pin url .
-    **kwargs:
-        Passed to the pins.board function.
+        A dictionary mapping pin name to pin URL.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
 
-    Example
-    -------
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
 
-    >>> github_raw = "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat"
-    >>> pin_paths = {
-    ...     "df_csv": "df_csv/20220214T163720Z-9bfad/",
-    ...     "df_arrow": "df_arrow/20220214T163720Z-ad0c1/",
-    ... }
-    >>> board = board_url(github_raw, pin_paths)
-    >>> board.pin_list()
+
+    Examples
+    --------
+
+    ```python
+    github_raw = "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat"
+    pin_paths = {
+      "df_csv": "df_csv/20220214T163720Z-9bfad/",
+      "df_arrow": "df_arrow/20220214T163720Z-ad0c1/",
+      }
+    board = board_url(github_raw, pin_paths)
+    board.pin_list()
+    ```
+    ```
     ['df_csv', 'df_arrow']
+    ```
     """
 
     # TODO(compat): R pins' version is named board_url (no s)
@@ -356,41 +406,54 @@ def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None)
 def board_connect(
     server_url=None, versioned=True, api_key=None, cache=DEFAULT, allow_pickle_read=None
 ):
-    """Create a board to read and write pins from an Posit Connect instance.
+    """Create a board to read and write pins from a Posit Connect server.
 
     Parameters
     ----------
     server_url:
-        Url to the Posit Connect server.
+        URL to the Posit Connect server.
+    versioned:
+        Whether or not pins should be versioned.
     api_key:
         API key for server. If not specified, pins will attempt to read it from
-        CONNECT_API_KEY environment variable.
-    **kwargs:
-        Passed to the pins.board function.
+        `CONNECT_API_KEY` environment variable.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
+
 
     Examples
     --------
-    Use a server url or set the CONNECT_SERVER environt variable to connect:
+    Use a server URL or set the `CONNECT_SERVER` environt variable to connect:
 
-    ::
+    ```python
+    server_url = "https://connect.rstudioservices.com"
+    board = board_connect(server_url)
+    ```
 
-       server_url = "https://connect.rstudioservices.com"
-       board = board_connect(server_url)
+    In order to read a public pin, use `board_url()` with the public pin URL:
 
-    In order to read a public pin, use board_manual with the public pin url.
-
-    ::
-
-       # for a pin at https://connect.rstudioservices.com/content/3004/
-       board = board_url(
-           "https://connect.rstudioservices.com/content",
-           {"my_df": "3004/"}
-       )
-       board.pin_read("my_df")
+    ```python
+    # for a pin at https://connect.rstudioservices.com/content/3004/
+    board = board_url(
+      "https://connect.rstudioservices.com/content",
+      {"my_df": "3004/"}
+    )
+    board.pin_read("my_df")
+    ```
 
     See Also
     --------
-    board_url : board for connecting to individual pins, using a url or path.
+    [](`~pins.board_url`) : Board for connecting to individual pins, using a URL or path.
 
     """
 
@@ -415,17 +478,29 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     Parameters
     ----------
     path:
-        Path of form <bucket_name>/<optional>/<subdirectory>.
-    **kwargs:
-        Passed to the pins.board function.
+        Path of form `<bucket_name>/<optional>/<subdirectory>`.
+    versioned:
+        Whether or not pins should be versioned.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
 
     Notes
     -----
-    The s3 board uses the fsspec library (s3fs) to handle interacting with s3.
-    In order to authenticate, set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
-    and (optionally) AWS_REGION environment variables.
+    The s3 board uses the fsspec library (s3fs) to handle interacting with AWS S3.
+    In order to authenticate, set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
+    and (optionally) `AWS_REGION` environment variables.
 
-    See https://github.com/fsspec/s3fs
+    See <https://github.com/fsspec/s3fs>
 
     """
     # TODO: user should be able to specify storage options here?
@@ -435,22 +510,34 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
 
 
 def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
-    """Create a board to read and write pins from an Google Cloud Storage bucket folder.
+    """Create a board to read and write pins from a Google Cloud Storage bucket folder.
 
     Parameters
     ----------
     path:
-        Path of form <bucket_name>/<optional>/<subdirectory>.
-    **kwargs:
-        Passed to the pins.board function.
+        Path of form `<bucket_name>/<optional>/<subdirectory>`.
+    versioned:
+        Whether or not pins should be versioned.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
 
     Notes
     -----
     The gcs board uses the fsspec library (gcsfs) to handle interacting with
-    google cloud storage. Currently, its default mode of authentication
+    Google Cloud Storage. Currently, its default mode of authentication
     is supported.
 
-    See https://gcsfs.readthedocs.io/en/latest/#credentials
+    See <https://gcsfs.readthedocs.io/#credentials>
     """
 
     # GCSFS uses a different name for listings_expiry_time, and then
@@ -460,14 +547,26 @@ def board_gcs(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
 
 
 def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
-    """Create a board to read and write pins from an Google Cloud Storage bucket folder.
+    """Create a board to read and write pins from an Azure Datalake Filesystem folder.
 
     Parameters
     ----------
     path:
-        Path of form <bucket_name>/<optional>/<subdirectory>.
-    **kwargs:
-        Passed to the pins.board function.
+        Path of form `<bucket_name>/<optional>/<subdirectory>`.
+    versioned:
+        Whether or not pins should be versioned.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
 
     Notes
     -----
@@ -475,7 +574,7 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     Azure Datalake Filesystem (abfs). Currently, its default mode of authentication
     is supported.
 
-    See https://github.com/fsspec/adlfs
+    See <https://github.com/fsspec/adlfs>
     """
 
     opts = {"use_listings_cache": False}

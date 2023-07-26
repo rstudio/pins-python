@@ -79,20 +79,21 @@ jobs:
           no_proxy: "*"
 
   test-rsconnect:
-    name: "Test RSConnect"
+    name: "Test Posit Connect"
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.head.repo.fork }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: "3.10"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements/dev.txt
           python -m pip install -e .[test]
-      - name: run RStudio Connect
+
+      - name: run Posit Connect
         run: |
           docker-compose up --build -d
           make dev
@@ -130,9 +131,8 @@ jobs:
     name: "Build Docs"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
       - name: Install dependencies
@@ -140,10 +140,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements/dev.txt
           python -m pip install -e .
-          ipython kernel install --name "venv-pins-python" --user
-      - uses: r-lib/actions/setup-pandoc@v1
-        with:
-          pandoc-version: '2.17.0.1'
+          python -m ipykernel install --user
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
       - name: Build docs
         run: |
           make docs-build
@@ -151,7 +151,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: docs-html
-          path: docs/_build/html/
+          path: docs-quarto/_site
 
   preview-docs:
     name: "Preview Docs:"
@@ -163,7 +163,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: docs-html
-          path: docs-html
+          path: docs-quarto/_site
 
       # Determine the release name ---
 
@@ -193,7 +193,7 @@ jobs:
         run: |
           npm install -g netlify-cli
           # push main branch to production, others to preview --
-          netlify deploy --dir=docs-html --alias="${ALIAS}"
+          netlify deploy --dir=docs-quarto/_site --alias="${ALIAS}"
 
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -222,11 +222,11 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: docs-html
-          path: docs-html
+          path: docs-quarto/_site
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs-html
+          publish_dir: docs-quarto/_site
 
   release-pypi:
     name: "Release to pypi"

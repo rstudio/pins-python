@@ -127,7 +127,7 @@ class BaseBoard:
 
         See Also
         --------
-        BaseBoard.pin_versions
+        [](`~pins.boards.BaseBoard.pin_versions`)
 
         """
 
@@ -173,7 +173,7 @@ class BaseBoard:
 
         Notes
         -----
-        This is a low-level function; use pin_search() to get more data about
+        This is a low-level function; use [](`~pins.boards.BaseBoard.pin_search`) to get more data about
         each pin in a convenient form.
         """
 
@@ -205,7 +205,7 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the ``pin_hash`` field retrived by ``pin_meta()``.
+            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
 
         """
         meta = self.pin_fetch(name, version)
@@ -245,7 +245,7 @@ class BaseBoard:
         name:
             Pin name.
         type:
-            File type used to save ``x`` to disk. May be "csv", "arrow", "parquet",
+            File type used to save `x` to disk. May be "csv", "arrow", "parquet",
             "joblib", "json", or "file".
         title:
             A title for the pin; most important for shared boards so that others
@@ -326,11 +326,12 @@ class BaseBoard:
 
         return meta
 
+
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
         """Download the files contained in a pin.
 
         This method only downloads the files in a pin. In order to read and load
-        pin data as an object (e.g. a pandas DataFrame), use ``pin_read()``.
+        pin data as an object (e.g. a pandas DataFrame), use [](`~pins.boards.BaseBoard.pin_read`).
 
         Parameters
         ----------
@@ -340,7 +341,7 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the ``pin_hash`` field retrived by ``pin_meta()``.
+            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
 
         """
 
@@ -366,10 +367,10 @@ class BaseBoard:
         return [Path(fname).absolute()]
 
     def pin_upload(self, paths, name=None, title=None, description=None, metadata=None):
-        """TODO: Write a pin based on paths to one or more files.
+        """Write a pin based on paths to one or more files.
 
         This method simply uploads the files given, so they can be downloaded later
-        using ``pin_download()``.
+        using [](`~pins.boards.BaseBoard.pin_download`).
         """
 
         return self.pin_write(
@@ -407,13 +408,13 @@ class BaseBoard:
         name:
             Pin name.
         n, days:
-            Pick one of n or days to choose how many versions to keep. n = 3 will
-            keep the last three versions, days = 14 will keep all the versions in
+            Pick one of `n` or `days` to choose how many versions to keep. `n = 3` will
+            keep the last three versions; `days = 14` will keep all the versions in
             the last 14 days.
 
         Notes
         -----
-        Regardless of what values you set, pin_versions_prune() will never delete
+        Regardless of what values you set, `pin_versions_prune` will never delete
         the most recent version.
 
         """
@@ -664,7 +665,7 @@ class BaseBoard:
 
 
 class BoardManual(BaseBoard):
-    """Simple board that accepts a dictionary of form pin_name: path.
+    """Simple board that accepts a dictionary of form `pin_name: path`.
 
     Examples
     --------

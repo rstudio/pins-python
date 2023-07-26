@@ -157,6 +157,11 @@ def test_board_pin_download_no_cache_error(board, tmp_path):
     assert meta.type == "file"
     assert meta.name == "cool_pin"
 
+    # file boards work okay, since the board directory itself is the cache
+    if board.fs.protocol == "file":
+        pytest.skip()
+
+    # uncached boards should fail, since nowhere to store the download
     with pytest.raises(PinsError):
         (pin_path,) = board.pin_download("cool_pin")
 

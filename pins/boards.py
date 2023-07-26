@@ -14,7 +14,7 @@ from typing import Sequence, Optional, Mapping
 from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
-from .drivers import load_data, save_data, default_title
+from .drivers import load_data, save_data, load_file, default_title
 from .utils import inform, warn_deprecated, ExtendMethodDoc
 from .config import get_allow_rsc_short_name
 
@@ -326,8 +326,8 @@ class BaseBoard:
 
         return meta
 
-    def pin_download(self, name, version=None, hash=None):
-        """TODO: Download the files contained in a pin.
+    def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
+        """Download the files contained in a pin.
 
         This method only downloads the files in a pin. In order to read and load
         pin data as an object (e.g. a pandas DataFrame), use ``pin_read()``.
@@ -342,9 +342,28 @@ class BaseBoard:
             A hash used to validate the retrieved pin data. If specified, it is
             compared against the ``pin_hash`` field retrived by ``pin_meta()``.
 
-
         """
-        raise NotImplementedError()
+
+        meta = self.pin_fetch(name, version)
+
+        if hash is not None:
+            raise NotImplementedError("TODO: validate hash")
+
+        pin_name = self.path_to_pin(name)
+
+        # TODO: raise for multiple files
+        # fetch file
+        f = load_file(
+            meta, self.fs, self.construct_path([pin_name, meta.version.version])
+        )
+
+        # could also check whether f isinstance of PinCache
+        fname = getattr(f, "name", None)
+
+        if fname is None:
+            raise PinsError("pin_download requires a cache.")
+
+        return [Path(fname).absolute()]
 
     def pin_upload(self, paths, name=None, title=None, description=None, metadata=None):
         """TODO: Write a pin based on paths to one or more files.
@@ -352,10 +371,15 @@ class BaseBoard:
         This method simply uploads the files given, so they can be downloaded later
         using ``pin_download()``.
         """
-        # TODO(question): why does this method exist? Isn't it equiv to a user
-        # doing this?: pin_write(board, c("filea.txt", "fileb.txt"), type="file")
-        # pin_download makes since, because it will download *regardless of type*
-        raise NotImplementedError()
+
+        return self.pin_write(
+            paths,
+            name,
+            type="file",
+            title=title,
+            description=description,
+            metadata=metadata,
+        )
 
     def pin_version_delete(self, name: str, version: str):
         """Delete a single version of a pin.
@@ -716,8 +740,15 @@ class BoardManual(BaseBoard):
         meta = self.pin_meta(name, version)
 
         if isinstance(meta, MetaRaw):
+            f = load_file(meta, self.fs, None)
 
-            return self._load_data(meta, None)
+            # could also check whether f isinstance of PinCache
+            fname = getattr(f, "name", None)
+
+            if fname is None:
+                raise PinsError("pin_download requires a cache.")
+
+            return [Path(fname).absolute()]
 
         raise NotImplementedError(
             "TODO: pin_download currently can only read a url to a single file."

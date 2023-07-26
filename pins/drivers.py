@@ -23,33 +23,7 @@ def _assert_is_pandas_df(x):
         )
 
 
-def load_data(
-    meta: Meta,
-    fs,
-    path_to_version: "str | None" = None,
-    allow_pickle_read: "bool | None" = None,
-):
-    """Return loaded data, based on meta type.
-    Parameters
-    ----------
-    meta: Meta
-        Information about the stored data (e.g. its type).
-    fs: IFileSystem
-        An abstract filesystem with a method to .open() files.
-    path_to_version:
-        A filepath used as the parent directory the data to-be-loaded lives in.
-    """
-    # TODO: extandable loading with deferred importing
-    if meta.type in UNSAFE_TYPES and not get_allow_pickle_read(allow_pickle_read):
-        raise PinsInsecureReadError(
-            f"Reading pin type {meta.type} involves reading a pickle file, so is NOT secure."
-            f"Set the allow_pickle_read=True when creating the board, or the "
-            f"{PINS_ENV_INSECURE_READ}=1 environment variable.\n"
-            "See:\n"
-            "  * https://docs.python.org/3/library/pickle.html \n"
-            "  * https://scikit-learn.org/stable/modules/model_persistence.html#security-maintainability-limitations"
-        )
-
+def load_path(meta, path_to_version):
     # Check that only a single file name was given
     fnames = [meta.file] if isinstance(meta.file, str) else meta.file
     if len(fnames) > 1 and type in REQUIRES_SINGLE_FILE:
@@ -67,48 +41,83 @@ def load_data(
     if path_to_version is not None:
         path_to_file = f"{path_to_version}/{target_fname}"
     else:
+        # BoardUrl doesn't have versions, and the file is the full url
         path_to_file = target_fname
 
-    # type handling -----------------------------------------------------------
+    return path_to_file
 
-    if meta.type == "csv":
-        import pandas as pd
 
-        return pd.read_csv(fs.open(path_to_file))
+def load_file(meta: Meta, fs, path_to_version):
+    return fs.open(load_path(meta, path_to_version))
 
-    elif meta.type == "arrow":
-        import pandas as pd
 
-        return pd.read_feather(fs.open(path_to_file))
+def load_data(
+    meta: Meta,
+    fs,
+    path_to_version: "str | None" = None,
+    allow_pickle_read: "bool | None" = None,
+):
+    """Return loaded data, based on meta type.
+    Parameters
+    ----------
+    meta: Meta
+        Information about the stored data (e.g. its type).
+    fs: IFileSystem
+        An abstract filesystem with a method to .open() files.
+    path_to_version:
+        A filepath used as the parent directory the data to-be-loaded lives in.
+    """
 
-    elif meta.type == "feather":
-        import pandas as pd
+    # TODO: extandable loading with deferred importing
+    if meta.type in UNSAFE_TYPES and not get_allow_pickle_read(allow_pickle_read):
+        raise PinsInsecureReadError(
+            f"Reading pin type {meta.type} involves reading a pickle file, so is NOT secure."
+            f"Set the allow_pickle_read=True when creating the board, or the "
+            f"{PINS_ENV_INSECURE_READ}=1 environment variable.\n"
+            "See:\n"
+            "  * https://docs.python.org/3/library/pickle.html \n"
+            "  * https://scikit-learn.org/stable/modules/model_persistence.html#security-maintainability-limitations"
+        )
 
-        return pd.read_feather(fs.open(path_to_file))
+    with load_file(meta, fs, path_to_version) as f:
+        if meta.type == "csv":
+            import pandas as pd
 
-    elif meta.type == "parquet":
-        import pandas as pd
+            return pd.read_csv(f)
 
-        return pd.read_parquet(fs.open(path_to_file))
+        elif meta.type == "arrow":
+            import pandas as pd
 
-    elif meta.type == "table":
-        import pandas as pd
+            return pd.read_feather(f)
 
-        return pd.read_csv(fs.open(path_to_file))
+        elif meta.type == "feather":
+            import pandas as pd
 
-    elif meta.type == "joblib":
-        import joblib
+            return pd.read_feather(f)
 
-        return joblib.load(fs.open(path_to_file))
+        elif meta.type == "parquet":
+            import pandas as pd
 
-    elif meta.type == "file":
-        # TODO: update to handle multiple files
-        return [str(Path(fs.open(path_to_file).name).absolute())]
+            return pd.read_parquet(f)
 
-    elif meta.type == "json":
-        import json
+        elif meta.type == "table":
+            import pandas as pd
 
-        return json.load(fs.open(path_to_file))
+            return pd.read_csv(f)
+
+        elif meta.type == "joblib":
+            import joblib
+
+            return joblib.load(f)
+
+        elif meta.type == "json":
+            import json
+
+            return json.load(f)
+
+        # elif meta.type == "file":
+        #    # TODO: update to handle multiple files
+        #    return [str(Path(f.name).absolute())]
 
     raise NotImplementedError(f"No driver for type {meta.type}")
 

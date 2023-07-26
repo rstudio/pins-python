@@ -326,7 +326,6 @@ class BaseBoard:
 
         return meta
 
-
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
         """Download the files contained in a pin.
 

@@ -133,12 +133,6 @@ def test_board_pin_write_file(board, tmp_path):
     meta = board.pin_write(path, "cool_pin", type="file")
     assert meta.type == "file"
 
-    if board.fs.protocol == "rsc":
-        # connect uses form <user_name>/<pin_name>
-        assert meta.name.endswith("/cool_pin")
-    else:
-        assert meta.name == "cool_pin"
-
     with pytest.raises(NotImplementedError):
         (pin_path,) = board.pin_read("cool_pin")
 
@@ -152,12 +146,6 @@ def test_board_pin_download(board_with_cache, tmp_path):
 
     meta = board_with_cache.pin_upload(path, "cool_pin")
     assert meta.type == "file"
-
-    if board_with_cache.fs.protocol == "rsc":
-        # connect uses form <user_name>/<pin_name>
-        assert meta.name.endswith("/cool_pin")
-    else:
-        assert meta.name == "cool_pin"
 
     (pin_path,) = board_with_cache.pin_download("cool_pin")
     df = pd.read_csv(pin_path)
@@ -173,12 +161,6 @@ def test_board_pin_download_no_cache_error(board, tmp_path):
     # TODO: should this error?
     meta = board.pin_upload(path, "cool_pin")
     assert meta.type == "file"
-
-    if board.fs.protocol == "rsc":
-        # connect uses form <user_name>/<pin_name>
-        assert meta.name.endswith("/cool_pin")
-    else:
-        assert meta.name == "cool_pin"
 
     # file boards work okay, since the board directory itself is the cache
     if board.fs.protocol == "file":

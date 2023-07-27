@@ -152,7 +152,6 @@ def test_board_pin_download(board_with_cache, tmp_path):
     assert df.x.tolist() == [1, 2, 3]
 
 
-@pytest.mark.xfail
 def test_board_pin_download_filename(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})

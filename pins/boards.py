@@ -271,6 +271,13 @@ class BaseBoard:
             )
             type = "arrow"
 
+        if type == "file":
+            # the file type makes the name of the data the exact filename, rather
+            # than the pin name + a suffix (e.g. my_pin.csv).
+            object_name = Path(x).with_suffix("").name
+        else:
+            object_name = None
+
         pin_name = self.path_to_pin(name)
 
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -285,6 +292,7 @@ class BaseBoard:
                 metadata,
                 versioned,
                 created,
+                object_name=object_name,
             )
 
             # move pin to destination ----
@@ -363,7 +371,7 @@ class BaseBoard:
         if fname is None:
             raise PinsError("pin_download requires a cache.")
 
-        return [Path(fname).absolute()]
+        return [str(Path(fname).absolute())]
 
     def pin_upload(self, paths, name=None, title=None, description=None, metadata=None):
         """Write a pin based on paths to one or more files.
@@ -577,6 +585,7 @@ class BaseBoard:
         metadata: Optional[Mapping] = None,
         versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
+        object_name: Optional[str] = None,
     ):
         if name is None:
             raise NotImplementedError("Name must be specified.")
@@ -594,7 +603,10 @@ class BaseBoard:
         # save all pin data to a temporary folder (including data.txt), so we
         # can fs.put it all straight onto the backend filesystem
 
-        p_obj = Path(pin_dir_path) / name
+        if object_name is None:
+            p_obj = Path(pin_dir_path) / name
+        else:
+            p_obj = Path(pin_dir_path) / object_name
 
         # file is saved locally in order to hash, calc size
         file_names = save_data(x, str(p_obj), type)
@@ -742,13 +754,13 @@ class BoardManual(BaseBoard):
         if isinstance(meta, MetaRaw):
             f = load_file(meta, self.fs, None)
 
-            # could also check whether f isinstance of PinCache
-            fname = getattr(f, "name", None)
+        # could also check whether f isinstance of PinCache
+        fname = getattr(f, "name", None)
 
-            if fname is None:
-                raise PinsError("pin_download requires a cache.")
+        if fname is None:
+            raise PinsError("pin_download requires a cache.")
 
-            return [Path(fname).absolute()]
+        return [Path(fname).absolute()]
 
         raise NotImplementedError(
             "TODO: pin_download currently can only read a url to a single file."

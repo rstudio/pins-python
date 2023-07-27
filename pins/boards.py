@@ -764,7 +764,7 @@ class BoardManual(BaseBoard):
         if fname is None:
             raise PinsError("pin_download requires a cache.")
 
-        return [Path(fname).absolute()]
+        return [str(Path(fname).absolute())]
 
     def construct_path(self, elements):
         # TODO: in practice every call to construct_path has the first element of

@@ -125,7 +125,7 @@ def test_board_pin_write_file(board, tmp_path):
     meta = board.pin_write(path, "cool_pin", type="file")
     assert meta.type == "file"
 
-    if board_with_cache.fs.protocol == "rsc":
+    if board.fs.protocol == "rsc":
         # connect uses form <user_name>/<pin_name>
         assert meta.name.endswith("/cool_pin")
     else:

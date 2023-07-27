@@ -164,7 +164,7 @@ def test_board_pin_download_filename(board_with_cache, tmp_path):
     assert meta.file == "data.csv"
 
     (pin_path,) = board_with_cache.pin_download("cool_pin")
-    assert pin_path.endswith("/data.csv")
+    assert Path(pin_path).name == "data.csv"
 
 
 def test_board_pin_download_no_cache_error(board, tmp_path):

@@ -152,6 +152,22 @@ def test_board_pin_download(board_with_cache, tmp_path):
     assert df.x.tolist() == [1, 2, 3]
 
 
+@pytest.mark.xfail
+def test_board_pin_download_filename(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.csv"
+    df.to_csv(path, index=False)
+
+    meta = board_with_cache.pin_upload(path, "cool_pin")
+
+    assert meta.file == "data.csv"
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
+    assert pin_path.endswith("/data.csv")
+
+
 def test_board_pin_download_no_cache_error(board, tmp_path):
     df = pd.DataFrame({"x": [1, 2, 3]})
 

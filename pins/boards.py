@@ -753,6 +753,10 @@ class BoardManual(BaseBoard):
 
         if isinstance(meta, MetaRaw):
             f = load_file(meta, self.fs, None)
+        else:
+            raise NotImplementedError(
+                "TODO: pin_download currently can only read a url to a single file."
+            )
 
         # could also check whether f isinstance of PinCache
         fname = getattr(f, "name", None)
@@ -761,10 +765,6 @@ class BoardManual(BaseBoard):
             raise PinsError("pin_download requires a cache.")
 
         return [Path(fname).absolute()]
-
-        raise NotImplementedError(
-            "TODO: pin_download currently can only read a url to a single file."
-        )
 
     def construct_path(self, elements):
         # TODO: in practice every call to construct_path has the first element of

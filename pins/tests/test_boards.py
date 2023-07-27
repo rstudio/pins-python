@@ -124,7 +124,12 @@ def test_board_pin_write_file(board, tmp_path):
     # TODO: should this error?
     meta = board.pin_write(path, "cool_pin", type="file")
     assert meta.type == "file"
-    assert meta.name == "cool_pin"
+
+    if board_with_cache.fs.protocol == "rsc":
+        # connect uses form <user_name>/<pin_name>
+        assert meta.name.endswith("/cool_pin")
+    else:
+        assert meta.name == "cool_pin"
 
     with pytest.raises(NotImplementedError):
         (pin_path,) = board.pin_read("cool_pin")

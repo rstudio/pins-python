@@ -225,7 +225,7 @@ class BaseBoard:
             meta, self.construct_path([pin_name, meta.version.version])
         )
 
-    def pin_write(
+    def _pin_store(
         self,
         x,
         name: Optional[str] = None,
@@ -236,32 +236,6 @@ class BaseBoard:
         versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
     ) -> Meta:
-        """Write a pin object to the board.
-
-        Parameters
-        ----------
-        x:
-            An object (e.g. a pandas DataFrame) to pin.
-        name:
-            Pin name.
-        type:
-            File type used to save `x` to disk. May be "csv", "arrow", "parquet",
-            "joblib", "json", or "file".
-        title:
-            A title for the pin; most important for shared boards so that others
-            can understand what the pin contains. If omitted, a brief description
-            of the contents will be automatically generated.
-        description:
-            A detailed description of the pin contents.
-        metadata:
-            A dictionary containing additional metadata to store with the pin.
-            This gets stored on the Meta.user field.
-        versioned:
-            Whether the pin should be versioned. Defaults to versioning.
-        created:
-            A date to store in the Meta.created field. This field may be used as
-            part of the pin version name.
-        """
 
         if type == "feather":
             warn_deprecated(
@@ -334,6 +308,54 @@ class BaseBoard:
 
         return meta
 
+    def pin_write(
+        self,
+        x,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        metadata: Optional[Mapping] = None,
+        versioned: Optional[bool] = None,
+        created: Optional[datetime] = None,
+    ) -> Meta:
+        """Write a pin object to the board.
+
+        Parameters
+        ----------
+        x:
+            An object (e.g. a pandas DataFrame) to pin.
+        name:
+            Pin name.
+        type:
+            File type used to save `x` to disk. May be "csv", "arrow", "parquet",
+            "joblib", "json", or "file".
+        title:
+            A title for the pin; most important for shared boards so that others
+            can understand what the pin contains. If omitted, a brief description
+            of the contents will be automatically generated.
+        description:
+            A detailed description of the pin contents.
+        metadata:
+            A dictionary containing additional metadata to store with the pin.
+            This gets stored on the Meta.user field.
+        versioned:
+            Whether the pin should be versioned. Defaults to versioning.
+        created:
+            A date to store in the Meta.created field. This field may be used as
+            part of the pin version name.
+        """
+
+        if type == "file":
+            raise NotImplementedError(
+                ".pin_write() does not support type='file'. "
+                "Use .pin_upload() to save a file as a pin."
+            )
+
+        return self._pin_store(
+            x, name, type, title, description, metadata, versioned, created
+        )
+
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
         """Download the files contained in a pin.
 
@@ -380,7 +402,7 @@ class BaseBoard:
         using [](`~pins.boards.BaseBoard.pin_download`).
         """
 
-        return self.pin_write(
+        return self._pin_store(
             paths,
             name,
             type="file",

@@ -123,18 +123,15 @@ def test_board_pin_write_feather_deprecated(board):
         board.pin_write(df, "cool_pin", type="feather")
 
 
-def test_board_pin_write_file(board, tmp_path):
+def test_board_pin_write_file_raises_error(board, tmp_path):
     df = pd.DataFrame({"x": [1, 2, 3]})
 
     path = tmp_path.joinpath("data.csv")
     df.to_csv(path, index=False)
 
     # TODO: should this error?
-    meta = board.pin_write(path, "cool_pin", type="file")
-    assert meta.type == "file"
-
     with pytest.raises(NotImplementedError):
-        (pin_path,) = board.pin_read("cool_pin")
+        board.pin_write(path, "cool_pin", type="file")
 
 
 def test_board_pin_download(board_with_cache, tmp_path):
@@ -150,6 +147,9 @@ def test_board_pin_download(board_with_cache, tmp_path):
     (pin_path,) = board_with_cache.pin_download("cool_pin")
     df = pd.read_csv(pin_path)
     assert df.x.tolist() == [1, 2, 3]
+
+    with pytest.raises(NotImplementedError):
+        board_with_cache.pin_read("cool_pin")
 
 
 def test_board_pin_download_filename(board_with_cache, tmp_path):

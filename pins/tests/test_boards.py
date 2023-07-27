@@ -140,7 +140,7 @@ def test_board_pin_download(board_with_cache, tmp_path):
     meta = board_with_cache.pin_upload(path, "cool_pin")
     assert meta.type == "file"
 
-    if board.fs.protocol == "rsc":
+    if board_with_cache.fs.protocol == "rsc":
         # connect uses form <user_name>/<pin_name>
         assert meta.name.endswith("/cool_pin")
     else:

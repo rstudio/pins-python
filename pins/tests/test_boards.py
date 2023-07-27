@@ -33,10 +33,18 @@ def board(backend):
 
 @fixture
 def board_with_cache(backend):
-    from pins.constructors import board as board_constructor
+    from pins.constructors import board as board_constructor, board_rsconnect
 
     board = backend.create_tmp_board()
-    board_with_cache = board_constructor(backend.fs_name, board.board)
+
+    if backend.fs_name == "rsc":
+        # The rsconnect board is special, in that it's slower to set up and tear down,
+        # so our test suite uses multiple rsconnect users in testing its API, and
+        # board behavior. As a result, we need to pass the credentials directly in.
+        server_url, api_key = board.fs.api.server_url, board.fs.api.api_key
+        board_with_cache = board_rsconnect(server_url=server_url, api_key=api_key)
+    else:
+        board_with_cache = board_constructor(backend.fs_name, board.board)
 
     yield board_with_cache
 

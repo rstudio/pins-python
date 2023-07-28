@@ -152,6 +152,38 @@ def test_board_pin_download(board_with_cache, tmp_path):
         board_with_cache.pin_read("cool_pin")
 
 
+def test_board_pin_download_filename_many_suffixes(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.a.b.csv"
+    df.to_csv(path, index=False)
+
+    board_with_cache.pin_upload(path, "cool_pin")
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
+    assert Path(pin_path).name == "data.a.b.csv"
+
+    df = pd.read_csv(pin_path)
+    assert df.x.tolist() == [1, 2, 3]
+
+
+def test_board_pin_download_filename_no_suffixes(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data"
+    df.to_csv(path, index=False)
+
+    board_with_cache.pin_upload(path, "cool_pin")
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
+    assert Path(pin_path).name == "data"
+
+    df = pd.read_csv(pin_path)
+    assert df.x.tolist() == [1, 2, 3]
+
+
 def test_board_pin_download_filename(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})

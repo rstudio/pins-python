@@ -144,3 +144,5 @@ _site/
 objects.json
 reference/
 src/
+
+/.luarc.json

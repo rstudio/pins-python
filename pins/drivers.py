@@ -115,9 +115,11 @@ def load_data(
 
             return json.load(f)
 
-        # elif meta.type == "file":
-        #    # TODO: update to handle multiple files
-        #    return [str(Path(f.name).absolute())]
+        elif meta.type == "file":
+            raise NotImplementedError(
+                "Methods like `.pin_read()` are not able to read 'file' type pins."
+                " Use `.pin_download()` to download the file."
+            )
 
     raise NotImplementedError(f"No driver for type {meta.type}")
 

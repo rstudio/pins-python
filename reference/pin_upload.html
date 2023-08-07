@@ -137,8 +137,59 @@ ul.task-list li input[type="checkbox"] {
 <p><code>boards.BaseBoard.pin_upload(self, paths, name=None, title=None, description=None, metadata=None)</code></p>
 <p>Write a pin based on paths to one or more files.</p>
 <p>This method simply uploads the files given, so they can be downloaded later using <a href="../reference/pin_download.html#pins.boards.BaseBoard.pin_download"><code>pin_download</code></a>.</p>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 8%">
+<col style="width: 80%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>paths</code></td>
+<td>str | list[str]</td>
+<td>Paths of files to upload. Currently, only uploading a single file is supported.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>name</code></td>
+<td></td>
+<td>Pin name.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td><code>title</code></td>
+<td></td>
+<td>A title for the pin; most important for shared boards so that others can understand what the pin contains. If omitted, a brief description of the contents will be automatically generated.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td><code>description</code></td>
+<td></td>
+<td>A detailed description of the pin contents.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td><code>metadata</code></td>
+<td></td>
+<td>A dictionary containing additional metadata to store with the pin. This gets stored on the Meta.user field.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

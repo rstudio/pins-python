@@ -400,11 +400,35 @@ class BaseBoard:
 
         return [str(Path(fname).absolute())]
 
-    def pin_upload(self, paths, name=None, title=None, description=None, metadata=None):
+    def pin_upload(
+        self,
+        paths: "str | list[str]",
+        name=None,
+        title=None,
+        description=None,
+        metadata=None,
+    ):
         """Write a pin based on paths to one or more files.
 
         This method simply uploads the files given, so they can be downloaded later
         using [](`~pins.boards.BaseBoard.pin_download`).
+
+        Parameters
+        ----------
+        paths:
+            Paths of files to upload. Currently, only uploading a single file
+            is supported.
+        name:
+            Pin name.
+        title:
+            A title for the pin; most important for shared boards so that others
+            can understand what the pin contains. If omitted, a brief description
+            of the contents will be automatically generated.
+        description:
+            A detailed description of the pin contents.
+        metadata:
+            A dictionary containing additional metadata to store with the pin.
+            This gets stored on the Meta.user field.
         """
 
         return self._pin_store(

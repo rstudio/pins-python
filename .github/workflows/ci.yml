@@ -151,7 +151,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: docs-html
-          path: docs-quarto/_site
+          path: docs/_site
 
   preview-docs:
     name: "Preview Docs:"
@@ -163,7 +163,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: docs-html
-          path: docs-quarto/_site
+          path: docs/_site
 
       # Determine the release name ---
 
@@ -193,7 +193,7 @@ jobs:
         run: |
           npm install -g netlify-cli
           # push main branch to production, others to preview --
-          netlify deploy --dir=docs-quarto/_site --alias="${ALIAS}"
+          netlify deploy --dir=docs/_site --alias="${ALIAS}"
 
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -222,11 +222,11 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: docs-html
-          path: docs-quarto/_site
+          path: docs/_site
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs-quarto/_site
+          publish_dir: docs/_site
 
   release-pypi:
     name: "Release to pypi"

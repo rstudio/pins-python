@@ -1,9 +1,0 @@
-# Table of contents
-# Learn more at https://jupyterbook.org/customize/toc.html
-
-format: jb-book
-root: intro
-chapters:
-- file: getting_started
-- file: articles/index.rst
-- file: api/index.rst

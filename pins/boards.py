@@ -248,6 +248,9 @@ class BaseBoard:
         if type == "file":
             # the file type makes the name of the data the exact filename, rather
             # than the pin name + a suffix (e.g. my_pin.csv).
+            if isinstance(x, (tuple, list)) and len(x) == 1:
+                x = x[0]
+
             _p = Path(x)
             _base_len = len(_p.name) - len("".join(_p.suffixes))
             object_name = _p.name[:_base_len]

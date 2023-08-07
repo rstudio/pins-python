@@ -218,6 +218,19 @@ def test_board_pin_download_no_cache_error(board, tmp_path):
         (pin_path,) = board.pin_download("cool_pin")
 
 
+def test_board_pin_upload_path_list(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.csv"
+    df.to_csv(path, index=False)
+
+    meta = board_with_cache.pin_upload([path], "cool_pin")
+    assert meta.type == "file"
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
+
+
 def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
     if board.fs.protocol != "rsc":
         pytest.skip()

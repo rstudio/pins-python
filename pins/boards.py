@@ -14,7 +14,7 @@ from typing import Sequence, Optional, Mapping
 from .versions import VersionRaw, guess_version
 from .meta import Meta, MetaRaw, MetaFactory
 from .errors import PinsError
-from .drivers import load_data, save_data, default_title
+from .drivers import load_data, save_data, load_file, default_title
 from .utils import inform, warn_deprecated, ExtendMethodDoc
 from .config import get_allow_rsc_short_name
 
@@ -225,7 +225,7 @@ class BaseBoard:
             meta, self.construct_path([pin_name, meta.version.version])
         )
 
-    def pin_write(
+    def _pin_store(
         self,
         x,
         name: Optional[str] = None,
@@ -236,32 +236,6 @@ class BaseBoard:
         versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
     ) -> Meta:
-        """Write a pin object to the board.
-
-        Parameters
-        ----------
-        x:
-            An object (e.g. a pandas DataFrame) to pin.
-        name:
-            Pin name.
-        type:
-            File type used to save `x` to disk. May be "csv", "arrow", "parquet",
-            "joblib", "json", or "file".
-        title:
-            A title for the pin; most important for shared boards so that others
-            can understand what the pin contains. If omitted, a brief description
-            of the contents will be automatically generated.
-        description:
-            A detailed description of the pin contents.
-        metadata:
-            A dictionary containing additional metadata to store with the pin.
-            This gets stored on the Meta.user field.
-        versioned:
-            Whether the pin should be versioned. Defaults to versioning.
-        created:
-            A date to store in the Meta.created field. This field may be used as
-            part of the pin version name.
-        """
 
         if type == "feather":
             warn_deprecated(
@@ -270,6 +244,18 @@ class BaseBoard:
                 ' Please switch to pin_write using type="arrow".'
             )
             type = "arrow"
+
+        if type == "file":
+            # the file type makes the name of the data the exact filename, rather
+            # than the pin name + a suffix (e.g. my_pin.csv).
+            if isinstance(x, (tuple, list)) and len(x) == 1:
+                x = x[0]
+
+            _p = Path(x)
+            _base_len = len(_p.name) - len("".join(_p.suffixes))
+            object_name = _p.name[:_base_len]
+        else:
+            object_name = None
 
         pin_name = self.path_to_pin(name)
 
@@ -285,6 +271,7 @@ class BaseBoard:
                 metadata,
                 versioned,
                 created,
+                object_name=object_name,
             )
 
             # move pin to destination ----
@@ -326,7 +313,55 @@ class BaseBoard:
 
         return meta
 
-    def pin_download(self, name, version=None, hash=None):
+    def pin_write(
+        self,
+        x,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        metadata: Optional[Mapping] = None,
+        versioned: Optional[bool] = None,
+        created: Optional[datetime] = None,
+    ) -> Meta:
+        """Write a pin object to the board.
+
+        Parameters
+        ----------
+        x:
+            An object (e.g. a pandas DataFrame) to pin.
+        name:
+            Pin name.
+        type:
+            File type used to save `x` to disk. May be "csv", "arrow", "parquet",
+            "joblib", or "json".
+        title:
+            A title for the pin; most important for shared boards so that others
+            can understand what the pin contains. If omitted, a brief description
+            of the contents will be automatically generated.
+        description:
+            A detailed description of the pin contents.
+        metadata:
+            A dictionary containing additional metadata to store with the pin.
+            This gets stored on the Meta.user field.
+        versioned:
+            Whether the pin should be versioned. Defaults to versioning.
+        created:
+            A date to store in the Meta.created field. This field may be used as
+            part of the pin version name.
+        """
+
+        if type == "file":
+            raise NotImplementedError(
+                ".pin_write() does not support type='file'. "
+                "Use .pin_upload() to save a file as a pin."
+            )
+
+        return self._pin_store(
+            x, name, type, title, description, metadata, versioned, created
+        )
+
+    def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
         """Download the files contained in a pin.
 
         This method only downloads the files in a pin. In order to read and load
@@ -342,20 +377,68 @@ class BaseBoard:
             A hash used to validate the retrieved pin data. If specified, it is
             compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
 
-
         """
-        raise NotImplementedError()
 
-    def pin_upload(self, paths, name=None, title=None, description=None, metadata=None):
+        meta = self.pin_fetch(name, version)
+
+        if hash is not None:
+            raise NotImplementedError("TODO: validate hash")
+
+        pin_name = self.path_to_pin(name)
+
+        # TODO: raise for multiple files
+        # fetch file
+        f = load_file(
+            meta, self.fs, self.construct_path([pin_name, meta.version.version])
+        )
+
+        # could also check whether f isinstance of PinCache
+        fname = getattr(f, "name", None)
+
+        if fname is None:
+            raise PinsError("pin_download requires a cache.")
+
+        return [str(Path(fname).absolute())]
+
+    def pin_upload(
+        self,
+        paths: "str | list[str]",
+        name=None,
+        title=None,
+        description=None,
+        metadata=None,
+    ):
         """Write a pin based on paths to one or more files.
 
         This method simply uploads the files given, so they can be downloaded later
         using [](`~pins.boards.BaseBoard.pin_download`).
+
+        Parameters
+        ----------
+        paths:
+            Paths of files to upload. Currently, only uploading a single file
+            is supported.
+        name:
+            Pin name.
+        title:
+            A title for the pin; most important for shared boards so that others
+            can understand what the pin contains. If omitted, a brief description
+            of the contents will be automatically generated.
+        description:
+            A detailed description of the pin contents.
+        metadata:
+            A dictionary containing additional metadata to store with the pin.
+            This gets stored on the Meta.user field.
         """
-        # TODO(question): why does this method exist? Isn't it equiv to a user
-        # doing this?: pin_write(board, c("filea.txt", "fileb.txt"), type="file")
-        # pin_download makes since, because it will download *regardless of type*
-        raise NotImplementedError()
+
+        return self._pin_store(
+            paths,
+            name,
+            type="file",
+            title=title,
+            description=description,
+            metadata=metadata,
+        )
 
     def pin_version_delete(self, name: str, version: str):
         """Delete a single version of a pin.
@@ -553,6 +636,7 @@ class BaseBoard:
         metadata: Optional[Mapping] = None,
         versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
+        object_name: Optional[str] = None,
     ):
         if name is None:
             raise NotImplementedError("Name must be specified.")
@@ -570,7 +654,10 @@ class BaseBoard:
         # save all pin data to a temporary folder (including data.txt), so we
         # can fs.put it all straight onto the backend filesystem
 
-        p_obj = Path(pin_dir_path) / name
+        if object_name is None:
+            p_obj = Path(pin_dir_path) / name
+        else:
+            p_obj = Path(pin_dir_path) / object_name
 
         # file is saved locally in order to hash, calc size
         file_names = save_data(x, str(p_obj), type)
@@ -716,12 +803,19 @@ class BoardManual(BaseBoard):
         meta = self.pin_meta(name, version)
 
         if isinstance(meta, MetaRaw):
+            f = load_file(meta, self.fs, None)
+        else:
+            raise NotImplementedError(
+                "TODO: pin_download currently can only read a url to a single file."
+            )
 
-            return self._load_data(meta, None)
+        # could also check whether f isinstance of PinCache
+        fname = getattr(f, "name", None)
 
-        raise NotImplementedError(
-            "TODO: pin_download currently can only read a url to a single file."
-        )
+        if fname is None:
+            raise PinsError("pin_download requires a cache.")
+
+        return [str(Path(fname).absolute())]
 
     def construct_path(self, elements):
         # TODO: in practice every call to construct_path has the first element of

@@ -31,6 +31,26 @@ def board(backend):
     backend.teardown()
 
 
+@fixture
+def board_with_cache(backend):
+    from pins.constructors import board as board_constructor, board_rsconnect
+
+    board = backend.create_tmp_board()
+
+    if backend.fs_name == "rsc":
+        # The rsconnect board is special, in that it's slower to set up and tear down,
+        # so our test suite uses multiple rsconnect users in testing its API, and
+        # board behavior. As a result, we need to pass the credentials directly in.
+        server_url, api_key = board.fs.api.server_url, board.fs.api.api_key
+        board_with_cache = board_rsconnect(server_url=server_url, api_key=api_key)
+    else:
+        board_with_cache = board_constructor(backend.fs_name, board.board)
+
+    yield board_with_cache
+
+    backend.teardown()
+
+
 # misc ========================================================================
 
 
@@ -101,6 +121,114 @@ def test_board_pin_write_feather_deprecated(board):
 
     with pytest.warns(DeprecationWarning):
         board.pin_write(df, "cool_pin", type="feather")
+
+
+def test_board_pin_write_file_raises_error(board, tmp_path):
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path.joinpath("data.csv")
+    df.to_csv(path, index=False)
+
+    # TODO: should this error?
+    with pytest.raises(NotImplementedError):
+        board.pin_write(path, "cool_pin", type="file")
+
+
+def test_board_pin_download(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.csv"
+    df.to_csv(path, index=False)
+
+    meta = board_with_cache.pin_upload(path, "cool_pin")
+    assert meta.type == "file"
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
+    df = pd.read_csv(pin_path)
+    assert df.x.tolist() == [1, 2, 3]
+
+    with pytest.raises(NotImplementedError):
+        board_with_cache.pin_read("cool_pin")
+
+
+def test_board_pin_download_filename_many_suffixes(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.a.b.csv"
+    df.to_csv(path, index=False)
+
+    board_with_cache.pin_upload(path, "cool_pin")
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
+    assert Path(pin_path).name == "data.a.b.csv"
+
+    df = pd.read_csv(pin_path)
+    assert df.x.tolist() == [1, 2, 3]
+
+
+def test_board_pin_download_filename_no_suffixes(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data"
+    df.to_csv(path, index=False)
+
+    board_with_cache.pin_upload(path, "cool_pin")
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
+    assert Path(pin_path).name == "data"
+
+    df = pd.read_csv(pin_path)
+    assert df.x.tolist() == [1, 2, 3]
+
+
+def test_board_pin_download_filename(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.csv"
+    df.to_csv(path, index=False)
+
+    meta = board_with_cache.pin_upload(path, "cool_pin")
+
+    assert meta.file == "data.csv"
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
+    assert Path(pin_path).name == "data.csv"
+
+
+def test_board_pin_download_no_cache_error(board, tmp_path):
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.csv"
+    df.to_csv(path, index=False)
+
+    # TODO: should this error?
+    meta = board.pin_upload(path, "cool_pin")
+    assert meta.type == "file"
+
+    # file boards work okay, since the board directory itself is the cache
+    if board.fs.protocol == "file":
+        pytest.skip()
+
+    # uncached boards should fail, since nowhere to store the download
+    with pytest.raises(PinsError):
+        (pin_path,) = board.pin_download("cool_pin")
+
+
+def test_board_pin_upload_path_list(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.csv"
+    df.to_csv(path, index=False)
+
+    meta = board_with_cache.pin_upload([path], "cool_pin")
+    assert meta.type == "file"
+
+    (pin_path,) = board_with_cache.pin_download("cool_pin")
 
 
 def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):

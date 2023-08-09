@@ -388,17 +388,16 @@ class BaseBoard:
 
         # TODO: raise for multiple files
         # fetch file
-        f = load_file(
+        with load_file(
             meta, self.fs, self.construct_path([pin_name, meta.version.version])
-        )
+        ) as f:
+            # could also check whether f isinstance of PinCache
+            fname = getattr(f, "name", None)
 
-        # could also check whether f isinstance of PinCache
-        fname = getattr(f, "name", None)
+            if fname is None:
+                raise PinsError("pin_download requires a cache.")
 
-        if fname is None:
-            raise PinsError("pin_download requires a cache.")
-
-        return [str(Path(fname).absolute())]
+            return [str(Path(fname).absolute())]
 
     def pin_upload(
         self,

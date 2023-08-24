@@ -29,8 +29,8 @@ website:
             target: _blank
     right:
       - icon: github
-        href: https://github.com/rstudio/vetiver-python
-        aria-label: Vetiver python GitHub
+        href: https://github.com/rstudio/pins-python
+        aria-label: Pins python GitHub
   sidebar:
     style: "floating"
     collapse-level: 1

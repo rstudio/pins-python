@@ -127,6 +127,9 @@ def test_constructor_board_url_file(tmp_cache, http_example_board_path):
 
     assert str(res[0]).endswith("df_csv.csv")
 
+    new_board = eval(c.board_deparse(board), c.__dict__)
+    assert new_board.pin_list() == board.pin_list()
+
 
 @pytest.mark.skip_on_github
 def test_constructor_board_github(tmp_cache, http_example_board_path, df_csv):
@@ -265,6 +268,16 @@ def test_board_constructor_folder(tmp_dir2, df):
 
 # Deparsing ===================================================================
 
+
+def test_board_deparse(board):
+    prot = board.fs.protocol
+
+    with rm_env("CONNECT_API_KEY"):
+        if prot == "rsc":
+            os.environ["CONNECT_API_KEY"] = board.fs.api.api_key
+
+        new_board = eval(c.board_deparse(board), c.__dict__)
+        new_board.pin_list()
 
 def test_board_deparse(board):
     prot = board.fs.protocol

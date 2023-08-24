@@ -278,13 +278,3 @@ def test_board_deparse(board):
 
         new_board = eval(c.board_deparse(board), c.__dict__)
         new_board.pin_list()
-
-def test_board_deparse(board):
-    prot = board.fs.protocol
-
-    with rm_env("CONNECT_API_KEY"):
-        if prot == "rsc":
-            os.environ["CONNECT_API_KEY"] = board.fs.api.api_key
-
-        new_board = eval(c.board_deparse(board), c.__dict__)
-        new_board.pin_list()

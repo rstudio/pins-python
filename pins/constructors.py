@@ -64,6 +64,8 @@ def board_deparse(board: BaseBoard):
         return f"board_azure({repr(board.board)}{allow_pickle})"
     elif prot == ("gcs", "gs"):
         return f"board_gcs({repr(board.board)}{allow_pickle})"
+    elif prot == "http":
+        return f"board_url({repr(board.board)}, {board.pin_paths}{allow_pickle})"
     else:
         raise NotImplementedError(
             f"board deparsing currently not supported for protocol: {prot}"

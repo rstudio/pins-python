@@ -67,8 +67,8 @@ class BaseBoard:
         self.fs = fs
         self.meta_factory = meta_factory
 
-        if versioned is False:
-            raise NotImplementedError()
+        # if versioned is False:
+        #     raise NotImplementedError()
 
         self.versioned = versioned
         self.allow_pickle_read = allow_pickle_read
@@ -93,6 +93,9 @@ class BaseBoard:
             Pin name.
 
         """
+        if self.versioned is False:
+            raise NotImplementedError()
+
         if not self.pin_exists(name):
             raise PinsError("Cannot check version, since pin %s does not exist" % name)
 
@@ -350,6 +353,9 @@ class BaseBoard:
             A date to store in the Meta.created field. This field may be used as
             part of the pin version name.
         """
+
+        if versioned is False:
+            raise NotImplementedError()
 
         if type == "file":
             raise NotImplementedError(

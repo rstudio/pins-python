@@ -399,7 +399,7 @@ def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None)
     return BoardManual(
         path,
         fs,
-        versioned=True,
+        versioned=False,
         allow_pickle_read=allow_pickle_read,
         pin_paths=pin_paths,
     )

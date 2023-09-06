@@ -350,7 +350,7 @@ class BaseBoard:
             part of the pin version name.
         """
 
-        if versioned is False:
+        if not self.versioned:
             raise NotImplementedError(
                 "Can only write pins with boards that support versioning."
             )

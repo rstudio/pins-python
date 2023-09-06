@@ -59,7 +59,7 @@ def construct_from_board(board):
 # copied from test_compat
 @pytest.mark.skip_on_github
 def test_constructor_board_url_data(tmp_cache, http_example_board_path, df_csv):
-    board = c.board_urls(
+    board = c.board_url(
         http_example_board_path,
         # could derive from example version path
         pin_paths={"df_csv": "df_csv/20220214T163720Z-9bfad/"},
@@ -77,13 +77,20 @@ def test_constructor_board_url_cache(tmp_cache, http_example_board_path, df_csv)
     # TODO: downloading a pin does not put files in the same directory, since
     # in this case we are hashing on the full url.
 
-    board = c.board_urls(
+    board = c.board_url(
         http_example_board_path,
         # could derive from example version path
         pin_paths={"df_csv": "df_csv/20220214T163718Z-eceac/"},
     )
 
     board.pin_read("df_csv")
+
+    # cannot read or view pin versions
+
+    with pytest.raises(NotImplementedError):
+        board.pin_write(df_csv)
+    with pytest.raises(NotImplementedError):
+        board.pin_versions("df_csv")
 
     # check cache ----
     http_dirs = list(tmp_cache.glob("http_*"))
@@ -107,7 +114,7 @@ def test_constructor_board_url_file(tmp_cache, http_example_board_path):
     # TODO: downloading a pin does not put files in the same directory, since
     # in this case we are hashing on the full url.
 
-    board = c.board_urls(
+    board = c.board_url(
         http_example_board_path,
         # could derive from example version path
         pin_paths={"df_csv": "df_csv/20220214T163718Z-eceac/df_csv.csv"},

@@ -66,10 +66,6 @@ class BaseBoard:
         self.board = str(board)
         self.fs = fs
         self.meta_factory = meta_factory
-
-        # if versioned is False:
-        #     raise NotImplementedError()
-
         self.versioned = versioned
         self.allow_pickle_read = allow_pickle_read
 
@@ -355,7 +351,9 @@ class BaseBoard:
         """
 
         if versioned is False:
-            raise NotImplementedError()
+            raise NotImplementedError(
+                "Can only write pins with boards that support versioning."
+            )
 
         if type == "file":
             raise NotImplementedError(

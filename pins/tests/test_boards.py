@@ -600,9 +600,8 @@ from pins.boards import BoardManual  # noqa
 
 
 def test_board_manual_http_file_download():
-    # TODO: change when repo is moved to RStudio
 
-    path = "https://raw.githubusercontent.com/machow/pins-python"
+    path = "https://raw.githubusercontent.com/rstudio/pins-python"
     license_path = "main/LICENSE"
 
     # use a simple cache, which automatically creates a temporary directory
@@ -630,7 +629,7 @@ def test_board_manual_pin_read():
     # see https://github.com/fsspec/filesystem_spec/issues/389
     fs = fsspec.filesystem("http", block_size=0)
     board = BoardManual(
-        "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat",
+        "https://raw.githubusercontent.com/rstudio/pins-python/main/pins/tests/pins-compat",
         fs,
         pin_paths={
             "df_csv": "df_csv/20220214T163718Z-eceac/",

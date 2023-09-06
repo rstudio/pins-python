@@ -370,7 +370,7 @@ def board_url(path: str, pin_paths: dict, cache=DEFAULT, allow_pickle_read=None)
     --------
 
     ```python
-    github_raw = "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat"
+    github_raw = "https://raw.githubusercontent.com/rstudio/pins-python/main/pins/tests/pins-compat"
     pin_paths = {
       "df_csv": "df_csv/20220214T163720Z-9bfad/",
       "df_arrow": "df_arrow/20220214T163720Z-ad0c1/",

@@ -89,8 +89,10 @@ class BaseBoard:
             Pin name.
 
         """
-        if self.versioned is False:
-            raise NotImplementedError()
+        if not self.versioned:
+            raise NotImplementedError(
+                "Cannot show versions for a board type that does not support versioning."
+            )
 
         if not self.pin_exists(name):
             raise PinsError("Cannot check version, since pin %s does not exist" % name)
@@ -235,6 +237,11 @@ class BaseBoard:
         versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
     ) -> Meta:
+
+        if not self.versioned:
+            raise NotImplementedError(
+                "Can only write pins with boards that support versioning."
+            )
 
         if type == "feather":
             warn_deprecated(
@@ -453,6 +460,10 @@ class BaseBoard:
         version:
             Version identifier.
         """
+        if not self.versioned:
+            raise NotImplementedError(
+                "Can only write pins with boards that support versioning."
+            )
 
         pin_name = self.path_to_pin(name)
 

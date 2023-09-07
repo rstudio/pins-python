@@ -73,7 +73,9 @@ def test_constructor_board_url_data(tmp_cache, http_example_board_path, df_csv):
 
 @pytest.mark.xfail
 @pytest.mark.skip_on_github
-def test_constructor_board_url_cache(tmp_cache, http_example_board_path, df_csv):
+def test_constructor_board_url_cache(
+    tmp_cache, http_example_board_path, df_csv, tmp_path
+):
     # TODO: downloading a pin does not put files in the same directory, since
     # in this case we are hashing on the full url.
 
@@ -85,12 +87,19 @@ def test_constructor_board_url_cache(tmp_cache, http_example_board_path, df_csv)
 
     board.pin_read("df_csv")
 
-    # cannot read or view pin versions
+    # cannot write or view pin versions
 
     with pytest.raises(NotImplementedError):
         board.pin_write(df_csv)
     with pytest.raises(NotImplementedError):
         board.pin_versions("df_csv")
+    with pytest.raises(NotImplementedError):
+        board.pin_version_delete(name="df_csv", version="20220214T163718Z")
+    with pytest.raises(NotImplementedError):
+        df = pd.DataFrame({"x": [1, 2, 3]})
+        path = tmp_path / "data.csv"
+        df.to_csv(path, index=False)
+        board.pin_upload(path, "cool_pin")
 
     # check cache ----
     http_dirs = list(tmp_cache.glob("http_*"))

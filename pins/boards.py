@@ -66,10 +66,6 @@ class BaseBoard:
         self.board = str(board)
         self.fs = fs
         self.meta_factory = meta_factory
-
-        if versioned is False:
-            raise NotImplementedError()
-
         self.versioned = versioned
         self.allow_pickle_read = allow_pickle_read
 
@@ -93,6 +89,11 @@ class BaseBoard:
             Pin name.
 
         """
+        if not self.versioned:
+            raise NotImplementedError(
+                "Cannot show versions for a board type that does not support versioning."
+            )
+
         if not self.pin_exists(name):
             raise PinsError("Cannot check version, since pin %s does not exist" % name)
 
@@ -237,6 +238,11 @@ class BaseBoard:
         created: Optional[datetime] = None,
     ) -> Meta:
 
+        if not self.versioned:
+            raise NotImplementedError(
+                "Can only write pins with boards that support versioning."
+            )
+
         if type == "feather":
             warn_deprecated(
                 'Writing pin type "feather" is unsupported. Switching type to "arrow".'
@@ -351,6 +357,11 @@ class BaseBoard:
             part of the pin version name.
         """
 
+        if not self.versioned:
+            raise NotImplementedError(
+                "Can only write pins with boards that support versioning."
+            )
+
         if type == "file":
             raise NotImplementedError(
                 ".pin_write() does not support type='file'. "
@@ -449,6 +460,10 @@ class BaseBoard:
         version:
             Version identifier.
         """
+        if not self.versioned:
+            raise NotImplementedError(
+                "Can only write pins with boards that support versioning."
+            )
 
         pin_name = self.path_to_pin(name)
 

@@ -600,9 +600,8 @@ from pins.boards import BoardManual  # noqa
 
 
 def test_board_manual_http_file_download():
-    # TODO: change when repo is moved to RStudio
 
-    path = "https://raw.githubusercontent.com/machow/pins-python"
+    path = "https://raw.githubusercontent.com/rstudio/pins-python"
     license_path = "main/LICENSE"
 
     # use a simple cache, which automatically creates a temporary directory

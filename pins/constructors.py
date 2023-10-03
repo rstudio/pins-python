@@ -435,11 +435,23 @@ def board_connect(
 
     Examples
     --------
-    Use a server URL or set the `CONNECT_SERVER` environt variable to connect:
+    Pins will automatically look for the `CONNECT_SERVER` and `CONNECT_API_KEY` environment variables:
 
     ```python
-    server_url = "https://connect.rstudioservices.com"
-    board = board_connect(server_url)
+    # where environment vars CONNECT_SERVER and CONNECT_API_KEY are set
+    board = board_connect()
+    ```
+
+    Or use the `[dotenv](https://saurabh-kumar.com/python-dotenv/)` package to load other environment variable names from a `.env` file:
+
+    ```python
+    import os
+    from dotenv import load_dotenv, find_dotenv
+    load_dotenv(find_dotenv())
+
+    api_key = os.getenv("MY_API_KEY")
+    server_url = os.getenv("MY_CONNECT_URL")
+    board = board_connect(server_url=server_url, api_key=api_key)
     ```
 
     In order to read a public pin, use `board_url()` with the public pin URL:

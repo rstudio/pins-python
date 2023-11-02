@@ -1,6 +1,10 @@
 # pins
 <a href="https://rstudio.github.io/pins-python/"><img src="docs/logo.png" align="right" height="138" /></a>
 
+![PyPI - Version](https://img.shields.io/pypi/v/pins.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pins)
+
+
+
 The pins package publishes data, models, and other Python objects,
 making it easy to share them across projects and with your colleagues.
 You can pin objects to a variety of pin *boards*, including folders (to

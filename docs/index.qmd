@@ -18,7 +18,7 @@ to read a pin created with the other. Learn more about
 
 ## Installation
 
-You can install the released version of vetiver from [PyPI](https://pypi.org/project/pins/):
+You can install the released version of pins from [PyPI](https://pypi.org/project/pins/):
 
 ```bash
 python -m pip install pins

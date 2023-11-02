@@ -18,7 +18,7 @@ for R](https://pins.rstudio.com).
 
 ## Installation
 
-You can install the released version of vetiver from
+You can install the released version of pins from
 [PyPI](https://pypi.org/project/pins/):
 
 ``` shell

@@ -442,7 +442,7 @@ def board_connect(
     board = board_connect()
     ```
 
-    Or use the `[dotenv](https://saurabh-kumar.com/python-dotenv/)` package to load other environment variable names from a `.env` file:
+    Or use the [dotenv](https://saurabh-kumar.com/python-dotenv/) package to load other environment variable names from a `.env` file:
 
     ```python
     import os

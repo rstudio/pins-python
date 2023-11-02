@@ -186,7 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>You can use pins from R as well as Python. For example, you can use one language to read a pin created with the other. Learn more about <a href="https://pins.rstudio.com">pins for R</a>.</p>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>You can install the released version of vetiver from <a href="https://pypi.org/project/pins/">PyPI</a>:</p>
+<p>You can install the released version of pins from <a href="https://pypi.org/project/pins/">PyPI</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install pins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>And the development version from <a href="https://github.com/rstudio/pins-python">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install git+https://github.com/rstudio/pins-python</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -206,10 +206,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'mtcars'
-Version: 20231030T164628Z-120a5</code></pre>
+Version: 20231102T215240Z-120a5</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20231030T164628Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 10, 30, 16, 46, 28, 130371), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})</code></pre>
+<pre><code>Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20231102T215240Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2023, 11, 2, 21, 52, 40, 494398), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})</code></pre>
 </div>
 </div>
 <p>Above, we saved the data as a CSV, but depending on what you’re saving and who else you want to read it, you might use the <code>type</code> argument to instead save it as a <code>joblib</code>, <code>parquet</code>, or <code>json</code> file.</p>

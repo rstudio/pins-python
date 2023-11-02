@@ -226,7 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Pins will automatically look for the <code>CONNECT_SERVER</code> and <code>CONNECT_API_KEY</code> environment variables:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># where environment vars CONNECT_SERVER and CONNECT_API_KEY are set</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Or use the <code>[dotenv](https://saurabh-kumar.com/python-dotenv/)</code> package to load other environment variable names from a <code>.env</code> file:</p>
+<p>Or use the <a href="https://saurabh-kumar.com/python-dotenv/">dotenv</a> package to load other environment variable names from a <code>.env</code> file:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv, find_dotenv</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>load_dotenv(find_dotenv())</span>

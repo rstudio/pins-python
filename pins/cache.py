@@ -5,12 +5,17 @@ import time
 import shutil
 import urllib.parse
 
-from fsspec.implementations.cached import SimpleCacheFileSystem, hash_name
+from fsspec.implementations.cached import SimpleCacheFileSystem
 from fsspec import register_implementation
 from pathlib import Path
 
 from .config import get_cache_dir
 from .utils import inform
+
+try:
+    from fsspec.implementations.cached import hash_name
+except ImportError:
+    hash_name = SimpleCacheFileSystem(target_protocol="").hash_name
 
 _log = logging.getLogger(__name__)
 

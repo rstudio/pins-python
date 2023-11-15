@@ -10,12 +10,7 @@ from fsspec import register_implementation
 from pathlib import Path
 
 from .config import get_cache_dir
-from .utils import inform
-
-try:
-    from fsspec.implementations.cached import hash_name
-except ImportError:
-    hash_name = SimpleCacheFileSystem(target_protocol="").hash_name
+from .utils import inform, hash_name
 
 _log = logging.getLogger(__name__)
 

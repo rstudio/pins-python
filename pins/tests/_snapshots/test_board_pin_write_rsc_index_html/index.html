@@ -76,8 +76,8 @@ board.pin_read("derek/test_rsc_pin")</code></pre>
       <h3>R Code</h3>
         <pre id="pin-r" class="pin-code"><code class="r">library(pins)
 
-  board <- board_connect(server_url='http://localhost:3939')
-  pin_read(board, "derek/test_rsc_pin")</code></pre>
+board <- board_connect(auth = "envvar")
+pin_read(board, "derek/test_rsc_pin")</code></pre>
         </section>
 
     <section style="">

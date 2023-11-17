@@ -30,10 +30,10 @@
   <body>
 
     <section>
-       <h3>derek/test_rsc_pin</h3>
+       <h3>user/test_rsc_pin</h3>
        
        <p>
-         <b>Last updated:</b> 2020-01-13 23:58:59 &bull;
+         <b>Last updated from Python:</b> 2020-01-13 23:58:59 &bull;
          <b>Format:</b> csv &bull;
          <b>API:</b> v1
        </p>
@@ -59,14 +59,26 @@ user: {}
     <h3>Python Code</h3>
 
     <pre id="pin-python" class="pin-code"><code class="python">from pins import board_connect
+from dotenv import load_dotenv
+load_dotenv()
+
 board = board_connect(server_url='http://localhost:3939')
-board.pin_read("derek/test_rsc_pin")</code></pre>
+board.pin_read("user/test_rsc_pin")</code></pre>
 
     <script type="text/javascript">
       hljs.registerLanguage("python", highlight_python);
+      hljs.registerLanguage("r", highlight_r);
       hljs.initHighlightingOnLoad();
     </script>
     </section>
+
+    <section style="">
+      <h3>R Code</h3>
+        <pre id="pin-r" class="pin-code"><code class="r">library(pins)
+
+  board <- board_connect(server_url='http://localhost:3939')
+  pin_read(board, "user/test_rsc_pin")</code></pre>
+        </section>
 
     <section style="">
       <h3>Preview <small>(up to 100 rows)</small></h3>

@@ -56,9 +56,9 @@ def board_deparse(board: BaseBoard):
     if prot == "rsc":
         url = board.fs.api.server_url
         return f"board_connect(server_url={repr(url)}{allow_pickle})"
-    elif prot == "file" or prot == ("file", "local"):
+    elif prot == "file":
         return f"board_folder({repr(board.board)}{allow_pickle})"
-    elif prot == ["s3", "s3a"] or prot == ("s3", "s3a"):
+    elif prot == ["s3", "s3a"]:
         return f"board_s3({repr(board.board)}{allow_pickle})"
     elif prot == "abfs":
         return f"board_azure({repr(board.board)}{allow_pickle})"

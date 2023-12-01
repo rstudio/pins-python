@@ -201,7 +201,6 @@ def test_board_pin_download_filename(board_with_cache, tmp_path):
 
 def test_board_pin_download_no_cache_error(board, tmp_path):
     df = pd.DataFrame({"x": [1, 2, 3]})
-
     path = tmp_path / "data.csv"
     df.to_csv(path, index=False)
 
@@ -210,7 +209,7 @@ def test_board_pin_download_no_cache_error(board, tmp_path):
     assert meta.type == "file"
 
     # file boards work okay, since the board directory itself is the cache
-    if board.fs.protocol == "file":
+    if board.fs.protocol in ["file", ("file", "local")]:
         pytest.skip()
 
     # uncached boards should fail, since nowhere to store the download

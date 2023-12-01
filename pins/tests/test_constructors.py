@@ -39,7 +39,7 @@ def construct_from_board(board):
     prot = board.fs.protocol
     fs_name = prot if isinstance(prot, str) else prot[0]
 
-    if fs_name == "file":
+    if fs_name == "file" or ("file", "protocol"):
         board = c.board_folder(board.board)
     elif fs_name == "rsc":
         board = c.board_rsconnect(
@@ -190,7 +190,7 @@ def test_constructor_boards(board, df_csv, tmp_cache):
     # check the cache structure -----------------------------------------------
 
     # check cache
-    if board.fs.protocol == "file":
+    if board.fs.protocol in ["file", ("file", "local")]:
         # no caching for local file boards
         pass
     else:

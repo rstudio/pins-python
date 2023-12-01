@@ -149,7 +149,7 @@ def test_constructor_board_url_file(tmp_cache, http_example_board_path):
 
 @pytest.mark.skip_on_github
 def test_constructor_board_github(tmp_cache, http_example_board_path, df_csv):
-    board = c.board_github("machow", "pins-python", EXAMPLE_REL_PATH)  # noqa
+    board = c.board_github("rstudio", "pins-python", EXAMPLE_REL_PATH)  # noqa
 
     df = board.pin_read("df_csv")
     assert_frame_equal(df, df_csv)

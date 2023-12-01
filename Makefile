@@ -26,7 +26,7 @@ README.md:
 test: test-most test-rsc
 
 test-most:
-	pytest pins -m "not fs_rsc" --workers 4 --tests-per-worker 1
+	pytest pins -m "not fs_rsc and not fs_s3" --workers 4 --tests-per-worker 1 -vv
 
 test-rsc:
 	pytest pins -m "fs_rsc"

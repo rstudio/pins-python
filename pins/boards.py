@@ -17,6 +17,7 @@ from .errors import PinsError
 from .drivers import load_data, save_data, load_file, default_title
 from .utils import inform, warn_deprecated, ExtendMethodDoc
 from .config import get_allow_rsc_short_name
+from .cache import PinsCache
 
 
 _log = logging.getLogger(__name__)
@@ -733,9 +734,8 @@ class BaseBoard:
 
         # TODO: assumes same_name set to True. Let's require this be set to
         # instantiate a pins cache.
-        if not hasattr(self.fs, "cached_files"):
+        if not isinstance(self.fs, PinsCache):
             return
-
         path_to_hashed = self.fs._check_file(path)
         return touch_access_time(path_to_hashed)
 

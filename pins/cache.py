@@ -57,12 +57,41 @@ def prefix_cache(fs, board_base_path):
     return f"{proto_name}_{base_hash}"
 
 
+class HashMapper:
+    def __init__(self, hash_prefix):
+        self.hash_prefix = hash_prefix
+
+    def __call__(self, path: str) -> str:
+        if self.hash_prefix is not None:
+            # optionally make the name relative to a parent path
+            # using the hash of parent path as a prefix, to flatten a bit
+            hash = Path(path).relative_to(Path(self.hash_prefix))
+            return hash
+
+        else:
+            raise NotImplementedError()
+
+
+class PinsAccessTimeCacheMapper:
+    def __init__(self, hash_prefix):
+        self.hash_prefix = hash_prefix
+
+    def __call__(self, path):
+        # hash full path, and put anything after the final / at the end, just
+        # to make it easier to browse.
+        # this has
+        base_name = hash_name(path, False)
+        suffix = Path(path).name
+        return f"{base_name}_{suffix}"
+
+
 class PinsCache(SimpleCacheFileSystem):
     protocol = "pinscache"
 
-    def __init__(self, *args, hash_prefix=None, **kwargs):
+    def __init__(self, *args, hash_prefix=None, mapper=HashMapper, **kwargs):
         super().__init__(*args, **kwargs)
         self.hash_prefix = hash_prefix
+        self._mapper = mapper(hash_prefix)
 
     def _open(self, path, *args, **kwargs):
         # For some reason, the open method of SimpleCacheFileSystem doesn't
@@ -83,19 +112,14 @@ class PinsCache(SimpleCacheFileSystem):
 
         return fn
 
-    def hash_name(self, path, same_name):
-        # the main change in this function is that, for same_name, it returns
-        # the full path
-        if same_name:
-            if self.hash_prefix is not None:
-                # optionally make the name relative to a parent path
-                # using the hash of parent path as a prefix, to flatten a bit
-                hash = Path(path).relative_to(Path(self.hash_prefix))
-                return hash
-
-            return path
-        else:
-            raise NotImplementedError()
+    # same as upstream, brought in to preserve backwards compatibility
+    def _check_file(self, path):
+        self._check_cache()
+        sha = self._mapper(path)
+        for storage in self.storage:
+            fn = os.path.join(storage, sha)
+            if os.path.exists(fn):
+                return fn
 
 
 class PinsRscCache(PinsCache):
@@ -154,15 +178,12 @@ class PinsUrlCache(PinsCache):
 class PinsAccessTimeCache(SimpleCacheFileSystem):
     name = "pinsaccesstimecache"
 
-    def hash_name(self, path, same_name):
-        if same_name:
-            raise NotImplementedError("same_name not implemented.")
-
-        # hash full path, and put anything after the final / at the end, just
-        # to make it easier to browse.
-        base_name = super().hash_name(path, same_name)
-        suffix = Path(path).name
-        return f"{base_name}_{suffix}"
+    def __init__(
+        self, *args, hash_prefix=None, mapper=PinsAccessTimeCacheMapper, **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+        self.hash_prefix = hash_prefix
+        self._mapper = mapper(hash_prefix)
 
     def _open(self, path, mode="rb", **kwargs):
         f = super()._open(path, mode=mode, **kwargs)
@@ -176,6 +197,15 @@ class PinsAccessTimeCache(SimpleCacheFileSystem):
         touch_access_time(fn)
 
         return f
+
+    # same as upstream, brought in to preserve backwards compatibility
+    def _check_file(self, path):
+        self._check_cache()
+        sha = self._mapper(path)
+        for storage in self.storage:
+            fn = os.path.join(storage, sha)
+            if os.path.exists(fn):
+                return fn
 
 
 class CachePruner:

@@ -95,7 +95,7 @@ class PinsRscCacheMapper:
     def __init__(self, hash_prefix):
         self.hash_prefix = hash_prefix
 
-    def __call__(self, path, same_name):
+    def __call__(self, path):
         # the main change in this function is that, for same_name, it returns
         # the full path
         # change pin path of form <user>/<content> to <user>+<content>

@@ -60,7 +60,7 @@ def test_touch_access_time_auto(some_file):
 
 def test_pins_cache_hash_name_preserves():
     cache = PinsCache(fs=filesystem("file"), hash_prefix="")
-    assert str(cache.hash_name("a/b/c.txt")) == "a/b/c.txt"
+    assert cache.hash_name("a/b/c.txt") == Path("a/b/c.txt")
 
 
 def test_pins_cache_url_hash_name():

@@ -85,6 +85,24 @@ class PinsAccessTimeCacheMapper:
         return f"{base_name}_{suffix}"
 
 
+class PinsRscCacheMapper:
+    """Modifies the PinsCache to allow hash_prefix to be an RSC server url.
+
+    Note that this class also modifies the first / in a path to be a -, so that
+    pin contents will not be put into subdirectories, for e.g. michael/mtcars/data.txt.
+    """
+
+    def __init__(self, hash_prefix):
+        self.hash_prefix = hash_prefix
+
+    def __call__(self, path, same_name):
+        # the main change in this function is that, for same_name, it returns
+        # the full path
+        # change pin path of form <user>/<content> to <user>+<content>
+        hash = path.replace("/", "+", 1)
+        return hash
+
+
 class PinsCache(SimpleCacheFileSystem):
     protocol = "pinscache"
 
@@ -120,30 +138,6 @@ class PinsCache(SimpleCacheFileSystem):
             fn = os.path.join(storage, sha)
             if os.path.exists(fn):
                 return fn
-
-
-class PinsRscCache(PinsCache):
-    """Modifies the PinsCache to allow hash_prefix to be an RSC server url.
-
-    Note that this class also modifies the first / in a path to be a -, so that
-    pin contents will not be put into subdirectories, for e.g. michael/mtcars/data.txt.
-    """
-
-    protocol = "pinsrsccache"
-
-    def hash_name(self, path, same_name):
-        # the main change in this function is that, for same_name, it returns
-        # the full path
-        if same_name:
-            if self.hash_prefix is None:
-                raise NotImplementedError()
-
-            # change pin path of form <user>/<content> to <user>+<content>
-            hash = path.replace("/", "+", 1)
-            return hash
-
-        else:
-            raise NotImplementedError()
 
 
 class PinsUrlCache(PinsCache):

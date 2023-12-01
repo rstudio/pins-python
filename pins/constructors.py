@@ -3,7 +3,7 @@ import os
 import tempfile
 
 from .boards import BaseBoard, BoardRsConnect, BoardManual
-from .cache import PinsCache, PinsRscCache, PinsAccessTimeCache, prefix_cache
+from .cache import PinsCache, PinsRscCacheMapper, PinsAccessTimeCache, prefix_cache
 from .config import get_data_dir, get_cache_dir
 
 
@@ -154,8 +154,12 @@ def board(
             board_cache = prefix_cache(fs, hash_prefix)
             cache_dir = os.path.join(base_cache_dir, board_cache)
 
-            fs = PinsRscCache(
-                cache_storage=cache_dir, fs=fs, hash_prefix=hash_prefix, same_names=True
+            fs = PinsCache(
+                cache_storage=cache_dir,
+                fs=fs,
+                hash_prefix=hash_prefix,
+                same_names=True,
+                mapper=PinsRscCacheMapper,
             )
         else:
             # ensures each subdir path is its own cache directory

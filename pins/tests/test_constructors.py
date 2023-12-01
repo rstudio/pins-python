@@ -39,7 +39,7 @@ def construct_from_board(board):
     prot = board.fs.protocol
     fs_name = prot if isinstance(prot, str) else prot[0]
 
-    if fs_name == "file" or ("file", "protocol"):
+    if fs_name in ["file", ("file", "local")]:
         board = c.board_folder(board.board)
     elif fs_name == "rsc":
         board = c.board_rsconnect(

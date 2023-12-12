@@ -2,6 +2,7 @@ from dataclasses import dataclass, asdict, field, fields
 from pathlib import Path
 
 from fsspec import AbstractFileSystem
+from fsspec.utils import isfilelike
 
 from typing import Sequence
 
@@ -276,6 +277,14 @@ class RsConnectFs(AbstractFileSystem):
             self.api.misc_get_content_bundle_file(
                 bundle["content_guid"], bundle["id"], parsed.file_name, lpath
             )
+
+    def get_file(self, rpath, lpath, **kwargs):
+        data = self.cat_file(rpath, **kwargs)
+        if isfilelike(lpath):
+            lpath.write(data)
+        else:
+            with open(lpath, "wb") as f:
+                f.write(data)
 
     def exists(self, path: str, **kwargs) -> bool:
         try:

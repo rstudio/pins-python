@@ -2,7 +2,6 @@ from dataclasses import dataclass, asdict, field, fields
 from pathlib import Path
 
 from fsspec import AbstractFileSystem
-from fsspec.utils import isfilelike
 
 from typing import Sequence
 
@@ -18,6 +17,7 @@ from .api import (
     RsConnectApiRequestError,
     RSC_CODE_OBJECT_DOES_NOT_EXIST,
 )
+from ..utils import isfilelike
 
 # Misc ----
 

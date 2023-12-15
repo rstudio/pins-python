@@ -111,6 +111,9 @@ class PinsCache(SimpleCacheFileSystem):
         self.hash_prefix = hash_prefix
         self._mapper = mapper(hash_prefix)
 
+    def hash_name(self, path, *args, **kwargs):
+        return self._mapper(path)
+
     def _open(self, path, *args, **kwargs):
         # For some reason, the open method of SimpleCacheFileSystem doesn't
         # call _make_local_details, so we need to patch in here.
@@ -178,6 +181,9 @@ class PinsAccessTimeCache(SimpleCacheFileSystem):
         super().__init__(*args, **kwargs)
         self.hash_prefix = hash_prefix
         self._mapper = mapper(hash_prefix)
+
+    def hash_name(self, path, *args, **kwargs):
+        return self._mapper(path)
 
     def _open(self, path, mode="rb", **kwargs):
         f = super()._open(path, mode=mode, **kwargs)

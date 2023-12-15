@@ -78,3 +78,11 @@ class ExtendMethodDoc:
         # which allows all the inspect machinery to give sphinx the __call__
         # attribute we set in __init__.
         raise NotImplementedError()
+
+
+# based off fsspec.isfilelike
+def isfilelike(file) -> bool:
+    for attr in ["read", "close", "tell"]:
+        if not hasattr(file, attr):
+            return False
+    return True

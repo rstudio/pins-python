@@ -1,5 +1,4 @@
-fsspec==0.8.0
-pyyaml==3.13
+fsspec==2022.2.0
 xxhash==1.0.0
 pandas==0.23.0
 jinja2==2.10.0

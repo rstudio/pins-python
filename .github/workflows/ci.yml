@@ -25,6 +25,9 @@ jobs:
         pytest_opts: ["--workers 4 --tests-per-worker 1"]
         requirements: [""]
         include:
+          - os: "ubuntu-latest"
+            python: "3.8"
+            requirements: "requirements/minimum.txt"
           - os: "macos-latest"
             python: "3.10"
             # ignore doctests, as they involve calls to github, and all mac machines

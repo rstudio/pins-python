@@ -1123,6 +1123,12 @@ class BoardRsConnect(BaseBoard):
             # TODO(compat): set display none in index.html
             context["data_preview"] = json.dumps({})
 
+        # do not show r code if not round-trip friendly
+        if meta.type in ["joblib"]:
+            context["show_r_style"] = "display:none"
+        else:
+            context["show_r_style"] = ""
+
         # render html template ----
 
         from jinja2 import Environment

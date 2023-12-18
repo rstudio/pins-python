@@ -17,6 +17,7 @@ from .api import (
     RsConnectApiRequestError,
     RSC_CODE_OBJECT_DOES_NOT_EXIST,
 )
+from ..utils import isfilelike
 
 # Misc ----
 
@@ -276,6 +277,14 @@ class RsConnectFs(AbstractFileSystem):
             self.api.misc_get_content_bundle_file(
                 bundle["content_guid"], bundle["id"], parsed.file_name, lpath
             )
+
+    def get_file(self, rpath, lpath, **kwargs):
+        data = self.cat_file(rpath, **kwargs)
+        if isfilelike(lpath):
+            lpath.write(data)
+        else:
+            with open(lpath, "wb") as f:
+                f.write(data)
 
     def exists(self, path: str, **kwargs) -> bool:
         try:

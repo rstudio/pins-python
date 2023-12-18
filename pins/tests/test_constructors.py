@@ -39,7 +39,7 @@ def construct_from_board(board):
     prot = board.fs.protocol
     fs_name = prot if isinstance(prot, str) else prot[0]
 
-    if fs_name == "file":
+    if fs_name in ["file", ("file", "local")]:
         board = c.board_folder(board.board)
     elif fs_name == "rsc":
         board = c.board_rsconnect(
@@ -149,7 +149,7 @@ def test_constructor_board_url_file(tmp_cache, http_example_board_path):
 
 @pytest.mark.skip_on_github
 def test_constructor_board_github(tmp_cache, http_example_board_path, df_csv):
-    board = c.board_github("machow", "pins-python", EXAMPLE_REL_PATH)  # noqa
+    board = c.board_github("rstudio", "pins-python", EXAMPLE_REL_PATH)  # noqa
 
     df = board.pin_read("df_csv")
     assert_frame_equal(df, df_csv)
@@ -190,7 +190,7 @@ def test_constructor_boards(board, df_csv, tmp_cache):
     # check the cache structure -----------------------------------------------
 
     # check cache
-    if board.fs.protocol == "file":
+    if board.fs.protocol in ["file", ("file", "local")]:
         # no caching for local file boards
         pass
     else:

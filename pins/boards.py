@@ -17,6 +17,7 @@ from .errors import PinsError
 from .drivers import load_data, save_data, load_file, default_title
 from .utils import inform, warn_deprecated, ExtendMethodDoc
 from .config import get_allow_rsc_short_name
+from .cache import PinsCache
 
 
 _log = logging.getLogger(__name__)
@@ -733,9 +734,8 @@ class BaseBoard:
 
         # TODO: assumes same_name set to True. Let's require this be set to
         # instantiate a pins cache.
-        if not hasattr(self.fs, "cached_files"):
+        if not isinstance(self.fs, PinsCache):
             return
-
         path_to_hashed = self.fs._check_file(path)
         return touch_access_time(path_to_hashed)
 
@@ -747,7 +747,7 @@ class BoardManual(BaseBoard):
     --------
     >>> import fsspec
     >>> import os
-    >>> fs = fsspec.filesystem("github", org = "machow", repo = "pins-python")
+    >>> fs = fsspec.filesystem("github", org = "rstudio", repo = "pins-python")
     >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad/"}
     >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
 

@@ -3,7 +3,7 @@ import os
 import tempfile
 
 from .boards import BaseBoard, BoardRsConnect, BoardManual
-from .cache import PinsCache, PinsRscCache, PinsAccessTimeCache, prefix_cache
+from .cache import PinsCache, PinsRscCacheMapper, PinsAccessTimeCache, prefix_cache
 from .config import get_data_dir, get_cache_dir
 
 
@@ -56,9 +56,9 @@ def board_deparse(board: BaseBoard):
     if prot == "rsc":
         url = board.fs.api.server_url
         return f"board_connect(server_url={repr(url)}{allow_pickle})"
-    elif prot == "file":
+    elif prot in ["file", ("file", "local")]:
         return f"board_folder({repr(board.board)}{allow_pickle})"
-    elif prot == ["s3", "s3a"]:
+    elif prot in [["s3", "s3a"], ("s3", "s3a")]:
         return f"board_s3({repr(board.board)}{allow_pickle})"
     elif prot == "abfs":
         return f"board_azure({repr(board.board)}{allow_pickle})"
@@ -93,15 +93,15 @@ def board(
 
     Parameters
     ----------
-    protocol:
+    protocol: str
         File system protocol. E.g. file, s3, github, rsc (for Posit Connect).
         See `fsspec.filesystem` for more information.
-    path:
+    path: str
         A base path the board should use. For example, the directory the board lives in,
         or the path to its S3 bucket.
-    versioned:
+    versioned: bool
         Whether or not pins should be versioned.
-    cache:
+    cache: optional, type[DEFAULT]
         Whether to use a cache. By default, pins attempts to select the right cache
         directory, given your filesystem. If `None` is passed, then no cache will be
         used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
@@ -154,8 +154,12 @@ def board(
             board_cache = prefix_cache(fs, hash_prefix)
             cache_dir = os.path.join(base_cache_dir, board_cache)
 
-            fs = PinsRscCache(
-                cache_storage=cache_dir, fs=fs, hash_prefix=hash_prefix, same_names=True
+            fs = PinsCache(
+                cache_storage=cache_dir,
+                fs=fs,
+                hash_prefix=hash_prefix,
+                same_names=True,
+                mapper=PinsRscCacheMapper,
             )
         else:
             # ensures each subdir path is its own cache directory

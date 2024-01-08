@@ -53,6 +53,20 @@ The first argument is the object to save (usually a data frame, but it can be an
 The name is basically equivalent to a file name; you'll use it when you later want to read the data from the pin.
 The only rule for a pin name is that it can't contain slashes.
 
+After you've pinned an object, you can read it back with [](`~pins.boards.BaseBoard.pin_read`):
+
+```{python}
+board.pin_read("mtcars")
+```
+
+You don't need to supply the file type when reading data from a pin because pins automatically stores the file type in the [metadata](#Metadata).
+
+::: {.callout-note}
+If you are using the Posit Connect board [](`~pins.board_connect`), then you must specify your pin name as
+`"user_name/content_name"`. For example, `"hadley/sales-report"`.
+:::
+
+## How and what to store as a pin
 
 Above, we saved the data as a CSV, but you can choose another option depending on your goals:
 
@@ -62,24 +76,15 @@ Above, we saved the data as a CSV, but you can choose another option depending o
 -   `type = "joblib"` uses `joblib.dump()` to create a binary Python data file, such as for storing a trained model. See the [joblib docs](https://joblib.readthedocs.io/en/latest/) for more information.
 -   `type = "json"` uses `json.dump()` to create a JSON file. Pretty much every programming language can read JSON files, but they only work well for nested lists.
 
-After you've pinned an object, you can read it back with [](`~pins.boards.BaseBoard.pin_read`):
-
-```{python}
-board.pin_read("mtcars")
-```
-
-You don't need to supply the file type when reading data from a pin because pins automatically stores the file type in the metadata, the topic of the next section.
-
 Note that when the data lives elsewhere, pins takes care of downloading and caching so that it's only re-downloaded when needed.
 That said, most boards transmit pins over HTTP, and this is going to be slow and possibly unreliable for very large pins.
 As a general rule of thumb, we don't recommend using pins with files over 500 MB.
 If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.
 
-::: {.callout-note}
-If you are using the Posit Connect board [](`~pins.board_connect`), then you must specify your pin name as
-`"user_name/content_name"`. For example, `"hadley/sales-report"`.
-:::
+Storing your data/object as a pin works well when you write from a single source or process. It is _not_ appropriate when multiple sources or processes need to write to the same pin; since the pins package reads and writes files, it cannot manage concurrent writes.
 
+- **Good** use for pins: an ETL pipeline that stores a model or summarized dataset once a day
+- **Bad** use for pins: a Shiny app that collects data from users, who may be using the app at the same time
 
 ## Metadata
 

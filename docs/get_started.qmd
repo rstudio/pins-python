@@ -59,7 +59,7 @@ After you've pinned an object, you can read it back with [](`~pins.boards.BaseBo
 board.pin_read("mtcars")
 ```
 
-You don't need to supply the file type when reading data from a pin because pins automatically stores the file type in the [metadata](#Metadata).
+You don't need to supply the file type when reading data from a pin because pins automatically stores the file type in the [metadata](#metadata).
 
 ::: {.callout-note}
 If you are using the Posit Connect board [](`~pins.board_connect`), then you must specify your pin name as

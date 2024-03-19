@@ -98,7 +98,9 @@ class BaseBoard:
         if not self.pin_exists(name):
             raise PinsError("Cannot check version, since pin %s does not exist" % name)
 
-        versions_raw = self.fs.ls(self.construct_path([self.path_to_pin(name)]))
+        versions_raw = self.fs.ls(
+            self.construct_path([self.path_to_pin(name)]), detail=False
+        )
 
         # get a list of Version(Raw) objects
         all_versions = []
@@ -179,7 +181,7 @@ class BaseBoard:
         each pin in a convenient form.
         """
 
-        full_paths = self.fs.ls(self.board)
+        full_paths = self.fs.ls(self.board, detail=False)
         pin_names = map(self.keep_final_path_component, full_paths)
 
         return [name for name in pin_names if name not in self.reserved_pin_names]

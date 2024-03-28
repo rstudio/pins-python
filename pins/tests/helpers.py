@@ -114,7 +114,7 @@ class BoardBuilder:
 
         return value
 
-    def create_tmp_board(self, src_board=None) -> BaseBoard:
+    def create_tmp_board(self, src_board=None, versioned=True) -> BaseBoard:
         if self.fs_name == "gcs":
             opts = {"cache_timeout": 0}
         else:
@@ -136,7 +136,7 @@ class BoardBuilder:
             fs.mkdir(board_name)
 
         self.board_path_registry.append(board_name)
-        return BaseBoard(board_name, fs=fs)
+        return BaseBoard(board_name, fs=fs, versioned=versioned)
 
     def teardown_board(self, board):
         board.fs.rm(board.board, recursive=True)
@@ -168,10 +168,10 @@ class RscBoardBuilder(BoardBuilder):
         self.fs_name = fs_name
         self.path = None
 
-    def create_tmp_board(self, src_board=None):
+    def create_tmp_board(self, src_board=None, versioned=True):
         from pins.rsconnect.fs import PinBundleManifest  # noqa
 
-        board = BoardRsConnect("", rsc_fs_from_key("derek"))
+        board = BoardRsConnect("", rsc_fs_from_key("derek"), versioned=versioned)
 
         if src_board is None:
             return board

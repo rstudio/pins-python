@@ -1,3 +1,5 @@
+import logging
+
 from dataclasses import dataclass, asdict
 from datetime import datetime
 from xxhash import xxh64
@@ -6,6 +8,8 @@ from typing import Union, Sequence, Mapping
 
 from .errors import PinsVersionError
 from ._types import StrOrFile, IOBase
+
+_log = logging.getLogger(__name__)
 
 VERSION_TIME_FORMAT = "%Y%m%dT%H%M%SZ"
 
@@ -116,3 +120,31 @@ def guess_version(x: str):
         return Version.from_string(x)
     except PinsVersionError:
         return VersionRaw(x)
+
+
+def version_setup(board, name, new_version, versioned):
+    if board.pin_exists(name):
+        versions_df = board.pin_versions(name, as_df=True)
+        versions = versions_df["version"].to_list()
+        old_version = versions[-1]
+        n_versions = len(versions)
+
+    else:
+        n_versions = 0
+
+    # if pin does not have version specified, see if multiple pins on board/board's version
+    if versioned is None:
+        versioned = True if n_versions > 1 else board.versioned
+
+    if versioned or n_versions == 0:
+        _log.info(f"Creating new version '{new_version}'")
+    elif n_versions == 1:
+        _log.info(f"Replacing version '{old_version}' with '{new_version}'")
+        board.pin_version_delete(name, old_version)
+    else:
+        raise PinsVersionError(
+            "Pin is versioned, but you have requested a write without versions."
+            "To un-version a pin, you must delete it"
+        )
+
+    return new_version

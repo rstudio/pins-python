@@ -121,6 +121,16 @@ def load_data(
                 " Use `.pin_download()` to download the file."
             )
 
+        elif meta.type == "rds":
+            try:
+                import rdata
+
+                return rdata.read_rds(f)
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError(
+                    "Install the 'rdata' package to attempt to convert 'rds' files into Python objects."
+                )
+
     raise NotImplementedError(f"No driver for type {meta.type}")
 
 

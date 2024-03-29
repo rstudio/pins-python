@@ -5,7 +5,6 @@ from datetime import datetime
 from xxhash import xxh64
 
 from typing import Union, Sequence, Mapping
-
 from .errors import PinsVersionError
 from ._types import StrOrFile, IOBase
 

@@ -153,18 +153,8 @@ def test_compat_pin_read(board):
     assert src_df.equals(dst_df)
 
 
-def test_compat_pin_read_supported_qs(board):
-    with pytest.raises(NotImplementedError):
-        board.pin_read("df_qs")
-
-
 def test_compat_pin_read_supported_rds(board):
-    with pytest.raises(ModuleNotFoundError):
-        board.pin_read("df_rds")
-
-
-@pytest.mark.fs_rsc
-def test_compat_pin_read_supported_rdata(board):
+    pytest.importorskip("rdata")
     import pandas as pd
 
     src_df = board.pin_read("df_rds")

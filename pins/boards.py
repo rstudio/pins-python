@@ -666,7 +666,6 @@ class BaseBoard:
         description: Optional[str] = None,
         metadata: Optional[Mapping] = None,
         created: Optional[datetime] = None,
-        versioned: Optional[bool] = None,
         object_name: Optional[str] = None,
     ):
         if name is None:
@@ -918,16 +917,19 @@ class BoardRsConnect(BaseBoard):
                 " can write to it."
             )
 
-        n_versions_before = None
-        if versioned is False and self.pin_exists(pin_name):
+        n_versions_before = 0
+        if self.pin_exists(pin_name):
             versions_df = self.pin_versions(pin_name, as_df=True)
             versions = versions_df["version"].to_list()
             n_versions_before = len(versions)
-            if n_versions_before > 1:
-                raise PinsVersionError(
-                    "Pin is versioned, but you have requested a write without versions."
-                    "To un-version a pin, you must delete it"
-                )
+
+        if versioned is None:
+            versioned = True if n_versions_before > 1 else self.versioned
+        if versioned is False and n_versions_before > 1:
+            raise PinsVersionError(
+                "Pin is versioned, but you have requested a write without versions."
+                "To un-version a pin, you must delete it"
+            )
 
         # run parent function ---
         meta = f_super(*args, **kwargs)
@@ -943,10 +945,8 @@ class BoardRsConnect(BaseBoard):
         )
 
         # clean up non-active pins in the case of an unversioned board
-        if versioned is None:
-            versioned = True if n_versions_before > 1 else self.versioned
         # a pin existed before the latest pin
-        if not versioned and n_versions_before == 1:
+        if versioned is False and n_versions_before == 1:
             _log.info(f"Replacing version '{versions}' with '{meta.version.version}'")
             self.pin_version_delete(pin_name, versions[0])
 

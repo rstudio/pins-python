@@ -647,6 +647,7 @@ class BaseBoard:
             title,
             description,
             metadata,
+            versioned,
             created,
             object_name,
         )
@@ -665,6 +666,7 @@ class BaseBoard:
         title: Optional[str] = None,
         description: Optional[str] = None,
         metadata: Optional[Mapping] = None,
+        versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
         object_name: Optional[str] = None,
     ):

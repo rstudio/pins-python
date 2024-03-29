@@ -34,7 +34,9 @@ jobs:
         use-public-rspm: true
 
     - name: Install R dependencies (from CRAN)
-      run: "install.packages('pins')"
+      run: |
+        "install.packages('pins')"
+        "install.packages('qs')"
       shell: Rscript {0}
       if: ${{ github.event.name != 'workflow_dispatch' || inputs.r_pins_tag == '__cran__' }}
 

@@ -20,5 +20,7 @@ board %>% pin_write(df, "df_arrow", type="arrow")
 # write two versions of df as RDS ----
 board %>% pin_write(df, "df_rds", type="rds")
 
+board %>% pin_write(df, "df_qs", type="qs")
+
 # write unversioned pin as CSV
 board %>% pin_write(df, "df_unversioned", versioned=FALSE)

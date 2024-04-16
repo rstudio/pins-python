@@ -334,8 +334,12 @@ def test_board_versioned_pin_write_unversioned(board):
     board.pin_write({"a": 1}, "test_pin", type="json")
     board.pin_write({"a": 2}, "test_pin", type="json")
 
-    with pytest.raises(PinsVersionError):
+    with pytest.raises(PinsVersionError) as e:
         board.pin_write({"a": 3}, "test_pin", type="json", versioned=False)
+
+    assert len(board_unversioned.pin_versions("test_pin")) == 2
+    assert "Pin is versioned, but you have requested a write without versions." in e
+    assert board_unversioned.pin_read("test_pin") == {"a": 2}
 
 
 # pin_delete ==================================================================

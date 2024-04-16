@@ -6,7 +6,7 @@ import pytest
 
 from pins.tests.helpers import DEFAULT_CREATION_DATE, rm_env
 from pins.config import PINS_ENV_INSECURE_READ
-from pins.errors import PinsError, PinsInsecureReadError
+from pins.errors import PinsError, PinsInsecureReadError, PinsVersionError
 from pins.meta import MetaRaw
 
 from datetime import datetime, timedelta
@@ -28,6 +28,12 @@ def df():
 @fixture
 def board(backend):
     yield backend.create_tmp_board()
+    backend.teardown()
+
+
+@fixture
+def board_unversioned(backend):
+    yield backend.create_tmp_board(versioned=False)
     backend.teardown()
 
 
@@ -302,6 +308,36 @@ def test_board_pin_read_insecure_succeed_board_flag(board):
         board.allow_pickle_read = True
         board.pin_write({"a": 1}, "test_pin", type="joblib", title="some title")
         board.pin_read("test_pin")
+
+
+# pin_write with unversioned boards ===========================================
+
+
+@pytest.mark.parametrize("versioned", [None, False])
+def test_board_unversioned_pin_write_unversioned(versioned, board_unversioned):
+    board_unversioned.pin_write({"a": 1}, "test_pin", type="json", versioned=versioned)
+    board_unversioned.pin_write({"a": 2}, "test_pin", type="json", versioned=versioned)
+
+    assert len(board_unversioned.pin_versions("test_pin")) == 1
+    assert board_unversioned.pin_read("test_pin") == {"a": 2}
+
+
+def test_board_unversioned_pin_write_versioned(board_unversioned):
+    board_unversioned.pin_write({"a": 1}, "test_pin", type="json", versioned=False)
+    board_unversioned.pin_write({"a": 2}, "test_pin", type="json", versioned=True)
+
+    assert len(board_unversioned.pin_versions("test_pin")) == 2
+
+
+def test_board_versioned_pin_write_unversioned(board):
+    # should fall back to the versioned setting of the board
+    board.pin_write({"a": 1}, "test_pin", type="json")
+    board.pin_write({"a": 2}, "test_pin", type="json")
+
+    with pytest.raises(PinsVersionError):
+        board.pin_write({"a": 3}, "test_pin", type="json", versioned=False)
+
+    assert len(board.pin_versions("test_pin")) == 2
 
 
 # pin_delete ==================================================================

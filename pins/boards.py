@@ -11,9 +11,9 @@ from datetime import datetime, timedelta
 
 from typing import Sequence, Optional, Mapping
 
-from .versions import VersionRaw, guess_version
+from .versions import VersionRaw, guess_version, version_setup
 from .meta import Meta, MetaRaw, MetaFactory
-from .errors import PinsError
+from .errors import PinsError, PinsVersionError
 from .drivers import load_data, save_data, load_file, default_title
 from .utils import inform, warn_deprecated, ExtendMethodDoc
 from .config import get_allow_rsc_short_name
@@ -90,16 +90,14 @@ class BaseBoard:
             Pin name.
 
         """
-        if not self.versioned:
-            raise NotImplementedError(
-                "Cannot show versions for a board type that does not support versioning."
-            )
 
         if not self.pin_exists(name):
             raise PinsError("Cannot check version, since pin %s does not exist" % name)
 
+        detail = isinstance(self, BoardRsConnect)
+
         versions_raw = self.fs.ls(
-            self.construct_path([self.path_to_pin(name)]), detail=False
+            self.construct_path([self.path_to_pin(name)]), detail=detail
         )
 
         # get a list of Version(Raw) objects
@@ -111,7 +109,6 @@ class BaseBoard:
         # sort them, with latest last
         sorted_versions = self.sort_pin_versions(all_versions)
 
-        # TODO(defer): this deviates from R pins, which returns a df by default
         if as_df:
             import pandas as pd
 
@@ -241,11 +238,6 @@ class BaseBoard:
         created: Optional[datetime] = None,
     ) -> Meta:
 
-        if not self.versioned:
-            raise NotImplementedError(
-                "Can only write pins with boards that support versioning."
-            )
-
         if type == "feather":
             warn_deprecated(
                 'Writing pin type "feather" is unsupported. Switching type to "arrow".'
@@ -360,11 +352,6 @@ class BaseBoard:
             part of the pin version name.
         """
 
-        if not self.versioned:
-            raise NotImplementedError(
-                "Can only write pins with boards that support versioning."
-            )
-
         if type == "file":
             raise NotImplementedError(
                 ".pin_write() does not support type='file'. "
@@ -463,10 +450,6 @@ class BaseBoard:
         version:
             Version identifier.
         """
-        if not self.versioned:
-            raise NotImplementedError(
-                "Can only write pins with boards that support versioning."
-            )
 
         pin_name = self.path_to_pin(name)
 
@@ -616,7 +599,7 @@ class BaseBoard:
     def validate_pin_name(self, name: str) -> None:
         """Raise an error if a pin name is not valid."""
 
-        if "/" in name:
+        if name and "/" in name:
             raise ValueError(f"Invalid pin name: {name}")
         elif name in self.reserved_pin_names:
             raise ValueError(f"The pin name '{name}' is reserved for internal use.")
@@ -655,11 +638,39 @@ class BaseBoard:
         created: Optional[datetime] = None,
         object_name: Optional[str] = None,
     ):
+        meta = self._create_meta(
+            pin_dir_path,
+            x,
+            name,
+            type,
+            title,
+            description,
+            metadata,
+            versioned,
+            created,
+            object_name,
+        )
+
+        # handle unversioned boards
+        version_setup(self, name, meta.version, versioned)
+
+        return meta
+
+    def _create_meta(
+        self,
+        pin_dir_path,
+        x,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        metadata: Optional[Mapping] = None,
+        versioned: Optional[bool] = None,
+        created: Optional[datetime] = None,
+        object_name: Optional[str] = None,
+    ):
         if name is None:
             raise NotImplementedError("Name must be specified.")
-
-        if versioned is False:
-            raise NotImplementedError("Only writing versioned pins supported.")
 
         if type is None:
             raise NotImplementedError("Type argument is required.")
@@ -769,15 +780,6 @@ class BoardManual(BaseBoard):
         super().__init__(*args, **kwargs)
 
         self.pin_paths = pin_paths
-
-    # def pin_read(self, *args, **kwargs):
-    #    if not get_feature_preview():
-    #        raise NotImplementedError(
-    #            "pin_read with BoardManual is currently unimplemented. "
-    #            "See https://github.com/machow/pins-python/issues/59."
-    #        )
-
-    #    return super().pin_read(*args, **kwargs)
 
     @ExtendMethodDoc
     def pin_list(self):
@@ -889,7 +891,9 @@ class BoardRsConnect(BaseBoard):
         return names
 
     @ExtendMethodDoc
-    def pin_write(self, *args, access_type=None, **kwargs):
+    def pin_write(
+        self, *args, access_type=None, versioned: Optional[bool] = None, **kwargs
+    ):
         """Write a pin.
 
         Extends parent method in the following ways:
@@ -915,6 +919,28 @@ class BoardRsConnect(BaseBoard):
                 " can write to it."
             )
 
+        # attempt to make the least number of API calls possible
+        if versioned or versioned is None and self.versioned:
+            # arbitrary number greater than 1
+            n_versions_before = 100
+        else:
+            try:
+                versions_df = self.pin_versions(pin_name, as_df=True)
+                versions = versions_df["version"].to_list()
+                n_versions_before = len(versions)
+            except PinsError:
+                # pin does not exist
+                n_versions_before = 0
+
+        if versioned is None:
+            versioned = True if n_versions_before > 1 else self.versioned
+
+        if versioned is False and n_versions_before > 1:
+            raise PinsVersionError(
+                "Pin is versioned, but you have requested a write without versions."
+                "To un-version a pin, you must delete it"
+            )
+
         # run parent function ---
         meta = f_super(*args, **kwargs)
 
@@ -927,6 +953,12 @@ class BoardRsConnect(BaseBoard):
             description=meta.description or "",
             access_type=access_type or content["access_type"],
         )
+
+        # clean up non-active pins in the case of an unversioned board
+        # a pin existed before the latest pin
+        if versioned is False and n_versions_before == 1:
+            _log.info(f"Replacing version '{versions}' with '{meta.version.version}'")
+            self.pin_version_delete(pin_name, versions[0])
 
         return meta
 
@@ -1067,7 +1099,7 @@ class BoardRsConnect(BaseBoard):
 
         # TODO(compat): py pins always uses the short name, R pins uses w/e the
         # user passed, but guessing people want the long name?
-        meta = super().prepare_pin_version(pin_dir_path, x, short_name, *args, **kwargs)
+        meta = super()._create_meta(pin_dir_path, x, short_name, *args, **kwargs)
         meta.name = name
 
         # copy in files needed by index.html ----------------------------------

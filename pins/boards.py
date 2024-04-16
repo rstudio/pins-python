@@ -93,10 +93,9 @@ class BaseBoard:
 
         if not self.pin_exists(name):
             raise PinsError("Cannot check version, since pin %s does not exist" % name)
-        if isinstance(self, BoardRsConnect):
-            detail = True
-        else:
-            detail = False
+
+        detail = isinstance(self, BoardRsConnect)
+
         versions_raw = self.fs.ls(
             self.construct_path([self.path_to_pin(name)]), detail=detail
         )
@@ -919,20 +918,6 @@ class BoardRsConnect(BaseBoard):
                 " can write to it."
             )
 
-        n_versions_before = 0
-        if self.pin_exists(pin_name):
-            versions_df = self.pin_versions(pin_name, as_df=True)
-            versions = versions_df["version"].to_list()
-            n_versions_before = len(versions)
-
-        if versioned is None:
-            versioned = True if n_versions_before > 1 else self.versioned
-        if versioned is False and n_versions_before > 1:
-            raise PinsVersionError(
-                "Pin is versioned, but you have requested a write without versions."
-                "To un-version a pin, you must delete it"
-            )
-
         # run parent function ---
         meta = f_super(*args, **kwargs)
 
@@ -946,11 +931,32 @@ class BoardRsConnect(BaseBoard):
             access_type=access_type or content["access_type"],
         )
 
-        # clean up non-active pins in the case of an unversioned board
-        # a pin existed before the latest pin
-        if versioned is False and n_versions_before == 1:
-            _log.info(f"Replacing version '{versions}' with '{meta.version.version}'")
-            self.pin_version_delete(pin_name, versions[0])
+        # return before more API calls if we already know it is versioned
+        if versioned or versioned is None and self.versioned:
+            return meta
+
+        versions_df = self.pin_versions(pin_name, as_df=True)
+        versions = versions_df["version"].to_list()
+
+        if versioned is None:
+            versioned = True if len(versions) > 2 else self.versioned
+
+        if versioned is False:
+            # clean up non-active pins in the case of an unversioned board
+            # a pin existed before the latest pin
+            if len(versions) == 2:
+                _log.info(
+                    f"Replacing version '{versions}' with '{meta.version.version}'"
+                )
+                self.pin_version_delete(pin_name, versions[0])
+            if len(versions) > 2:
+                # delete what was just pinned-- we'd rather have this take a little longer
+                # write + delete erroneous pins than do all the API calls for a pin that doesn't need it
+                self.pin_version_delete(pin_name, versions[-1])
+                raise PinsVersionError(
+                    "Pin is versioned, but you have requested a write without versions."
+                    "To un-version a pin, you must delete it"
+                )
 
         return meta
 

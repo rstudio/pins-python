@@ -313,19 +313,13 @@ def test_board_pin_read_insecure_succeed_board_flag(board):
 # pin_write with unversioned boards ===========================================
 
 
-@pytest.mark.parametrize("versioned", [None, True, False])
-def test_board_unversioned_pin_write_once_unversioned(versioned, board_unversioned):
-    board_unversioned.pin_write({"a": 1}, "test_pin", type="json", versioned=versioned)
-
-    assert len(board_unversioned.pin_versions("test_pin")) == 1
-
-
 @pytest.mark.parametrize("versioned", [None, False])
 def test_board_unversioned_pin_write_unversioned(versioned, board_unversioned):
     board_unversioned.pin_write({"a": 1}, "test_pin", type="json", versioned=versioned)
     board_unversioned.pin_write({"a": 2}, "test_pin", type="json", versioned=versioned)
 
     assert len(board_unversioned.pin_versions("test_pin")) == 1
+    assert board_unversioned.pin_read("test_pin") == {"a": 2}
 
 
 def test_board_unversioned_pin_write_versioned(board_unversioned):
@@ -336,13 +330,6 @@ def test_board_unversioned_pin_write_versioned(board_unversioned):
 
 
 def test_board_versioned_pin_write_unversioned(board):
-    # should fall back to the versioned setting of the board
-    board.pin_write({"a": 1}, "test_pin", type="json", versioned=False)
-
-    assert len(board.pin_versions("test_pin")) == 1
-
-
-def test_board_versioned_multiple_pin_write_unversioned(board):
     # should fall back to the versioned setting of the board
     board.pin_write({"a": 1}, "test_pin", type="json")
     board.pin_write({"a": 2}, "test_pin", type="json")

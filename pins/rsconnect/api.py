@@ -2,7 +2,6 @@ import logging
 import os
 import requests
 import tempfile
-import json
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -204,7 +203,7 @@ class RsConnectApi:
             raise ValueError(
                 "Unknown json returned by delete_content endpoint: %s" % data
             )
-        except json.JSONDecodeError:
+        except requests.JSONDecodeError:
             # fallback to at least raising status errors
             r.raise_for_status()
 
@@ -237,7 +236,7 @@ class RsConnectApi:
                 data = r.json()
                 self._validate_json_response(data)
                 return data
-            except json.JSONDecodeError:
+            except requests.JSONDecodeError:
                 r.raise_for_status()
 
     def walk_paginated_offsets(self, f_query, endpoint, method, params=None, **kwargs):

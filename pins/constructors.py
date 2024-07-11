@@ -490,7 +490,9 @@ def board_connect(
 board_rsconnect = board_connect
 
 
-def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None, **storage_options):
+def board_s3(
+    path, versioned=True, cache=DEFAULT, allow_pickle_read=None, **storage_options
+):
     """Create a board to read and write pins from an AWS S3 bucket folder.
 
     Parameters

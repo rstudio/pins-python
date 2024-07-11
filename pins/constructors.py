@@ -539,7 +539,7 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None, **stor
     # TODO: user should be able to specify storage options here?
 
     opts = {"listings_expiry_time": 0}
-    opts.update(**kwargs)
+    opts.update(**storage_options)
     return board("s3", path, versioned, cache, allow_pickle_read, storage_options=opts)
 
 

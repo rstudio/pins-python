@@ -526,6 +526,7 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None, **stor
 
     Examples
     --------
+    >>> import pins
     >>> board = pins.board_s3(
     ...     "pins-test",
     ...     endpoint_url=os.getenv("FSSPEC_S3_ENDPOINT_URL"),

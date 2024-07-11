@@ -490,7 +490,7 @@ def board_connect(
 board_rsconnect = board_connect
 
 
-def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None, **storage_options):
     """Create a board to read and write pins from an AWS S3 bucket folder.
 
     Parameters
@@ -511,12 +511,27 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
         You can enable reading pickles by setting this to `True`, or by setting the
         environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
         takes precedence.
+    storage_options:
+        Additional keyword arguments to be passed to the underlying fsspec S3FileSystem.
 
     Notes
     -----
     The s3 board uses the fsspec library (s3fs) to handle interacting with AWS S3.
     In order to authenticate, set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
-    and (optionally) `AWS_REGION` environment variables.
+    and (optionally) `AWS_REGION` environment variables. If you are using an
+    s3-compatible storage service that is not from AWS, you can pass in the necessary
+    credentials to the `storage_options` dictionary, such as `endpoint_url`, `key`, and
+    `secret`. We recommend setting these as environment variables. An example using
+    Backblaze B2 would look like:
+
+    Examples
+    --------
+    >>> board = pins.board_s3(
+    ...     "pins-test",
+    ...     endpoint_url=os.getenv("FSSPEC_S3_ENDPOINT_URL"),
+    ...     key=os.getenv("FSSPEC_S3_KEY"),
+    ...     secret=os.getenv("FSSPEC_S3_SECRET"),
+    ... )
 
     See <https://github.com/fsspec/s3fs>
 
@@ -524,6 +539,7 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     # TODO: user should be able to specify storage options here?
 
     opts = {"listings_expiry_time": 0}
+    opts.update(**kwargs)
     return board("s3", path, versioned, cache, allow_pickle_read, storage_options=opts)
 
 

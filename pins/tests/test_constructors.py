@@ -47,6 +47,8 @@ def construct_from_board(board):
         )
     elif fs_name == "abfs":
         board = c.board_azure(board.board)
+    elif fs_name == "gs":
+        board = c.board_gcs(board.board)
     else:
         board = getattr(c, f"board_{fs_name}")(board.board)
 

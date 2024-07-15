@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.5.54">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -122,7 +122,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -136,7 +136,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Reference</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-learn-more" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-learn-more" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Learn more</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-learn-more">    
@@ -159,7 +159,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -172,25 +172,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">pins <a href="https://rstudio.github.io/pins-python/"><img src="logo.png" align="right" height="138"></a></h1>
-</div>
 
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
+<section id="pins" class="level1">
+<h1>pins <a href="https://rstudio.github.io/pins-python/"><img src="logo.png" align="right" height="138"></a></h1>
 <p>The pins package publishes data, models, and other Python objects, making it easy to share them across projects and with your colleagues. You can pin objects to a variety of pin <em>boards</em>, including folders (to share on a networked drive or with services like DropBox), Posit Connect, Amazon S3, and Google Cloud Storage. Pins can be automatically versioned, making it straightforward to track changes, re-run analyses on historical data, and undo mistakes.</p>
 <p>You can use pins from R as well as Python. For example, you can use one language to read a pin created with the other. Learn more about <a href="https://pins.rstudio.com">pins for R</a>.</p>
 <section id="installation" class="level2">
@@ -203,34 +189,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <p>To use the pins package, you must first create a pin board. A good place to start is <a href="./reference/board_folder.html#pins.board_folder"><code>board_folder</code></a>, which stores pins in a directory you specify. Here we’ll use a special version of <a href="./reference/board_folder.html#pins.board_folder"><code>board_folder</code></a> called <a href="./reference/board_temp.html#pins.board_temp"><code>board_temp</code></a> which creates a temporary board that’s automatically deleted when your Python script or notebook session ends. This is great for examples, but obviously you shouldn’t use it for real work!</p>
-<div id="8edbd2f2" class="cell" data-execution_count="1">
+<div id="0768866f" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pins</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins.data <span class="im">import</span> mtcars</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> pins.board_temp()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You can “pin” (save) data to a board with the <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> method. It requires three arguments: an object, a name, and a pin type:</p>
-<div id="c88b2781" class="cell" data-execution_count="2">
+<div id="3976ffc7" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>board.pin_write(mtcars.head(), <span class="st">"mtcars"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'mtcars'
-Version: 20240430T203952Z-120a5</code></pre>
+Version: 20240715T232738Z-120a5</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20240430T203952Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2024, 4, 30, 20, 39, 52, 868909), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})</code></pre>
+<pre><code>Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20240715T232738Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2024, 7, 15, 23, 27, 38, 287088), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})</code></pre>
 </div>
 </div>
 <p>Above, we saved the data as a CSV, but depending on what you’re saving and who else you want to read it, you might use the <code>type</code> argument to instead save it as a <code>joblib</code>, <code>parquet</code>, or <code>json</code> file.</p>
 <p>You can later retrieve the pinned data with <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a>:</p>
-<div id="4cf20903" class="cell" data-execution_count="3">
+<div id="f8e79d73" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"mtcars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
-<div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -324,7 +309,6 @@ Version: 20240430T203952Z-120a5</code></pre>
 </div>
 </div>
 </div>
-</div>
 <p>A board on your computer is good place to start, but the real power of pins comes when you use a board that’s shared with multiple people. To get started, you can use <a href="./reference/board_folder.html#pins.board_folder"><code>board_folder</code></a> with a directory on a shared drive or in DropBox, or if you use <a href="https://posit.co/products/enterprise/connect/">Posit Connect</a> you can use <a href="./reference/board_connect.html#pins.board_connect"><code>board_connect</code></a>:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that this uses one approach to connecting,</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the environment variables CONNECT_SERVER and CONNECT_API_KEY</span></span>
@@ -345,6 +329,7 @@ Version: 20240430T203952Z-120a5</code></pre>
 </ul>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -383,18 +368,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -426,7 +400,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -434,7 +430,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {

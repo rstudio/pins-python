@@ -1,7 +1,7 @@
-import appdirs
 import os
-
 from types import SimpleNamespace
+
+import platformdirs
 
 PINS_NAME = "pins-py"
 PINS_ENV_DATA_DIR = "PINS_DATA_DIR"
@@ -27,11 +27,11 @@ def _interpret_int(env_var_name):
 
 
 def get_data_dir():
-    return os.environ.get(PINS_ENV_DATA_DIR, appdirs.user_data_dir(PINS_NAME))
+    return os.environ.get(PINS_ENV_DATA_DIR, platformdirs.user_data_dir(PINS_NAME))
 
 
 def get_cache_dir():
-    return os.environ.get(PINS_ENV_CACHE_DIR, appdirs.user_cache_dir(PINS_NAME))
+    return os.environ.get(PINS_ENV_CACHE_DIR, platformdirs.user_cache_dir(PINS_NAME))
 
 
 def get_allow_pickle_read(flag):

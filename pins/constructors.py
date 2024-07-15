@@ -58,11 +58,11 @@ def board_deparse(board: BaseBoard):
         return f"board_connect(server_url={repr(url)}{allow_pickle})"
     elif prot in ["file", ("file", "local")]:
         return f"board_folder({repr(board.board)}{allow_pickle})"
-    elif prot in [["s3", "s3a"], ("s3", "s3a")]:
+    elif set(prot) == {"s3", "s3a"}:
         return f"board_s3({repr(board.board)}{allow_pickle})"
     elif prot == "abfs":
         return f"board_azure({repr(board.board)}{allow_pickle})"
-    elif prot == ("gcs", "gs"):
+    elif set(prot) == {"gcs", "gs"} or prot == "gs":
         return f"board_gcs({repr(board.board)}{allow_pickle})"
     elif prot == "http":
         return f"board_url({repr(board.board)}, {board.pin_paths}{allow_pickle})"

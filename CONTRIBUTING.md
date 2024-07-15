@@ -49,6 +49,13 @@ pytest pins -m 'not fs_rsc'
 
 # run only local filesystem backend tests
 pytest pins -m 'fs_file'
+
+# run all tests except those for S3 and GCS
+pytest pins -m 'not fs_s3 and not fs_gcs'
+
+# run all tests except those using data on GitHub
+# n.b. doctests cannot have marks https://github.com/pytest-dev/pytest/issues/5794
+pytest pins -m 'not skip_on_github' -k 'not pins.boards.BoardManual'
 ```
 
 There are two important details to note for testing:
@@ -57,9 +64,9 @@ There are two important details to note for testing:
     will need to set credentials to test against them.
 * **Pytest Marks**. You can disable tests over a specific backend through pytest's
     `-m` flag. For example...
-  - Skip S3: `pytest pins -m 'not fs_s3'`
-  - Test only s3: `pytest pins -m 'fs_s3'`
-  - List all marks: `pytest pins --markers`
+  * Skip S3: `pytest pins -m 'not fs_s3'`
+  * Test only s3: `pytest pins -m 'fs_s3'`
+  * List all marks: `pytest pins --markers`
 
 ### Configuring backends
 

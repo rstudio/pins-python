@@ -64,9 +64,9 @@ There are two important details to note for testing:
     will need to set credentials to test against them.
 * **Pytest Marks**. You can disable tests over a specific backend through pytest's
     `-m` flag. For example...
-  * Skip S3: `pytest pins -m 'not fs_s3'`
-  * Test only s3: `pytest pins -m 'fs_s3'`
-  * List all marks: `pytest pins --markers`
+  - Skip S3: `pytest pins -m 'not fs_s3'`
+  - Test only s3: `pytest pins -m 'fs_s3'`
+  - List all marks: `pytest pins --markers`
 
 ### Configuring backends
 

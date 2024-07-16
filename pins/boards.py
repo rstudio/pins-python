@@ -770,6 +770,7 @@ def board_deparse(board: BaseBoard):
 
     The example below deparses a board connected to Posit Connect.
 
+    >>> from pins.constructors import board_connect
     >>> board_deparse(board_connect(server_url="http://example.com", api_key="xxx"))
     "board_connect(server_url='http://example.com')"
 
@@ -779,6 +780,7 @@ def board_deparse(board: BaseBoard):
 
     Below is an example of representing a board connected to a local folder.
 
+    >>> from pins.constructors import board_folder
     >>> board_deparse(board_folder("a/b/c"))
     "board_folder('a/b/c')"
 

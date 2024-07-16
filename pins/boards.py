@@ -3,13 +3,14 @@ import tempfile
 import shutil
 import inspect
 import re
+import functools
 
 from io import IOBase
 from pathlib import Path
 from importlib_resources import files
 from datetime import datetime, timedelta
 
-from typing import Sequence, Optional, Mapping
+from typing import Protocol, Sequence, Optional, Mapping
 
 from .versions import VersionRaw, guess_version, version_setup
 from .meta import Meta, MetaRaw, MetaFactory
@@ -23,8 +24,7 @@ from .cache import PinsCache
 _log = logging.getLogger(__name__)
 
 
-# Note that once we drop python 3.7, we can make this a Protocol
-class IFileSystem:
+class IFileSystem(Protocol):
 
     protocol: "str | list"
 
@@ -1075,18 +1075,9 @@ class BoardRsConnect(BaseBoard):
         # to fs.put to the <user>/<content_name>.
         return self.path_to_pin(name)
 
-    @property
+    @functools.cached_property
     def user_name(self):
-        # note that this is essentially the manual version of functools.cached_property
-        # since we support python 3.7
-        name = getattr(self, "_user_name", None)
-        if name is not None:
-            return name
-        else:
-            user = self.fs.api.get_user()
-            self._user_name = user["username"]
-
-            return self._user_name
+        return self.fs.api.get_user()
 
     def prepare_pin_version(self, pin_dir_path, x, name: "str | None", *args, **kwargs):
         # TODO: should move board_deparse into utils, to avoid circular import
@@ -1112,8 +1103,7 @@ class BoardRsConnect(BaseBoard):
             )
 
         # recursively copy all assets into prepped pin version dir
-        # shutil.copytree(self.html_assets_dir, pin_dir_path, dirs_exist_ok=True)
-        _copytree(self.html_assets_dir, pin_dir_path)
+        shutil.copytree(self.html_assets_dir, pin_dir_path, dirs_exist_ok=True)
 
         # render index.html ------------------------------------------------
 
@@ -1174,17 +1164,3 @@ class BoardRsConnect(BaseBoard):
         (Path(pin_dir_path) / "index.html").write_text(rendered)
 
         return meta
-
-
-# TODO: replace with shutil.copytree once py3.7 is dropped
-# copied from https://stackoverflow.com/a/12514470/1144523
-def _copytree(src, dst, symlinks=False, ignore=None):
-    import os
-
-    for item in os.listdir(src):
-        s = os.path.join(src, item)
-        d = os.path.join(dst, item)
-        if os.path.isdir(s):
-            shutil.copytree(s, d, symlinks, ignore)
-        else:
-            shutil.copy2(s, d)

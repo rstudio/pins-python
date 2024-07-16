@@ -2,74 +2,16 @@ import fsspec
 import os
 import tempfile
 
-from .boards import BaseBoard, BoardRsConnect, BoardManual
+from .boards import BaseBoard, BoardRsConnect, BoardManual, board_deparse
 from .cache import PinsCache, PinsRscCacheMapper, PinsAccessTimeCache, prefix_cache
 from .config import get_data_dir, get_cache_dir
+
+# Kept here for backward-compatibility reasons.
+board_deparse  # Note that this is not a constructor, but a function to represent them.
 
 
 class DEFAULT:
     pass
-
-
-# Representing constructors ===================================================
-
-# Note that this is not a constructor, but a function to represent them.
-def board_deparse(board: BaseBoard):
-    """Return a representation of how a board could be reconstructed.
-
-    Note that this function does not try to represent the exact arguments used
-    to construct a board, but key pieces (like the path to the board). You may
-    need to specify environment variables with API keys to complete the connection.
-
-    Parameters
-    ----------
-    board:
-        A pins board to be represented.
-
-    Examples
-    --------
-
-    The example below deparses a board connected to Posit Connect.
-
-    >>> board_deparse(board_connect(server_url="http://example.com", api_key="xxx"))
-    "board_connect(server_url='http://example.com')"
-
-    Note that the deparsing a Posit Connect board does not keep the api_key,
-    which is sensitive information. In this case, you can set the CONNECT_API_KEY
-    environment variable to connect.
-
-    Below is an example of representing a board connected to a local folder.
-
-    >>> board_deparse(board_folder("a/b/c"))
-    "board_folder('a/b/c')"
-
-    >>> board_deparse(board_folder(path="a/b/c", allow_pickle_read=True))
-    "board_folder('a/b/c', allow_pickle_read=True)"
-    """
-    if board.allow_pickle_read is not None:
-        allow_pickle = f", allow_pickle_read={repr(board.allow_pickle_read)}"
-    else:
-        allow_pickle = ""
-
-    prot = board.fs.protocol
-
-    if prot == "rsc":
-        url = board.fs.api.server_url
-        return f"board_connect(server_url={repr(url)}{allow_pickle})"
-    elif prot in ["file", ("file", "local")]:
-        return f"board_folder({repr(board.board)}{allow_pickle})"
-    elif set(prot) == {"s3", "s3a"}:
-        return f"board_s3({repr(board.board)}{allow_pickle})"
-    elif prot == "abfs":
-        return f"board_azure({repr(board.board)}{allow_pickle})"
-    elif set(prot) == {"gcs", "gs"} or prot == "gs":
-        return f"board_gcs({repr(board.board)}{allow_pickle})"
-    elif prot == "http":
-        return f"board_url({repr(board.board)}, {board.pin_paths}{allow_pickle})"
-    else:
-        raise NotImplementedError(
-            f"board deparsing currently not supported for protocol: {prot}"
-        )
 
 
 # Board constructors ==========================================================

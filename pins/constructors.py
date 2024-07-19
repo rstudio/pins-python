@@ -1,6 +1,7 @@
 import fsspec
 import os
 import tempfile
+import warnings
 
 from .boards import BaseBoard, BoardRsConnect, BoardManual
 from .cache import PinsCache, PinsRscCacheMapper, PinsAccessTimeCache, prefix_cache
@@ -539,10 +540,21 @@ def board_s3(
     See <https://github.com/fsspec/s3fs>
 
     """
-    # TODO: user should be able to specify storage options here?
+    # Warn user about the use of non-zero listings_expiry_time
+    listings_expiry_time = storage_options.get("listings_expiry_time", 0)
+    if listings_expiry_time != 0:
+        warning_msg = """
+Non-zero `listings_expiry_time` may lead to unexpected behaviour with cache operations.
+We're not discouraging you from setting it to be a non-zero value,
+but we strongly recommend setting it to 0 for optimal performance.
+"""
+        warnings.warn(warning_msg)
 
-    opts = {"listings_expiry_time": 0}
-    opts.update(**storage_options)
+    # Set options to pass in. Start with storage options provided by user.
+    opts = {**storage_options}
+    # Set listings_expiry_time based on what's provided by user
+    # or the default value of 0.
+    opts.update({"listings_expiry_time": listings_expiry_time})
     return board("s3", path, versioned, cache, allow_pickle_read, storage_options=opts)
 
 

@@ -231,10 +231,20 @@ def default_title(obj, name):
     import pandas as pd
 
     if isinstance(obj, pd.DataFrame):
+        try:
+            import geopandas as gpd
+        except ModuleNotFoundError:
+            obj_name = "DataFrame"
+        else:
+            if isinstance(obj, gpd.GeoDataFrame):
+                obj_name = "GeoDataFrame"
+            else:
+                obj_name = "DataFrame"
+
         # TODO(compat): title says CSV rather than data.frame
         # see https://github.com/machow/pins-python/issues/5
         shape_str = " x ".join(map(str, obj.shape))
-        return f"{name}: a pinned {shape_str} DataFrame"
+        return f"{name}: a pinned {shape_str} {obj_name}"
     else:
         obj_name = type(obj).__qualname__
         return f"{name}: a pinned {obj_name} object"

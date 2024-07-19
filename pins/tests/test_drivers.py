@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import fsspec
+import geopandas as gpd
 import pandas as pd
 import pytest
 
@@ -34,6 +35,10 @@ class ExC:
     [
         (pd.DataFrame({"x": [1, 2]}), "somename: a pinned 2 x 1 DataFrame"),
         (pd.DataFrame({"x": [1], "y": [2]}), "somename: a pinned 1 x 2 DataFrame"),
+        (
+            gpd.GeoDataFrame({"x": [1], "geometry": [None]}),
+            "somename: a pinned 1 x 2 GeoDataFrame",
+        ),
         (ExC(), "somename: a pinned ExC object"),
         (ExC().D(), "somename: a pinned ExC.D object"),
         ([1, 2, 3], "somename: a pinned list object"),

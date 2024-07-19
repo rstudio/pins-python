@@ -16,3 +16,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
       - uses: pre-commit/action@v2.0.3
+
+  pyright:
+    name: "Run Pyright"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jakebailey/pyright-action@v1
+        with:
+          version: 1.1.273 # Manually sync with setup.cfg

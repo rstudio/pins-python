@@ -6,8 +6,30 @@ build-backend = "setuptools.build_meta"
 testpaths = ["pins"]
 addopts = "--doctest-modules"
 doctest_optionflags = "NORMALIZE_WHITESPACE"
-markers = [
-    "skip_on_github: skip this test if running on github",
-]
+markers = ["skip_on_github: skip this test if running on github"]
 
 [tool.setuptools_scm]
+
+[tool.pyright]
+include = ["pins"]
+exclude = ["**/__pycache__"]
+ignore = ["src/tests"]
+pythonVersion = "3.12"       # Use the maximum version supported by python-pins
+pythonPlatform = "Linux"
+
+reportArgumentType = false
+reportAssignmentType = false
+reportAttributeAccessIssue = false
+reportCallIssue = false
+reportGeneralTypeIssues = false
+reportIncompatibleMethodOverride = false
+reportIncompatibleVariableOverride = false
+reportIndexIssue = false
+reportMissingImports = false
+reportMissingTypeStubs = false
+reportOptionalIterable = false
+reportOptionalMemberAccess = false
+reportOptionalSubscript = false
+reportPossiblyUnboundVariable = false
+reportReturnType = false
+reportUnusedExpression = false

@@ -47,7 +47,7 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.17.1
     # via adlfs
-azure-storage-blob==12.20.0
+azure-storage-blob==12.21.0
     # via adlfs
 backcall==0.2.0
     # via ipython
@@ -61,6 +61,8 @@ cachetools==5.4.0
     # via google-auth
 certifi==2024.7.4
     # via
+    #   pyogrio
+    #   pyproj
     #   requests
     #   sphobjinv
 cffi==1.16.0
@@ -117,6 +119,8 @@ fsspec==2024.6.1
     #   pins (setup.cfg)
     #   s3fs
 gcsfs==2024.6.1
+    # via pins (setup.cfg)
+geopandas==1.0.1
     # via pins (setup.cfg)
 google-api-core==2.19.1
     # via
@@ -209,7 +213,7 @@ matplotlib-inline==0.1.7
     #   ipython
 mdurl==0.1.2
     # via markdown-it-py
-msal==1.29.0
+msal==1.30.0
     # via
     #   azure-datalake-store
     #   azure-identity
@@ -235,20 +239,26 @@ nodeenv==1.9.1
 numpy==2.0.0
     # via
     #   fastparquet
+    #   geopandas
     #   pandas
     #   pyarrow
+    #   pyogrio
+    #   shapely
 oauthlib==3.2.2
     # via requests-oauthlib
 packaging==24.1
     # via
     #   build
     #   fastparquet
+    #   geopandas
     #   ipykernel
+    #   pyogrio
     #   pytest
     #   pytest-cases
 pandas==2.2.2
     # via
     #   fastparquet
+    #   geopandas
     #   pins (setup.cfg)
 parso==0.8.4
     # via jedi
@@ -264,7 +274,7 @@ platformdirs==4.2.2
     #   virtualenv
 pluggy==1.5.0
     # via pytest
-plum-dispatch==2.5.1.post1
+plum-dispatch==2.5.2
     # via quartodoc
 portalocker==2.10.1
     # via msal-extensions
@@ -287,7 +297,7 @@ pure-eval==0.2.2
     # via stack-data
 py==1.11.0
     # via pytest
-pyarrow==16.1.0
+pyarrow==17.0.0
     # via pins (setup.cfg)
 pyasn1==0.6.0
     # via
@@ -309,6 +319,10 @@ pyjwt==2.8.0
     # via
     #   msal
     #   pyjwt
+pyogrio==0.9.0
+    # via geopandas
+pyproj==3.6.1
+    # via geopandas
 pyproject-hooks==1.1.0
     # via
     #   build
@@ -373,6 +387,8 @@ rsa==4.9
     # via google-auth
 s3fs==2024.6.1
     # via pins (setup.cfg)
+shapely==2.0.5
+    # via geopandas
 six==1.16.0
     # via
     #   asttokens
@@ -410,6 +426,7 @@ typing-extensions==4.12.2
     #   azure-core
     #   azure-identity
     #   azure-storage-blob
+    #   plum-dispatch
     #   pydantic
     #   pydantic-core
     #   quartodoc

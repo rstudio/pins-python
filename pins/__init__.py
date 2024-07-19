@@ -11,7 +11,6 @@ del _v
 # Imports ----
 from .cache import cache_prune, cache_info
 from .constructors import (
-    board_deparse,
     board_folder,
     board_temp,
     board_local,
@@ -25,3 +24,4 @@ from .constructors import (
     board_gcs,
     board,
 )
+from .boards import board_deparse

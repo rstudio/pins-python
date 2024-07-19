@@ -1,6 +1,7 @@
 import fsspec
 import os
 import tempfile
+import warnings
 
 from .boards import BaseBoard, BoardRsConnect, BoardManual, board_deparse
 from .cache import PinsCache, PinsRscCacheMapper, PinsAccessTimeCache, prefix_cache
@@ -432,7 +433,9 @@ def board_connect(
 board_rsconnect = board_connect
 
 
-def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+def board_s3(
+    path, versioned=True, cache=DEFAULT, allow_pickle_read=None, **storage_options
+):
     """Create a board to read and write pins from an AWS S3 bucket folder.
 
     Parameters
@@ -453,19 +456,47 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
         You can enable reading pickles by setting this to `True`, or by setting the
         environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
         takes precedence.
+    storage_options:
+        Additional keyword arguments to be passed to the underlying fsspec S3FileSystem.
 
     Notes
     -----
     The s3 board uses the fsspec library (s3fs) to handle interacting with AWS S3.
     In order to authenticate, set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
-    and (optionally) `AWS_REGION` environment variables.
+    and (optionally) `AWS_REGION` environment variables. If you are using an
+    s3-compatible storage service that is not from AWS, you can pass in the necessary
+    credentials to the `storage_options` dictionary, such as `endpoint_url`, `key`, and
+    `secret`. We recommend setting these as environment variables. An example using
+    Backblaze B2 would look like:
+
+    Examples
+    --------
+    >>> import pins
+    >>> board = pins.board_s3(
+    ...     "pins-test",
+    ...     endpoint_url=os.getenv("FSSPEC_S3_ENDPOINT_URL"),
+    ...     key=os.getenv("FSSPEC_S3_KEY"),
+    ...     secret=os.getenv("FSSPEC_S3_SECRET"),
+    ... )
 
     See <https://github.com/fsspec/s3fs>
 
     """
-    # TODO: user should be able to specify storage options here?
+    # Warn user about the use of non-zero listings_expiry_time
+    listings_expiry_time = storage_options.get("listings_expiry_time", 0)
+    if listings_expiry_time != 0:
+        warning_msg = """
+Non-zero `listings_expiry_time` may lead to unexpected behaviour with cache operations.
+We're not discouraging you from setting it to be a non-zero value,
+but we strongly recommend setting it to 0 for optimal performance.
+"""
+        warnings.warn(warning_msg)
 
-    opts = {"listings_expiry_time": 0}
+    # Set options to pass in. Start with storage options provided by user.
+    opts = {**storage_options}
+    # Set listings_expiry_time based on what's provided by user
+    # or the default value of 0.
+    opts.update({"listings_expiry_time": listings_expiry_time})
     return board("s3", path, versioned, cache, allow_pickle_read, storage_options=opts)
 
 

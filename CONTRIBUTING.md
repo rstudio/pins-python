@@ -49,6 +49,13 @@ pytest pins -m 'not fs_rsc'
 
 # run only local filesystem backend tests
 pytest pins -m 'fs_file'
+
+# run all tests except those for S3 and GCS
+pytest pins -m 'not fs_s3 and not fs_gcs'
+
+# run all tests except those using data on GitHub
+# n.b. doctests cannot have marks https://github.com/pytest-dev/pytest/issues/5794
+pytest pins -m 'not skip_on_github' -k 'not pins.boards.BoardManual'
 ```
 
 There are two important details to note for testing:

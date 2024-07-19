@@ -60,7 +60,7 @@ test = [
     "pytest-dotenv",
     "pytest-parallel",
     "s3fs",
-    "geopandas",
+    "geopandas>=0.8.0", # At 0.8.0, the GeoParquet format was introduced.
 ]
 
 [build-system]

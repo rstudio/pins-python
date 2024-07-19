@@ -22,6 +22,16 @@ def _assert_is_pandas_df(x, file_type: str) -> None:
         )
 
 
+def _assert_is_geopandas_df(x):
+    # Assume we have already protected against uninstalled geopandas
+    import geopandas as gpd
+
+    if not isinstance(x, gpd.GeoDataFrame):
+        raise NotImplementedError(
+            "Currently only geopandas.GeoDataFrame can be saved to a GeoParquet."
+        )
+
+
 def load_path(meta, path_to_version):
     # Check that only a single file name was given
     fnames = [meta.file] if isinstance(meta.file, str) else meta.file
@@ -104,6 +114,17 @@ def load_data(
 
             return pd.read_csv(f)
 
+        elif meta.type == "geoparquet":
+            try:
+                import geopandas as gpd
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError(
+                    'The "geopandas" package is required to read "geoparquet" type '
+                    "files."
+                ) from None
+
+            return gpd.read_parquet(f)
+
         elif meta.type == "joblib":
             import joblib
 
@@ -144,6 +165,8 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
     if apply_suffix:
         if type == "file":
             suffix = "".join(Path(obj).suffixes)
+        elif type == "geoparquet":
+            suffix = ".parquet"
         else:
             suffix = f".{type}"
     else:
@@ -172,6 +195,11 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
 
     elif type == "parquet":
         _assert_is_pandas_df(obj, file_type=type)
+
+        obj.to_parquet(final_name)
+
+    elif type == "geoparquet":
+        _assert_is_geopandas_df(obj)
 
         obj.to_parquet(final_name)
 

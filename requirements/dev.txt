@@ -47,7 +47,7 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.17.1
     # via adlfs
-azure-storage-blob==12.21.0
+azure-storage-blob==12.20.0
     # via adlfs
 backcall==0.2.0
     # via ipython
@@ -213,7 +213,7 @@ matplotlib-inline==0.1.7
     #   ipython
 mdurl==0.1.2
     # via markdown-it-py
-msal==1.30.0
+msal==1.29.0
     # via
     #   azure-datalake-store
     #   azure-identity
@@ -274,7 +274,7 @@ platformdirs==4.2.2
     #   virtualenv
 pluggy==1.5.0
     # via pytest
-plum-dispatch==2.5.2
+plum-dispatch==2.5.1.post1
     # via quartodoc
 portalocker==2.10.1
     # via msal-extensions
@@ -297,7 +297,7 @@ pure-eval==0.2.2
     # via stack-data
 py==1.11.0
     # via pytest
-pyarrow==17.0.0
+pyarrow==16.1.0
     # via pins (setup.cfg)
 pyasn1==0.6.0
     # via
@@ -426,7 +426,6 @@ typing-extensions==4.12.2
     #   azure-core
     #   azure-identity
     #   azure-storage-blob
-    #   plum-dispatch
     #   pydantic
     #   pydantic-core
     #   quartodoc

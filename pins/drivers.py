@@ -232,13 +232,15 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
 
 
 def default_title(obj, name):
-    import pandas as pd
+    df_family = _get_df_family(obj)
 
-    if isinstance(obj, pd.DataFrame):
+    if df_family in ("pandas", "polars"):
         # TODO(compat): title says CSV rather than data.frame
         # see https://github.com/machow/pins-python/issues/5
         shape_str = " x ".join(map(str, obj.shape))
         return f"{name}: a pinned {shape_str} DataFrame"
-    else:
+    elif df_family == "unknown":
         obj_name = type(obj).__qualname__
         return f"{name}: a pinned {obj_name} object"
+    else:
+        assert_never(df_family)

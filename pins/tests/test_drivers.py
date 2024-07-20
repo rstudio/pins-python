@@ -2,6 +2,7 @@ from pathlib import Path
 
 import fsspec
 import pandas as pd
+import polars as pl
 import pytest
 
 from pins.config import PINS_ENV_INSECURE_READ
@@ -34,6 +35,7 @@ class ExC:
     [
         (pd.DataFrame({"x": [1, 2]}), "somename: a pinned 2 x 1 DataFrame"),
         (pd.DataFrame({"x": [1], "y": [2]}), "somename: a pinned 1 x 2 DataFrame"),
+        (pl.DataFrame({"x": [1, 2]}), "somename: a pinned 2 x 1 DataFrame"),
         (ExC(), "somename: a pinned ExC object"),
         (ExC().D(), "somename: a pinned ExC.D object"),
         ([1, 2, 3], "somename: a pinned list object"),

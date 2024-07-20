@@ -1,5 +1,7 @@
 from pathlib import Path
-from typing import Literal, Sequence, assert_never
+from typing import Literal, Sequence
+
+from typing_extensions import assert_never
 
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError

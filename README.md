@@ -67,9 +67,10 @@ board.pin_write(mtcars.head(), "mtcars", type="csv")
 
 Above, we saved the data as a CSV, but depending on what you’re saving
 and who else you want to read it, you might use the `type` argument to
-instead save it as a `joblib`, `parquet`, or `json` file.
+instead save it as a `joblib`, `parquet`, or `json` file. If you're using
+a `polars.DataFrame`, you can save to `parquet`.
 
-You can later retrieve the pinned data with `.pin_read()`:
+You can later retrieve the pinned data as a `pandas.DataFrame` with `.pin_read()`:
 
 ``` python
 board.pin_read("mtcars")

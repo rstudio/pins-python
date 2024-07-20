@@ -13,7 +13,7 @@ markers = ["skip_on_github: skip this test if running on github"]
 [tool.pyright]
 include = ["pins"]
 exclude = ["**/__pycache__"]
-ignore = ["src/tests"]
+ignore = ["pins/tests"]
 pythonVersion = "3.12"       # Use the maximum version supported by python-pins
 pythonPlatform = "Linux"
 

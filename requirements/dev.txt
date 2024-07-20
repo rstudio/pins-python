@@ -169,7 +169,7 @@ ipython==8.12.0
     # via
     #   ipykernel
     #   pins (setup.cfg)
-    isodate==0.6.1
+isodate==0.6.1
     # via azure-storage-blob
 jedi==0.19.1
     # via ipython

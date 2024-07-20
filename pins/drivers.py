@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Sequence
+from typing import Literal, Sequence, assert_never
 
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError
@@ -14,12 +14,36 @@ REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib", "file"])
 
 
 def _assert_is_pandas_df(x, file_type: str) -> None:
-    import pandas as pd
+    df_family = _get_df_family(x)
 
-    if not isinstance(x, pd.DataFrame):
+    if df_family != "pandas":
         raise NotImplementedError(
             f"Currently only pandas.DataFrame can be saved as type {file_type!r}."
         )
+
+
+def _get_df_family(df) -> Literal["unknown", "pandas", "polars"]:
+    try:
+        import polars as pl
+    except ModuleNotFoundError:
+        is_polars_df = False
+    else:
+        is_polars_df = isinstance(df, pl.DataFrame)
+
+    import pandas as pd
+
+    is_pandas_df = isinstance(df, pd.DataFrame)
+
+    if not is_polars_df and not is_pandas_df:
+        return "unknown"
+    if is_polars_df and is_pandas_df:  # Hybrid DataFrame type!
+        return "unknown"
+    elif is_polars_df:
+        return "polars"
+    elif is_pandas_df:
+        return "pandas"
+    else:
+        assert_never(df)
 
 
 def load_path(meta, path_to_version):
@@ -171,9 +195,17 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
         )
 
     elif type == "parquet":
-        _assert_is_pandas_df(obj, file_type=type)
-
-        obj.to_parquet(final_name)
+        df_family = _get_df_family(obj)
+        if df_family == "polars":
+            obj.write_parquet(final_name)
+        elif df_family == "pandas":
+            obj.to_parquet(final_name)
+        else:
+            msg = (
+                "Currently only pandas.DataFrame and polars.DataFrame can be saved to "
+                "a parquet file."
+            )
+            raise NotImplementedError(msg)
 
     elif type == "joblib":
         import joblib

@@ -403,6 +403,8 @@ traitlets==5.14.3
     #   matplotlib-inline
     #   nbclient
     #   nbformat
+types-appdirs==1.4.3.5
+    # via pins (setup.cfg)
 typing-extensions==4.12.2
     # via
     #   azure-core

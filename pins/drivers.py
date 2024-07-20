@@ -4,7 +4,8 @@ from .config import get_allow_pickle_read, PINS_ENV_INSECURE_READ
 from .meta import Meta
 from .errors import PinsInsecureReadError
 
-from typing import Literal, Sequence, assert_never
+from typing import Literal, Sequence
+from typing_extensions import assert_never
 
 # TODO: move IFileSystem out of boards, to fix circular import
 # from .boards import IFileSystem

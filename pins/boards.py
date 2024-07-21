@@ -250,15 +250,16 @@ class BaseBoard:
 
         pin_name = self.path_to_pin(name)
 
-        # Prepare for the force_identical_write check
-        # Fetch the last meta if it exists - prepare_pin_version will delete it
-        # For unversioned boards. We need it for
+        # Pre-emptively fetch the most recent pin's meta if it exists - this is used
+        # for the force_identical_write check
         abort_if_identical = not force_identical_write and self.pin_exists(name)
         if abort_if_identical:
             last_meta = self.pin_meta(name)
 
         with tempfile.TemporaryDirectory() as tmp_dir:
-            # create all pin data (e.g. data.txt, save object)
+            # create all pin data (e.g. data.txt, save object) to get the metadata.
+            # For unversioned boards, this also will delete the most recent pin version,
+            # ready for it to be replaced with a new one.
             meta = self.prepare_pin_version(
                 tmp_dir,
                 x,

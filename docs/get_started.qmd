@@ -4,7 +4,8 @@ jupyter: python3
 ---
 
 ```{python}
-#| include: false
+# | include: false
+import time
 import pandas as pd
 pd.options.display.max_rows = 25
 ```
@@ -126,13 +127,29 @@ While we’ll do our best to keep the automatically generated metadata consisten
 
 ## Versioning
 
-Every [](`~pins.boards.BaseBoard.pin_write`) will create a new version:
+By default, calls to [](`~pins.boards.BaseBoard.pin_write`) will usually create a new version:
 
 ```{python}
 board2 = board_temp()
 board2.pin_write([1,2,3,4,5], name = "x", type = "json")
 board2.pin_write([1,2,3], name = "x", type = "json")
 board2.pin_write([1,2], name = "x", type = "json")
+board2.pin_versions("x")
+```
+
+The only exception is if the data is identical with the most recent version (compared via file hash):
+
+```{python}
+board2.pin_write([1], name = "x", type = "json")
+time.sleep(1.1) # later, let's try and write a new version...
+board2.pin_write([1], name = "x", type = "json")
+board2.pin_versions("x")
+```
+
+
+However you can opt-out of this behaviour with `force_identical_write=True`:
+```{python}
+board2.pin_write([1], name = "x", type = "json", force_identical_write=True)
 board2.pin_versions("x")
 ```
 

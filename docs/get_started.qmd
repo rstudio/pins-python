@@ -81,7 +81,7 @@ That said, most boards transmit pins over HTTP, and this is going to be slow and
 As a general rule of thumb, we don't recommend using pins with files over 500 MB.
 If you find yourself routinely pinning data larger that this, you might need to reconsider your data engineering pipeline.
 
-Storing your data/object as a pin works well when you write from a single source or process. It is _not_ appropriate when multiple sources or processes need to write to the same pin; since the pins package reads and writes files, it cannot manage concurrent writes.
+Storing your data/object as a pin works well when you write from a single source or process. It is _not_ appropriate when multiple sources or processes need to write to the same pin; since the pins package reads and writes files, it cannot manage concurrent writes. It is also not appropriate for high frequency writes (multiple times per second).
 
 - **Good** use for pins: an ETL pipeline that stores a model or summarized dataset once a day
 - **Bad** use for pins: a Shiny app that collects data from users, who may be using the app at the same time

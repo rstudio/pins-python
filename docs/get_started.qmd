@@ -141,7 +141,7 @@ The only exception is if the data is identical with the most recent version (com
 
 ```{python}
 board2.pin_write([1], name = "x", type = "json")
-time.sleep(1.1) # later, let's try and write a new version...
+time.sleep(1.1) # later, let's try and write a new version of the same data...
 board2.pin_write([1], name = "x", type = "json")
 board2.pin_versions("x")
 ```

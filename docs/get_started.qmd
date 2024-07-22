@@ -149,6 +149,7 @@ board2.pin_versions("x")
 
 However you can opt-out of this behaviour with `force_identical_write=True`:
 ```{python}
+time.sleep(1.1) # try again...
 board2.pin_write([1], name = "x", type = "json", force_identical_write=True)
 board2.pin_versions("x")
 ```

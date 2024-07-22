@@ -155,9 +155,7 @@ class BaseBoard:
         path_meta = self.construct_path([*components, meta_name])
         f, local = self._open_pin_meta(path_meta)
 
-        meta = self.meta_factory.read_pin_yaml(
-            f, pin_name, selected_version, local=local
-        )
+        meta = self.meta_factory.read_pin_yaml(f, pin_name, selected_version, local=local)
 
         return meta
 
@@ -229,7 +227,6 @@ class BaseBoard:
         versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
     ) -> Meta:
-
         if type == "feather":
             warn_deprecated(
                 'Writing pin type "feather" is unsupported. Switching type to "arrow".'
@@ -291,9 +288,7 @@ class BaseBoard:
                     "but that directory already exists."
                 )
 
-            inform(
-                _log, f"Writing pin:\nName: {repr(pin_name)}\nVersion: {dst_version}"
-            )
+            inform(_log, f"Writing pin:\nName: {repr(pin_name)}\nVersion: {dst_version}")
 
             res = self.fs.put(tmp_dir, dst_version_path, recursive=True)
 
@@ -448,9 +443,7 @@ class BaseBoard:
         pin_version_path = self.construct_path([pin_name, version])
         self.fs.rm(pin_version_path, recursive=True)
 
-    def pin_versions_prune(
-        self, name, n: "int | None" = None, days: "int | None" = None
-    ):
+    def pin_versions_prune(self, name, n: "int | None" = None, days: "int | None" = None):
         """Delete old versions of a pin.
 
         Parameters

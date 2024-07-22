@@ -192,13 +192,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>The pins package helps you publish data sets, models, and other Python objects, making it easy to share them across projects and with your colleagues. You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with DropBox), Posit Connect, Amazon S3, Google Cloud Storage, Azure, and more. This vignette will introduce you to the basics of pins.</p>
-<div id="337c3bfe" class="cell" data-execution_count="2">
+<div id="ce5cf46c" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins <span class="im">import</span> board_local, board_folder, board_temp, board_url</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="getting-started" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
 <p>Every pin lives in a pin <em>board</em>, so you must start by creating a pin board. In this vignette I’ll use a temporary board which is automatically deleted when your Python session is over:</p>
-<div id="9b87ab83" class="cell" data-execution_count="3">
+<div id="3c647fc4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_temp()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In real life, you’d pick a board depending on how you want to share the data. Here are a few options:</p>
@@ -210,19 +210,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="reading-and-writing-data" class="level2">
 <h2 class="anchored" data-anchor-id="reading-and-writing-data">Reading and writing data</h2>
 <p>Once you have a pin board, you can write data to it with the <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> method:</p>
-<div id="3b367071" class="cell" data-execution_count="4">
+<div id="1fa0bb72" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins.data <span class="im">import</span> mtcars</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>meta <span class="op">=</span> board.pin_write(mtcars, <span class="st">"mtcars"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'mtcars'
-Version: 20240719T040600Z-3b134</code></pre>
+Version: 20240722T214409Z-3b134</code></pre>
 </div>
 </div>
 <p>The first argument is the object to save (usually a data frame, but it can be any Python object), and the second argument gives the “name” of the pin. The name is basically equivalent to a file name; you’ll use it when you later want to read the data from the pin. The only rule for a pin name is that it can’t contain slashes.</p>
 <p>After you’ve pinned an object, you can read it back with <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a>:</p>
-<div id="d939d273" class="cell" data-execution_count="5">
+<div id="a6c0b2c8" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"mtcars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
@@ -442,10 +442,10 @@ Note
 <section id="metadata" class="level2">
 <h2 class="anchored" data-anchor-id="metadata">Metadata</h2>
 <p>Every pin is accompanied by some metadata that you can access with <a href="./reference/pin_meta.html#pins.boards.BaseBoard.pin_meta"><code>pin_meta</code></a>:</p>
-<div id="b6ecdf7c" class="cell" data-execution_count="6">
+<div id="fecc6088" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>board.pin_meta(<span class="st">"mtcars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>Meta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20240719T040600Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2024, 7, 19, 4, 6), hash='3b134'), tags=None, name='mtcars', user={}, local={})</code></pre>
+<pre><code>Meta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20240722T214409Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2024, 7, 22, 21, 44, 9), hash='3b134'), tags=None, name='mtcars', user={}, local={})</code></pre>
 </div>
 </div>
 <p>This shows you the metadata that’s generated by default. This includes:</p>
@@ -457,7 +457,7 @@ Note
 <li>a unique <code>pin_hash</code> that you can supply to <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a> to ensure that you’re reading exactly the data that you expect.</li>
 </ul>
 <p>When creating the pin, you can override the default description or provide additional metadata that is stored with the data:</p>
-<div id="7188eb19" class="cell" data-execution_count="7">
+<div id="247c1d4e" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>board.pin_write(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    mtcars,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"mtcars2"</span>,</span>
@@ -470,16 +470,16 @@ Note
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'mtcars2'
-Version: 20240719T040600Z-3b134</code></pre>
+Version: 20240722T214409Z-3b134</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>Meta(title='mtcars2: a pinned 32 x 11 DataFrame', description='Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).', created='20240719T040600Z', pin_hash='3b134bae183b50c9', file='mtcars2.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2024, 7, 19, 4, 6, 0, 421743), hash='3b134bae183b50c9'), tags=None, name='mtcars2', user={'source': 'Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.'}, local={})</code></pre>
+<pre><code>Meta(title='mtcars2: a pinned 32 x 11 DataFrame', description='Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).', created='20240722T214409Z', pin_hash='3b134bae183b50c9', file='mtcars2.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2024, 7, 22, 21, 44, 9, 236413), hash='3b134bae183b50c9'), tags=None, name='mtcars2', user={'source': 'Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.'}, local={})</code></pre>
 </div>
 </div>
-<div id="bb5e537f" class="cell" data-execution_count="8">
+<div id="ceb3478e" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>board.pin_meta(<span class="st">"mtcars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>Meta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20240719T040600Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2024, 7, 19, 4, 6), hash='3b134'), tags=None, name='mtcars', user={}, local={})</code></pre>
+<pre><code>Meta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20240722T214409Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2024, 7, 22, 21, 44, 9), hash='3b134'), tags=None, name='mtcars', user={}, local={})</code></pre>
 </div>
 </div>
 <p>While we’ll do our best to keep the automatically generated metadata consistent over time, I’d recommend manually capturing anything you really care about in metadata.</p>
@@ -487,7 +487,7 @@ Version: 20240719T040600Z-3b134</code></pre>
 <section id="versioning" class="level2">
 <h2 class="anchored" data-anchor-id="versioning">Versioning</h2>
 <p>Every <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> will create a new version:</p>
-<div id="dc231f72" class="cell" data-execution_count="9">
+<div id="20907fa2" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>board2 <span class="op">=</span> board_temp()</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>)</span>
@@ -496,13 +496,13 @@ Version: 20240719T040600Z-3b134</code></pre>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'x'
-Version: 20240719T040600Z-2bc5d
+Version: 20240722T214409Z-2bc5d
 Writing pin:
 Name: 'x'
-Version: 20240719T040600Z-c24c0
+Version: 20240722T214409Z-c24c0
 Writing pin:
 Name: 'x'
-Version: 20240719T040600Z-91d9a</code></pre>
+Version: 20240722T214409Z-91d9a</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
@@ -520,21 +520,21 @@ Version: 20240719T040600Z-91d9a</code></pre>
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
-<td>2024-07-19 04:06:00</td>
+<td>2024-07-22 21:44:09</td>
 <td>2bc5d</td>
-<td>20240719T040600Z-2bc5d</td>
+<td>20240722T214409Z-2bc5d</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
-<td>2024-07-19 04:06:00</td>
+<td>2024-07-22 21:44:09</td>
 <td>91d9a</td>
-<td>20240719T040600Z-91d9a</td>
+<td>20240722T214409Z-91d9a</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
-<td>2024-07-19 04:06:00</td>
+<td>2024-07-22 21:44:09</td>
 <td>c24c0</td>
-<td>20240719T040600Z-c24c0</td>
+<td>20240722T214409Z-c24c0</td>
 </tr>
 </tbody>
 </table>
@@ -543,14 +543,14 @@ Version: 20240719T040600Z-91d9a</code></pre>
 </div>
 </div>
 <p>By default, <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a> will return the most recent version:</p>
-<div id="97aea897" class="cell" data-execution_count="10">
+<div id="c108670e" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>board2.pin_read(<span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>[1, 2, 3]</code></pre>
 </div>
 </div>
 <p>But you can request an older version by supplying the <code>version</code> argument:</p>
-<div id="184a4305" class="cell" data-execution_count="11">
+<div id="96b1aa5a" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>version <span class="op">=</span> board2.pin_versions(<span class="st">"x"</span>).version[<span class="dv">1</span>]</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>board2.pin_read(<span class="st">"x"</span>, version <span class="op">=</span> version)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
@@ -575,7 +575,7 @@ Warning
 </div>
 <p>You can write a pin with <code>type="joblib"</code> to store arbitrary python objects, including fitted models from packages like <a href="https://scikit-learn.org/">scikit-learn</a>.</p>
 <p>For example, suppose you wanted to store a custom <code>namedtuple</code> object.</p>
-<div id="cbf6e257" class="cell" data-execution_count="12">
+<div id="3f25e5fd" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> namedtuple</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>board3 <span class="op">=</span> board_temp(allow_pickle_read<span class="op">=</span><span class="va">True</span>)</span>
@@ -589,14 +589,14 @@ Warning
 </div>
 </div>
 <p>Using <code>type="joblib"</code> lets you store and read back the custom <code>coords</code> object.</p>
-<div id="80ed9af7" class="cell" data-execution_count="13">
+<div id="ccfbeff8" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>board3.pin_write(coords, <span class="st">"my_coords"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"joblib"</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>board3.pin_read(<span class="st">"my_coords"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'my_coords'
-Version: 20240719T040600Z-d5e4a</code></pre>
+Version: 20240722T214409Z-d5e4a</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>Coords(x=1, y=2)</code></pre>
@@ -607,13 +607,13 @@ Version: 20240719T040600Z-d5e4a</code></pre>
 <h2 class="anchored" data-anchor-id="caching">Caching</h2>
 <p>The primary purpose of pins is to make it easy to share data. But pins is also designed to help you spend as little time as possible downloading data. <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a> and <a href="./reference/pin_download.html#pins.boards.BaseBoard.pin_download"><code>pin_download</code></a> automatically cache remote pins: they maintain a local copy of the data (so it’s fast) but always check that it’s up-to-date (so your analysis doesn’t use stale data).</p>
 <p>Wouldn’t it be nice if you could take advantage of this feature for any dataset on the internet? That’s the idea behind <a href="./reference/board_url.html#pins.board_url"><code>board_url</code></a>; you can assemble your own board from datasets, wherever they live on the internet. For example, this code creates a board containing a single pin, <code>penguins</code>, that refers to some fun data I found on GitHub:</p>
-<div id="7c05eda3" class="cell" data-execution_count="14">
+<div id="be886a29" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>my_data <span class="op">=</span> board_url(<span class="st">""</span>, {</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"penguins"</span>: <span class="st">"https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins_raw.csv"</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You can read this data by combining <a href="./reference/pin_download.html#pins.boards.BaseBoard.pin_download"><code>pin_download</code></a> with <code>read_csv</code> from pandas:</p>
-<div id="92386a4f" class="cell" data-execution_count="15">
+<div id="1c825208" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fname <span class="op">=</span> my_data.pin_download(<span class="st">"penguins"</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>fname</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -621,7 +621,7 @@ Version: 20240719T040600Z-d5e4a</code></pre>
 <pre><code>['/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv']</code></pre>
 </div>
 </div>
-<div id="c090b2eb" class="cell" data-execution_count="16">
+<div id="217dd06f" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>pd.read_csv(fname[<span class="dv">0</span>]).head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -759,7 +759,7 @@ Version: 20240719T040600Z-d5e4a</code></pre>
 </div>
 </div>
 </div>
-<div id="deb2adc9" class="cell" data-execution_count="17">
+<div id="c57d4167" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>my_data.pin_download(<span class="st">"penguins"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <pre><code>['/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv']</code></pre>

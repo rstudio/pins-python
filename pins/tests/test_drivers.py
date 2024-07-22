@@ -13,10 +13,10 @@ from pins.errors import PinsInsecureReadError
 
 
 @pytest.fixture
-def some_joblib(tmp_dir2):
+def some_joblib(tmp_path: Path):
     import joblib
 
-    p_obj = tmp_dir2 / "some.joblib"
+    p_obj = tmp_path / "some.joblib"
     joblib.dump({"a": 1}, p_obj)
 
     return p_obj
@@ -54,7 +54,7 @@ def test_default_title(obj, dst_title):
         "joblib",
     ],
 )
-def test_driver_roundtrip(tmp_dir2, type_):
+def test_driver_roundtrip(tmp_path: Path, type_):
     # TODO: I think this test highlights the challenge of getting the flow
     # between metadata, drivers, and the metafactory right.
     # There is the name of the data (relative to the pin directory), and the full
@@ -66,13 +66,13 @@ def test_driver_roundtrip(tmp_dir2, type_):
     fname = "some_df"
     full_file = f"{fname}.{type_}"
 
-    p_obj = tmp_dir2 / fname
+    p_obj = tmp_path / fname
     res_fname = save_data(df, p_obj, type_)
 
     assert Path(res_fname).name == full_file
 
     meta = MetaRaw(full_file, type_, "my_pin")
-    obj = load_data(meta, fsspec.filesystem("file"), tmp_dir2, allow_pickle_read=True)
+    obj = load_data(meta, fsspec.filesystem("file"), tmp_path, allow_pickle_read=True)
 
     assert df.equals(obj)
 
@@ -83,32 +83,32 @@ def test_driver_roundtrip(tmp_dir2, type_):
         "json",
     ],
 )
-def test_driver_roundtrip_json(tmp_dir2, type_):
+def test_driver_roundtrip_json(tmp_path: Path, type_):
 
     df = {"x": [1, 2, 3]}
 
     fname = "some_df"
     full_file = f"{fname}.{type_}"
 
-    p_obj = tmp_dir2 / fname
+    p_obj = tmp_path / fname
     res_fname = save_data(df, p_obj, type_)
 
     assert Path(res_fname).name == full_file
 
     meta = MetaRaw(full_file, type_, "my_pin")
-    obj = load_data(meta, fsspec.filesystem("file"), tmp_dir2, allow_pickle_read=True)
+    obj = load_data(meta, fsspec.filesystem("file"), tmp_path, allow_pickle_read=True)
 
     assert df == obj
 
 
-def test_driver_feather_write_error(tmp_dir2):
+def test_driver_feather_write_error(tmp_path: Path):
     import pandas as pd
 
     df = pd.DataFrame({"x": [1, 2, 3]})
 
     fname = "some_df"
 
-    p_obj = tmp_dir2 / fname
+    p_obj = tmp_path / fname
 
     with pytest.raises(NotImplementedError) as exc_info:
         save_data(df, p_obj, "feather")
@@ -116,7 +116,7 @@ def test_driver_feather_write_error(tmp_dir2):
     assert '"feather" no longer supported.' in exc_info.value.args[0]
 
 
-def test_driver_feather_read_backwards_compat(tmp_dir2):
+def test_driver_feather_read_backwards_compat(tmp_path: Path):
     import pandas as pd
 
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -124,10 +124,10 @@ def test_driver_feather_read_backwards_compat(tmp_dir2):
     fname = "some_df"
     full_file = f"{fname}.feather"
 
-    df.to_feather(tmp_dir2 / full_file)
+    df.to_feather(tmp_path / full_file)
 
     obj = load_data(
-        MetaRaw(full_file, "feather", "my_pin"), fsspec.filesystem("file"), tmp_dir2
+        MetaRaw(full_file, "feather", "my_pin"), fsspec.filesystem("file"), tmp_path
     )
 
     assert df.equals(obj)
@@ -149,7 +149,7 @@ def test_driver_pickle_read_fail_default(some_joblib):
         )
 
 
-def test_driver_apply_suffix_false(tmp_dir2):
+def test_driver_apply_suffix_false(tmp_path: Path):
     import pandas as pd
 
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -157,7 +157,7 @@ def test_driver_apply_suffix_false(tmp_dir2):
     fname = "some_df"
     type_ = "csv"
 
-    p_obj = tmp_dir2 / fname
+    p_obj = tmp_path / fname
     res_fname = save_data(df, p_obj, type_, apply_suffix=False)
 
     assert Path(res_fname).name == "some_df"

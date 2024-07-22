@@ -63,15 +63,6 @@ def df():
 
 
 @pytest.fixture
-def tmp_dir2():
-    # fixture for offering a temporary directory
-    # note that pytest has a built-in fixture tmp_dir, but it uses the lib py.path
-    # which recommends using pathlib, etc..
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        yield Path(tmp_dir)
-
-
-@pytest.fixture
 def tmp_cache():
     with rm_env("PINS_CACHE_DIR"):
         with tempfile.TemporaryDirectory() as tmp_dir:

@@ -1077,7 +1077,7 @@ class BoardRsConnect(BaseBoard):
 
     @functools.cached_property
     def user_name(self):
-        return self.fs.api.get_user()
+        return self.fs.api.get_user()["username"]
 
     def prepare_pin_version(self, pin_dir_path, x, name: "str | None", *args, **kwargs):
         # TODO: should move board_deparse into utils, to avoid circular import

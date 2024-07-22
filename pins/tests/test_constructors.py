@@ -57,6 +57,7 @@ def construct_from_board(board):
 
 # End-to-end constructor tests
 
+
 # there are two facets of boards: reading and writing.
 # copied from test_compat
 @pytest.mark.skip_on_github

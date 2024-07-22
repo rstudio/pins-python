@@ -25,7 +25,6 @@ _log = logging.getLogger(__name__)
 
 
 class IFileSystem(Protocol):
-
     protocol: "str | list"
 
     def ls(self, path: str) -> Sequence[str]: ...

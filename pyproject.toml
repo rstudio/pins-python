@@ -73,6 +73,7 @@ reportPossiblyUnboundVariable = false
 # Variety of issues
 reportReturnType = false
 
+reportUnusedExpression = false
 [tool.ruff]
 line-length = 90
 extend-exclude = ["docs"]

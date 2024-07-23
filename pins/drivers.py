@@ -31,7 +31,7 @@ def load_path(meta, path_to_version):
 
     # file path creation ------------------------------------------------------
 
-    if type == "table":
+    if type == "table":  # noqa: E721 False Positive due to bug: https://github.com/rstudio/pins-python/issues/266
         # this type contains an rds and csv files named data.{ext}, so we match
         # R pins behavior and hardcode the name
         target_fname = "data.csv"
@@ -134,9 +134,7 @@ def load_data(
     raise NotImplementedError(f"No driver for type {meta.type}")
 
 
-def save_data(
-    obj, fname, type=None, apply_suffix: bool = True
-) -> "str | Sequence[str]":
+def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequence[str]":
     # TODO: extensible saving with deferred importing
     # TODO: how to encode arguments to saving / loading drivers?
     #       e.g. pandas index options

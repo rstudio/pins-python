@@ -15,9 +15,7 @@ df = pd.DataFrame({"x": [1, 2, 3]})
 df.to_csv(p_data)
 
 p_meta = p_root / "data.txt"
-meta = MetaFactory().create(
-    str(p_data), "csv", title="some title", name="data_frame.csv"
-)
+meta = MetaFactory().create(str(p_data), "csv", title="some title", name="data_frame.csv")
 meta.to_yaml(p_meta.open("w"))
 
 # add manifest last, since it enumerates all the files

@@ -17,67 +17,19 @@ ignore = ["pins/tests"]
 pythonVersion = "3.12"       # Use the maximum version supported by python-pins
 pythonPlatform = "Linux"
 
-# #######################
-# Rules disabled and reasons why
-# #######################
-
-# None defaults without None in their type hint
-# Variety of other issues
+# Tracking compliance with these rules at https://github.com/rstudio/pins-python/issues/272
 reportArgumentType = false
-
-# Only one change needed - to avoid trying to treat Traversable as Path
 reportAssignmentType = false
-
-# Variety of issues
 reportAttributeAccessIssue = false
-
-# Passing extra args to the IFileSystem Protocol
-# Missing overloads for as_df arg in pin_search and pin_versions
 reportCallIssue = false
-
-# Return type issues in CachePruner.versions and pins.constructors.board
 reportGeneralTypeIssues = false
-
-# Issues with ExtendMethodDoc
-# RSConnect implementation of the IFileSystem Protocol
 reportIncompatibleMethodOverride = false
-
-# Only one change needed in RsConnectFs; protocol: ClassVar[str | tuple[str, ...]]
 reportIncompatibleVariableOverride = false
-
-# Using __delitem__ on a Mapping
-# RSConnect API Reponse object issues
 reportIndexIssue = false
-
-# https://github.com/rstudio/pins-python/issues/262#issuecomment-2240875273
 reportMissingImports = false
-
-# Missing stubs for fsspec: https://github.com/fsspec/filesystem_spec/issues/625
-# Missing stubs for joblib: https://github.com/joblib/joblib/issues/1516
 reportMissingTypeStubs = false
-
-# RSConnect API _raw_query return type issue
 reportOptionalIterable = false
-
-# RSConnect API _raw_query return type issue
-# prepare_pin_version unhandled case
 reportOptionalMemberAccess = false
-
-# RSConnect API _raw_query return type issue
-# RSConnect implementation of the IFileSystem Protocol
 reportOptionalSubscript = false
-
-# Mostly False positives arising from fragmented if statements and integer comparisons
 reportPossiblyUnboundVariable = false
-
-# Variety of issues
 reportReturnType = false
-
-reportUnusedExpression = false
-[tool.ruff]
-line-length = 90
-extend-exclude = ["docs"]
-
-[tool.ruff.lint]
-select = ["E", "F", "W"]
-ignore = ["E501"]

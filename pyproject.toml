@@ -33,3 +33,12 @@ reportOptionalMemberAccess = false
 reportOptionalSubscript = false
 reportPossiblyUnboundVariable = false
 reportReturnType = false
+reportUnusedExpression = false
+
+[tool.ruff]
+line-length = 90
+extend-exclude = ["docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E501"]

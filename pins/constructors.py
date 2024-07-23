@@ -152,9 +152,7 @@ def board_folder(path: str, versioned=True, allow_pickle_read=None):
         takes precedence.
     """
 
-    return board(
-        "file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read
-    )
+    return board("file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read)
 
 
 def board_temp(versioned=True, allow_pickle_read=None):
@@ -206,9 +204,7 @@ def board_local(versioned=True, allow_pickle_read=None):
     """
     path = get_data_dir()
 
-    return board(
-        "file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read
-    )
+    return board("file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read)
 
 
 def board_github(
@@ -425,9 +421,7 @@ def board_connect(
         server_url = os.environ.get("CONNECT_SERVER")
 
     kwargs = dict(server_url=server_url, api_key=api_key)
-    return board(
-        "rsc", None, versioned, cache, allow_pickle_read, storage_options=kwargs
-    )
+    return board("rsc", None, versioned, cache, allow_pickle_read, storage_options=kwargs)
 
 
 board_rsconnect = board_connect
@@ -569,6 +563,4 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     """
 
     opts = {"use_listings_cache": False}
-    return board(
-        "abfs", path, versioned, cache, allow_pickle_read, storage_options=opts
-    )
+    return board("abfs", path, versioned, cache, allow_pickle_read, storage_options=opts)

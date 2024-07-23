@@ -14,12 +14,12 @@ UNSAFE_TYPES = frozenset(["joblib"])
 REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib", "file"])
 
 
-def _assert_is_pandas_df(x):
+def _assert_is_pandas_df(x, file_type: str) -> None:
     import pandas as pd
 
     if not isinstance(x, pd.DataFrame):
         raise NotImplementedError(
-            "Currently only pandas.DataFrame can be saved to a CSV."
+            f"Currently only pandas.DataFrame can be saved as type {file_type!r}."
         )
 
 
@@ -31,7 +31,7 @@ def load_path(meta, path_to_version):
 
     # file path creation ------------------------------------------------------
 
-    if type == "table":
+    if type == "table":  # noqa: E721 False Positive due to bug: https://github.com/rstudio/pins-python/issues/266
         # this type contains an rds and csv files named data.{ext}, so we match
         # R pins behavior and hardcode the name
         target_fname = "data.csv"
@@ -134,9 +134,7 @@ def load_data(
     raise NotImplementedError(f"No driver for type {meta.type}")
 
 
-def save_data(
-    obj, fname, type=None, apply_suffix: bool = True
-) -> "str | Sequence[str]":
+def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequence[str]":
     # TODO: extensible saving with deferred importing
     # TODO: how to encode arguments to saving / loading drivers?
     #       e.g. pandas index options
@@ -155,26 +153,26 @@ def save_data(
     final_name = f"{fname}{suffix}"
 
     if type == "csv":
-        _assert_is_pandas_df(obj)
+        _assert_is_pandas_df(obj, file_type=type)
 
         obj.to_csv(final_name, index=False)
 
     elif type == "arrow":
         # NOTE: R pins accepts the type arrow, and saves it as feather.
         #       we allow reading this type, but raise an error for writing.
-        _assert_is_pandas_df(obj)
+        _assert_is_pandas_df(obj, file_type=type)
 
         obj.to_feather(final_name)
 
     elif type == "feather":
-        _assert_is_pandas_df(obj)
+        _assert_is_pandas_df(obj, file_type=type)
 
         raise NotImplementedError(
             'Saving data as type "feather" no longer supported. Use type "arrow" instead.'
         )
 
     elif type == "parquet":
-        _assert_is_pandas_df(obj)
+        _assert_is_pandas_df(obj, file_type=type)
 
         obj.to_parquet(final_name)
 

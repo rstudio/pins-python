@@ -84,7 +84,6 @@ def test_driver_roundtrip(tmp_path: Path, type_):
     ],
 )
 def test_driver_roundtrip_json(tmp_path: Path, type_):
-
     df = {"x": [1, 2, 3]}
 
     fname = "some_df"

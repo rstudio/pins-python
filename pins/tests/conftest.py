@@ -44,7 +44,9 @@ def http_example_board_path():
     # yield backend.create_tmp_board(str(PATH_TO_EXAMPLE_BOARD.absolute())).board
     # backend.teardown()
     # TODO: could putting it in a publically available bucket folder
-    return "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat"
+    return (
+        "https://raw.githubusercontent.com/machow/pins-python/main/pins/tests/pins-compat"
+    )
 
 
 @pytest.fixture

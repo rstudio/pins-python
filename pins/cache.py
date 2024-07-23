@@ -190,9 +190,7 @@ class PinsAccessTimeCache(SimpleCacheFileSystem):
         fn = self._check_file(path)
 
         if fn is None:
-            raise ValueError(
-                f"Cached file should exist for path, but none found: {path}"
-            )
+            raise ValueError(f"Cached file should exist for path, but none found: {path}")
 
         touch_access_time(fn)
 

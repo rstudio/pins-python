@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import Literal, Sequence
 
-from typing_extensions import assert_never
-
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError
 from .meta import Meta
@@ -24,7 +22,8 @@ def _assert_is_pandas_df(x, file_type: str) -> None:
         )
 
 
-def _get_df_family(df) -> Literal["unknown", "pandas", "polars"]:
+def _get_df_family(df) -> Literal["pandas", "polars"]:
+    """Return the type of DataFrame, or raise NotImplementedError if we can't decide."""
     try:
         import polars as pl
     except ModuleNotFoundError:
@@ -36,16 +35,15 @@ def _get_df_family(df) -> Literal["unknown", "pandas", "polars"]:
 
     is_pandas_df = isinstance(df, pd.DataFrame)
 
-    if not is_polars_df and not is_pandas_df:
-        return "unknown"
-    if is_polars_df and is_pandas_df:  # Hybrid DataFrame type!
-        return "unknown"
+    if is_polars_df and is_pandas_df:
+        raise NotImplementedError(
+            "Hybrid DataFrames (simultaneously pandas and polars) are not supported."
+        )
     elif is_polars_df:
         return "polars"
     elif is_pandas_df:
         return "pandas"
-    else:
-        assert_never(df)
+    raise NotImplementedError(f"Unrecognized DataFrame type: {type(df)}")
 
 
 def load_path(meta, path_to_version):
@@ -234,15 +232,13 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
 
 
 def default_title(obj, name):
-    df_family = _get_df_family(obj)
-
-    if df_family in ("pandas", "polars"):
-        # TODO(compat): title says CSV rather than data.frame
-        # see https://github.com/machow/pins-python/issues/5
-        shape_str = " x ".join(map(str, obj.shape))
-        return f"{name}: a pinned {shape_str} DataFrame"
-    elif df_family == "unknown":
+    try:
+        _get_df_family(obj)
+    except NotImplementedError:
         obj_name = type(obj).__qualname__
         return f"{name}: a pinned {obj_name} object"
-    else:
-        assert_never(df_family)
+
+    # TODO(compat): title says CSV rather than data.frame
+    # see https://github.com/machow/pins-python/issues/5
+    shape_str = " x ".join(map(str, obj.shape))
+    return f"{name}: a pinned {shape_str} DataFrame"

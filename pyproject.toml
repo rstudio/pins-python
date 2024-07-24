@@ -3,10 +3,17 @@ requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
+markers = [
+    "fs_file: mark test to only run on local filesystem",
+    "fs_s3: mark test to only run on AWS S3 bucket filesytem",
+    "fs_gcs: mark test to only run on Google Cloud Storage bucket filesystem",
+    "fs_abfs: mark test to only run on Azure Datalake filesystem",
+    "fs_rsc: mark test to only run on Posit Connect filesystem",
+    "skip_on_github: skip this test if running on GitHub",
+]
 testpaths = ["pins"]
 addopts = "--doctest-modules"
 doctest_optionflags = "NORMALIZE_WHITESPACE"
-markers = ["skip_on_github: skip this test if running on github"]
 
 [tool.setuptools_scm]
 

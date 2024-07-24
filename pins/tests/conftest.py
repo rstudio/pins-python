@@ -14,9 +14,6 @@ EXAMPLE_PIN_NAME = "df_csv"
 
 PATH_TO_MANIFEST_BOARD = files("pins") / "tests/pin-board"
 
-# Based on https://github.com/machow/siuba/blob/main/siuba/tests/helpers.py
-BACKEND_MARKS = ["fs_s3", "fs_file", "fs_gcs", "fs_abfs", "fs_rsc"]
-
 # parameters that can be used more than once per session
 params_safe = [
     pytest.param(lambda: BoardBuilder("file"), id="file", marks=m.fs_file),
@@ -91,12 +88,3 @@ def tmp_data_dir():
 
 def pytest_addoption(parser):
     parser.addoption("--snapshot-update", action="store_true")
-
-
-def pytest_configure(config):
-    # TODO: better way to define all marks? Can we iterate over params above?
-    for mark_name in BACKEND_MARKS:
-        fs_name = mark_name.split("_")[-1]
-        config.addinivalue_line(
-            "markers", f"{mark_name}: mark test to only run on {fs_name} filesystem."
-        )

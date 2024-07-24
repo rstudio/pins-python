@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Literal, Sequence
+from typing import Literal, Sequence, TypeAlias
 
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError
@@ -11,39 +11,7 @@ from .meta import Meta
 
 UNSAFE_TYPES = frozenset(["joblib"])
 REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib", "file"])
-
-
-def _assert_is_pandas_df(x, file_type: str) -> None:
-    df_family = _get_df_family(x)
-
-    if df_family != "pandas":
-        raise NotImplementedError(
-            f"Currently only pandas.DataFrame can be saved as type {file_type!r}."
-        )
-
-
-def _get_df_family(df) -> Literal["pandas", "polars"]:
-    """Return the type of DataFrame, or raise NotImplementedError if we can't decide."""
-    try:
-        import polars as pl
-    except ModuleNotFoundError:
-        is_polars_df = False
-    else:
-        is_polars_df = isinstance(df, pl.DataFrame)
-
-    import pandas as pd
-
-    is_pandas_df = isinstance(df, pd.DataFrame)
-
-    if is_polars_df and is_pandas_df:
-        raise NotImplementedError(
-            "Hybrid DataFrames (simultaneously pandas and polars) are not supported."
-        )
-    elif is_polars_df:
-        return "polars"
-    elif is_pandas_df:
-        return "pandas"
-    raise NotImplementedError(f"Unrecognized DataFrame type: {type(df)}")
+_DFLib: TypeAlias = Literal["pandas", "polars"]
 
 
 def load_path(meta, path_to_version):
@@ -176,36 +144,31 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
     final_name = f"{fname}{suffix}"
 
     if type == "csv":
-        _assert_is_pandas_df(obj, file_type=type)
-
+        _choose_df_lib(obj, supported_libs=["pandas"], file_type=type)
         obj.to_csv(final_name, index=False)
 
     elif type == "arrow":
         # NOTE: R pins accepts the type arrow, and saves it as feather.
         #       we allow reading this type, but raise an error for writing.
-        _assert_is_pandas_df(obj, file_type=type)
-
+        _choose_df_lib(obj, supported_libs=["pandas"], file_type=type)
         obj.to_feather(final_name)
 
     elif type == "feather":
-        _assert_is_pandas_df(obj, file_type=type)
+        _choose_df_lib(obj, supported_libs=["pandas"], file_type=type)
 
         raise NotImplementedError(
             'Saving data as type "feather" no longer supported. Use type "arrow" instead.'
         )
 
     elif type == "parquet":
-        df_family = _get_df_family(obj)
-        if df_family == "polars":
-            obj.write_parquet(final_name)
-        elif df_family == "pandas":
+        df_lib = _choose_df_lib(obj, supported_libs=["pandas", "polars"], file_type=type)
+
+        if df_lib == "pandas":
             obj.to_parquet(final_name)
+        elif df_lib == "polars":
+            obj.write_parquet(final_name)
         else:
-            msg = (
-                "Currently only pandas.DataFrame and polars.DataFrame can be saved to "
-                "a parquet file."
-            )
-            raise NotImplementedError(msg)
+            raise NotImplementedError
 
     elif type == "joblib":
         import joblib
@@ -233,7 +196,7 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
 
 def default_title(obj, name):
     try:
-        _get_df_family(obj)
+        _choose_df_lib(obj)
     except NotImplementedError:
         obj_name = type(obj).__qualname__
         return f"{name}: a pinned {obj_name} object"
@@ -242,3 +205,73 @@ def default_title(obj, name):
     # see https://github.com/machow/pins-python/issues/5
     shape_str = " x ".join(map(str, obj.shape))
     return f"{name}: a pinned {shape_str} DataFrame"
+
+
+def _choose_df_lib(
+    df,
+    *,
+    supported_libs: list[_DFLib] = ["pandas", "polars"],
+    file_type: str | None = None,
+) -> _DFLib:
+    """Return the type of DataFrame library used in the given DataFrame.
+
+    Args:
+        df:
+            The object to check - might not be a DataFrame necessarily.
+        supported_libs:
+            The DataFrame libraries to accept for this df.
+        file_type:
+            The file type we're trying to save to - used to give more specific error messages.
+
+    Raises:
+        NotImplementedError: If the DataFrame type is not recognized.
+    """
+    df_libs: list[_DFLib] = []
+
+    # pandas
+    import pandas as pd
+
+    if isinstance(df, pd.DataFrame):
+        df_libs.append("pandas")
+
+    # polars
+    try:
+        import polars as pl
+    except ModuleNotFoundError:
+        pass
+    else:
+        if isinstance(df, pl.DataFrame):
+            df_libs.append("polars")
+
+    if len(df_libs) == 1:
+        (df_lib,) = df_libs
+    elif len(df_libs) > 1:
+        msg = (
+            f"Hybrid DataFrames are not supported: "
+            f"should only be one of {supported_libs!r}, "
+            f"but got an object from multiple libraries {df_libs!r}."
+        )
+        raise NotImplementedError(msg)
+    else:
+        raise NotImplementedError(f"Unrecognized DataFrame type: {type(df)}")
+
+    if df_lib not in supported_libs:
+        if file_type is None:
+            ftype_clause = "in pins"
+        else:
+            ftype_clause = f"for type {file_type!r}"
+
+        if len(supported_libs) == 1:
+            msg = (
+                f"Currently only {supported_libs[0]} DataFrames can be saved "
+                f"{ftype_clause}. {df_lib} DataFrames are not yet supported."
+            )
+        else:
+            msg = (
+                f"Currently only DataFrames from the following libraries can be saved "
+                f"{ftype_clause}: {supported_libs!r}."
+            )
+
+        raise NotImplementedError(msg)
+
+    return df_lib

@@ -3,13 +3,14 @@ import tempfile
 import shutil
 import inspect
 import re
+import functools
 
 from io import IOBase
 from pathlib import Path
 from importlib_resources import files
 from datetime import datetime, timedelta
 
-from typing import Sequence, Optional, Mapping
+from typing import Protocol, Sequence, Optional, Mapping
 
 from .versions import VersionRaw, guess_version, version_setup
 from .meta import Meta, MetaRaw, MetaFactory
@@ -23,34 +24,24 @@ from .cache import PinsCache
 _log = logging.getLogger(__name__)
 
 
-# Note that once we drop python 3.7, we can make this a Protocol
-class IFileSystem:
-
+class IFileSystem(Protocol):
     protocol: "str | list"
 
-    def ls(self, path: str) -> Sequence[str]:
-        ...
+    def ls(self, path: str) -> Sequence[str]: ...
 
-    def put(self) -> None:
-        ...
+    def put(self) -> None: ...
 
-    def open(self, path: str, mode: str, *args, **kwargs) -> IOBase:
-        ...
+    def open(self, path: str, mode: str, *args, **kwargs) -> IOBase: ...
 
-    def get(self) -> None:
-        ...
+    def get(self) -> None: ...
 
-    def exists(self, path: str, **kwargs) -> bool:
-        ...
+    def exists(self, path: str, **kwargs) -> bool: ...
 
-    def mkdir(self, path, create_parents=True, **kwargs) -> None:
-        ...
+    def mkdir(self, path, create_parents=True, **kwargs) -> None: ...
 
-    def rm(self, path, recursive=False, maxdepth=None) -> None:
-        ...
+    def rm(self, path, recursive=False, maxdepth=None) -> None: ...
 
-    def info(self, path):
-        ...
+    def info(self, path): ...
 
 
 class BaseBoard:
@@ -163,9 +154,7 @@ class BaseBoard:
         path_meta = self.construct_path([*components, meta_name])
         f, local = self._open_pin_meta(path_meta)
 
-        meta = self.meta_factory.read_pin_yaml(
-            f, pin_name, selected_version, local=local
-        )
+        meta = self.meta_factory.read_pin_yaml(f, pin_name, selected_version, local=local)
 
         return meta
 
@@ -237,7 +226,6 @@ class BaseBoard:
         versioned: Optional[bool] = None,
         created: Optional[datetime] = None,
     ) -> Meta:
-
         if type == "feather":
             warn_deprecated(
                 'Writing pin type "feather" is unsupported. Switching type to "arrow".'
@@ -299,9 +287,7 @@ class BaseBoard:
                     "but that directory already exists."
                 )
 
-            inform(
-                _log, f"Writing pin:\nName: {repr(pin_name)}\nVersion: {dst_version}"
-            )
+            inform(_log, f"Writing pin:\nName: {repr(pin_name)}\nVersion: {dst_version}")
 
             res = self.fs.put(tmp_dir, dst_version_path, recursive=True)
 
@@ -456,9 +442,7 @@ class BaseBoard:
         pin_version_path = self.construct_path([pin_name, version])
         self.fs.rm(pin_version_path, recursive=True)
 
-    def pin_versions_prune(
-        self, name, n: "int | None" = None, days: "int | None" = None
-    ):
+    def pin_versions_prune(self, name, n: "int | None" = None, days: "int | None" = None):
         """Delete old versions of a pin.
 
         Parameters
@@ -751,6 +735,66 @@ class BaseBoard:
             return
         path_to_hashed = self.fs._check_file(path)
         return touch_access_time(path_to_hashed)
+
+
+def board_deparse(board: BaseBoard):
+    """Return a representation of how a board could be reconstructed.
+
+    Note that this function does not try to represent the exact arguments used
+    to construct a board, but key pieces (like the path to the board). You may
+    need to specify environment variables with API keys to complete the connection.
+
+    Parameters
+    ----------
+    board:
+        A pins board to be represented.
+
+    Examples
+    --------
+
+    The example below deparses a board connected to Posit Connect.
+
+    >>> from pins.constructors import board_connect
+    >>> board_deparse(board_connect(server_url="http://example.com", api_key="xxx"))
+    "board_connect(server_url='http://example.com')"
+
+    Note that the deparsing a Posit Connect board does not keep the api_key,
+    which is sensitive information. In this case, you can set the CONNECT_API_KEY
+    environment variable to connect.
+
+    Below is an example of representing a board connected to a local folder.
+
+    >>> from pins.constructors import board_folder
+    >>> board_deparse(board_folder("a/b/c"))
+    "board_folder('a/b/c')"
+
+    >>> board_deparse(board_folder(path="a/b/c", allow_pickle_read=True))
+    "board_folder('a/b/c', allow_pickle_read=True)"
+    """
+    if board.allow_pickle_read is not None:
+        allow_pickle = f", allow_pickle_read={repr(board.allow_pickle_read)}"
+    else:
+        allow_pickle = ""
+
+    prot = board.fs.protocol
+
+    if prot == "rsc":
+        url = board.fs.api.server_url
+        return f"board_connect(server_url={repr(url)}{allow_pickle})"
+    elif prot in ["file", ("file", "local")]:
+        return f"board_folder({repr(board.board)}{allow_pickle})"
+    elif set(prot) == {"s3", "s3a"}:
+        return f"board_s3({repr(board.board)}{allow_pickle})"
+    elif prot == "abfs":
+        return f"board_azure({repr(board.board)}{allow_pickle})"
+    elif set(prot) == {"gcs", "gs"} or prot == "gs":
+        return f"board_gcs({repr(board.board)}{allow_pickle})"
+    elif prot == "http":
+        return f"board_url({repr(board.board)}, {board.pin_paths}{allow_pickle})"
+    else:
+        raise NotImplementedError(
+            f"board deparsing currently not supported for protocol: {prot}"
+        )
 
 
 class BoardManual(BaseBoard):
@@ -1075,23 +1119,11 @@ class BoardRsConnect(BaseBoard):
         # to fs.put to the <user>/<content_name>.
         return self.path_to_pin(name)
 
-    @property
+    @functools.cached_property
     def user_name(self):
-        # note that this is essentially the manual version of functools.cached_property
-        # since we support python 3.7
-        name = getattr(self, "_user_name", None)
-        if name is not None:
-            return name
-        else:
-            user = self.fs.api.get_user()
-            self._user_name = user["username"]
-
-            return self._user_name
+        return self.fs.api.get_user()["username"]
 
     def prepare_pin_version(self, pin_dir_path, x, name: "str | None", *args, **kwargs):
-        # TODO: should move board_deparse into utils, to avoid circular import
-        from .constructors import board_deparse
-
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
         # the <name> part.
@@ -1112,8 +1144,7 @@ class BoardRsConnect(BaseBoard):
             )
 
         # recursively copy all assets into prepped pin version dir
-        # shutil.copytree(self.html_assets_dir, pin_dir_path, dirs_exist_ok=True)
-        _copytree(self.html_assets_dir, pin_dir_path)
+        shutil.copytree(self.html_assets_dir, pin_dir_path, dirs_exist_ok=True)
 
         # render index.html ------------------------------------------------
 
@@ -1174,17 +1205,3 @@ class BoardRsConnect(BaseBoard):
         (Path(pin_dir_path) / "index.html").write_text(rendered)
 
         return meta
-
-
-# TODO: replace with shutil.copytree once py3.7 is dropped
-# copied from https://stackoverflow.com/a/12514470/1144523
-def _copytree(src, dst, symlinks=False, ignore=None):
-    import os
-
-    for item in os.listdir(src):
-        s = os.path.join(src, item)
-        d = os.path.join(dst, item)
-        if os.path.isdir(s):
-            shutil.copytree(s, d, symlinks, ignore)
-        else:
-            shutil.copy2(s, d)

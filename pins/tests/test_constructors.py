@@ -57,6 +57,7 @@ def construct_from_board(board):
 
 # End-to-end constructor tests
 
+
 # there are two facets of boards: reading and writing.
 # copied from test_compat
 @pytest.mark.skip_on_github
@@ -256,7 +257,6 @@ def test_constructor_boards_multi_user(board2, df_csv, tmp_cache):
 
 @pytest.mark.skip_on_github
 def test_board_constructor_local_default_writable():
-
     with rm_env("PINS_DATA_DIR"):
         board = c.board_local()
         p_board = Path(board.board)

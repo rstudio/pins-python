@@ -71,19 +71,15 @@ def test_board_validate_pin_name_root(board):
 
 
 def test_board_pin_write_default_title(board):
-
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
     meta = board.pin_write(df, "df_csv", title=None, type="csv")
     assert meta.title == "df_csv: a pinned 3 x 2 DataFrame"
 
 
 def test_board_pin_write_prepare_pin(board, tmp_dir2):
-
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
-    meta = board.prepare_pin_version(
-        str(tmp_dir2), df, "df_csv", title=None, type="csv"
-    )
+    meta = board.prepare_pin_version(str(tmp_dir2), df, "df_csv", title=None, type="csv")
     assert meta.file == "df_csv.csv"
     assert (tmp_dir2 / "data.txt").exists()
     assert (tmp_dir2 / "df_csv.csv").exists()
@@ -91,7 +87,6 @@ def test_board_pin_write_prepare_pin(board, tmp_dir2):
 
 
 def test_board_pin_write_roundtrip(board):
-
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
     assert not board.pin_exists("df_csv")
@@ -413,7 +408,6 @@ def test_board_pin_version_delete_latest(board, pin_name, pin_del):
 
 @pytest.mark.parametrize("n", [1, 2])
 def test_board_pin_versions_prune_n(board, pin_prune, pin_name, n):
-
     board.pin_versions_prune(pin_name, n=n)
     new_versions = board.pin_versions(pin_name, as_df=False)
 
@@ -428,7 +422,6 @@ def test_board_pin_versions_prune_n(board, pin_prune, pin_name, n):
 
 @pytest.mark.parametrize("days", [1, 2])
 def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
-
     # RStudio cannot handle days, since it involves pulling metadata
     if board.fs.protocol == "rsc":
         with pytest.raises(NotImplementedError):
@@ -482,7 +475,6 @@ from pins.cache import PinsCache  # noqa
 
 
 def test_board_base_pin_meta_cache_touch(tmp_dir2, df):
-
     cache = fsspec.filesystem(
         "pinscache",
         target_protocol="file",
@@ -635,7 +627,6 @@ from pins.boards import BoardManual  # noqa
 
 
 def test_board_manual_http_file_download():
-
     path = "https://raw.githubusercontent.com/rstudio/pins-python"
     license_path = "main/LICENSE"
 

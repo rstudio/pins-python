@@ -278,7 +278,6 @@ class RsConnectApi:
         asc_order: "bool | None" = None,
         walk_pages=True,
     ) -> "Sequence[User] | Sequence[dict]":
-
         params = {k: v for k, v in locals().items() if k != "self" if v is not None}
 
         if walk_pages:
@@ -290,9 +289,7 @@ class RsConnectApi:
 
     # content ----
 
-    def get_content(
-        self, owner_guid: str = None, name: str = None
-    ) -> Sequence[Content]:
+    def get_content(self, owner_guid: str = None, name: str = None) -> Sequence[Content]:
         params = self._get_params(locals())
 
         results = self.query_v1("content", params=params)
@@ -355,7 +352,6 @@ class RsConnectApi:
     def get_content_bundle_archive(
         self, guid: str, id: str, f_obj: "str | IOBase"
     ) -> None:
-
         r = self.query_v1(
             f"content/{guid}/bundles/{id}/download", stream=True, return_request=True
         )

@@ -223,7 +223,6 @@ class MetaFactory:
         created=None,
         user=None,
     ) -> Meta:
-
         if title is None:
             raise NotImplementedError("title arguments required")
         if isinstance(files, str):

@@ -45,9 +45,7 @@ class PinBundleManifest:
     version: int = 1
     local: str = "en_US"
     platform: str = "3.5.1"
-    metadata: PinBundleManifestMetadata = field(
-        default_factory=PinBundleManifestMetadata
-    )
+    metadata: PinBundleManifestMetadata = field(default_factory=PinBundleManifestMetadata)
     packages: None = None
     files: list = field(default_factory=list)
     users: None = None
@@ -119,9 +117,7 @@ class RsConnectFs(AbstractFileSystem):
         self._user_name_cache = {}
         self._content_name_cache = {}
 
-    def ls(
-        self, path, details=False, **kwargs
-    ) -> "Sequence[BaseEntity] | Sequence[str]":
+    def ls(self, path, details=False, **kwargs) -> "Sequence[BaseEntity] | Sequence[str]":
         """List contents of Rstudio Connect Server.
 
         Parameters
@@ -219,9 +215,7 @@ class RsConnectFs(AbstractFileSystem):
         # Deploy bundle ----
 
         if deploy:
-            task = self.api.post_content_item_deploy(
-                bundle["content_guid"], bundle["id"]
-            )
+            task = self.api.post_content_item_deploy(bundle["content_guid"], bundle["id"])
 
             task = self.api.poll_tasks(task["task_id"])
             if task["code"] != 0 or not task["finished"]:
@@ -399,9 +393,7 @@ class RsConnectFs(AbstractFileSystem):
                 if len(contents) == 0
                 else RsConnectApiResultError
             )
-            raise err(
-                f"Expecting 1 content entry, but found {len(contents)}: {contents}"
-            )
+            raise err(f"Expecting 1 content entry, but found {len(contents)}: {contents}")
 
         res = contents[0]
 

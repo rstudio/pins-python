@@ -1,75 +1,18 @@
 import fsspec
 import os
 import tempfile
+import warnings
 
-from .boards import BaseBoard, BoardRsConnect, BoardManual
+from .boards import BaseBoard, BoardRsConnect, BoardManual, board_deparse
 from .cache import PinsCache, PinsRscCacheMapper, PinsAccessTimeCache, prefix_cache
 from .config import get_data_dir, get_cache_dir
+
+# Kept here for backward-compatibility reasons.
+board_deparse  # Note that this is not a constructor, but a function to represent them.
 
 
 class DEFAULT:
     pass
-
-
-# Representing constructors ===================================================
-
-# Note that this is not a constructor, but a function to represent them.
-def board_deparse(board: BaseBoard):
-    """Return a representation of how a board could be reconstructed.
-
-    Note that this function does not try to represent the exact arguments used
-    to construct a board, but key pieces (like the path to the board). You may
-    need to specify environment variables with API keys to complete the connection.
-
-    Parameters
-    ----------
-    board:
-        A pins board to be represented.
-
-    Examples
-    --------
-
-    The example below deparses a board connected to Posit Connect.
-
-    >>> board_deparse(board_connect(server_url="http://example.com", api_key="xxx"))
-    "board_connect(server_url='http://example.com')"
-
-    Note that the deparsing a Posit Connect board does not keep the api_key,
-    which is sensitive information. In this case, you can set the CONNECT_API_KEY
-    environment variable to connect.
-
-    Below is an example of representing a board connected to a local folder.
-
-    >>> board_deparse(board_folder("a/b/c"))
-    "board_folder('a/b/c')"
-
-    >>> board_deparse(board_folder(path="a/b/c", allow_pickle_read=True))
-    "board_folder('a/b/c', allow_pickle_read=True)"
-    """
-    if board.allow_pickle_read is not None:
-        allow_pickle = f", allow_pickle_read={repr(board.allow_pickle_read)}"
-    else:
-        allow_pickle = ""
-
-    prot = board.fs.protocol
-
-    if prot == "rsc":
-        url = board.fs.api.server_url
-        return f"board_connect(server_url={repr(url)}{allow_pickle})"
-    elif prot in ["file", ("file", "local")]:
-        return f"board_folder({repr(board.board)}{allow_pickle})"
-    elif set(prot) == {"s3", "s3a"}:
-        return f"board_s3({repr(board.board)}{allow_pickle})"
-    elif prot == "abfs":
-        return f"board_azure({repr(board.board)}{allow_pickle})"
-    elif set(prot) == {"gcs", "gs"} or prot == "gs":
-        return f"board_gcs({repr(board.board)}{allow_pickle})"
-    elif prot == "http":
-        return f"board_url({repr(board.board)}, {board.pin_paths}{allow_pickle})"
-    else:
-        raise NotImplementedError(
-            f"board deparsing currently not supported for protocol: {prot}"
-        )
 
 
 # Board constructors ==========================================================
@@ -209,9 +152,7 @@ def board_folder(path: str, versioned=True, allow_pickle_read=None):
         takes precedence.
     """
 
-    return board(
-        "file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read
-    )
+    return board("file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read)
 
 
 def board_temp(versioned=True, allow_pickle_read=None):
@@ -263,9 +204,7 @@ def board_local(versioned=True, allow_pickle_read=None):
     """
     path = get_data_dir()
 
-    return board(
-        "file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read
-    )
+    return board("file", path, versioned, cache=None, allow_pickle_read=allow_pickle_read)
 
 
 def board_github(
@@ -482,15 +421,15 @@ def board_connect(
         server_url = os.environ.get("CONNECT_SERVER")
 
     kwargs = dict(server_url=server_url, api_key=api_key)
-    return board(
-        "rsc", None, versioned, cache, allow_pickle_read, storage_options=kwargs
-    )
+    return board("rsc", None, versioned, cache, allow_pickle_read, storage_options=kwargs)
 
 
 board_rsconnect = board_connect
 
 
-def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+def board_s3(
+    path, versioned=True, cache=DEFAULT, allow_pickle_read=None, **storage_options
+):
     """Create a board to read and write pins from an AWS S3 bucket folder.
 
     Parameters
@@ -511,19 +450,47 @@ def board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
         You can enable reading pickles by setting this to `True`, or by setting the
         environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
         takes precedence.
+    storage_options:
+        Additional keyword arguments to be passed to the underlying fsspec S3FileSystem.
 
     Notes
     -----
     The s3 board uses the fsspec library (s3fs) to handle interacting with AWS S3.
     In order to authenticate, set the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
-    and (optionally) `AWS_REGION` environment variables.
+    and (optionally) `AWS_REGION` environment variables. If you are using an
+    s3-compatible storage service that is not from AWS, you can pass in the necessary
+    credentials to the `storage_options` dictionary, such as `endpoint_url`, `key`, and
+    `secret`. We recommend setting these as environment variables. An example using
+    Backblaze B2 would look like:
+
+    Examples
+    --------
+    >>> import pins
+    >>> board = pins.board_s3(
+    ...     "pins-test",
+    ...     endpoint_url=os.getenv("FSSPEC_S3_ENDPOINT_URL"),
+    ...     key=os.getenv("FSSPEC_S3_KEY"),
+    ...     secret=os.getenv("FSSPEC_S3_SECRET"),
+    ... )
 
     See <https://github.com/fsspec/s3fs>
 
     """
-    # TODO: user should be able to specify storage options here?
+    # Warn user about the use of non-zero listings_expiry_time
+    listings_expiry_time = storage_options.get("listings_expiry_time", 0)
+    if listings_expiry_time != 0:
+        warning_msg = """
+Non-zero `listings_expiry_time` may lead to unexpected behaviour with cache operations.
+We're not discouraging you from setting it to be a non-zero value,
+but we strongly recommend setting it to 0 for optimal performance.
+"""
+        warnings.warn(warning_msg)
 
-    opts = {"listings_expiry_time": 0}
+    # Set options to pass in. Start with storage options provided by user.
+    opts = {**storage_options}
+    # Set listings_expiry_time based on what's provided by user
+    # or the default value of 0.
+    opts.update({"listings_expiry_time": listings_expiry_time})
     return board("s3", path, versioned, cache, allow_pickle_read, storage_options=opts)
 
 
@@ -596,6 +563,4 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     """
 
     opts = {"use_listings_cache": False}
-    return board(
-        "abfs", path, versioned, cache, allow_pickle_read, storage_options=opts
-    )
+    return board("abfs", path, versioned, cache, allow_pickle_read, storage_options=opts)

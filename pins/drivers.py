@@ -196,24 +196,32 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
 
 def default_title(obj, name):
     try:
-        _choose_df_lib(obj)
+        df_lib = _choose_df_lib(obj)
     except NotImplementedError:
         obj_name = type(obj).__qualname__
         return f"{name}: a pinned {obj_name} object"
 
+    _df_lib_to_objname: dict[_DFLib, str] = {
+        "polars": "DataFrame",
+        "pandas": "DataFrame",
+    }
+
     # TODO(compat): title says CSV rather than data.frame
     # see https://github.com/machow/pins-python/issues/5
     shape_str = " x ".join(map(str, obj.shape))
-    return f"{name}: a pinned {shape_str} DataFrame"
+    return f"{name}: a pinned {shape_str} {_df_lib_to_objname[df_lib]}"
 
 
 def _choose_df_lib(
     df,
     *,
-    supported_libs: list[_DFLib] = ["pandas", "polars"],
+    supported_libs: list[_DFLib] | None = None,
     file_type: str | None = None,
 ) -> _DFLib:
-    """Return the type of DataFrame library used in the given DataFrame.
+    """Return the library associated with a DataFrame, e.g. "pandas".
+
+    The arguments `supported_libs` and `file_type` must be specified together, and are
+    meant to be used when saving an object, to choose the appropriate library.
 
     Args:
         df:
@@ -221,11 +229,15 @@ def _choose_df_lib(
         supported_libs:
             The DataFrame libraries to accept for this df.
         file_type:
-            The file type we're trying to save to - used to give more specific error messages.
+            The file type we're trying to save to - used to give more specific error
+            messages.
 
     Raises:
-        NotImplementedError: If the DataFrame type is not recognized.
+        NotImplementedError: If the DataFrame type is not recognized, or not supported.
     """
+    if (supported_libs is None) + (file_type is None) == 1:
+        raise ValueError("Must provide both or neither of supported_libs and file_type")
+
     df_libs: list[_DFLib] = []
 
     # pandas
@@ -243,6 +255,7 @@ def _choose_df_lib(
         if isinstance(df, pl.DataFrame):
             df_libs.append("polars")
 
+    # Make sure there's only one library associated with the dataframe
     if len(df_libs) == 1:
         (df_lib,) = df_libs
     elif len(df_libs) > 1:
@@ -255,16 +268,14 @@ def _choose_df_lib(
     else:
         raise NotImplementedError(f"Unrecognized DataFrame type: {type(df)}")
 
-    if df_lib not in supported_libs:
-        if file_type is None:
-            ftype_clause = "in pins"
-        else:
-            ftype_clause = f"for type {file_type!r}"
+    # Raise if the library is not supported
+    if supported_libs is not None and df_lib not in supported_libs:
+        ftype_clause = f"for type {file_type!r}"
 
         if len(supported_libs) == 1:
             msg = (
                 f"Currently only {supported_libs[0]} DataFrames can be saved "
-                f"{ftype_clause}. {df_lib} DataFrames are not yet supported."
+                f"{ftype_clause}. DataFrames from {df_lib} are not yet supported."
             )
         else:
             msg = (

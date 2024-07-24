@@ -6,7 +6,7 @@ import polars as pl
 import pytest
 
 from pins.config import PINS_ENV_INSECURE_READ
-from pins.drivers import default_title, load_data, save_data
+from pins.drivers import _choose_df_lib, default_title, load_data, save_data
 from pins.errors import PinsInsecureReadError
 from pins.meta import MetaRaw
 from pins.tests.helpers import rm_env
@@ -191,3 +191,57 @@ def test_driver_apply_suffix_false(tmp_path: Path):
     res_fname = save_data(df, p_obj, type_, apply_suffix=False)
 
     assert Path(res_fname).name == "some_df"
+
+
+class TestChooseDFLib:
+    def test_pandas(self):
+        assert _choose_df_lib(pd.DataFrame({"x": [1]})) == "pandas"
+
+    def test_polars(self):
+        assert _choose_df_lib(pl.DataFrame({"x": [1]})) == "polars"
+
+    def test_list_raises(self):
+        with pytest.raises(
+            NotImplementedError, match="Unrecognized DataFrame type: <class 'list'>"
+        ):
+            _choose_df_lib([])
+
+    def test_pandas_subclass(self):
+        class MyDataFrame(pd.DataFrame):
+            pass
+
+        assert _choose_df_lib(MyDataFrame({"x": [1]})) == "pandas"
+
+    def test_ftype_compatible(self):
+        assert (
+            _choose_df_lib(
+                pd.DataFrame({"x": [1]}), supported_libs=["pandas"], file_type="csv"
+            )
+            == "pandas"
+        )
+
+    def test_ftype_incompatible(self):
+        with pytest.raises(
+            NotImplementedError,
+            match=(
+                "Currently only pandas DataFrames can be saved for type 'csv'. "
+                "DataFrames from polars are not yet supported."
+            ),
+        ):
+            _choose_df_lib(
+                pl.DataFrame({"x": [1]}), supported_libs=["pandas"], file_type="csv"
+            )
+
+    def test_supported_alone_raises(self):
+        with pytest.raises(
+            ValueError,
+            match="Must provide both or neither of supported_libs and file_type",
+        ):
+            _choose_df_lib(..., supported_libs=["pandas"])
+
+    def test_file_type_alone_raises(self):
+        with pytest.raises(
+            ValueError,
+            match="Must provide both or neither of supported_libs and file_type",
+        ):
+            _choose_df_lib(..., file_type="csv")

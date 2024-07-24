@@ -84,7 +84,7 @@ def test_driver_roundtrip(tmp_path: Path, type_):
         "parquet",
     ],
 )
-def test_driver_polars_roundtrip(tmp_dir2, type_):
+def test_driver_polars_roundtrip(tmp_path, type_):
     import polars as pl
 
     df = pl.DataFrame({"x": [1, 2, 3]})
@@ -92,14 +92,14 @@ def test_driver_polars_roundtrip(tmp_dir2, type_):
     fname = "some_df"
     full_file = f"{fname}.{type_}"
 
-    p_obj = tmp_dir2 / fname
+    p_obj = tmp_path / fname
     res_fname = save_data(df, p_obj, type_)
 
     assert Path(res_fname).name == full_file
 
     meta = MetaRaw(full_file, type_, "my_pin")
     pandas_df = load_data(
-        meta, fsspec.filesystem("file"), tmp_dir2, allow_pickle_read=True
+        meta, fsspec.filesystem("file"), tmp_path, allow_pickle_read=True
     )
 
     # Convert from pandas to polars

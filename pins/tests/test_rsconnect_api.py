@@ -1,16 +1,15 @@
-import pytest
 import tempfile
-
 from pathlib import Path
+
+import pytest
 from requests.exceptions import HTTPError
+
 from pins.rsconnect.api import (
-    RsConnectApiRequestError,
     RsConnectApiMissingContentError,
+    RsConnectApiRequestError,
 )
-
-from pins.rsconnect.fs import RsConnectFs, PinBundleManifest
-
-from pins.tests.helpers import rsc_from_key, rsc_delete_user_content
+from pins.rsconnect.fs import PinBundleManifest, RsConnectFs
+from pins.tests.helpers import rsc_delete_user_content, rsc_from_key
 
 pytestmark = pytest.mark.fs_rsc  # noqa
 
@@ -213,8 +212,8 @@ def test_rsconnect_api_get_content_bundle(rsc_short):
 
 def test_rsconnect_api_get_content_bundle_archive(rsc_short):
     # TODO: should just use a committed archive
-    import tarfile
     import filecmp
+    import tarfile
     from pathlib import Path
 
     content = rsc_short.post_content_item("test-content-bundle", "acl")

@@ -1,13 +1,11 @@
-from typing import ClassVar
-from dataclasses import dataclass, asdict, field, fields, InitVar
+from dataclasses import InitVar, asdict, dataclass, field, fields
 from pathlib import Path
+from typing import ClassVar, List, Mapping, Optional, Sequence, Union
 
 import yaml
 
-from typing import Mapping, Union, Sequence, Optional, List
-
-from .versions import VersionRaw, Version, guess_version
-from ._types import StrOrFile, IOBase
+from ._types import IOBase, StrOrFile
+from .versions import Version, VersionRaw, guess_version
 
 META_FILENAME = "data.txt"
 DEFAULT_API_VERSION = 1

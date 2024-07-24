@@ -1,5 +1,4 @@
 import pandas as pd
-
 from importlib_resources import files
 
 from pins import board_folder

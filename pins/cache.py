@@ -1,16 +1,16 @@
-import humanize
 import logging
 import os
-import time
 import shutil
+import time
 import urllib.parse
-
-from fsspec.implementations.cached import SimpleCacheFileSystem
-from fsspec import register_implementation
 from pathlib import Path
 
+import humanize
+from fsspec import register_implementation
+from fsspec.implementations.cached import SimpleCacheFileSystem
+
 from .config import get_cache_dir
-from .utils import inform, hash_name
+from .utils import hash_name, inform
 
 _log = logging.getLogger(__name__)
 

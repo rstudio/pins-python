@@ -1,25 +1,23 @@
-import logging
-import tempfile
-import shutil
-import inspect
-import re
 import functools
-
+import inspect
+import logging
+import re
+import shutil
+import tempfile
+from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
+from typing import Mapping, Optional, Protocol, Sequence
+
 from importlib_resources import files
-from datetime import datetime, timedelta
 
-from typing import Protocol, Sequence, Optional, Mapping
-
-from .versions import VersionRaw, guess_version, version_setup
-from .meta import Meta, MetaRaw, MetaFactory
-from .errors import PinsError, PinsVersionError
-from .drivers import load_data, save_data, load_file, default_title
-from .utils import inform, warn_deprecated, ExtendMethodDoc
-from .config import get_allow_rsc_short_name
 from .cache import PinsCache
-
+from .config import get_allow_rsc_short_name
+from .drivers import default_title, load_data, load_file, save_data
+from .errors import PinsError, PinsVersionError
+from .meta import Meta, MetaFactory, MetaRaw
+from .utils import ExtendMethodDoc, inform, warn_deprecated
+from .versions import VersionRaw, guess_version, version_setup
 
 _log = logging.getLogger(__name__)
 
@@ -1164,8 +1162,9 @@ class BoardRsConnect(BaseBoard):
         # TODO: move out data_preview logic? Can we draw some limits here?
         #       note that the R library uses jsonlite::toJSON
 
-        import pandas as pd
         import json
+
+        import pandas as pd
 
         if isinstance(x, pd.DataFrame):
             # TODO(compat) is 100 hard-coded?

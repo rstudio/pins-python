@@ -1,7 +1,7 @@
 import sys
 
-from pins.data import mtcars
 from pins import board_folder
+from pins.data import mtcars
 
 if len(sys.argv) < 2:
     raise ValueError("must pass board location as command-line argument")

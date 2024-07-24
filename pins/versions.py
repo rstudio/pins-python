@@ -1,12 +1,12 @@
 import logging
-
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
+from typing import Mapping, Sequence, Union
+
 from xxhash import xxh64
 
-from typing import Union, Sequence, Mapping
+from ._types import IOBase, StrOrFile
 from .errors import PinsVersionError
-from ._types import StrOrFile, IOBase
 
 _log = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 import pytest
 
-from pins.utils import inform
 from pins.config import pins_options
+from pins.utils import inform
 
 
 @pytest.fixture

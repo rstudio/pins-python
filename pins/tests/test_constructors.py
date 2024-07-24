@@ -1,15 +1,15 @@
 import os
+from pathlib import Path
+
 import pandas as pd
 import pytest
-
 from pandas.testing import assert_frame_equal
-from pathlib import Path
 
 from pins import constructors as c
 from pins.tests.conftest import (
+    EXAMPLE_REL_PATH,
     PATH_TO_EXAMPLE_BOARD,
     PATH_TO_EXAMPLE_VERSION,
-    EXAMPLE_REL_PATH,
 )
 from pins.tests.helpers import rm_env
 

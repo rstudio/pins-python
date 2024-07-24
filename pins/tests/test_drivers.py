@@ -1,15 +1,14 @@
-import fsspec
-import pytest
-import pandas as pd
-
 from pathlib import Path
 
-from pins.tests.helpers import rm_env
+import fsspec
+import pandas as pd
+import pytest
 
-from pins.meta import MetaRaw
 from pins.config import PINS_ENV_INSECURE_READ
-from pins.drivers import load_data, save_data, default_title
+from pins.drivers import default_title, load_data, save_data
 from pins.errors import PinsInsecureReadError
+from pins.meta import MetaRaw
+from pins.tests.helpers import rm_env
 
 
 @pytest.fixture

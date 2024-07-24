@@ -15,5 +15,5 @@ line-length = 90
 extend-exclude = ["docs"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W"]
+select = ["E", "F", "I", "W"]
 ignore = ["E501"]

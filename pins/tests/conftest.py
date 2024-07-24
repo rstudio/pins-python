@@ -1,10 +1,11 @@
-import pytest
-import tempfile
 import os
+import tempfile
+from pathlib import Path
 
+import pytest
 from importlib_resources import files
 from pytest import mark as m
-from pathlib import Path
+
 from pins.tests.helpers import BoardBuilder, RscBoardBuilder, Snapshot, rm_env
 
 EXAMPLE_REL_PATH = "pins/tests/pins-compat"

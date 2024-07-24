@@ -1,9 +1,9 @@
-import pytest
 import tempfile
-import yaml
-
 from datetime import datetime
 from io import StringIO
+
+import pytest
+import yaml
 
 from pins.meta import Meta, MetaFactory
 from pins.versions import Version

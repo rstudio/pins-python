@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from pins.config import PINS_ENV_INSECURE_READ
-from pins.drivers import default_title, load_data, save_data
+from pins.drivers import default_title, load_data, load_path, save_data
 from pins.errors import PinsInsecureReadError
 from pins.meta import MetaRaw
 from pins.tests.helpers import rm_env
@@ -159,3 +159,34 @@ def test_driver_apply_suffix_false(tmp_path: Path):
     res_fname = save_data(df, p_obj, type_, apply_suffix=False)
 
     assert Path(res_fname).name == "some_df"
+
+
+class TestLoadFile:
+    def test_multi_file_raises(self):
+        class _MockMetaMultiFile:
+            file: str | list[str] = ["a", "b"]
+            type: str = "csv"
+
+        with pytest.raises(ValueError, match="Cannot load data when more than 1 file"):
+            load_path(_MockMetaMultiFile(), None)
+
+    def test_str_file(self):
+        class _MockMetaStrFile:
+            file: str = "a"
+            type: str = "csv"
+
+        assert load_path(_MockMetaStrFile(), None) == "a"
+
+    def test_table(self):
+        class _MockMetaTable:
+            file: str = "a"
+            type: str = "table"
+
+        assert load_path(_MockMetaTable(), None) == "data.csv"
+
+    def test_version(self):
+        class _MockMetaTable:
+            file: str = "a"
+            type: str = "csv"
+
+        assert load_path(_MockMetaTable(), "v1") == "v1/a"

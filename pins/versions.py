@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import asdict, dataclass
 from datetime import datetime
-from typing import Mapping, Sequence, Union
+from typing import Mapping, Sequence
 
 from xxhash import xxh64
 
@@ -64,12 +66,12 @@ class Version(_VersionBase):
         return hasher.hexdigest()
 
     @classmethod
-    def from_string(cls, version: str) -> "Version":
+    def from_string(cls, version: str) -> Version:
         parts = version.split("-")
 
         if len(parts) != 2:
             raise PinsVersionError(
-                "version string can only have 1 '-', but contains %s" % len(parts)
+                f"version string can only have 1 '-', but contains {len(parts)}"
             )
 
         dt_string, hash_ = parts
@@ -79,7 +81,7 @@ class Version(_VersionBase):
         try:
             created = cls.parse_created(dt_string)
         except ValueError:
-            raise PinsVersionError("Invalid date part of version: " % dt_string)
+            raise PinsVersionError("Invalid date part of version: ".format())
 
         obj = cls(created, hash_)
 
@@ -93,8 +95,8 @@ class Version(_VersionBase):
 
     @classmethod
     def from_files(
-        cls, files: Sequence[StrOrFile], created: Union[datetime, None] = None
-    ) -> "Version":
+        cls, files: Sequence[StrOrFile], created: datetime | None = None
+    ) -> Version:
         hashes = []
         for f in files:
             hash_ = cls.hash_file(open(f, "rb") if isinstance(f, str) else f)

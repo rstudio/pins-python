@@ -120,5 +120,11 @@ line-length = 90
 extend-exclude = ["docs"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "W"]
+select = [
+    "E", # Style
+    "F", # Errors
+    "FA", # Use from __future__ import annotations for cleaner type hints
+    "I", # Import sorting
+    "W", # Style
+]
 ignore = ["E501"]

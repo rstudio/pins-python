@@ -76,14 +76,14 @@ def test_board_pin_write_default_title(board):
     assert meta.title == "df_csv: a pinned 3 x 2 DataFrame"
 
 
-def test_board_pin_write_prepare_pin(board, tmp_dir2):
+def test_board_pin_write_prepare_pin(board, tmp_path: Path):
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
-    meta = board.prepare_pin_version(str(tmp_dir2), df, "df_csv", title=None, type="csv")
+    meta = board.prepare_pin_version(str(tmp_path), df, "df_csv", title=None, type="csv")
     assert meta.file == "df_csv.csv"
-    assert (tmp_dir2 / "data.txt").exists()
-    assert (tmp_dir2 / "df_csv.csv").exists()
-    assert not (tmp_dir2 / "df_csv.csv").is_dir()
+    assert (tmp_path / "data.txt").exists()
+    assert (tmp_path / "df_csv.csv").exists()
+    assert not (tmp_path / "df_csv.csv").is_dir()
 
 
 def test_board_pin_write_roundtrip(board):
@@ -231,7 +231,7 @@ def test_board_pin_upload_path_list(board_with_cache, tmp_path):
     (pin_path,) = board_with_cache.pin_download("cool_pin")
 
 
-def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
+def test_board_pin_write_rsc_index_html(board, tmp_path: Path, snapshot):
     if board.fs.protocol != "rsc":
         pytest.skip()
 
@@ -240,7 +240,7 @@ def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
     pin_name = "test_rsc_pin"
 
     board.prepare_pin_version(
-        str(tmp_dir2),
+        str(tmp_path),
         df,
         pin_name,
         type="csv",
@@ -249,7 +249,7 @@ def test_board_pin_write_rsc_index_html(board, tmp_dir2, snapshot):
         created=DEFAULT_CREATION_DATE,
     )
 
-    snapshot.assert_equal_dir(tmp_dir2)
+    snapshot.assert_equal_dir(tmp_path)
 
 
 # pin_write against different types -------------------------------------------
@@ -474,14 +474,14 @@ from pins.boards import BaseBoard  # noqa
 from pins.cache import PinsCache  # noqa
 
 
-def test_board_base_pin_meta_cache_touch(tmp_dir2, df):
+def test_board_base_pin_meta_cache_touch(tmp_path: Path, df):
     cache = fsspec.filesystem(
         "pinscache",
         target_protocol="file",
         same_names=True,
-        hash_prefix=str(tmp_dir2),
+        hash_prefix=str(tmp_path),
     )
-    board = BaseBoard(str(tmp_dir2), fs=cache)
+    board = BaseBoard(str(tmp_path), fs=cache)
 
     board.pin_write(df, "some_df", type="csv")
     meta = board.pin_meta("some_df")

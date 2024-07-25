@@ -28,8 +28,8 @@ def _sleep():
 
 
 @pytest.fixture
-def some_file(tmp_dir2):
-    p = tmp_dir2 / "some_file.txt"
+def some_file(tmp_path):
+    p = tmp_path / "some_file.txt"
     p.touch()
     return p
 
@@ -87,8 +87,8 @@ def test_pins_cache_open():
 
 
 @pytest.fixture
-def a_cache(tmp_dir2):
-    return tmp_dir2 / "board_cache"
+def a_cache(tmp_path):
+    return tmp_path / "board_cache"
 
 
 def create_metadata(p, access_time):

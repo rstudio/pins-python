@@ -1,10 +1,10 @@
-from pins.versions import Version
 from datetime import datetime
-
-import xxhash
-import pytest
-
 from io import BytesIO
+
+import pytest
+import xxhash
+
+from pins.versions import Version
 
 EXAMPLE_DATE = datetime(2021, 1, 2, 13, 58, 59)
 

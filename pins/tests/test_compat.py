@@ -1,11 +1,10 @@
-import pytest
 import datetime
 
+import pytest
 
 from pins.errors import PinsError
-from pins.tests.helpers import xfail_fs
 from pins.tests.conftest import PATH_TO_EXAMPLE_BOARD, PATH_TO_MANIFEST_BOARD
-
+from pins.tests.helpers import xfail_fs
 
 NOT_A_PIN = "not_a_pin_abcdefg"
 PIN_CSV = "df_csv"

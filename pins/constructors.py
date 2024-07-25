@@ -1,11 +1,12 @@
-import fsspec
 import os
 import tempfile
 import warnings
 
-from .boards import BaseBoard, BoardRsConnect, BoardManual, board_deparse
-from .cache import PinsCache, PinsRscCacheMapper, PinsAccessTimeCache, prefix_cache
-from .config import get_data_dir, get_cache_dir
+import fsspec
+
+from .boards import BaseBoard, BoardManual, BoardRsConnect, board_deparse
+from .cache import PinsAccessTimeCache, PinsCache, PinsRscCacheMapper, prefix_cache
+from .config import get_cache_dir, get_data_dir
 
 # Kept here for backward-compatibility reasons.
 board_deparse  # Note that this is not a constructor, but a function to represent them.

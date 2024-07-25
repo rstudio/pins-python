@@ -1,7 +1,6 @@
 import sys
 
-from pins import board_folder
-from pins import data
+from pins import board_folder, data
 
 path_py, path_r = sys.argv[1], sys.argv[2]
 

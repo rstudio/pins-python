@@ -1,10 +1,11 @@
-import pytest
-import tempfile
 import os
+import tempfile
+from pathlib import Path
 
+import pytest
 from importlib_resources import files
 from pytest import mark as m
-from pathlib import Path
+
 from pins.tests.helpers import BoardBuilder, RscBoardBuilder, Snapshot, rm_env
 
 EXAMPLE_REL_PATH = "pins/tests/pins-compat"
@@ -13,9 +14,6 @@ PATH_TO_EXAMPLE_VERSION = PATH_TO_EXAMPLE_BOARD / "df_csv/20220214T163720Z-9bfad
 EXAMPLE_PIN_NAME = "df_csv"
 
 PATH_TO_MANIFEST_BOARD = files("pins") / "tests/pin-board"
-
-# Based on https://github.com/machow/siuba/blob/main/siuba/tests/helpers.py
-BACKEND_MARKS = ["fs_s3", "fs_file", "fs_gcs", "fs_abfs", "fs_rsc"]
 
 # parameters that can be used more than once per session
 params_safe = [
@@ -65,15 +63,6 @@ def df():
 
 
 @pytest.fixture
-def tmp_dir2():
-    # fixture for offering a temporary directory
-    # note that pytest has a built-in fixture tmp_dir, but it uses the lib py.path
-    # which recommends using pathlib, etc..
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        yield Path(tmp_dir)
-
-
-@pytest.fixture
 def tmp_cache():
     with rm_env("PINS_CACHE_DIR"):
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -91,12 +80,3 @@ def tmp_data_dir():
 
 def pytest_addoption(parser):
     parser.addoption("--snapshot-update", action="store_true")
-
-
-def pytest_configure(config):
-    # TODO: better way to define all marks? Can we iterate over params above?
-    for mark_name in BACKEND_MARKS:
-        fs_name = mark_name.split("_")[-1]
-        config.addinivalue_line(
-            "markers", f"{mark_name}: mark test to only run on {fs_name} filesystem."
-        )

@@ -1,16 +1,16 @@
 import time
+from pathlib import Path
 
 import pytest
+from fsspec import filesystem
+
 from pins.cache import (
     CachePruner,
-    touch_access_time,
-    cache_prune,
     PinsCache,
     PinsUrlCache,
+    cache_prune,
+    touch_access_time,
 )
-
-from fsspec import filesystem
-from pathlib import Path
 
 # NOTE: windows time.time() implementation appears to have 16 millisecond precision, so
 # we need to add a small delay, in order to avoid prune checks appearing to happen at the
@@ -28,8 +28,8 @@ def _sleep():
 
 
 @pytest.fixture
-def some_file(tmp_dir2):
-    p = tmp_dir2 / "some_file.txt"
+def some_file(tmp_path):
+    p = tmp_path / "some_file.txt"
     p.touch()
     return p
 
@@ -87,8 +87,8 @@ def test_pins_cache_open():
 
 
 @pytest.fixture
-def a_cache(tmp_dir2):
-    return tmp_dir2 / "board_cache"
+def a_cache(tmp_path):
+    return tmp_path / "board_cache"
 
 
 def create_metadata(p, access_time):

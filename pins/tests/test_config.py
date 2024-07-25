@@ -1,8 +1,9 @@
 import os
+
 import pytest
 
-from pins.tests.helpers import rm_env
 from pins import config
+from pins.tests.helpers import rm_env
 
 
 @pytest.fixture

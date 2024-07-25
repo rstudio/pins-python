@@ -1,14 +1,89 @@
+[project]
+name = "pins"
+description = "Publish data sets, models, and other python objects, making it easy to share them across projects and with your colleagues."
+readme.content-type = "text/markdown"
+readme.file = "README.md"
+urls.Documentation = "https://rstudio.github.io/pins-python"
+urls.Homepage = "https://github.com/rstudio/pins-python"
+authors = [{ name = "Michael Chow", email = "michael.chow@posit.co" }]
+maintainers = [{ name = "Isabel Zimmerman", email = "isabel.zimmerman@posit.co" }]
+keywords = ["data", "tidyverse"]
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+]
+requires-python = ">=3.8"
+dynamic = ["version"]
+dependencies = [
+    "appdirs<2",                # Using appdirs rather than platformdirs is deliberate, see https://github.com/rstudio/pins-python/pull/239
+    "fsspec>=2022.2",
+    "humanize>=1",
+    "importlib-metadata>=4.4",
+    "importlib-resources>=1.3",
+    "jinja2>=2.10",
+    "joblib>=0.12",
+    "pandas>=0.23",
+    "pyyaml>=3.13",
+    "requests",
+    "xxhash>=1",
+]
+
+[project.optional-dependencies]
+aws = ["s3fs"]
+azure = ["adlfs"]
+doc = [
+    "ipykernel",
+    "ipython<=8.12",
+    "nbclient",
+    "nbformat",
+    "quartodoc",
+]
+gcs = ["gcsfs"]
+test = [
+    "adlfs>=2024.4.1",
+    "fastparquet",
+    "gcsfs",
+    "pip-tools",
+    "pyarrow",
+    "pytest==7.1.3",
+    "pytest-cases",
+    "pytest-dotenv",
+    "pytest-parallel",
+    "s3fs",
+]
+
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+requires = ["setuptools>=45", "setuptools-scm>=6.2", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages]
+find = { namespaces = false }
+
+[tool.setuptools_scm]
+
+[tool.distutils.bdist_wheel]
+universal = 1
+
 [tool.pytest.ini_options]
+markers = [
+    "fs_file: mark test to only run on local filesystem",
+    "fs_s3: mark test to only run on AWS S3 bucket filesytem",
+    "fs_gcs: mark test to only run on Google Cloud Storage bucket filesystem",
+    "fs_abfs: mark test to only run on Azure Datalake filesystem",
+    "fs_rsc: mark test to only run on Posit Connect filesystem",
+    "skip_on_github: skip this test if running on GitHub",
+]
 testpaths = ["pins"]
 addopts = "--doctest-modules"
 doctest_optionflags = "NORMALIZE_WHITESPACE"
-markers = ["skip_on_github: skip this test if running on github"]
-
-[tool.setuptools_scm]
 
 [tool.pyright]
 include = ["pins"]
@@ -40,5 +115,5 @@ line-length = 90
 extend-exclude = ["docs"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W"]
+select = ["E", "F", "I", "W"]
 ignore = ["E501"]

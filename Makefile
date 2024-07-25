@@ -41,7 +41,7 @@ docs-clean:
 requirements/dev.txt: setup.cfg
 	@# allows you to do this...
 	@# make requirements | tee > requirements/some_file.txt
-	@pip-compile setup.cfg --rebuild --extra doc --extra test --output-file=- > $@
+	@pip-compile setup.cfg --rebuild --extra doc --extra test --extra check --output-file=- > $@
 
 binder/requirements.txt: requirements/dev.txt
 	cp $< $@

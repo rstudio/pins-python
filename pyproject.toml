@@ -36,6 +36,11 @@ dependencies = [
 [project.optional-dependencies]
 aws = ["s3fs"]
 azure = ["adlfs"]
+check = [
+    "pre-commit",
+    "pyright==1.1.372", # Pinned; manually sync with .github/workflows/code-checks.yml
+    "types-appdirs",
+]
 doc = [
     "ipykernel",
     "ipython<=8.12",
@@ -84,6 +89,31 @@ markers = [
 testpaths = ["pins"]
 addopts = "--doctest-modules"
 doctest_optionflags = "NORMALIZE_WHITESPACE"
+
+[tool.pyright]
+include = ["pins"]
+exclude = ["**/__pycache__"]
+ignore = ["pins/tests"]
+pythonVersion = "3.12"       # Use the maximum version supported by python-pins
+pythonPlatform = "Linux"
+
+# Tracking compliance with these rules at https://github.com/rstudio/pins-python/issues/272
+reportArgumentType = false
+reportAssignmentType = false
+reportAttributeAccessIssue = false
+reportCallIssue = false
+reportGeneralTypeIssues = false
+reportIncompatibleMethodOverride = false
+reportIncompatibleVariableOverride = false
+reportIndexIssue = false
+reportMissingImports = false
+reportMissingTypeStubs = false
+reportOptionalIterable = false
+reportOptionalMemberAccess = false
+reportOptionalSubscript = false
+reportPossiblyUnboundVariable = false
+reportReturnType = false
+reportUnusedExpression = false
 
 [tool.ruff]
 line-length = 90

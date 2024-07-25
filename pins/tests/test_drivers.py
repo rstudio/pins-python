@@ -81,7 +81,7 @@ def test_driver_roundtrip(tmp_path: Path, type_):
     assert df.equals(obj)
 
 
-def test_driver_geoparquet_roundtrip(tmp_dir2):
+def test_driver_geoparquet_roundtrip(tmp_path):
     import geopandas as gpd
 
     gdf = gpd.GeoDataFrame(
@@ -91,13 +91,13 @@ def test_driver_geoparquet_roundtrip(tmp_dir2):
     fname = "some_gdf"
     full_file = f"{fname}.parquet"
 
-    p_obj = tmp_dir2 / fname
+    p_obj = tmp_path / fname
     res_fname = save_data(gdf, p_obj, "geoparquet")
 
     assert Path(res_fname).name == full_file
 
     meta = MetaRaw(full_file, "geoparquet", "my_pin")
-    obj = load_data(meta, fsspec.filesystem("file"), tmp_dir2, allow_pickle_read=True)
+    obj = load_data(meta, fsspec.filesystem("file"), tmp_path, allow_pickle_read=True)
 
     assert gdf.equals(obj)
 

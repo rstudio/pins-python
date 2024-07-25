@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from typing import Sequence
+from typing import ClassVar, Sequence
 
 from fsspec import AbstractFileSystem
 
@@ -105,7 +105,7 @@ class BundleFilePath(BundlePath):
 
 
 class RsConnectFs(AbstractFileSystem):
-    protocol: str = "rsc"
+    protocol: ClassVar[str | tuple[str, ...]] = "rsc"
 
     def __init__(self, server_url, **kwargs):
         if isinstance(server_url, RsConnectApi):

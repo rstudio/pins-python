@@ -6,9 +6,7 @@ readme.file = "README.md"
 urls.Documentation = "https://rstudio.github.io/pins-python"
 urls.Homepage = "https://github.com/rstudio/pins-python"
 authors = [{ name = "Michael Chow", email = "michael.chow@posit.co" }]
-maintainers = [
-    { name = "Isabel Zimmerman", email = "isabel.zimmerman@posit.co" },
-]
+maintainers = [{ name = "Isabel Zimmerman", email = "isabel.zimmerman@posit.co" }]
 keywords = ["data", "tidyverse"]
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
@@ -43,7 +41,13 @@ check = [
     "pyright==1.1.372", # Pinned; manually sync with .github/workflows/code-checks.yml
     "types-appdirs",
 ]
-doc = ["ipykernel", "ipython<=8.12", "nbclient", "nbformat", "quartodoc"]
+doc = [
+    "ipykernel",
+    "ipython<=8.12",
+    "nbclient",
+    "nbformat",
+    "quartodoc",
+]
 gcs = ["gcsfs"]
 test = [
     "adlfs>=2024.4.1",

@@ -259,11 +259,11 @@ class RsConnectApi:
 
     # users ----
 
-    def get_user(self, guid: str = None) -> User:
+    def get_user(self, guid: str | None = None) -> User:
         if guid is None:
             return User(self.query_v1("user"))
 
-        result = self.query_v1(f"user/{guid}")
+        result = self.query_v1(f"users/{guid}")
         return User(result)
 
     def get_users(

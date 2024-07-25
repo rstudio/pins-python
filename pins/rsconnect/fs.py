@@ -1,23 +1,22 @@
-from dataclasses import dataclass, asdict, field, fields
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
+from typing import Sequence
 
 from fsspec import AbstractFileSystem
 
-from typing import Sequence
-
-from .api import (
-    RsConnectApi,
-    BaseEntity,
-    User,
-    Content,
-    Bundle,
-    RsConnectApiMissingContentError,
-    RsConnectApiError,
-    RsConnectApiResultError,
-    RsConnectApiRequestError,
-    RSC_CODE_OBJECT_DOES_NOT_EXIST,
-)
 from ..utils import isfilelike
+from .api import (
+    RSC_CODE_OBJECT_DOES_NOT_EXIST,
+    BaseEntity,
+    Bundle,
+    Content,
+    RsConnectApi,
+    RsConnectApiError,
+    RsConnectApiMissingContentError,
+    RsConnectApiRequestError,
+    RsConnectApiResultError,
+    User,
+)
 
 # Misc ----
 

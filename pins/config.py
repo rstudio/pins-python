@@ -1,7 +1,7 @@
-import appdirs
 import os
-
 from types import SimpleNamespace
+
+import appdirs
 
 PINS_NAME = "pins-py"
 PINS_ENV_DATA_DIR = "PINS_DATA_DIR"

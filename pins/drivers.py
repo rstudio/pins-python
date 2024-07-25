@@ -1,10 +1,9 @@
 from pathlib import Path
-
-from .config import get_allow_pickle_read, PINS_ENV_INSECURE_READ
-from .meta import Meta
-from .errors import PinsInsecureReadError
-
 from typing import Sequence
+
+from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
+from .errors import PinsInsecureReadError
+from .meta import Meta
 
 # TODO: move IFileSystem out of boards, to fix circular import
 # from .boards import IFileSystem

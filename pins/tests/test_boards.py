@@ -1,21 +1,21 @@
-import fsspec
 import os
 import uuid
+from datetime import datetime, timedelta
+from pathlib import Path
+from time import sleep
+
+import fsspec
 import pandas as pd
 import pytest
-
-from pins.tests.helpers import DEFAULT_CREATION_DATE, rm_env
-from pins.config import PINS_ENV_INSECURE_READ
-from pins.errors import PinsError, PinsInsecureReadError, PinsVersionError
-from pins.meta import MetaRaw
-
-from datetime import datetime, timedelta
-from time import sleep
-from pathlib import Path
 
 # using pytest cases, so that we can pass in fixtures as parameters
 # TODO: this seems like maybe overkill
 from pytest_cases import fixture, parametrize
+
+from pins.config import PINS_ENV_INSECURE_READ
+from pins.errors import PinsError, PinsInsecureReadError, PinsVersionError
+from pins.meta import MetaRaw
+from pins.tests.helpers import DEFAULT_CREATION_DATE, rm_env
 
 
 @fixture
@@ -39,7 +39,8 @@ def board_unversioned(backend):
 
 @fixture
 def board_with_cache(backend):
-    from pins.constructors import board as board_constructor, board_rsconnect
+    from pins.constructors import board as board_constructor
+    from pins.constructors import board_rsconnect
 
     board = backend.create_tmp_board()
 

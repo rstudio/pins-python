@@ -1,8 +1,9 @@
+from pathlib import Path
+
 import pandas as pd
 
-from pathlib import Path
-from pins.rsconnect.fs import PinBundleManifest
 from pins.meta import MetaFactory
+from pins.rsconnect.fs import PinBundleManifest
 
 p_root = Path("pins/tests/example-bundle")
 p_root.parent.mkdir(parents=True, exist_ok=True)

@@ -1,7 +1,6 @@
 import hashlib
 import os
 import sys
-
 from functools import update_wrapper
 from types import MethodType
 from warnings import warn

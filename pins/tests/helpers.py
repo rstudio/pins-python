@@ -1,19 +1,18 @@
-import pytest
-
 import contextlib
-import uuid
-import os
 import json
+import os
 import shutil
-
-from tempfile import TemporaryDirectory
-from pathlib import Path
-from functools import wraps
+import uuid
 from datetime import datetime
+from functools import wraps
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import pytest
+from fsspec import filesystem
 from importlib_resources import files
 
 from pins.boards import BaseBoard, BoardRsConnect
-from fsspec import filesystem
 
 DEFAULT_CREATION_DATE = datetime(2020, 1, 13, 23, 58, 59)
 

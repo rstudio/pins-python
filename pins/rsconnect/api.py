@@ -1,17 +1,15 @@
 import logging
 import os
-import requests
 import tempfile
-
+from collections.abc import Mapping
 from dataclasses import dataclass
-from pathlib import Path
 from functools import partial
 from io import IOBase
+from pathlib import Path
+from typing import Generic, Sequence, TypeVar
 from urllib.parse import urlencode
 
-from collections.abc import Mapping
-from typing import Sequence, TypeVar, Generic
-
+import requests
 
 RSC_API_KEY = "CONNECT_API_KEY"
 RSC_CODE_OBJECT_DOES_NOT_EXIST = 4

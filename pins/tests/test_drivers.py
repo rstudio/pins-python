@@ -2,10 +2,11 @@ from pathlib import Path
 
 import fsspec
 import pandas as pd
+import polars as pl
 import pytest
 
 from pins.config import PINS_ENV_INSECURE_READ
-from pins.drivers import default_title, load_data, save_data
+from pins.drivers import _choose_df_lib, default_title, load_data, save_data
 from pins.errors import PinsInsecureReadError
 from pins.meta import MetaRaw
 from pins.tests.helpers import rm_env
@@ -34,6 +35,7 @@ class ExC:
     [
         (pd.DataFrame({"x": [1, 2]}), "somename: a pinned 2 x 1 DataFrame"),
         (pd.DataFrame({"x": [1], "y": [2]}), "somename: a pinned 1 x 2 DataFrame"),
+        (pl.DataFrame({"x": [1, 2]}), "somename: a pinned 2 x 1 DataFrame"),
         (ExC(), "somename: a pinned ExC object"),
         (ExC().D(), "somename: a pinned ExC.D object"),
         ([1, 2, 3], "somename: a pinned list object"),
@@ -72,6 +74,36 @@ def test_driver_roundtrip(tmp_path: Path, type_):
 
     meta = MetaRaw(full_file, type_, "my_pin")
     obj = load_data(meta, fsspec.filesystem("file"), tmp_path, allow_pickle_read=True)
+
+    assert df.equals(obj)
+
+
+@pytest.mark.parametrize(
+    "type_",
+    [
+        "parquet",
+    ],
+)
+def test_driver_polars_roundtrip(tmp_path, type_):
+    import polars as pl
+
+    df = pl.DataFrame({"x": [1, 2, 3]})
+
+    fname = "some_df"
+    full_file = f"{fname}.{type_}"
+
+    p_obj = tmp_path / fname
+    res_fname = save_data(df, p_obj, type_)
+
+    assert Path(res_fname).name == full_file
+
+    meta = MetaRaw(full_file, type_, "my_pin")
+    pandas_df = load_data(
+        meta, fsspec.filesystem("file"), tmp_path, allow_pickle_read=True
+    )
+
+    # Convert from pandas to polars
+    obj = pl.DataFrame(pandas_df)
 
     assert df.equals(obj)
 
@@ -159,3 +191,57 @@ def test_driver_apply_suffix_false(tmp_path: Path):
     res_fname = save_data(df, p_obj, type_, apply_suffix=False)
 
     assert Path(res_fname).name == "some_df"
+
+
+class TestChooseDFLib:
+    def test_pandas(self):
+        assert _choose_df_lib(pd.DataFrame({"x": [1]})) == "pandas"
+
+    def test_polars(self):
+        assert _choose_df_lib(pl.DataFrame({"x": [1]})) == "polars"
+
+    def test_list_raises(self):
+        with pytest.raises(
+            NotImplementedError, match="Unrecognized DataFrame type: <class 'list'>"
+        ):
+            _choose_df_lib([])
+
+    def test_pandas_subclass(self):
+        class MyDataFrame(pd.DataFrame):
+            pass
+
+        assert _choose_df_lib(MyDataFrame({"x": [1]})) == "pandas"
+
+    def test_ftype_compatible(self):
+        assert (
+            _choose_df_lib(
+                pd.DataFrame({"x": [1]}), supported_libs=["pandas"], file_type="csv"
+            )
+            == "pandas"
+        )
+
+    def test_ftype_incompatible(self):
+        with pytest.raises(
+            NotImplementedError,
+            match=(
+                "Currently only pandas DataFrames can be saved for type 'csv'. "
+                "DataFrames from polars are not yet supported."
+            ),
+        ):
+            _choose_df_lib(
+                pl.DataFrame({"x": [1]}), supported_libs=["pandas"], file_type="csv"
+            )
+
+    def test_supported_alone_raises(self):
+        with pytest.raises(
+            ValueError,
+            match="Must provide both or neither of supported_libs and file_type",
+        ):
+            _choose_df_lib(..., supported_libs=["pandas"])
+
+    def test_file_type_alone_raises(self):
+        with pytest.raises(
+            ValueError,
+            match="Must provide both or neither of supported_libs and file_type",
+        ):
+            _choose_df_lib(..., file_type="csv")

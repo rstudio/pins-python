@@ -60,6 +60,7 @@ test = [
     "pytest-dotenv",
     "pytest-parallel",
     "s3fs",
+    "polars>=1.0.0",
 ]
 
 [build-system]

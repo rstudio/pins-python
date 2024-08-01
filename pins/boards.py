@@ -81,7 +81,7 @@ class BaseBoard:
         """
 
         if not self.pin_exists(name):
-            raise PinsError("Cannot check version, since pin %s does not exist" % name)
+            raise PinsError(f"Cannot check version, since pin {name} does not exist")
 
         detail = isinstance(self, BoardRsConnect)
 
@@ -548,7 +548,7 @@ class BaseBoard:
 
         for name in names:
             if not self.pin_exists(name):
-                raise PinsError("Cannot delete pin, since pin %s does not exist" % name)
+                raise PinsError(f"Cannot delete pin, since pin {name} does not exist")
 
             path_to_pin = self.construct_path([self.path_to_pin(name)])
             self.fs.rm(path_to_pin, recursive=True)

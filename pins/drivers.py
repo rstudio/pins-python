@@ -124,7 +124,10 @@ def load_data(
             try:
                 import rdata
 
-                return rdata.read_rds(f)
+                # Equivalent to `rdata.read_rds(f)` but compatible with Python 3.8.
+                # See https://github.com/rstudio/pins-python/pull/265
+                parsed = rdata.parser.parse_file(f)
+                return rdata.conversion.convert(parsed)
             except ModuleNotFoundError:
                 raise ModuleNotFoundError(
                     "Install the 'rdata' package to attempt to convert 'rds' files into Python objects."

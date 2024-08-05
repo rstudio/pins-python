@@ -104,7 +104,6 @@ reportAttributeAccessIssue = false
 reportCallIssue = false
 reportGeneralTypeIssues = false
 reportIncompatibleMethodOverride = false
-reportIncompatibleVariableOverride = false
 reportIndexIssue = false
 reportMissingImports = false
 reportMissingTypeStubs = false

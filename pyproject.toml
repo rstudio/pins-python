@@ -120,5 +120,13 @@ line-length = 90
 extend-exclude = ["docs"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "W"]
-ignore = ["E501"]
+select = [
+    "E",  # Style
+    "F",  # Errors
+    "I",  # Import sorting
+    "UP", # Upgrade to latest supported Python syntax
+    "W",  # Style
+]
+ignore = [
+    "E501", # Line too long
+]

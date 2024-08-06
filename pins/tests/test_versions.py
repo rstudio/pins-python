@@ -33,6 +33,9 @@ def test_version_from_string_too_few_hyphens():
         PinsVersionError, match="version string can only have 1 '-', but contains 0"
     ):
         Version.from_string("20220209T220116Zbaf3f")
+def test_version_from_string_baddate():
+    with pytest.raises(PinsVersionError, match="Invalid date part of version: bug"):
+        Version.from_string("bug-baf3f")
 
 
 def test_version_hash_file(bytes_):

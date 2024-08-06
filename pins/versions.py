@@ -79,7 +79,7 @@ class Version(_VersionBase):
         try:
             created = cls.parse_created(dt_string)
         except ValueError:
-            raise PinsVersionError("Invalid date part of version: " % dt_string)
+            raise PinsVersionError(f"Invalid date part of version: {dt_string}")
 
         obj = cls(created, hash_)
 

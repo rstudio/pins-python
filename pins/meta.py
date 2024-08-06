@@ -205,7 +205,7 @@ class MetaFactory:
 
     def get_version_for_meta(self, api_version) -> Version:
         if api_version != 1:
-            raise NotImplementedError("Unsupported api_version: %s" % api_version)
+            raise NotImplementedError(f"Unsupported api_version: {api_version}")
 
         return Version
 

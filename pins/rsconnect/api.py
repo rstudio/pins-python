@@ -200,9 +200,7 @@ class RsConnectApi:
             self._validate_json_response(data)
 
             # this should never be triggered
-            raise ValueError(
-                "Unknown json returned by delete_content endpoint: %s" % data
-            )
+            raise ValueError(f"Unknown json returned by delete_content endpoint: {data}")
         except requests.JSONDecodeError:
             # fallback to at least raising status errors
             r.raise_for_status()

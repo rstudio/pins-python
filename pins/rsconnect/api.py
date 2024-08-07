@@ -132,14 +132,14 @@ class Paginated(Generic[T]):
 
 
 class RsConnectApi:
-    api_key: "str | None"
-    server_url: "str"
+    api_key: str | None
+    server_url: str
 
     def __init__(
         self,
-        server_url: "str | None",
-        api_key: "str | None" = None,
-        session: "requests.Session | None" = None,
+        server_url: str | None,
+        api_key: str | None = None,
+        session: requests.Session | None = None,
     ):
         self.server_url = server_url
         self.api_key = api_key
@@ -184,7 +184,7 @@ class RsConnectApi:
 
         return {**d_key, **d_rsc}
 
-    def _validate_json_response(self, data: "dict | list"):
+    def _validate_json_response(self, data: dict | list):
         if isinstance(data, list):
             return
 
@@ -268,14 +268,14 @@ class RsConnectApi:
 
     def get_users(
         self,
-        prefix: "str | None" = None,
-        user_role: "str | None" = None,
-        account_status: "str | None" = None,
-        page_number: "int | None" = None,
-        page_size: "int | None" = None,
-        asc_order: "bool | None" = None,
+        prefix: str | None = None,
+        user_role: str | None = None,
+        account_status: str | None = None,
+        page_number: int | None = None,
+        page_size: int | None = None,
+        asc_order: bool | None = None,
         walk_pages=True,
-    ) -> "Sequence[User] | Sequence[dict]":
+    ) -> Sequence[User] | Sequence[dict]:
         params = {k: v for k, v in locals().items() if k != "self" if v is not None}
 
         if walk_pages:
@@ -305,7 +305,7 @@ class RsConnectApi:
 
         return Content(result)
 
-    def post_content_item_deploy(self, guid: str, bundle_id: "str | None" = None):
+    def post_content_item_deploy(self, guid: str, bundle_id: str | None = None):
         json = {"bundle_id": bundle_id} if bundle_id is not None else {}
         return self.query_v1(f"content/{guid}/deploy", "POST", json=json)
 
@@ -347,9 +347,7 @@ class RsConnectApi:
         result = self.query_v1(f"content/{guid}/bundles/{id}")
         return Bundle(result)
 
-    def get_content_bundle_archive(
-        self, guid: str, id: str, f_obj: "str | IOBase"
-    ) -> None:
+    def get_content_bundle_archive(self, guid: str, id: str, f_obj: str | IOBase) -> None:
         r = self.query_v1(
             f"content/{guid}/bundles/{id}/download", stream=True, return_request=True
         )
@@ -401,7 +399,7 @@ class RsConnectApi:
         return self._raw_query(f"{self.server_url}/__ping__")
 
     def misc_get_content_bundle_file(
-        self, guid: str, id: str, fname: str, f_obj: "str | IOBase | None" = None
+        self, guid: str, id: str, fname: str, f_obj: str | IOBase | None = None
     ):
         if f_obj is None:
             f_obj = fname

@@ -9,11 +9,11 @@ import tempfile
 from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
-from typing import Any, Mapping, Protocol, Sequence
+from typing import Mapping, Protocol, Sequence
 
 from importlib_resources import files
 
-from .adaptors import _create_df_adaptor, _DFAdaptor
+from .adaptors import _create_adaptor
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
 from .drivers import default_title, load_data, load_file, save_data
@@ -1124,11 +1124,7 @@ class BoardRsConnect(BaseBoard):
 
     # TODO(NAMC) what about the functions that call this one?
     def prepare_pin_version(self, pin_dir_path, x, name: str | None, *args, **kwargs):
-        try:
-            x = _create_df_adaptor(x)
-        except NotImplementedError:
-            # Not a dataframe.
-            pass
+        adaptor = _create_adaptor(x)
 
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
@@ -1138,7 +1134,7 @@ class BoardRsConnect(BaseBoard):
         # TODO(compat): py pins always uses the short name, R pins uses w/e the
         # user passed, but guessing people want the long name?
         meta = super()._create_meta(
-            pin_dir_path, x, short_name, *args, **kwargs
+            pin_dir_path, adaptor, short_name, *args, **kwargs
         )  # TODO(NAMC) ensure .create_meta can accept adaptor
         meta.name = name
 
@@ -1165,35 +1161,8 @@ class BoardRsConnect(BaseBoard):
             "pin_files": pin_files,
             "pin_metadata": meta,
             "board_deparse": board_deparse(self),
+            "data_preview": adaptor.data_preview,
         }
-
-        # data preview ----
-
-        # TODO: move out data_preview logic? Can we draw some limits here?
-        #       note that the R library uses jsonlite::toJSON
-
-        import json
-
-        if isinstance(x, _DFAdaptor):
-            # TODO(compat) is 100 hard-coded?
-            # Note that we go df -> json -> dict, to take advantage of type conversions in the dataframe library
-            data: list[dict[Any, Any]] = json.loads(x.head(100).write_json())
-            columns = [
-                {"name": [col], "label": [col], "align": ["left"], "type": [""]}
-                for col in x.columns
-            ]
-
-            # this reproduces R pins behavior, by omitting entries that would be null
-            data_no_nulls = [
-                {k: v for k, v in row.items() if v is not None} for row in data
-            ]
-
-            context["data_preview"] = json.dumps(
-                {"data": data_no_nulls, "columns": columns}
-            )
-        else:
-            # TODO(compat): set display none in index.html
-            context["data_preview"] = json.dumps({})
 
         # do not show r code if not round-trip friendly
         if meta.type in ["joblib"]:

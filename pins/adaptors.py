@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any, ClassVar, Self, TypeAlias, overload
 
@@ -25,6 +26,47 @@ class _Adaptor:
     def __init__(self, data: Any) -> None:
         self._d = data
 
+    @overload
+    def write_json(self, file: str) -> None: ...
+    @overload
+    def write_json(self, file: None) -> str: ...
+    def write_json(self, file=None):
+        if file is None:
+            msg = (
+                f"Writing to JSON string rather than file is not supported for "
+                f"{type(self._d)}"
+            )
+            raise NotImplementedError(msg)
+
+        import json
+
+        json.dump(self._d, open(file, mode="w"))
+
+    def write_joblib(self, file: str) -> None:
+        import joblib
+
+        joblib.dump(self._d, file)
+
+    def write_csv(self, file: str) -> None:
+        msg = f"Writing to CSV is not supported for {type(self._d)}"
+        raise NotImplementedError(msg)
+
+    def write_parquet(self, file: str) -> None:
+        msg = f"Writing to Parquet is not supported for {type(self._d)}"
+        raise NotImplementedError(msg)
+
+    def write_feather(self, file: str) -> None:
+        msg = f"Writing to Feather is not supported for {type(self._d)}"
+        raise NotImplementedError(msg)
+
+    @property
+    def data_preview(self) -> str:
+        # note that the R library uses jsonlite::toJSON
+        import json
+
+        # TODO(compat): set display none in index.html
+        return json.dumps({})
+
 
 class _DFAdaptor(_Adaptor):
     _d: ClassVar[_DataFrame]
@@ -39,12 +81,20 @@ class _DFAdaptor(_Adaptor):
     @abstractmethod
     def head(self, n: int) -> Self: ...
 
-    @abstractmethod
-    def write_json(self) -> str:
-        """Write the dataframe to a JSON string.
+    @property
+    def data_preview(self) -> str:
+        # TODO(compat) is 100 hard-coded?
+        # Note that we go df -> json -> dict, to take advantage of type conversions in the dataframe library
+        data: list[dict[Any, Any]] = json.loads(self.head(100).write_json())
+        columns = [
+            {"name": [col], "label": [col], "align": ["left"], "type": [""]}
+            for col in self.columns
+        ]
 
-        In the format: list like [{column -> value}, ... , {column -> value}]
-        """
+        # this reproduces R pins behavior, by omitting entries that would be null
+        data_no_nulls = [{k: v for k, v in row.items() if v is not None} for row in data]
+
+        return json.dumps({"data": data_no_nulls, "columns": columns})
 
 
 class _PandasAdaptor(_DFAdaptor):
@@ -53,22 +103,43 @@ class _PandasAdaptor(_DFAdaptor):
 
     @property
     def columns(self) -> list[Any]:
-        return self._d.columns
+        return self._d.columns.tolist()
 
     def head(self, n: int) -> Self:
         return _PandasAdaptor(self._d.head(n))
 
-    def write_json(self) -> str:
+    @overload
+    def write_json(self, file: str) -> None: ...
+    @overload
+    def write_json(self, file: None) -> str: ...
+    def write_json(self, file=None):
+        if file is not None:
+            msg = (
+                f"Writing to file rather than JSON string is not supported for "
+                f"{type(self._d)}"
+            )
+            raise NotImplementedError(msg)
+
         return self._d.to_json(orient="records")
 
+    def write_csv(self, file: str) -> None:
+        self._d.to_csv(file, index=False)
+
+    def write_parquet(self, file: str) -> None:
+        self._d.to_parquet(file)
+
+    def write_feather(self, file: str) -> None:
+        self._d.to_feather(file)
+
 
 @overload
-def _create_df_adaptor(df: _DataFrame) -> _DFAdaptor: ...
+def _create_adaptor(obj: Any) -> _Adaptor: ...
 @overload
-def _create_df_adaptor(df: _PandasDataFrame) -> _PandasAdaptor: ...
-def _create_df_adaptor(df):
-    if isinstance(df, _AbstractPandasFrame):
-        return _PandasAdaptor(df)
-
-    msg = f"Could not determine dataframe adaptor for {df}"
-    raise NotImplementedError(msg)
+def _create_adaptor(obj: _DataFrame) -> _DFAdaptor: ...
+@overload
+def _create_adaptor(obj: _PandasDataFrame) -> _PandasAdaptor: ...
+def _create_adaptor(obj):
+    if isinstance(obj, _AbstractPandasFrame):
+        return _PandasAdaptor(obj)
+    else:
+        return _Adaptor(obj)

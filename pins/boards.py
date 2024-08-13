@@ -9,10 +9,11 @@ import tempfile
 from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
-from typing import Mapping, Protocol, Sequence
+from typing import Any, Mapping, Protocol, Sequence
 
 from importlib_resources import files
 
+from .adaptors import _create_df_adaptor, _DFAdaptor
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
 from .drivers import default_title, load_data, load_file, save_data
@@ -1121,7 +1122,14 @@ class BoardRsConnect(BaseBoard):
     def user_name(self):
         return self.fs.api.get_user()["username"]
 
+    # TODO(NAMC) what about the functions that call this one?
     def prepare_pin_version(self, pin_dir_path, x, name: str | None, *args, **kwargs):
+        try:
+            x = _create_df_adaptor(x)
+        except NotImplementedError:
+            # Not a dataframe.
+            pass
+
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
         # the <name> part.
@@ -1129,7 +1137,9 @@ class BoardRsConnect(BaseBoard):
 
         # TODO(compat): py pins always uses the short name, R pins uses w/e the
         # user passed, but guessing people want the long name?
-        meta = super()._create_meta(pin_dir_path, x, short_name, *args, **kwargs)
+        meta = super()._create_meta(
+            pin_dir_path, x, short_name, *args, **kwargs
+        )  # TODO(NAMC) ensure .create_meta can accept adaptor
         meta.name = name
 
         # copy in files needed by index.html ----------------------------------
@@ -1147,7 +1157,7 @@ class BoardRsConnect(BaseBoard):
         # render index.html ------------------------------------------------
 
         all_files = [meta.file] if isinstance(meta.file, str) else meta.file
-        pin_files = ", ".join(f"""<a href="{x}">{x}</a>""" for x in all_files)
+        pin_files = ", ".join(f"""<a href="{file}">{file}</a>""" for file in all_files)
 
         context = {
             "date": meta.version.created.replace(microsecond=0),
@@ -1164,15 +1174,13 @@ class BoardRsConnect(BaseBoard):
 
         import json
 
-        import pandas as pd
-
-        if isinstance(x, pd.DataFrame):
+        if isinstance(x, _DFAdaptor):
             # TODO(compat) is 100 hard-coded?
-            # Note that we go df -> json -> dict, to take advantage of pandas type conversions
-            data = json.loads(x.head(100).to_json(orient="records"))
+            # Note that we go df -> json -> dict, to take advantage of type conversions in the dataframe library
+            data: list[dict[Any, Any]] = json.loads(x.head(100).write_json())
             columns = [
                 {"name": [col], "label": [col], "align": ["left"], "type": [""]}
-                for col in x
+                for col in x.columns
             ]
 
             # this reproduces R pins behavior, by omitting entries that would be null

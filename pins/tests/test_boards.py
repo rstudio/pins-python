@@ -437,6 +437,33 @@ def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
     assert len(new_versions) == days
 
 
+def test_board_pin_versions_prune_days_protect_most_recent(board, pin_name):
+    """To address https://github.com/rstudio/pins-python/issues/297"""
+    # RStudio cannot handle days, since it involves pulling metadata
+    if board.fs.protocol == "rsc":
+        with pytest.raises(NotImplementedError):
+            board.pin_versions_prune(pin_name, days=5)
+        return
+
+    today = datetime.now()
+    two_days_ago = today - timedelta(days=2, minutes=1)
+    three_days_ago = today - timedelta(days=3, minutes=1)
+
+    # Note, we are _not_ going to write a pin for today, otherwise we wouldn't be
+    # properly testing the protection of the most recent version - it would be trivially
+    # protected because it would always lie in the last day / fraction of a day.
+    board.pin_write({"a": 1}, pin_name, type="json", created=two_days_ago)
+    assert len(board.pin_versions(pin_name, as_df=False)) == 1
+    board.pin_write({"a": 2}, pin_name, type="json", created=three_days_ago)
+
+    # prune the versions, keeping only the most recent
+    board.pin_versions_prune(pin_name, days=1)
+
+    # check that only the most recent version remains
+    versions = board.pin_versions(pin_name, as_df=False)
+    assert len(versions) == 1
+
+
 # pin_search ==================================================================
 
 

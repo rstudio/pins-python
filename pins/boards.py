@@ -473,7 +473,8 @@ class BaseBoard:
                 raise ValueError("Argument days is {days}, but must be greater than 0.")
 
             date_cutoff = datetime.today() - timedelta(days=days)
-            to_delete = [v for v in versions if v.created < date_cutoff]
+            # Avoid deleting the most recent version
+            to_delete = [v for v in versions[:-1] if v.created < date_cutoff]
 
         # message user about deletions ----
         # TODO(question): how to pin_inform? Log or warning?

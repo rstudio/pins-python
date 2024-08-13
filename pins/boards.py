@@ -13,7 +13,7 @@ from typing import Mapping, Protocol, Sequence
 
 from importlib_resources import files
 
-from ._adaptors import _create_adaptor
+from ._adaptors import _Adaptor, _create_adaptor
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
 from .drivers import default_title, load_data, load_file, save_data
@@ -23,6 +23,8 @@ from .utils import ExtendMethodDoc, inform, warn_deprecated
 from .versions import VersionRaw, guess_version, version_setup
 
 _log = logging.getLogger(__name__)
+
+_ = default_title  # Keep this import for backward compatibility
 
 
 class IFileSystem(Protocol):
@@ -623,6 +625,8 @@ class BaseBoard:
         created: datetime | None = None,
         object_name: str | None = None,
     ):
+        x = _create_adaptor(x)
+
         meta = self._create_meta(
             pin_dir_path,
             x,
@@ -644,7 +648,7 @@ class BaseBoard:
     def _create_meta(
         self,
         pin_dir_path,
-        x,
+        x: _Adaptor,
         name: str | None = None,
         type: str | None = None,
         title: str | None = None,
@@ -661,7 +665,7 @@ class BaseBoard:
             raise NotImplementedError("Type argument is required.")
 
         if title is None:
-            title = default_title(x, name)
+            title = x.default_title(name)
 
         # create metadata from object on disk ---------------------------------
         # save all pin data to a temporary folder (including data.txt), so we
@@ -673,7 +677,7 @@ class BaseBoard:
             p_obj = Path(pin_dir_path) / object_name
 
         # file is saved locally in order to hash, calc size
-        file_names = save_data(x, str(p_obj), type)
+        file_names = save_data(x._d, str(p_obj), type)
 
         meta = self.meta_factory.create(
             pin_dir_path,
@@ -1122,7 +1126,6 @@ class BoardRsConnect(BaseBoard):
     def user_name(self):
         return self.fs.api.get_user()["username"]
 
-    # TODO(NAMC) what about the functions that call this one?
     def prepare_pin_version(self, pin_dir_path, x, name: str | None, *args, **kwargs):
         adaptor = _create_adaptor(x)
 
@@ -1133,9 +1136,7 @@ class BoardRsConnect(BaseBoard):
 
         # TODO(compat): py pins always uses the short name, R pins uses w/e the
         # user passed, but guessing people want the long name?
-        meta = super()._create_meta(
-            pin_dir_path, adaptor, short_name, *args, **kwargs
-        )  # TODO(NAMC) ensure .create_meta can accept adaptor
+        meta = super()._create_meta(pin_dir_path, adaptor, short_name, *args, **kwargs)
         meta.name = name
 
         # copy in files needed by index.html ----------------------------------

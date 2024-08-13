@@ -29,8 +29,8 @@ class _Adaptor:
     @overload
     def write_json(self, file: str) -> None: ...
     @overload
-    def write_json(self, file: None) -> str: ...
-    def write_json(self, file=None):
+    def write_json(self, file: None = ...) -> str: ...
+    def write_json(self, file: str | None = None) -> str | None:
         if file is None:
             msg = (
                 f"Writing to JSON string rather than file is not supported for "
@@ -139,7 +139,7 @@ class _PandasAdaptor(_DFAdaptor):
     def write_json(self, file: str) -> None: ...
     @overload
     def write_json(self, file: None) -> str: ...
-    def write_json(self, file=None):
+    def write_json(self, file: str | None = None) -> str | None:
         if file is not None:
             msg = (
                 f"Writing to file rather than JSON string is not supported for "
@@ -160,12 +160,10 @@ class _PandasAdaptor(_DFAdaptor):
 
 
 @overload
-def _create_adaptor(obj: Any) -> _Adaptor: ...
-@overload
 def _create_adaptor(obj: _DataFrame) -> _DFAdaptor: ...
 @overload
-def _create_adaptor(obj: _PandasDataFrame) -> _PandasAdaptor: ...
-def _create_adaptor(obj):
+def _create_adaptor(obj: Any) -> _Adaptor: ...
+def _create_adaptor(obj: Any | _DataFrame) -> _Adaptor | _DFAdaptor:
     if isinstance(obj, _AbstractPandasFrame):
         return _PandasAdaptor(obj)
     else:

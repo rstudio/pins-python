@@ -72,6 +72,10 @@ class TestAdaptor:
             adaptor = _Adaptor(data)
             assert adaptor.data_preview == "{}"
 
+    def test_default_title(self):
+        adaptor = _Adaptor(42)
+        assert adaptor.default_title("my_data") == "my_data: a pinned int object"
+
 
 class TestPandasAdaptor:
     def test_columns(self):
@@ -80,6 +84,13 @@ class TestPandasAdaptor:
         assert isinstance(adaptor, _DFAdaptor)
         assert isinstance(adaptor, _PandasAdaptor)
         assert adaptor.columns == ["a", "b"]
+
+    def test_shape(self):
+        df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
+        adaptor = _PandasAdaptor(df)
+        assert isinstance(adaptor, _DFAdaptor)
+        assert isinstance(adaptor, _PandasAdaptor)
+        assert adaptor.shape == (3, 2)
 
     def test_head(self):
         df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
@@ -127,6 +138,11 @@ class TestPandasAdaptor:
             '{"name": ["b"], "label": ["b"], "align": ["left"], "type": [""]}]}'
         )
         assert adaptor.data_preview == expected
+
+    def test_default_title(self):
+        df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
+        adaptor = _PandasAdaptor(df)
+        assert adaptor.default_title("my_df") == "my_df: a pinned 3 x 2 DataFrame"
 
 
 class TestAbstractBackends:

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Sequence
+from typing import Any, Sequence
 
 from pins.adaptors import _create_adaptor
 
@@ -176,14 +176,6 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
     return final_name
 
 
-def default_title(obj, name):
-    import pandas as pd
-
-    if isinstance(obj, pd.DataFrame):
-        # TODO(compat): title says CSV rather than data.frame
-        # see https://github.com/machow/pins-python/issues/5
-        shape_str = " x ".join(map(str, obj.shape))
-        return f"{name}: a pinned {shape_str} DataFrame"
-    else:
-        obj_name = type(obj).__qualname__
-        return f"{name}: a pinned {obj_name} object"
+def default_title(obj: Any, name: str) -> str:
+    # Kept for backward compatibility only.
+    return _create_adaptor(obj).default_title(name)

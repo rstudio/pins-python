@@ -67,6 +67,13 @@ class _Adaptor:
         # TODO(compat): set display none in index.html
         return json.dumps({})
 
+    def default_title(self, name: str) -> str:
+        return f"{name}: a pinned {self._obj_name} object"
+
+    @property
+    def _obj_name(self) -> str:
+        return type(self._d).__qualname__
+
 
 class _DFAdaptor(_Adaptor):
     _d: ClassVar[_DataFrame]
@@ -77,6 +84,10 @@ class _DFAdaptor(_Adaptor):
     @property
     @abstractmethod
     def columns(self) -> list[Any]: ...
+
+    @property
+    @abstractmethod
+    def shape(self) -> tuple[int, int]: ...
 
     @abstractmethod
     def head(self, n: int) -> Self: ...
@@ -96,6 +107,12 @@ class _DFAdaptor(_Adaptor):
 
         return json.dumps({"data": data_no_nulls, "columns": columns})
 
+    def default_title(self, name: str) -> str:
+        # TODO(compat): title says CSV rather than data.frame
+        # see https://github.com/machow/pins-python/issues/5
+        shape_str = " x ".join(map(str, self.shape))
+        return f"{name}: a pinned {shape_str} DataFrame"
+
 
 class _PandasAdaptor(_DFAdaptor):
     def __init__(self, data: _AbstractPandasFrame) -> None:
@@ -104,6 +121,10 @@ class _PandasAdaptor(_DFAdaptor):
     @property
     def columns(self) -> list[Any]:
         return self._d.columns.tolist()
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        return self._d.shape
 
     def head(self, n: int) -> Self:
         return _PandasAdaptor(self._d.head(n))

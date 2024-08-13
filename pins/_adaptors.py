@@ -116,11 +116,8 @@ class _DFAdaptor(_Adaptor):
 
     @property
     def _obj_name(self) -> str:
-        return f"{type(self._d).__qualname__} object"
-
-    def default_title(self, name: str) -> str:
         row, col = self.shape
-        return f"{name}: a pinned {row} x {col} {self.df_type}"
+        return f"{row} x {col} {self.df_type}"
 
 
 class _PandasAdaptor(_DFAdaptor):

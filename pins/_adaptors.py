@@ -68,11 +68,13 @@ class _Adaptor:
         return json.dumps({})
 
     def default_title(self, name: str) -> str:
-        return f"{name}: a pinned {self._obj_name} object"
+        # TODO(compat): title says CSV rather than data.frame
+        # see https://github.com/machow/pins-python/issues/5
+        return f"{name}: a pinned {self._obj_name}"
 
     @property
     def _obj_name(self) -> str:
-        return type(self._d).__qualname__
+        return f"{type(self._d).__qualname__} object"
 
 
 class _DFAdaptor(_Adaptor):
@@ -80,6 +82,11 @@ class _DFAdaptor(_Adaptor):
 
     def __init__(self, data: _DataFrame) -> None:
         super().__init__(data)
+
+    @property
+    def df_type(self) -> str:
+        # Consider over-riding this for specialized dataframes
+        return "DataFrame"
 
     @property
     @abstractmethod
@@ -107,11 +114,13 @@ class _DFAdaptor(_Adaptor):
 
         return json.dumps({"data": data_no_nulls, "columns": columns})
 
+    @property
+    def _obj_name(self) -> str:
+        return f"{type(self._d).__qualname__} object"
+
     def default_title(self, name: str) -> str:
-        # TODO(compat): title says CSV rather than data.frame
-        # see https://github.com/machow/pins-python/issues/5
-        shape_str = " x ".join(map(str, self.shape))
-        return f"{name}: a pinned {shape_str} DataFrame"
+        row, col = self.shape
+        return f"{name}: a pinned {row} x {col} {self.df_type}"
 
 
 class _PandasAdaptor(_DFAdaptor):

@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from pins.adaptors import (
+from pins._adaptors import (
     _AbstractPandasFrame,
     _Adaptor,
     _create_adaptor,
@@ -78,6 +78,11 @@ class TestAdaptor:
 
 
 class TestPandasAdaptor:
+    def test_df_type(self):
+        df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
+        adaptor = _PandasAdaptor(df)
+        assert adaptor.df_type == "DataFrame"
+
     def test_columns(self):
         df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
         adaptor = _PandasAdaptor(df)

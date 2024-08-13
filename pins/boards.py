@@ -13,7 +13,7 @@ from typing import Mapping, Protocol, Sequence
 
 from importlib_resources import files
 
-from .adaptors import _create_adaptor
+from ._adaptors import _create_adaptor
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
 from .drivers import default_title, load_data, load_file, save_data

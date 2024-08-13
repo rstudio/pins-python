@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Sequence
 
-from pins.adaptors import _create_adaptor
+from pins._adaptors import _create_adaptor
 
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError

@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, ClassVar, Self, TypeAlias, overload
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, overload
+
+from typing_extensions import Self
 
 from ._databackend import AbstractBackend
 

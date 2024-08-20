@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, Union, overload
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, overload
 
 from ._databackend import AbstractBackend
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     import pandas as pd
 
     _PandasDataFrame: TypeAlias = pd.DataFrame
-    _DataFrame: TypeAlias = Union[_PandasDataFrame,]
+    _DataFrame: TypeAlias = _PandasDataFrame
 
 
 class _AbstractPandasFrame(AbstractBackend):

@@ -123,6 +123,7 @@ extend-exclude = ["docs"]
 select = [
     "E",  # Style
     "F",  # Errors
+    "FA", # Use from __future__ import annotations for cleaner type hints
     "I",  # Import sorting
     "UP", # Upgrade to latest supported Python syntax
     "W",  # Style

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import asdict, dataclass
 from datetime import datetime
-from typing import Mapping, Sequence, Union
+from typing import Mapping, Sequence
 
 from xxhash import xxh64
 
@@ -64,7 +66,7 @@ class Version(_VersionBase):
         return hasher.hexdigest()
 
     @classmethod
-    def from_string(cls, version: str) -> "Version":
+    def from_string(cls, version: str) -> Version:
         parts = version.split("-")
 
         if len(parts) != 2:
@@ -93,8 +95,8 @@ class Version(_VersionBase):
 
     @classmethod
     def from_files(
-        cls, files: Sequence[StrOrFile], created: Union[datetime, None] = None
-    ) -> "Version":
+        cls, files: Sequence[StrOrFile], created: datetime | None = None
+    ) -> Version:
         hashes = []
         for f in files:
             hash_ = cls.hash_file(open(f, "rb") if isinstance(f, str) else f)

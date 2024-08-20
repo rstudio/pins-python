@@ -71,7 +71,7 @@ class Version(_VersionBase):
 
         if len(parts) != 2:
             raise PinsVersionError(
-                f"version string can only have 1 '-', but contains {len(parts)}"
+                f"version string can only have 1 '-', but contains {len(parts) - 1}"
             )
 
         dt_string, hash_ = parts
@@ -81,7 +81,7 @@ class Version(_VersionBase):
         try:
             created = cls.parse_created(dt_string)
         except ValueError:
-            raise PinsVersionError("Invalid date part of version: ".format())
+            raise PinsVersionError(f"Invalid date part of version: {dt_string}")
 
         obj = cls(created, hash_)
 

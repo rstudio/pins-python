@@ -33,7 +33,7 @@ def load_path(meta, path_to_version):
 
     # file path creation ------------------------------------------------------
 
-    if type == "table":
+    if _type == "table":
         # this type contains an rds and csv files named data.{ext}, so we match
         # R pins behavior and hardcode the name
         target_fname = "data.csv"

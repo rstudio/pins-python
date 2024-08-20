@@ -28,7 +28,7 @@ def load_path(meta, path_to_version):
 
     _type = meta.type
 
-    if len(fnames) > 1 and type in REQUIRES_SINGLE_FILE:
+    if len(fnames) > 1 and _type in REQUIRES_SINGLE_FILE:
         raise ValueError("Cannot load data when more than 1 file")
 
     # file path creation ------------------------------------------------------

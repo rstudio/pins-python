@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, overload
-
-from typing_extensions import Self
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, Union, overload
 
 from ._databackend import AbstractBackend
 
@@ -12,7 +10,7 @@ if TYPE_CHECKING:
     import pandas as pd
 
     _PandasDataFrame: TypeAlias = pd.DataFrame
-    _DataFrame: TypeAlias = pd.DataFrame
+    _DataFrame: TypeAlias = Union[_PandasDataFrame,]
 
 
 class _AbstractPandasFrame(AbstractBackend):
@@ -99,7 +97,7 @@ class _DFAdaptor(_Adaptor):
     def shape(self) -> tuple[int, int]: ...
 
     @abstractmethod
-    def head(self, n: int) -> Self: ...
+    def head(self, n: int) -> _DFAdaptor: ...
 
     @property
     def data_preview(self) -> str:
@@ -123,6 +121,8 @@ class _DFAdaptor(_Adaptor):
 
 
 class _PandasAdaptor(_DFAdaptor):
+    _d: ClassVar[_PandasDataFrame]
+
     def __init__(self, data: _AbstractPandasFrame) -> None:
         super().__init__(data)
 
@@ -134,7 +134,7 @@ class _PandasAdaptor(_DFAdaptor):
     def shape(self) -> tuple[int, int]:
         return self._d.shape
 
-    def head(self, n: int) -> Self:
+    def head(self, n: int) -> _PandasAdaptor:
         return _PandasAdaptor(self._d.head(n))
 
     @overload

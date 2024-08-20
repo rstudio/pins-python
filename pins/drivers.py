@@ -26,7 +26,7 @@ def load_path(meta, path_to_version):
     # Check that only a single file name was given
     fnames = [meta.file] if isinstance(meta.file, str) else meta.file
 
-    type = meta.type
+    _type = meta.type
 
     if len(fnames) > 1 and type in REQUIRES_SINGLE_FILE:
         raise ValueError("Cannot load data when more than 1 file")

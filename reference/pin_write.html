@@ -149,8 +149,8 @@ ul.task-list li input[type="checkbox"] {
 <table class="caption-top table">
 <colgroup>
 <col style="width: 6%">
-<col style="width: 9%">
-<col style="width: 79%">
+<col style="width: 7%">
+<col style="width: 80%">
 <col style="width: 5%">
 </colgroup>
 <thead>
@@ -170,43 +170,43 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><code>name</code></td>
-<td>Optional[str]</td>
+<td>str | None</td>
 <td>Pin name.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td><code>type</code></td>
-<td>Optional[str]</td>
+<td>str | None</td>
 <td>File type used to save <code>x</code> to disk. May be “csv”, “arrow”, “parquet”, “joblib”, or “json”.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td><code>title</code></td>
-<td>Optional[str]</td>
+<td>str | None</td>
 <td>A title for the pin; most important for shared boards so that others can understand what the pin contains. If omitted, a brief description of the contents will be automatically generated.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td><code>description</code></td>
-<td>Optional[str]</td>
+<td>str | None</td>
 <td>A detailed description of the pin contents.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td><code>metadata</code></td>
-<td>Optional[Mapping]</td>
+<td>Mapping | None</td>
 <td>A dictionary containing additional metadata to store with the pin. This gets stored on the Meta.user field.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td><code>versioned</code></td>
-<td>Optional[bool]</td>
+<td>bool | None</td>
 <td>Whether the pin should be versioned. Defaults to versioning.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td><code>created</code></td>
-<td>Optional[datetime]</td>
+<td>datetime | None</td>
 <td>A date to store in the Meta.created field. This field may be used as part of the pin version name.</td>
 <td><code>None</code></td>
 </tr>

@@ -122,7 +122,7 @@ def load_data(
 
         elif meta.type == "rds":
             try:
-                import rdata  # pyright: ignore[reportMissingImport]
+                import rdata  # pyright: ignore[reportMissingImports]
             except ModuleNotFoundError:
                 raise ModuleNotFoundError(
                     "Install the 'rdata' package to attempt to convert 'rds' files into Python objects."

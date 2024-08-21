@@ -130,10 +130,10 @@ def load_data(
                 # See https://github.com/rstudio/pins-python/pull/265
                 if isinstance(f, fsspec.implementations.local.LocalFileOpener):
                     # rdata requires f to be a BinaryIO object.
-                    io_f = f.f
+                    fp = f.name
                 else:
-                    io_f = f
-                parsed = rdata.parser.parse_file(io_f)
+                    fp = f
+                parsed = rdata.parser.parse_file(fp)
                 return rdata.conversion.convert(parsed)
             except ModuleNotFoundError:
                 raise ModuleNotFoundError(

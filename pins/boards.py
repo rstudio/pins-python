@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import functools
 import inspect
 import logging
@@ -7,7 +9,7 @@ import tempfile
 from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
-from typing import Mapping, Optional, Protocol, Sequence
+from typing import Mapping, Protocol, Sequence
 
 from importlib_resources import files
 
@@ -23,7 +25,7 @@ _log = logging.getLogger(__name__)
 
 
 class IFileSystem(Protocol):
-    protocol: "str | list"
+    protocol: str | list
 
     def ls(self, path: str) -> Sequence[str]: ...
 
@@ -47,11 +49,11 @@ class BaseBoard:
 
     def __init__(
         self,
-        board: "str | Path",
+        board: str | Path,
         fs: IFileSystem,
         versioned=True,
         meta_factory=MetaFactory(),
-        allow_pickle_read: "bool | None" = None,
+        allow_pickle_read: bool | None = None,
     ):
         self.board = str(board)
         self.fs = fs
@@ -81,7 +83,7 @@ class BaseBoard:
         """
 
         if not self.pin_exists(name):
-            raise PinsError("Cannot check version, since pin %s does not exist" % name)
+            raise PinsError(f"Cannot check version, since pin {name} does not exist")
 
         detail = isinstance(self, BoardRsConnect)
 
@@ -170,7 +172,7 @@ class BaseBoard:
 
         return [name for name in pin_names if name not in self.reserved_pin_names]
 
-    def pin_fetch(self, name: str, version: Optional[str] = None) -> Meta:
+    def pin_fetch(self, name: str, version: str | None = None) -> Meta:
         meta = self.pin_meta(name, version)
 
         # TODO: sanity check caching (since R pins does a cache touch here)
@@ -182,7 +184,7 @@ class BaseBoard:
         #       so they could pin_fetch and then examine the result, a la pin_download
         return meta
 
-    def pin_read(self, name, version: Optional[str] = None, hash: Optional[str] = None):
+    def pin_read(self, name, version: str | None = None, hash: str | None = None):
         """Return the data stored in a pin.
 
         Parameters
@@ -216,13 +218,13 @@ class BaseBoard:
     def _pin_store(
         self,
         x,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Mapping] = None,
-        versioned: Optional[bool] = None,
-        created: Optional[datetime] = None,
+        name: str | None = None,
+        type: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        metadata: Mapping | None = None,
+        versioned: bool | None = None,
+        created: datetime | None = None,
     ) -> Meta:
         if type == "feather":
             warn_deprecated(
@@ -301,13 +303,13 @@ class BaseBoard:
     def pin_write(
         self,
         x,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Mapping] = None,
-        versioned: Optional[bool] = None,
-        created: Optional[datetime] = None,
+        name: str | None = None,
+        type: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        metadata: Mapping | None = None,
+        versioned: bool | None = None,
+        created: datetime | None = None,
     ) -> Meta:
         """Write a pin object to the board.
 
@@ -386,7 +388,7 @@ class BaseBoard:
 
     def pin_upload(
         self,
-        paths: "str | list[str]",
+        paths: str | list[str],
         name=None,
         title=None,
         description=None,
@@ -440,7 +442,7 @@ class BaseBoard:
         pin_version_path = self.construct_path([pin_name, version])
         self.fs.rm(pin_version_path, recursive=True)
 
-    def pin_versions_prune(self, name, n: "int | None" = None, days: "int | None" = None):
+    def pin_versions_prune(self, name, n: int | None = None, days: int | None = None):
         """Delete old versions of a pin.
 
         Parameters
@@ -534,7 +536,7 @@ class BaseBoard:
         #               looks with meta objects in it.
         return res
 
-    def pin_delete(self, names: "str | Sequence[str]"):
+    def pin_delete(self, names: str | Sequence[str]):
         """Delete a pin (or pins), removing it from the board.
 
         Parameters
@@ -548,7 +550,7 @@ class BaseBoard:
 
         for name in names:
             if not self.pin_exists(name):
-                raise PinsError("Cannot delete pin, since pin %s does not exist" % name)
+                raise PinsError(f"Cannot delete pin, since pin {name} does not exist")
 
             path_to_pin = self.construct_path([self.path_to_pin(name)])
             self.fs.rm(path_to_pin, recursive=True)
@@ -611,14 +613,14 @@ class BaseBoard:
         self,
         pin_dir_path,
         x,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Mapping] = None,
-        versioned: Optional[bool] = None,
-        created: Optional[datetime] = None,
-        object_name: Optional[str] = None,
+        name: str | None = None,
+        type: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        metadata: Mapping | None = None,
+        versioned: bool | None = None,
+        created: datetime | None = None,
+        object_name: str | None = None,
     ):
         meta = self._create_meta(
             pin_dir_path,
@@ -642,14 +644,14 @@ class BaseBoard:
         self,
         pin_dir_path,
         x,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Mapping] = None,
-        versioned: Optional[bool] = None,
-        created: Optional[datetime] = None,
-        object_name: Optional[str] = None,
+        name: str | None = None,
+        type: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        metadata: Mapping | None = None,
+        versioned: bool | None = None,
+        created: datetime | None = None,
+        object_name: str | None = None,
     ):
         if name is None:
             raise NotImplementedError("Name must be specified.")
@@ -933,9 +935,7 @@ class BoardRsConnect(BaseBoard):
         return names
 
     @ExtendMethodDoc
-    def pin_write(
-        self, *args, access_type=None, versioned: Optional[bool] = None, **kwargs
-    ):
+    def pin_write(self, *args, access_type=None, versioned: bool | None = None, **kwargs):
         """Write a pin.
 
         Extends parent method in the following ways:
@@ -1121,7 +1121,7 @@ class BoardRsConnect(BaseBoard):
     def user_name(self):
         return self.fs.api.get_user()["username"]
 
-    def prepare_pin_version(self, pin_dir_path, x, name: "str | None", *args, **kwargs):
+    def prepare_pin_version(self, pin_dir_path, x, name: str | None, *args, **kwargs):
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
         # the <name> part.

@@ -4,6 +4,7 @@ from io import BytesIO
 import pytest
 import xxhash
 
+from pins.errors import PinsVersionError
 from pins.versions import Version
 
 EXAMPLE_DATE = datetime(2021, 1, 2, 13, 58, 59)
@@ -18,6 +19,25 @@ def test_version_from_string():
     version = Version.from_string("20220209T220116Z-baf3f")
     assert str(version.created) == "2022-02-09 22:01:16"
     assert version.hash == "baf3f"
+
+
+def test_version_from_string_too_many_hyphens():
+    with pytest.raises(
+        PinsVersionError, match="version string can only have 1 '-', but contains 2"
+    ):
+        Version.from_string("20220209T220116Z-baf3f-")
+
+
+def test_version_from_string_too_few_hyphens():
+    with pytest.raises(
+        PinsVersionError, match="version string can only have 1 '-', but contains 0"
+    ):
+        Version.from_string("20220209T220116Zbaf3f")
+
+
+def test_version_from_string_baddate():
+    with pytest.raises(PinsVersionError, match="Invalid date part of version: bug"):
+        Version.from_string("bug-baf3f")
 
 
 def test_version_hash_file(bytes_):

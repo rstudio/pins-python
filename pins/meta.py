@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import InitVar, asdict, dataclass, field, fields
 from pathlib import Path
-from typing import ClassVar, List, Mapping, Optional, Sequence, Union
+from typing import ClassVar, Mapping, Sequence
 
 import yaml
 
@@ -24,7 +26,7 @@ class MetaRaw:
         The type of pin data stored. This is used to determine how to read / write it.
     """
 
-    file: "str | Sequence[str] | None"
+    file: str | Sequence[str] | None
     type: str
     name: str
 
@@ -63,16 +65,16 @@ class Meta:
 
     """
 
-    _excluded: ClassVar["set[str]"] = {"name", "version", "local"}
+    _excluded: ClassVar[set[str]] = {"name", "version", "local"}
 
-    title: Optional[str]
-    description: Optional[str]
+    title: str | None
+    description: str | None
 
     # TODO(defer): different from R pins, which has a local field
     created: str
     pin_hash: str
 
-    file: Union[str, Sequence[str]]
+    file: str | Sequence[str]
     file_size: int
     type: str
 
@@ -84,14 +86,14 @@ class Meta:
     # pin_hash, created, etc.."
     version: VersionRaw
 
-    tags: Optional[List[str]] = None
-    name: Optional[str] = None
+    tags: list[str] | None = None
+    name: str | None = None
     user: Mapping = field(default_factory=dict)
     local: Mapping = field(default_factory=dict)
 
-    unknown_fields: InitVar["dict | None"] = None
+    unknown_fields: InitVar[dict | None] = None
 
-    def __post_init__(self, unknown_fields: "dict | None"):
+    def __post_init__(self, unknown_fields: dict | None):
         unknown_fields = {} if unknown_fields is None else unknown_fields
 
         self._unknown_fields = unknown_fields
@@ -119,7 +121,7 @@ class Meta:
         return d
 
     @classmethod
-    def from_pin_dict(cls, data, pin_name, version, local=None) -> "Meta":
+    def from_pin_dict(cls, data, pin_name, version, local=None) -> Meta:
         # TODO: re-arrange Meta argument positions to reflect what's been
         # learned about default arguments. e.g. title was not used at some
         # point in api_version 1
@@ -142,7 +144,7 @@ class Meta:
             unknown_fields=unknown,
         )
 
-    def to_pin_yaml(self, f: Optional[IOBase] = None) -> "str | None":
+    def to_pin_yaml(self, f: IOBase | None = None) -> str | None:
         data = self.to_pin_dict()
 
         return yaml.dump(data, f)
@@ -150,9 +152,9 @@ class Meta:
 
 @dataclass
 class MetaV0:
-    file: Union[str, Sequence[str]]
+    file: str | Sequence[str]
     type: str
-    description: "str | None"
+    description: str | None
 
     name: str
 
@@ -173,7 +175,7 @@ class MetaV0:
         return asdict(self)
 
     @classmethod
-    def from_pin_dict(cls, data, pin_name, version, local=None) -> "MetaV0":
+    def from_pin_dict(cls, data, pin_name, version, local=None) -> MetaV0:
         # could infer from dataclasses.fields(), but seems excessive.
         req_fields = {"type", "description"}
 
@@ -205,13 +207,13 @@ class MetaFactory:
 
     def get_version_for_meta(self, api_version) -> Version:
         if api_version != 1:
-            raise NotImplementedError("Unsupported api_version: %s" % api_version)
+            raise NotImplementedError(f"Unsupported api_version: {api_version}")
 
         return Version
 
     def create(
         self,
-        base_folder: "str | Path",
+        base_folder: str | Path,
         files: Sequence[StrOrFile],
         type,
         # TODO: when files is a string name should be okay as None
@@ -266,7 +268,7 @@ class MetaFactory:
         self,
         f: IOBase,
         pin_name: str,
-        version: "str | VersionRaw",
+        version: str | VersionRaw,
         local=None,
     ) -> Meta:
         if isinstance(version, str):

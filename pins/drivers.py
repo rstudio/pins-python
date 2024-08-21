@@ -25,12 +25,15 @@ def _assert_is_pandas_df(x, file_type: str) -> None:
 def load_path(meta, path_to_version):
     # Check that only a single file name was given
     fnames = [meta.file] if isinstance(meta.file, str) else meta.file
-    if len(fnames) > 1 and type in REQUIRES_SINGLE_FILE:
+
+    _type = meta.type
+
+    if len(fnames) > 1 and _type in REQUIRES_SINGLE_FILE:
         raise ValueError("Cannot load data when more than 1 file")
 
     # file path creation ------------------------------------------------------
 
-    if type == "table":  # noqa: E721 False Positive due to bug: https://github.com/rstudio/pins-python/issues/266
+    if _type == "table":
         # this type contains an rds and csv files named data.{ext}, so we match
         # R pins behavior and hardcode the name
         target_fname = "data.csv"

@@ -102,7 +102,6 @@ reportArgumentType = false
 reportAssignmentType = false
 reportAttributeAccessIssue = false
 reportCallIssue = false
-reportGeneralTypeIssues = false
 reportIncompatibleMethodOverride = false
 reportIndexIssue = false
 reportMissingImports = false

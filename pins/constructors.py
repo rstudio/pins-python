@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import os
 import tempfile
 import warnings
+from typing import Callable
 
 import fsspec
 
@@ -25,10 +28,10 @@ def board(
     protocol: str,
     path: str = "",
     versioned: bool = True,
-    cache: "type[DEFAULT] | None" = DEFAULT,
+    cache: type[DEFAULT] | None = DEFAULT,
     allow_pickle_read=None,
-    storage_options: "dict | None" = None,
-    board_factory: "callable | type[BaseBoard] | None" = None,
+    storage_options: dict | None = None,
+    board_factory: Callable | type[BaseBoard] | None = None,
 ):
     """General function for constructing a pins board.
 

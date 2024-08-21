@@ -8,8 +8,9 @@ from .boards import BaseBoard, BoardManual, BoardRsConnect, board_deparse
 from .cache import PinsAccessTimeCache, PinsCache, PinsRscCacheMapper, prefix_cache
 from .config import get_cache_dir, get_data_dir
 
-# Kept here for backward-compatibility reasons.
-board_deparse  # Note that this is not a constructor, but a function to represent them.
+# Kept here for backward-compatibility reasons
+# Note that this is not a constructor, but a function to represent them.
+board_deparse  # pyright: ignore[reportUnusedExpression]
 
 
 class DEFAULT:

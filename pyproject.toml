@@ -107,7 +107,6 @@ reportIncompatibleMethodOverride = false
 reportIndexIssue = false
 reportMissingImports = false
 reportMissingTypeStubs = false
-reportOptionalIterable = false
 reportOptionalMemberAccess = false
 reportOptionalSubscript = false
 reportPossiblyUnboundVariable = false

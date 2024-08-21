@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import Sequence
 
-import fsspec.implementations.local
-
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError
 from .meta import Meta
@@ -128,12 +126,7 @@ def load_data(
 
                 # Equivalent to `rdata.read_rds(f)` but compatible with Python 3.8.
                 # See https://github.com/rstudio/pins-python/pull/265
-                if isinstance(f, fsspec.implementations.local.LocalFileOpener):
-                    # rdata requires f to be a BinaryIO object.
-                    fp = f.name
-                else:
-                    fp = f
-                parsed = rdata.parser.parse_file(fp)
+                parsed = rdata.parser.parse_file(f.name)
                 return rdata.conversion.convert(parsed)
             except ModuleNotFoundError:
                 raise ModuleNotFoundError(

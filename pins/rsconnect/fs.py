@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from typing import ClassVar, Sequence, Tuple
+from typing import ClassVar, Sequence
 
 from fsspec import AbstractFileSystem
 
@@ -33,7 +35,7 @@ def _not_impl_args_kwargs(args, kwargs):
 @dataclass
 class PinBundleManifestMetadata:
     appmode: str = "static"
-    primary_rmd: "str|None" = None
+    primary_rmd: str | None = None
     primary_html: str = "index.html"
     content_category: str = "pin"
     has_parameters: bool = False
@@ -59,7 +61,7 @@ class PinBundleManifest:
         return cls(files=flat_rel_files)
 
     @classmethod
-    def add_manifest_to_directory(cls, dir_name: "str | Path", **kwargs) -> None:
+    def add_manifest_to_directory(cls, dir_name: str | Path, **kwargs) -> None:
         import json
 
         # TODO(question): R lib uses RSCONNECT_TAR env variable
@@ -105,7 +107,7 @@ class BundleFilePath(BundlePath):
 
 
 class RsConnectFs(AbstractFileSystem):
-    protocol: ClassVar[str | Tuple[str, ...]] = "rsc"
+    protocol: ClassVar[str | tuple[str, ...]] = "rsc"
 
     def __init__(self, server_url, **kwargs):
         if isinstance(server_url, RsConnectApi):
@@ -116,7 +118,7 @@ class RsConnectFs(AbstractFileSystem):
         self._user_name_cache = {}
         self._content_name_cache = {}
 
-    def ls(self, path, details=False, **kwargs) -> "Sequence[BaseEntity] | Sequence[str]":
+    def ls(self, path, details=False, **kwargs) -> Sequence[BaseEntity] | Sequence[str]:
         """List contents of Rstudio Connect Server.
 
         Parameters
@@ -303,7 +305,7 @@ class RsConnectFs(AbstractFileSystem):
         # TODO: could implement and call makedirs, but seems overkill
         self.api.post_content_item(parsed.content, access_type, **kwargs)
 
-    def info(self, path, **kwargs) -> "User | Content | Bundle":
+    def info(self, path, **kwargs) -> User | Content | Bundle:
         # TODO: source of fsspec info uses self._parent to check cache?
         # S3 encodes refresh (for local cache) and version_id arguments
 

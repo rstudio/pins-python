@@ -127,7 +127,9 @@ select = [
     "I",  # Import sorting
     "UP", # Upgrade to latest supported Python syntax
     "W",  # Style
+    "A",  # Don't shadow built-ins
 ]
 ignore = [
     "E501", # Line too long
+    "A002", # The pins interface includes builtin names in args, e.g. hash, id, etc.
 ]

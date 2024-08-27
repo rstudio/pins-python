@@ -5,6 +5,7 @@ import pytest
 from requests.exceptions import HTTPError
 
 from pins.rsconnect.api import (
+    RsConnectApi,
     RsConnectApiMissingContentError,
     RsConnectApiRequestError,
 )
@@ -66,6 +67,13 @@ def fs_short(rsc_short):
 
 def test_rsconnect_api_get_user(rsc_admin):
     me = rsc_admin.get_user()
+    assert me["username"] == "admin"
+
+
+def test_rsconnect_api_get_user_guid(rsc_admin: RsConnectApi):
+    guid = rsc_admin.get_user().get_id()
+    me = rsc_admin.get_user(guid=guid)
+    assert me.get_id() == guid
     assert me["username"] == "admin"
 
 

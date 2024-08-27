@@ -112,7 +112,6 @@ reportOptionalMemberAccess = false
 reportOptionalSubscript = false
 reportPossiblyUnboundVariable = false
 reportReturnType = false
-reportUnusedExpression = false
 
 [tool.ruff]
 line-length = 90

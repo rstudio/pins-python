@@ -4,7 +4,7 @@ import json
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, overload
 
-from ._databackend import AbstractBackend
+from databackend import AbstractBackend
 
 if TYPE_CHECKING:
     import pandas as pd

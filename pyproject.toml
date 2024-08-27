@@ -31,6 +31,7 @@ dependencies = [
     "pyyaml>=3.13",
     "requests",
     "xxhash>=1",
+    "databackend>=0.0.3",
 ]
 
 [project.optional-dependencies]

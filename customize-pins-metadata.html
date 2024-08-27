@@ -190,7 +190,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>The <code>metadata</code> argument in pins is flexible and can hold any kind of metadata that you can formulate as a <code>dict</code> (convertable to JSON). In some situations, you may want to read and write with <em>consistent</em> customized metadata; you can create functions to wrap <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> and <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a> for your particular use case.</p>
 <p>We’ll begin by creating a temporary board for demonstration:</p>
-<div id="98556d76" class="cell" data-execution_count="1">
+<div id="2dbba7e0" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pins</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -202,7 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>A function to store pandas Categoricals</h1>
 <p>Say you want to store a pandas Categorical object as JSON together with the <em>categories</em> of the categorical in the metadata.</p>
 <p>For example, here is a simple categorical and its categories:</p>
-<div id="69455895" class="cell" data-execution_count="2">
+<div id="54e20a07" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>some_cat <span class="op">=</span> pd.Categorical([<span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"b"</span>])</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>some_cat.categories</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -212,7 +212,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Notice that the categories attribute is just the unique values in the categorical.</p>
 <p>We can write a function wrapping <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> that holds the categories in metadata, so we can easily re-create the categorical with them.</p>
-<div id="38096fd1" class="cell" data-execution_count="3">
+<div id="c801dd87" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pin_write_cat_json(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    board,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    x: pd.Categorical,</span>
@@ -224,41 +224,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    board.pin_write(json_data, name <span class="op">=</span> name, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>, metadata <span class="op">=</span> metadata, <span class="op">**</span>kwargs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can use this new function to write a pin as JSON with our specific metadata:</p>
-<div id="ba472fd7" class="cell" data-execution_count="4">
+<div id="8c4966ce" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>some_cat <span class="op">=</span> pd.Categorical([<span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>])</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pin_write_cat_json(board, some_cat, name <span class="op">=</span> <span class="st">"some-cat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_2102/2180373110.py:8: FutureWarning: Categorical.to_list is deprecated and will be removed in a future version. Use obj.tolist() instead
+<pre><code>/tmp/ipykernel_2004/2180373110.py:8: FutureWarning: Categorical.to_list is deprecated and will be removed in a future version. Use obj.tolist() instead
   json_data = x.to_list()
 Writing pin:
 Name: 'some-cat'
-Version: 20240827T221740Z-6ce8e</code></pre>
+Version: 20240827T221721Z-6ce8e</code></pre>
 </div>
 </div>
 <section id="a-function-to-read-categoricals" class="level2">
 <h2 class="anchored" data-anchor-id="a-function-to-read-categoricals">A function to read categoricals</h2>
 <p>It’s possible to read this pin using the regular <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a> function, but the object we get is no longer a categorical!</p>
-<div id="61868d7b" class="cell" data-execution_count="5">
+<div id="a55cbf10" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"some-cat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>['a', 'a', 'b', 'c']</code></pre>
 </div>
 </div>
 <p>However, notice that if we use <a href="./reference/pin_meta.html#pins.boards.BaseBoard.pin_meta"><code>pin_meta</code></a>, the information we stored on categories is in the <code>.user</code> field.</p>
-<div id="1b2e23ea" class="cell" data-execution_count="6">
+<div id="44df51ee" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pprint(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    board.pin_meta(<span class="st">"some-cat"</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Meta(title='some-cat: a pinned list object',
      description=None,
-     created='20240827T221740Z',
+     created='20240827T221721Z',
      pin_hash='6ce8eaa9de0dfd54',
      file='some-cat.json',
      file_size=20,
      type='json',
      api_version=1,
-     version=Version(created=datetime.datetime(2024, 8, 27, 22, 17, 40),
+     version=Version(created=datetime.datetime(2024, 8, 27, 22, 17, 21),
                      hash='6ce8e'),
      tags=None,
      name='some-cat',
@@ -267,7 +267,7 @@ Version: 20240827T221740Z-6ce8e</code></pre>
 </div>
 </div>
 <p>This enables us to write a special function for reading, to reconstruct the categorical, using the categories stashed in metadata:</p>
-<div id="2bdd4239" class="cell" data-execution_count="7">
+<div id="81f46129" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pin_read_cat_json(board, name, version<span class="op">=</span><span class="va">None</span>, <span class="bu">hash</span><span class="op">=</span><span class="va">None</span>, <span class="op">**</span>kwargs):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  data <span class="op">=</span> board.pin_read(name <span class="op">=</span> name, version <span class="op">=</span> version, <span class="bu">hash</span> <span class="op">=</span> <span class="bu">hash</span>, <span class="op">**</span>kwargs)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  meta <span class="op">=</span> board.pin_meta(name <span class="op">=</span> name, version <span class="op">=</span> version, <span class="op">**</span>kwargs)</span>

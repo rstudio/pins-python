@@ -636,7 +636,9 @@ def test_board_pin_search_admin_user(df, board_short, fs_admin):  # noqa
 @pytest.mark.fs_rsc
 def test_board_rsc_pin_write_title_update(df, board_short):
     board_short.pin_write(df, "susan/some_df", type="csv", title="title a")
-    board_short.pin_write(df, "susan/some_df", type="csv", title="title b")
+    board_short.pin_write(
+        df, "susan/some_df", type="csv", title="title b", force_identical_write=True
+    )
 
     content = board_short.fs.info("susan/some_df")
     assert content["title"] == "title b"

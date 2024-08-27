@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Mapping, Protocol, Sequence
 
 from importlib_resources import files
+from importlib_resources.abc import Traversable
 
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
@@ -919,8 +920,8 @@ class BoardRsConnect(BaseBoard):
     # TODO: note that board is unused in this class (e.g. it's not in construct_path())
 
     # TODO: should read template dynamically, not at class def'n time
-    html_assets_dir: Path = files("pins") / "rsconnect/html"
-    html_template: Path = files("pins") / "rsconnect/html/index.html"
+    html_assets_dir: Traversable = files("pins") / "rsconnect/html"
+    html_template: Traversable = files("pins") / "rsconnect/html/index.html"
 
     # defaults work ----
 

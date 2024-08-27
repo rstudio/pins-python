@@ -237,6 +237,8 @@ numpy==2.0.0
     #   fastparquet
     #   pandas
     #   pyarrow
+    #   rdata
+    #   xarray
 oauthlib==3.2.2
     # via requests-oauthlib
 packaging==24.1
@@ -246,10 +248,13 @@ packaging==24.1
     #   ipykernel
     #   pytest
     #   pytest-cases
+    #   xarray
 pandas==2.2.2
     # via
     #   fastparquet
     #   pins (setup.cfg)
+    #   rdata
+    #   xarray
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
@@ -346,6 +351,8 @@ pyzmq==26.0.3
     #   jupyter-client
 quartodoc==0.7.5
     # via pins (setup.cfg)
+rdata==0.11.2
+    # via pins (setup.cfg)
 referencing==0.35.1
     # via
     #   jsonschema
@@ -413,6 +420,7 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   quartodoc
+    #   rdata
 tzdata==2024.1
     # via pandas
 urllib3==2.2.2
@@ -429,6 +437,8 @@ wheel==0.43.0
     # via pip-tools
 wrapt==1.16.0
     # via aiobotocore
+xarray==2024.6.0
+    # via rdata
 xxhash==3.4.1
     # via pins (setup.cfg)
 yarl==1.9.4

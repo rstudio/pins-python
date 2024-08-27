@@ -125,13 +125,16 @@ def load_data(
 
         elif meta.type == "rds":
             try:
-                import rdata
-
-                return rdata.read_rds(f)
+                import rdata  # pyright: ignore[reportMissingImports]
             except ModuleNotFoundError:
                 raise ModuleNotFoundError(
                     "Install the 'rdata' package to attempt to convert 'rds' files into Python objects."
                 )
+
+            # Equivalent to `rdata.read_rds(f)` but compatible with Python 3.8.
+            # See https://github.com/rstudio/pins-python/pull/265
+            parsed = rdata.parser.parse_file(f.name)
+            return rdata.conversion.convert(parsed)
 
     raise NotImplementedError(f"No driver for type {meta.type}")
 

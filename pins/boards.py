@@ -225,6 +225,8 @@ class BaseBoard:
         metadata: Mapping | None = None,
         versioned: bool | None = None,
         created: datetime | None = None,
+        *,
+        force_identical_write: bool = False,
     ) -> Meta:
         if type == "feather":
             warn_deprecated(
@@ -248,8 +250,16 @@ class BaseBoard:
 
         pin_name = self.path_to_pin(name)
 
+        # Pre-emptively fetch the most recent pin's meta if it exists - this is used
+        # for the force_identical_write check
+        abort_if_identical = not force_identical_write and self.pin_exists(name)
+        if abort_if_identical:
+            last_meta = self.pin_meta(name)
+
         with tempfile.TemporaryDirectory() as tmp_dir:
-            # create all pin data (e.g. data.txt, save object)
+            # create all pin data (e.g. data.txt, save object) to get the metadata.
+            # For unversioned boards, this also will delete the most recent pin version,
+            # ready for it to be replaced with a new one.
             meta = self.prepare_pin_version(
                 tmp_dir,
                 x,
@@ -262,6 +272,18 @@ class BaseBoard:
                 created,
                 object_name=object_name,
             )
+
+            # force_identical_write check
+            if abort_if_identical:
+                last_hash = last_meta.pin_hash
+
+                if last_hash == meta.pin_hash:
+                    msg = (
+                        f'The hash of pin "{name}" has not changed. Your pin will not '
+                        f"be stored.",
+                    )
+                    inform(log=_log, msg=msg)
+                    return last_meta
 
             # move pin to destination ----
             # create pin version folder
@@ -310,6 +332,8 @@ class BaseBoard:
         metadata: Mapping | None = None,
         versioned: bool | None = None,
         created: datetime | None = None,
+        *,
+        force_identical_write: bool = False,
     ) -> Meta:
         """Write a pin object to the board.
 
@@ -336,6 +360,17 @@ class BaseBoard:
         created:
             A date to store in the Meta.created field. This field may be used as
             part of the pin version name.
+        force_identical_write:
+            Store the pin even if the pin contents are identical to the last version
+            (compared using the hash). Only the pin contents are compared, not the pin
+            metadata. Defaults to False.
+
+        Returns
+        -------
+        Meta:
+            Metadata about the stored pin. If `force_identical_write` is False and the
+            pin contents are identical to the last version, the last version's metadata
+            is returned.
         """
 
         if type == "file":
@@ -345,7 +380,15 @@ class BaseBoard:
             )
 
         return self._pin_store(
-            x, name, type, title, description, metadata, versioned, created
+            x,
+            name,
+            type,
+            title,
+            description,
+            metadata,
+            versioned,
+            created,
+            force_identical_write=force_identical_write,
         )
 
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:

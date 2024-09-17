@@ -136,17 +136,6 @@ def test_board_pin_write_file_raises_error(board, tmp_path):
         board.pin_write(path, "cool_pin", type="file")
 
 
-def test_board_pin_write_force_identical_write_is_not_default(board):
-    df = pd.DataFrame({"x": [1, 2, 3]})
-
-    # 1min ago to avoid name collision
-    one_min_ago = datetime.now() - timedelta(minutes=1)
-    board.pin_write(df, "cool_pin", type="csv", created=one_min_ago)
-    board.pin_write(df, "cool_pin", type="csv")
-    versions = board.pin_versions("cool_pin")
-    assert len(versions) == 1
-
-
 @pytest.mark.parametrize("force_identical_write", [True, False])
 def test_board_pin_write_force_identical_write_pincount(board, force_identical_write):
     df = pd.DataFrame({"x": [1, 2, 3]})

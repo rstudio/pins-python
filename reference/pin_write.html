@@ -142,16 +142,16 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="pins.boards.BaseBoard.pin_write" class="level1">
 <h1>pin_write</h1>
-<p><code>boards.BaseBoard.pin_write(x, name=None, type=None, title=None, description=None, metadata=None, versioned=None, created=None)</code></p>
+<p><code>boards.BaseBoard.pin_write(x, name=None, type=None, title=None, description=None, metadata=None, versioned=None, created=None, *, force_identical_write=False)</code></p>
 <p>Write a pin object to the board.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 6%">
+<col style="width: 10%">
 <col style="width: 7%">
-<col style="width: 80%">
-<col style="width: 5%">
+<col style="width: 77%">
+<col style="width: 4%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -209,6 +209,33 @@ ul.task-list li input[type="checkbox"] {
 <td>datetime | None</td>
 <td>A date to store in the Meta.created field. This field may be used as part of the pin version name.</td>
 <td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td><code>force_identical_write</code></td>
+<td>bool</td>
+<td>Store the pin even if the pin contents are identical to the last version (compared using the hash). Only the pin contents are compared, not the pin metadata. Defaults to False.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns" class="level2">
+<h2 class="anchored" data-anchor-id="returns">Returns</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 95%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Meta</td>
+<td>Metadata about the stored pin. If <code>force_identical_write</code> is False and the pin contents are identical to the last version, the last version’s metadata is returned.</td>
 </tr>
 </tbody>
 </table>

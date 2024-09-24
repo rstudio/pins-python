@@ -1,5 +1,7 @@
 from pathlib import Path
-from typing import Sequence
+from typing import Any, Sequence
+
+from pins._adaptors import _create_adaptor
 
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError
@@ -11,15 +13,6 @@ from .meta import Meta
 
 UNSAFE_TYPES = frozenset(["joblib"])
 REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib", "file"])
-
-
-def _assert_is_pandas_df(x, file_type: str) -> None:
-    import pandas as pd
-
-    if not isinstance(x, pd.DataFrame):
-        raise NotImplementedError(
-            f"Currently only pandas.DataFrame can be saved as type {file_type!r}."
-        )
 
 
 def load_path(meta, path_to_version):
@@ -144,6 +137,8 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
     #       as argument to board, and then type dispatchers for explicit cases
     #       of saving / loading objects different ways.
 
+    adaptor = _create_adaptor(obj)
+
     if apply_suffix:
         if type == "file":
             suffix = "".join(Path(obj).suffixes)
@@ -155,39 +150,22 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
     final_name = f"{fname}{suffix}"
 
     if type == "csv":
-        _assert_is_pandas_df(obj, file_type=type)
-
-        obj.to_csv(final_name, index=False)
-
+        adaptor.write_csv(final_name)
     elif type == "arrow":
         # NOTE: R pins accepts the type arrow, and saves it as feather.
         #       we allow reading this type, but raise an error for writing.
-        _assert_is_pandas_df(obj, file_type=type)
-
-        obj.to_feather(final_name)
-
+        adaptor.write_feather(final_name)
     elif type == "feather":
-        _assert_is_pandas_df(obj, file_type=type)
-
-        raise NotImplementedError(
+        msg = (
             'Saving data as type "feather" no longer supported. Use type "arrow" instead.'
         )
-
+        raise NotImplementedError(msg)
     elif type == "parquet":
-        _assert_is_pandas_df(obj, file_type=type)
-
-        obj.to_parquet(final_name)
-
+        adaptor.write_parquet(final_name)
     elif type == "joblib":
-        import joblib
-
-        joblib.dump(obj, final_name)
-
+        adaptor.write_joblib(final_name)
     elif type == "json":
-        import json
-
-        json.dump(obj, open(final_name, "w"))
-
+        adaptor.write_json(final_name)
     elif type == "file":
         import contextlib
         import shutil
@@ -195,21 +173,12 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
         # ignore the case where the source is the same as the target
         with contextlib.suppress(shutil.SameFileError):
             shutil.copyfile(str(obj), final_name)
-
     else:
         raise NotImplementedError(f"Cannot save type: {type}")
 
     return final_name
 
 
-def default_title(obj, name):
-    import pandas as pd
-
-    if isinstance(obj, pd.DataFrame):
-        # TODO(compat): title says CSV rather than data.frame
-        # see https://github.com/machow/pins-python/issues/5
-        shape_str = " x ".join(map(str, obj.shape))
-        return f"{name}: a pinned {shape_str} DataFrame"
-    else:
-        obj_name = type(obj).__qualname__
-        return f"{name}: a pinned {obj_name} object"
+def default_title(obj: Any, name: str) -> str:
+    # Kept for backward compatibility only.
+    return _create_adaptor(obj).default_title(name)

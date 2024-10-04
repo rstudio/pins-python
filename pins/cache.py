@@ -68,8 +68,8 @@ class HashMapper:
         if self.hash_prefix is not None:
             # optionally make the name relative to a parent path
             # using the hash of parent path as a prefix, to flatten a bit
-            hash = Path(path).relative_to(Path(self.hash_prefix))
-            return hash
+            _hash = Path(path).relative_to(Path(self.hash_prefix))
+            return _hash
 
         else:
             raise NotImplementedError()
@@ -102,8 +102,8 @@ class PinsRscCacheMapper:
         # the main change in this function is that, for same_name, it returns
         # the full path
         # change pin path of form <user>/<content> to <user>+<content>
-        hash = path.replace("/", "+", 1)
-        return hash
+        _hash = path.replace("/", "+", 1)
+        return _hash
 
 
 class PinsCache(SimpleCacheFileSystem):

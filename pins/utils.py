@@ -22,10 +22,10 @@ def warn_deprecated(msg):
 
 def hash_name(path, same_name):
     if same_name:
-        hash = os.path.basename(path)
+        _hash = os.path.basename(path)
     else:
-        hash = hashlib.sha256(path.encode()).hexdigest()
-    return hash
+        _hash = hashlib.sha256(path.encode()).hexdigest()
+    return _hash
 
 
 class ExtendMethodDoc:

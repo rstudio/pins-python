@@ -228,15 +228,16 @@ class BaseBoard:
         *,
         force_identical_write: bool = False,
     ) -> Meta:
-        if type == "feather":
+        _type = type
+        if _type == "feather":
             warn_deprecated(
                 'Writing pin type "feather" is unsupported. Switching type to "arrow".'
                 " This produces the exact same behavior, and also works with R pins."
                 ' Please switch to pin_write using type="arrow".'
             )
-            type = "arrow"
+            _type = "arrow"
 
-        if type == "file":
+        if _type == "file":
             # the file type makes the name of the data the exact filename, rather
             # than the pin name + a suffix (e.g. my_pin.csv).
             if isinstance(x, (tuple, list)) and len(x) == 1:
@@ -264,7 +265,7 @@ class BaseBoard:
                 tmp_dir,
                 x,
                 pin_name,
-                type,
+                _type,
                 title,
                 description,
                 metadata,

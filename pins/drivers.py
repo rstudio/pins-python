@@ -208,7 +208,7 @@ def save_data(
                 shutil.copyfile(str(obj), final_name)
 
     else:
-        raise NotImplementedError(f"Cannot save type: {type}")
+        raise NotImplementedError(f"Cannot save type: {pin_type}")
 
     return final_name
 

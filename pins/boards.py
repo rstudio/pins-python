@@ -239,10 +239,13 @@ class BaseBoard:
             # than the pin name + a suffix (e.g. my_pin.csv).
             if isinstance(x, (tuple, list)) and len(x) == 1:
                 x = x[0]
+
+            if not isinstance(x, (list, tuple)):
                 _p = Path(x)
                 _base_len = len(_p.name) - len("".join(_p.suffixes))
                 object_name = _p.name[:_base_len]
             else:
+                # multifile upload, keep list of filenames
                 object_name = x
         else:
             object_name = None

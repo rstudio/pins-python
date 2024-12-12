@@ -245,7 +245,14 @@ class MetaFactory:
 
             raise NotImplementedError("Cannot create from file object.")
         else:
-            raise NotImplementedError("TODO: creating meta from multiple files")
+            if isinstance(files, (list, tuple)):
+                from pathlib import Path
+
+                file_name = files
+                file_size = [Path(f).stat().st_size for f in files]
+                version = Version.from_files(files, created)
+
+            # raise NotImplementedError("TODO: creating meta from multiple files")
 
         return Meta(
             title=title,

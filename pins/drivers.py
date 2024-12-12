@@ -136,7 +136,9 @@ def load_data(
     raise NotImplementedError(f"No driver for type {meta.type}")
 
 
-def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequence[str]":
+def save_data(
+    obj, fname, pin_type=None, apply_suffix: bool = True
+) -> "str | Sequence[str]":
     # TODO: extensible saving with deferred importing
     # TODO: how to encode arguments to saving / loading drivers?
     #       e.g. pandas index options
@@ -145,56 +147,65 @@ def save_data(obj, fname, type=None, apply_suffix: bool = True) -> "str | Sequen
     #       of saving / loading objects different ways.
 
     if apply_suffix:
-        if type == "file":
+        if pin_type == "file":
             suffix = "".join(Path(obj).suffixes)
         else:
-            suffix = f".{type}"
+            suffix = f".{pin_type}"
     else:
         suffix = ""
 
-    final_name = f"{fname}{suffix}"
+    if isinstance(fname, list):
+        final_name = fname
+    else:
+        final_name = f"{fname}{suffix}"
 
-    if type == "csv":
+    if pin_type == "csv":
         _assert_is_pandas_df(obj, file_type=type)
 
         obj.to_csv(final_name, index=False)
 
-    elif type == "arrow":
+    elif pin_type == "arrow":
         # NOTE: R pins accepts the type arrow, and saves it as feather.
         #       we allow reading this type, but raise an error for writing.
         _assert_is_pandas_df(obj, file_type=type)
 
         obj.to_feather(final_name)
 
-    elif type == "feather":
+    elif pin_type == "feather":
         _assert_is_pandas_df(obj, file_type=type)
 
         raise NotImplementedError(
             'Saving data as type "feather" no longer supported. Use type "arrow" instead.'
         )
 
-    elif type == "parquet":
+    elif pin_type == "parquet":
         _assert_is_pandas_df(obj, file_type=type)
 
         obj.to_parquet(final_name)
 
-    elif type == "joblib":
+    elif pin_type == "joblib":
         import joblib
 
         joblib.dump(obj, final_name)
 
-    elif type == "json":
+    elif pin_type == "json":
         import json
 
         json.dump(obj, open(final_name, "w"))
 
-    elif type == "file":
+    elif pin_type == "file":
         import contextlib
         import shutil
 
+        if isinstance(obj, list):
+            for f, j in zip(obj, final_name):
+                with contextlib.suppress(shutil.SameFileError):
+                    shutil.copyfile(str(f), j)
+            return obj
         # ignore the case where the source is the same as the target
-        with contextlib.suppress(shutil.SameFileError):
-            shutil.copyfile(str(obj), final_name)
+        else:
+            with contextlib.suppress(shutil.SameFileError):
+                shutil.copyfile(str(obj), final_name)
 
     else:
         raise NotImplementedError(f"Cannot save type: {type}")

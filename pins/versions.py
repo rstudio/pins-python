@@ -106,7 +106,8 @@ class Version(_VersionBase):
             created = datetime.now()
 
         if len(hashes) > 1:
-            raise NotImplementedError("Only 1 file may be currently be hashed")
+            hashes = [str(hash(tuple(hashes)))]
+            # raise NotImplementedError("Only 1 file may be currently be hashed")
 
         return cls(created, hashes[0])
 

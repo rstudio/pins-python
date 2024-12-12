@@ -239,10 +239,11 @@ class BaseBoard:
             # than the pin name + a suffix (e.g. my_pin.csv).
             if isinstance(x, (tuple, list)) and len(x) == 1:
                 x = x[0]
-
-            _p = Path(x)
-            _base_len = len(_p.name) - len("".join(_p.suffixes))
-            object_name = _p.name[:_base_len]
+                _p = Path(x)
+                _base_len = len(_p.name) - len("".join(_p.suffixes))
+                object_name = _p.name[:_base_len]
+            else:
+                object_name = x
         else:
             object_name = None
 
@@ -416,6 +417,12 @@ class BaseBoard:
             A dictionary containing additional metadata to store with the pin.
             This gets stored on the Meta.user field.
         """
+
+        if isinstance(paths, (list, tuple)):
+            # check if all paths exist
+            for path in paths:
+                if not Path(path).is_file():
+                    raise PinsError(f"Path is not a valid file: {path}")
 
         return self._pin_store(
             paths,
@@ -621,7 +628,7 @@ class BaseBoard:
         metadata: Mapping | None = None,
         versioned: bool | None = None,
         created: datetime | None = None,
-        object_name: str | None = None,
+        object_name: str | list[str] | None = None,
     ):
         meta = self._create_meta(
             pin_dir_path,
@@ -666,14 +673,19 @@ class BaseBoard:
         # create metadata from object on disk ---------------------------------
         # save all pin data to a temporary folder (including data.txt), so we
         # can fs.put it all straight onto the backend filesystem
-
-        if object_name is None:
-            p_obj = Path(pin_dir_path) / name
+        apply_suffix = True
+        if isinstance(object_name, (list, tuple)):
+            apply_suffix = False
+            p_obj = []
+            for obj in object_name:
+                p_obj.append(str(Path(pin_dir_path) / obj))
+        elif object_name is None:
+            p_obj = str(Path(pin_dir_path) / name)
         else:
-            p_obj = Path(pin_dir_path) / object_name
+            p_obj = str(Path(pin_dir_path) / object_name)
 
         # file is saved locally in order to hash, calc size
-        file_names = save_data(x, str(p_obj), type)
+        file_names = save_data(x, p_obj, type, apply_suffix)
 
         meta = self.meta_factory.create(
             pin_dir_path,

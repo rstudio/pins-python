@@ -164,31 +164,23 @@ def test_driver_apply_suffix_false(tmp_path: Path):
 
 
 class TestLoadFile:
-    def test_multi_file_raises(self):
-        class _MockMetaMultiFile:
-            file: str | list[str] = ["a", "b"]
-            type: str = "csv"
-
-        with pytest.raises(ValueError, match="Cannot load data when more than 1 file"):
-            load_path(_MockMetaMultiFile(), None)
-
     def test_str_file(self):
         class _MockMetaStrFile:
             file: str = "a"
             type: str = "csv"
 
-        assert load_path(_MockMetaStrFile(), None) == "a"
+        assert load_path(_MockMetaStrFile().file, None, _MockMetaStrFile().type) == "a"
 
     def test_table(self):
         class _MockMetaTable:
             file: str = "a"
             type: str = "table"
 
-        assert load_path(_MockMetaTable(), None) == "data.csv"
+        assert load_path(_MockMetaTable().file, None, _MockMetaTable().type) == "data.csv"
 
     def test_version(self):
         class _MockMetaTable:
             file: str = "a"
             type: str = "csv"
 
-        assert load_path(_MockMetaTable(), "v1") == "v1/a"
+        assert load_path(_MockMetaTable().file, "v1", _MockMetaTable().type) == "v1/a"

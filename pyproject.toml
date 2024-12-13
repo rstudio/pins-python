@@ -100,7 +100,6 @@ pythonPlatform = "Linux"
 
 # Tracking compliance with these rules at https://github.com/rstudio/pins-python/issues/272
 reportArgumentType = false
-reportAssignmentType = false
 reportAttributeAccessIssue = false
 reportCallIssue = false
 reportIncompatibleMethodOverride = false

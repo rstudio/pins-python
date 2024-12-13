@@ -109,7 +109,7 @@ class Version(_VersionBase):
             combined_hashes = "".join(hashes)
 
             # Create an xxh64 hash of the combined string
-            hashes = xxh64(combined_hashes).hexdigest()
+            hashes = [xxh64(combined_hashes).hexdigest()]
 
         return cls(created, hashes[0])
 

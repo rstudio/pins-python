@@ -252,8 +252,6 @@ class MetaFactory:
                 file_size = [Path(f).stat().st_size for f in files]
                 version = Version.from_files(files, created)
 
-            # raise NotImplementedError("TODO: creating meta from multiple files")
-
         return Meta(
             title=title,
             description=description,

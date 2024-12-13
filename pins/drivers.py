@@ -22,7 +22,7 @@ def _assert_is_pandas_df(x, file_type: str) -> None:
         )
 
 
-def load_path(filename: str, path_to_version, pin_type):
+def load_path(filename: str, path_to_version, pin_type=None):
     # file path creation ------------------------------------------------------
     if pin_type == "table":
         # this type contains an rds and csv files named data.{ext}, so we match
@@ -38,7 +38,7 @@ def load_path(filename: str, path_to_version, pin_type):
     return path_to_file
 
 
-def load_file(filename: str, fs, path_to_version, pin_type: str):
+def load_file(filename: str, fs, path_to_version, pin_type):
     return fs.open(load_path(filename, path_to_version, pin_type))
 
 
@@ -70,7 +70,7 @@ def load_data(
             "  * https://scikit-learn.org/stable/modules/model_persistence.html#security-maintainability-limitations"
         )
 
-    with load_file(meta, fs, path_to_version) as f:
+    with load_file(meta.file, fs, path_to_version, meta.type) as f:
         if meta.type == "csv":
             import pandas as pd
 

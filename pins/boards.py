@@ -893,7 +893,7 @@ class BoardManual(BaseBoard):
         meta = self.pin_meta(name, version)
 
         if isinstance(meta, MetaRaw):
-            f = load_file(meta, self.fs, None)
+            f = load_file(meta.file, self.fs, None, meta.type)
         else:
             raise NotImplementedError(
                 "TODO: pin_download currently can only read a url to a single file."

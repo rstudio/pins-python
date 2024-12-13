@@ -248,7 +248,7 @@ class MetaFactory:
             if isinstance(files, (list, tuple)):
                 from pathlib import Path
 
-                file_name = files
+                file_name = [Path(f).name for f in files]
                 file_size = [Path(f).stat().st_size for f in files]
                 version = Version.from_files(files, created)
 

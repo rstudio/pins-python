@@ -15,7 +15,7 @@ from importlib_resources import files
 
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
-from .drivers import default_title, load_data, load_file, save_data
+from .drivers import REQUIRES_SINGLE_FILE, default_title, load_data, load_file, save_data
 from .errors import PinsError, PinsVersionError
 from .meta import Meta, MetaFactory, MetaRaw
 from .utils import ExtendMethodDoc, inform, warn_deprecated
@@ -375,20 +375,32 @@ class BaseBoard:
         if hash is not None:
             raise NotImplementedError("TODO: validate hash")
 
+        # Check that only a single file name was given
+        fnames = [meta.file] if isinstance(meta.file, str) else meta.file
+        pin_type = meta.type
+
+        if len(fnames) > 1 and pin_type in REQUIRES_SINGLE_FILE:
+            raise ValueError("Cannot load data when more than 1 file")
         pin_name = self.path_to_pin(name)
+        files = []
 
-        # TODO: raise for multiple files
-        # fetch file
-        with load_file(
-            meta, self.fs, self.construct_path([pin_name, meta.version.version])
-        ) as f:
-            # could also check whether f isinstance of PinCache
-            fname = getattr(f, "name", None)
+        for fname in fnames:
+            # fetch file
+            with load_file(
+                fname,
+                self.fs,
+                self.construct_path([pin_name, meta.version.version]),
+                pin_type,
+            ) as f:
+                # could also check whether f isinstance of PinCache
+                fname = getattr(f, "name", None)
 
-            if fname is None:
-                raise PinsError("pin_download requires a cache.")
+                if fname is None:
+                    raise PinsError("pin_download requires a cache.")
 
-            return [str(Path(fname).absolute())]
+                files.append(str(Path(fname).absolute()))
+
+        return files
 
     def pin_upload(
         self,

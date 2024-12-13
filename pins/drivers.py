@@ -10,7 +10,7 @@ from .meta import Meta
 
 
 UNSAFE_TYPES = frozenset(["joblib"])
-REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib", "file"])
+REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib"])
 
 
 def _assert_is_pandas_df(x, file_type: str) -> None:
@@ -22,35 +22,24 @@ def _assert_is_pandas_df(x, file_type: str) -> None:
         )
 
 
-def load_path(meta, path_to_version):
-    # Check that only a single file name was given
-    fnames = [meta.file] if isinstance(meta.file, str) else meta.file
-
-    _type = meta.type
-
-    if len(fnames) > 1 and _type in REQUIRES_SINGLE_FILE:
-        raise ValueError("Cannot load data when more than 1 file")
-
+def load_path(filename: str, path_to_version, pin_type):
     # file path creation ------------------------------------------------------
-
-    if _type == "table":
+    if pin_type == "table":
         # this type contains an rds and csv files named data.{ext}, so we match
         # R pins behavior and hardcode the name
-        target_fname = "data.csv"
-    else:
-        target_fname = fnames[0]
+        filename = "data.csv"
 
     if path_to_version is not None:
-        path_to_file = f"{path_to_version}/{target_fname}"
+        path_to_file = f"{path_to_version}/{filename}"
     else:
         # BoardUrl doesn't have versions, and the file is the full url
-        path_to_file = target_fname
+        path_to_file = filename
 
     return path_to_file
 
 
-def load_file(meta: Meta, fs, path_to_version):
-    return fs.open(load_path(meta, path_to_version))
+def load_file(filename: str, fs, path_to_version, pin_type: str):
+    return fs.open(load_path(filename, path_to_version, pin_type))
 
 
 def load_data(

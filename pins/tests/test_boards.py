@@ -235,7 +235,7 @@ def test_board_pin_upload_path_list(board_with_cache, tmp_path):
 def test_board_pin_download_filename_multifile(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})
-    print(tmp_path)
+
     path1, path2 = tmp_path / "data1.csv", tmp_path / "data2.csv"
     df.to_csv(path1, index=False)
     df.to_csv(path2, index=False)
@@ -245,8 +245,11 @@ def test_board_pin_download_filename_multifile(board_with_cache, tmp_path):
     assert meta.type == "file"
     assert meta.file == ["data1.csv", "data2.csv"]
 
-    # (pin_path,) = board_with_cache.pin_download("cool_pin")
-    # assert Path(pin_path).name == "data.csv"
+    pin_path = board_with_cache.pin_download("cool_pin")
+
+    assert len(pin_path) == 2
+    assert Path(pin_path[0]).name == "data1.csv"
+    assert Path(pin_path[1]).name == "data2.csv"
 
 
 def test_board_pin_write_rsc_index_html(board, tmp_path: Path, snapshot):

@@ -187,9 +187,9 @@ def save_data(
         import shutil
 
         if isinstance(obj, list):
-            for f, j in zip(obj, final_name):
+            for file, final in zip(obj, final_name):
                 with contextlib.suppress(shutil.SameFileError):
-                    shutil.copyfile(str(f), j)
+                    shutil.copyfile(str(file), final)
             return obj
         # ignore the case where the source is the same as the target
         else:

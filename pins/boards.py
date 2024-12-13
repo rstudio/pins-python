@@ -246,7 +246,11 @@ class BaseBoard:
                 object_name = _p.name[:_base_len]
             else:
                 # multifile upload, keep list of filenames
-                object_name = x
+                object_name = []
+                for file in x:
+                    _p = Path(file)
+                    # _base_len = len(_p.name) - len("".join(_p.suffixes))
+                    object_name.append(_p.name)  # [:_base_len])
         else:
             object_name = None
 
@@ -375,12 +379,12 @@ class BaseBoard:
         if hash is not None:
             raise NotImplementedError("TODO: validate hash")
 
-        # Check that only a single file name was given
         fnames = [meta.file] if isinstance(meta.file, str) else meta.file
         pin_type = meta.type
 
         if len(fnames) > 1 and pin_type in REQUIRES_SINGLE_FILE:
             raise ValueError("Cannot load data when more than 1 file")
+
         pin_name = self.path_to_pin(name)
         files = []
 
@@ -698,7 +702,6 @@ class BaseBoard:
             p_obj = str(Path(pin_dir_path) / name)
         else:
             p_obj = str(Path(pin_dir_path) / object_name)
-
         # file is saved locally in order to hash, calc size
         file_names = save_data(x, p_obj, type, apply_suffix)
 

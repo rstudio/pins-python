@@ -20,13 +20,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         os: ["ubuntu-latest"]
         pytest_opts: ["--workers 4 --tests-per-worker 1"]
         requirements: [""]
         include:
           - os: "ubuntu-latest"
-            python: "3.8"
+            python: "3.9"
             requirements: "requirements/minimum.txt"
           - os: "macos-latest"
             python: "3.10"

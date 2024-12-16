@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import InitVar, asdict, dataclass, field, fields
 from pathlib import Path
-from typing import Any, ClassVar, Mapping, Sequence
+from typing import Any, ClassVar
 
 import yaml
 
@@ -61,7 +62,7 @@ class Meta:
         A dictionary of additional metadata that may be specified by the user.
     local:
         A dictionary of additional metadata that may be added by the board, depending
-        on the backend used. E.g. RStudio Connect content id, url, etc..
+        on the backend used. E.g. Posit Connect content id, url, etc..
 
     """
 

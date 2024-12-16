@@ -522,7 +522,7 @@ def test_board_pin_versions_prune_n(board, pin_prune, pin_name, n):
 
 @pytest.mark.parametrize("days", [1, 2])
 def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
-    # RStudio cannot handle days, since it involves pulling metadata
+    # Posit cannot handle days, since it involves pulling metadata
     if board.fs.protocol == "rsc":
         with pytest.raises(NotImplementedError):
             board.pin_versions_prune(pin_name, days=days)
@@ -538,7 +538,7 @@ def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
 
 def test_board_pin_versions_prune_days_protect_most_recent(board, pin_name):
     """To address https://github.com/rstudio/pins-python/issues/297"""
-    # RStudio cannot handle days, since it involves pulling metadata
+    # Posit cannot handle days, since it involves pulling metadata
     if board.fs.protocol == "rsc":
         with pytest.raises(NotImplementedError):
             board.pin_versions_prune(pin_name, days=5)
@@ -628,7 +628,7 @@ def test_board_base_pin_meta_cache_touch(tmp_path: Path, df):
     assert orig_access < new_access
 
 
-# RStudio Connect specific ====================================================
+# Posit Connect specific ====================================================
 
 # import fixture that builds / tearsdown user "susan"
 from pins.tests.test_rsconnect_api import (  # noqa

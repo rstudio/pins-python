@@ -3,12 +3,12 @@ from __future__ import annotations
 import logging
 import os
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import partial
 from io import IOBase
 from pathlib import Path
-from typing import Generic, Literal, Sequence, TypeVar, overload
+from typing import Generic, Literal, TypeVar, overload
 from urllib.parse import urlencode
 
 import requests
@@ -440,7 +440,7 @@ class _HackyConnect(RsConnectApi):
     """Handles logging in to connect, rather than using an API key.
 
     This class allows you to create users and generate API keys on a fresh
-    RStudio Connect service.
+    Posit Connect service.
     """
 
     def login(self, user, password):

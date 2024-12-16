@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from dataclasses import InitVar, asdict, dataclass, field, fields
 from pathlib import Path
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import yaml
 
@@ -105,7 +105,7 @@ class Meta:
         except KeyError:
             raise AttributeError(f"No metadata field not found: {k}")
 
-    def to_dict(self) -> Mapping:
+    def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
 
         return data

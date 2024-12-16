@@ -440,7 +440,7 @@ class _HackyConnect(RsConnectApi):
     """Handles logging in to connect, rather than using an API key.
 
     This class allows you to create users and generate API keys on a fresh
-    RStudio Connect service.
+    Posit Connect service.
     """
 
     def login(self, user, password):

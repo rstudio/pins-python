@@ -1003,7 +1003,7 @@ class BoardRsConnect(BaseBoard):
 
     @ExtendMethodDoc
     def pin_list(self):
-        # lists all pin content on RStudio Connect server
+        # lists all pin content on Posit Connect server
         # we can't use fs.ls, because it will list *all content*
         paged_res = self.fs.api.misc_get_applications("content_type:pin")
         results = paged_res.results
@@ -1128,14 +1128,14 @@ class BoardRsConnect(BaseBoard):
             if e.args[0]["code"] != 75:
                 raise e
 
-            raise PinsError("RStudio Connect cannot delete the latest pin version.")
+            raise PinsError("Posit Connect cannot delete the latest pin version.")
 
     @ExtendMethodDoc
     def pin_versions_prune(self, *args, **kwargs):
         sig = inspect.signature(super().pin_versions_prune)
         if sig.bind(*args, **kwargs).arguments.get("days") is not None:
             raise NotImplementedError(
-                "RStudio Connect board cannot prune versions using days."
+                "Posit Connect board cannot prune versions using days."
             )
         super().pin_versions_prune(*args, **kwargs)
 
@@ -1162,7 +1162,7 @@ class BoardRsConnect(BaseBoard):
         if not get_allow_rsc_short_name() and name.count("/") != 1:
             raise ValueError(
                 f"Invalid pin name: {name}"
-                "\nRStudio Connect pin names must include user name. E.g. "
+                "\nPosit Connect pin names must include user name. E.g. "
                 "\nsome_user/mtcars, for the user some_user."
             )
 

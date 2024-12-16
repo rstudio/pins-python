@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.12 # Use the maximum version supported by python-pins
+          python-version: 3.13 # Use the maximum version supported by python-pins
       - name: Install dependencies
         shell: bash
         run: |
@@ -32,4 +32,4 @@ jobs:
           python -m pip install -e .[check]
       - uses: jakebailey/pyright-action@v2
         with:
-          version: 1.1.372 # Manually sync with setup.cfg
+          version: 1.1.372

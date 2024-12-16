@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import InitVar, asdict, dataclass, field, fields
 from pathlib import Path
-from typing import ClassVar, Mapping, Sequence
+from typing import ClassVar
 
 import yaml
 

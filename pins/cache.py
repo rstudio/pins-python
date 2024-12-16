@@ -5,8 +5,8 @@ import os
 import shutil
 import time
 import urllib.parse
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 import humanize
 from fsspec import register_implementation

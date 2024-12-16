@@ -3,12 +3,12 @@ from __future__ import annotations
 import logging
 import os
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import partial
 from io import IOBase
 from pathlib import Path
-from typing import Generic, Sequence, TypeVar
+from typing import Generic, TypeVar
 from urllib.parse import urlencode
 
 import requests

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from functools import partial
 from io import IOBase
 from pathlib import Path
-from typing import Generic, Sequence, TypeVar
+from typing import Generic, Literal, Sequence, TypeVar, overload
 from urllib.parse import urlencode
 
 import requests
@@ -215,7 +215,15 @@ class RsConnectApi:
 
         return self._raw_query(endpoint, method, return_request, **kwargs)
 
-    def _raw_query(self, url, method="GET", return_request=False, **kwargs):
+    @overload
+    def _raw_query(
+        self, url, method, return_request: Literal[True], **kwargs
+    ) -> requests.Response: ...
+    @overload
+    def _raw_query(
+        self, url, method, return_request: Literal[False], **kwargs
+    ) -> dict | list: ...
+    def _raw_query(self, url, method="GET", return_request: bool = False, **kwargs):
         if "headers" in kwargs:
             raise KeyError("cannot specify headers param in kwargs")
 

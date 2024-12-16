@@ -103,7 +103,6 @@ reportArgumentType = false
 reportAttributeAccessIssue = false
 reportCallIssue = false
 reportIncompatibleMethodOverride = false
-reportIndexIssue = false
 reportMissingImports = false
 reportMissingTypeStubs = false
 reportOptionalMemberAccess = false

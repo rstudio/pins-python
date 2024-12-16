@@ -44,7 +44,7 @@ Tests can be run using pytest:
 ```shell
 pytest pins
 
-# run all tests except those for Rstudio Connect
+# run all tests except those for Posit Connect
 pytest pins -m 'not fs_rsc'
 
 # run only local filesystem backend tests
@@ -60,7 +60,7 @@ pytest pins -m 'not skip_on_github' -k 'not pins.boards.BoardManual'
 
 There are two important details to note for testing:
 
-* **Backends**. pins can write to backends like s3, azure, and RStudio Connect, so you
+* **Backends**. pins can write to backends like s3, azure, and Posit Connect, so you
     will need to set credentials to test against them.
 * **Pytest Marks**. You can disable tests over a specific backend through pytest's
     `-m` flag. For example...
@@ -74,7 +74,7 @@ There are two important details to note for testing:
 * Modify `.env` to file in environment variables (e.g. AWS_ACCESS_KEY_ID)
 * Be careful not to put any sensitive information in `.env.dev`!
 
-### Setting up RStudio Connect tests
+### Setting up Posit Connect tests
 
 ```
 # Be sure to set RSC_LICENSE in .env

@@ -15,6 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: MIT License",
 ]
 requires-python = ">=3.8"
@@ -100,12 +101,9 @@ pythonPlatform = "Linux"
 
 # Tracking compliance with these rules at https://github.com/rstudio/pins-python/issues/272
 reportArgumentType = false
-reportAssignmentType = false
 reportAttributeAccessIssue = false
 reportCallIssue = false
-reportGeneralTypeIssues = false
 reportIncompatibleMethodOverride = false
-reportIncompatibleVariableOverride = false
 reportIndexIssue = false
 reportMissingTypeStubs = false
 reportOptionalIterable = false
@@ -113,7 +111,6 @@ reportOptionalMemberAccess = false
 reportOptionalSubscript = false
 reportPossiblyUnboundVariable = false
 reportReturnType = false
-reportUnusedExpression = false
 
 [tool.ruff]
 line-length = 90
@@ -127,7 +124,9 @@ select = [
     "I",  # Import sorting
     "UP", # Upgrade to latest supported Python syntax
     "W",  # Style
+    "A",  # Don't shadow built-ins
 ]
 ignore = [
     "E501", # Line too long
+    "A002", # The pins interface includes builtin names in args, e.g. hash, id, etc.
 ]

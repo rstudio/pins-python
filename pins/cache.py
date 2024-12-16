@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import logging
 import os
 import shutil
 import time
 import urllib.parse
 from pathlib import Path
+from typing import Iterator
 
 import humanize
 from fsspec import register_implementation
@@ -20,7 +23,7 @@ PLACEHOLDER_VERSION = "v"
 PLACEHOLDER_FILE = "file"
 
 
-def touch_access_time(path, access_time: "float | None" = None, strict=True):
+def touch_access_time(path, access_time: float | None = None, strict=True):
     """Update access time of file.
 
     Returns the new access time.
@@ -65,8 +68,8 @@ class HashMapper:
         if self.hash_prefix is not None:
             # optionally make the name relative to a parent path
             # using the hash of parent path as a prefix, to flatten a bit
-            hash = Path(path).relative_to(Path(self.hash_prefix))
-            return hash
+            _hash = Path(path).relative_to(Path(self.hash_prefix))
+            return _hash
 
         else:
             raise NotImplementedError()
@@ -99,8 +102,8 @@ class PinsRscCacheMapper:
         # the main change in this function is that, for same_name, it returns
         # the full path
         # change pin path of form <user>/<content> to <user>+<content>
-        hash = path.replace("/", "+", 1)
-        return hash
+        _hash = path.replace("/", "+", 1)
+        return _hash
 
 
 class PinsCache(SimpleCacheFileSystem):
@@ -220,15 +223,15 @@ class CachePruner:
 
     meta_path = "data.txt"
 
-    def __init__(self, cache_dir: "str | Path"):
+    def __init__(self, cache_dir: str | Path):
         self.cache_dir = Path(cache_dir)
 
-    def versions(self) -> "iter[Path]":
+    def versions(self) -> Iterator[Path]:
         for p_version in self.cache_dir.glob("*/*"):
             if p_version.is_dir() and (p_version / self.meta_path).exists():
                 yield p_version
 
-    def should_prune_version(self, days, path: "str | Path"):
+    def should_prune_version(self, days, path: str | Path):
         path = Path(path)
 
         expiry_time_sec = days * 60 * 60 * 24
@@ -258,7 +261,7 @@ class CachePruner:
         _log.info("Skipping cache deletion")
 
 
-def delete_version(path: "str | Path"):
+def delete_version(path: str | Path):
     path = Path(path)
     shutil.rmtree(str(path.absolute()))
 

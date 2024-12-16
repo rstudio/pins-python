@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -142,11 +176,11 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="pins.boards.BaseBoard.pin_download" class="level1">
 <h1>pin_download</h1>
-<p><code>boards.BaseBoard.pin_download(name, version=None, hash=None)</code></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>boards.BaseBoard.pin_download(name, version<span class="op">=</span><span class="va">None</span>, <span class="bu">hash</span><span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Download the files contained in a pin.</p>
 <p>This method only downloads the files in a pin. In order to read and load pin data as an object (e.g.&nbsp;a pandas DataFrame), use <a href="../reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a>.</p>
-<section id="parameters" class="level2">
-<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<section id="parameters" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -158,19 +192,19 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>name</code></td>
+<td>name</td>
 <td></td>
 <td>Pin name.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>version</code></td>
+<td>version</td>
 <td></td>
 <td>A specific pin version to retrieve.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td><code>hash</code></td>
+<td>hash</td>
 <td></td>
 <td>A hash used to validate the retrieved pin data. If specified, it is compared against the <code>pin_hash</code> field retrived by <a href="../reference/pin_meta.html#pins.boards.BaseBoard.pin_meta"><code>pin_meta</code></a>.</td>
 <td><code>None</code></td>

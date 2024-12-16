@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from typing import ClassVar, Sequence
+from typing import ClassVar
 
 from fsspec import AbstractFileSystem
 

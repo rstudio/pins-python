@@ -6,10 +6,11 @@ import logging
 import re
 import shutil
 import tempfile
+from collections.abc import Mapping, Sequence
 from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
-from typing import Mapping, Protocol, Sequence
+from typing import Protocol
 
 from importlib_resources import files
 from importlib_resources.abc import Traversable

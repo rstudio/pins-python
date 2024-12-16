@@ -228,7 +228,10 @@ def test_rsconnect_api_get_content_bundle_archive(rsc_short):
     bundle = create_content_bundle(rsc_short, content["guid"])
 
     # create temporary directories for content source and dest to download to ----
-    with tempfile.TemporaryDirectory() as tmp_src, tempfile.TemporaryDirectory() as tmp_dst:
+    with (
+        tempfile.TemporaryDirectory() as tmp_src,
+        tempfile.TemporaryDirectory() as tmp_dst,
+    ):
         create_content_bundle(rsc_short, content["guid"], tmp_src)
 
         # download .tar.gz archive to a temporary file and unzip ----

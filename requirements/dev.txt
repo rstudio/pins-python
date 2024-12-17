@@ -360,6 +360,8 @@ pyzmq==26.2.0
     #   jupyter-client
 quartodoc==0.9.1
     # via pins (pyproject.toml)
+rdata==0.11.2
+    # via pins (pyproject.toml)
 referencing==0.35.1
     # via
     #   jsonschema
@@ -442,6 +444,8 @@ wheel==0.45.1
     # via pip-tools
 wrapt==1.17.0
     # via aiobotocore
+xarray==2024.6.0
+    # via rdata
 xxhash==3.5.0
     # via pins (pyproject.toml)
 yarl==1.18.3

@@ -114,7 +114,7 @@ def load_data(
 
         elif meta.type == "rds":
             try:
-                import rdata
+                import rdata  # pyright: ignore[reportMissingImports]
 
                 return rdata.read_rds(f)
             except ModuleNotFoundError:

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import InitVar, asdict, dataclass, field, fields
 from pathlib import Path
-from typing import ClassVar, Mapping, Sequence
+from typing import Any, ClassVar
 
 import yaml
 
@@ -61,7 +62,7 @@ class Meta:
         A dictionary of additional metadata that may be specified by the user.
     local:
         A dictionary of additional metadata that may be added by the board, depending
-        on the backend used. E.g. RStudio Connect content id, url, etc..
+        on the backend used. E.g. Posit Connect content id, url, etc..
 
     """
 
@@ -104,7 +105,7 @@ class Meta:
         except KeyError:
             raise AttributeError(f"No metadata field not found: {k}")
 
-    def to_dict(self) -> Mapping:
+    def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
 
         return data
@@ -245,7 +246,12 @@ class MetaFactory:
 
             raise NotImplementedError("Cannot create from file object.")
         else:
-            raise NotImplementedError("TODO: creating meta from multiple files")
+            if isinstance(files, (list, tuple)):
+                from pathlib import Path
+
+                file_name = [Path(f).name for f in files]
+                file_size = [Path(f).stat().st_size for f in files]
+                version = Version.from_files(files, created)
 
         return Meta(
             title=title,

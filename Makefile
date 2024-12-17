@@ -38,10 +38,10 @@ docs-build:
 docs-clean:
 	rm -rf docs/_build docs/api/api_card
 
-requirements/dev.txt: setup.cfg
+requirements/dev.txt: pyproject.toml
 	@# allows you to do this...
 	@# make requirements | tee > requirements/some_file.txt
-	@pip-compile setup.cfg --rebuild --extra doc --extra test --extra check --output-file=- > $@
+	@pip-compile pyproject.toml --rebuild --extra doc --extra test --extra check --output-file=- > $@
 
 binder/requirements.txt: requirements/dev.txt
 	cp $< $@

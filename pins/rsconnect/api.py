@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import logging
 import os
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import partial
 from io import IOBase
 from pathlib import Path
-from typing import Generic, Sequence, TypeVar
+from typing import Generic, Literal, TypeVar, overload
 from urllib.parse import urlencode
 
 import requests
@@ -130,14 +132,14 @@ class Paginated(Generic[T]):
 
 
 class RsConnectApi:
-    api_key: "str | None"
-    server_url: "str"
+    api_key: str | None
+    server_url: str
 
     def __init__(
         self,
-        server_url: "str | None",
-        api_key: "str | None" = None,
-        session: "requests.Session | None" = None,
+        server_url: str | None,
+        api_key: str | None = None,
+        session: requests.Session | None = None,
     ):
         self.server_url = server_url
         self.api_key = api_key
@@ -182,7 +184,7 @@ class RsConnectApi:
 
         return {**d_key, **d_rsc}
 
-    def _validate_json_response(self, data: "dict | list"):
+    def _validate_json_response(self, data: dict | list):
         if isinstance(data, list):
             return
 
@@ -213,7 +215,15 @@ class RsConnectApi:
 
         return self._raw_query(endpoint, method, return_request, **kwargs)
 
-    def _raw_query(self, url, method="GET", return_request=False, **kwargs):
+    @overload
+    def _raw_query(
+        self, url, method, return_request: Literal[True], **kwargs
+    ) -> requests.Response: ...
+    @overload
+    def _raw_query(
+        self, url, method, return_request: Literal[False], **kwargs
+    ) -> dict | list: ...
+    def _raw_query(self, url, method="GET", return_request: bool = False, **kwargs):
         if "headers" in kwargs:
             raise KeyError("cannot specify headers param in kwargs")
 
@@ -232,8 +242,9 @@ class RsConnectApi:
                 data = r.json()
                 self._validate_json_response(data)
                 return data
-            except requests.JSONDecodeError:
+            except requests.JSONDecodeError as err:
                 r.raise_for_status()
+                raise err  # Fallback if somehow there was no HTTPError
 
     def walk_paginated_offsets(self, f_query, endpoint, method, params=None, **kwargs):
         if params is None:
@@ -257,23 +268,23 @@ class RsConnectApi:
 
     # users ----
 
-    def get_user(self, guid: str = None) -> User:
+    def get_user(self, guid: str | None = None) -> User:
         if guid is None:
             return User(self.query_v1("user"))
 
-        result = self.query_v1(f"user/{guid}")
+        result = self.query_v1(f"users/{guid}")
         return User(result)
 
     def get_users(
         self,
-        prefix: "str | None" = None,
-        user_role: "str | None" = None,
-        account_status: "str | None" = None,
-        page_number: "int | None" = None,
-        page_size: "int | None" = None,
-        asc_order: "bool | None" = None,
+        prefix: str | None = None,
+        user_role: str | None = None,
+        account_status: str | None = None,
+        page_number: int | None = None,
+        page_size: int | None = None,
+        asc_order: bool | None = None,
         walk_pages=True,
-    ) -> "Sequence[User] | Sequence[dict]":
+    ) -> Sequence[User] | Sequence[dict]:
         params = {k: v for k, v in locals().items() if k != "self" if v is not None}
 
         if walk_pages:
@@ -303,7 +314,7 @@ class RsConnectApi:
 
         return Content(result)
 
-    def post_content_item_deploy(self, guid: str, bundle_id: "str | None" = None):
+    def post_content_item_deploy(self, guid: str, bundle_id: str | None = None):
         json = {"bundle_id": bundle_id} if bundle_id is not None else {}
         return self.query_v1(f"content/{guid}/deploy", "POST", json=json)
 
@@ -345,9 +356,7 @@ class RsConnectApi:
         result = self.query_v1(f"content/{guid}/bundles/{id}")
         return Bundle(result)
 
-    def get_content_bundle_archive(
-        self, guid: str, id: str, f_obj: "str | IOBase"
-    ) -> None:
+    def get_content_bundle_archive(self, guid: str, id: str, f_obj: str | IOBase) -> None:
         r = self.query_v1(
             f"content/{guid}/bundles/{id}/download", stream=True, return_request=True
         )
@@ -399,7 +408,7 @@ class RsConnectApi:
         return self._raw_query(f"{self.server_url}/__ping__")
 
     def misc_get_content_bundle_file(
-        self, guid: str, id: str, fname: str, f_obj: "str | IOBase | None" = None
+        self, guid: str, id: str, fname: str, f_obj: str | IOBase | None = None
     ):
         if f_obj is None:
             f_obj = fname
@@ -431,7 +440,7 @@ class _HackyConnect(RsConnectApi):
     """Handles logging in to connect, rather than using an API key.
 
     This class allows you to create users and generate API keys on a fresh
-    RStudio Connect service.
+    Posit Connect service.
     """
 
     def login(self, user, password):

@@ -612,4 +612,4 @@ def board_databricks(folder_url, versioned=True, cache=DEFAULT, allow_pickle_rea
     """
 
     kwargs = dict(folder_url=folder_url)
-    return board("dbc", None, versioned, cache, allow_pickle_read, storage_options=kwargs)
+    return board("dbc", folder_url, versioned, cache, allow_pickle_read, storage_options=kwargs)

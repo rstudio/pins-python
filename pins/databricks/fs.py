@@ -10,7 +10,7 @@ class DatabricksFs(AbstractFileSystem):
         self.folder_url = folder_url
 
     def ls(self, path, details=False, **kwargs):
-        return self._list_folders(self.folder_url)
+        return self._list_folders(path)
 
     def exists(self, path: str, **kwargs):
         path = os.path.basename(path)

@@ -87,6 +87,11 @@ def board(
 
         fs = RsConnectFs(**storage_options)
 
+    elif protocol == "dbc" :
+        from pins.databricks.fs import DatabricksFs        
+
+        fs = DatabricksFs(**storage_options)
+
     else:
         fs = fsspec.filesystem(protocol, **storage_options)
 
@@ -109,6 +114,8 @@ def board(
                 same_names=True,
                 mapper=PinsRscCacheMapper,
             )
+        elif protocol == "dbc":
+            None
         else:
             # ensures each subdir path is its own cache directory
             board_cache = prefix_cache(fs, path)
@@ -130,6 +137,8 @@ def board(
         board = board_factory(path, fs, versioned, **pickle_kwargs)
     elif protocol == "rsc":
         board = BoardRsConnect(path, fs, versioned, **pickle_kwargs)
+    elif protocol == "rsc":
+        board = DatabricksFs(path, fs, versioned, **pickle_kwargs)        
     else:
         board = BaseBoard(path, fs, versioned, **pickle_kwargs)
     return board
@@ -569,3 +578,36 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
 
     opts = {"use_listings_cache": False}
     return board("abfs", path, versioned, cache, allow_pickle_read, storage_options=opts)
+
+def board_databricks(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+    """Create a board to read and write pins from an Databricks Volume folder.
+
+    Parameters
+    ----------
+    path:
+        Path of form `<bucket_name>/<optional>/<subdirectory>`.
+    versioned:
+        Whether or not pins should be versioned.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
+
+    Notes
+    -----
+    The Databricks board uses the fsspec library (dbutils) to handle interacting with
+    Databricks Volumes. Currently, its default mode of authentication is supported.
+
+    See <https://github.com/webwareforpython/dbutils>
+    """
+
+    opts = {"use_listings_cache": False}
+    return board("dbc", path, versioned, cache, allow_pickle_read, storage_options=opts)

@@ -17,7 +17,19 @@ class DatabricksFs(AbstractFileSystem):
         return self._list_dir(path, "name")
 
     def exists(self, path: str, **kwargs):
-        return path in self._list_dir(path, "name")
+        file_exists = True
+        try:
+            self.workspace.files.get_metadata(path)
+        except:
+            file_exists = False
+
+        dir_exists = True
+        try:
+            self.workspace.files.get_directory_metadata(path)
+        except:
+            dir_exists = False
+
+        return file_exists | dir_exists
 
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
         resp = self.workspace.files.download(path)
@@ -49,7 +61,7 @@ class DatabricksFs(AbstractFileSystem):
     def rm(self, path, recursive=True, maxdepth=None) -> None:
         lev1 = self._list_dir(path)
         for item1 in lev1:
-            if(item1.get("is_directory")):
+            if item1.get("is_directory"):
                 lev2 = self._list_dir(item1.get("path"), "path")
                 for item2 in lev2:
                     self.workspace.files.delete(item2)
@@ -57,19 +69,19 @@ class DatabricksFs(AbstractFileSystem):
             else:
                 self.workspace.files.delete(item1.get("path"))
         self.workspace.files.delete_directory(path)
-        
+
     def _map_details(self, item):
         details = {
-            "path" : item.path,
-            "name" : item.name,
-            "is_directory" : item.is_directory
-            }
+            "path": item.path,
+            "name": item.name,
+            "is_directory": item.is_directory,
+        }
         return details
 
-    def _list_dir(self, path, field = 'all'):    
+    def _list_dir(self, path, field="all"):
         dir_contents = list(self.workspace.files.list_directory_contents(path))
         details = list(map(self._map_details, dir_contents))
-        if(field != 'all'):
+        if field != "all":
             items = []
             for item in details:
                 items.append(item.get(field))

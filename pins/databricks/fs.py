@@ -14,11 +14,10 @@ class DatabricksFs(AbstractFileSystem):
         self.workspace = WorkspaceClient()
 
     def ls(self, path, details=False, **kwargs):
-        return self._list_items(path)
+        return self._list_dir(path, "name")
 
     def exists(self, path: str, **kwargs):
-        path = os.path.basename(path)
-        return path in self._list_items(self.folder_url)
+        return path in self._list_dir(path, "name")
 
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
         resp = self.workspace.files.download(path)
@@ -47,9 +46,33 @@ class DatabricksFs(AbstractFileSystem):
                 file = open(abs_item, "rb")
                 self.workspace.files.upload(dest, BytesIO(file.read()), overwrite=True)
 
-    def _list_items(self, path):
+    def rm(self, path, recursive=True, maxdepth=None) -> None:
+        lev1 = self._list_dir(path)
+        for item1 in lev1:
+            if(item1.get("is_directory")):
+                lev2 = self._list_dir(item1.get("path"), "path")
+                for item2 in lev2:
+                    self.workspace.files.delete(item2)
+                self.workspace.files.delete_directory(item1.get("path"))
+            else:
+                self.workspace.files.delete(item1.get("path"))
+        self.workspace.files.delete_directory(path)
+        
+    def _map_details(self, item):
+        details = {
+            "path" : item.path,
+            "name" : item.name,
+            "is_directory" : item.is_directory
+            }
+        return details
+
+    def _list_dir(self, path, field = 'all'):    
         dir_contents = list(self.workspace.files.list_directory_contents(path))
-        all_items = []
-        for item in dir_contents:
-            all_items.append(item.name)
-        return all_items
+        details = list(map(self._map_details, dir_contents))
+        if(field != 'all'):
+            items = []
+            for item in details:
+                items.append(item.get(field))
+        else:
+            items = details
+        return items

@@ -137,7 +137,7 @@ def board(
         board = board_factory(path, fs, versioned, **pickle_kwargs)
     elif protocol == "rsc":
         board = BoardRsConnect(path, fs, versioned, **pickle_kwargs)
-    elif protocol == "rsc":
+    elif protocol == "dbc":
         board = DatabricksFs(path, fs, versioned, **pickle_kwargs)        
     else:
         board = BaseBoard(path, fs, versioned, **pickle_kwargs)

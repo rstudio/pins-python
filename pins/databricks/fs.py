@@ -1,9 +1,10 @@
 import os
-from databricks.sdk import WorkspaceClient
-from fsspec import AbstractFileSystem
-from typing import ClassVar
-from io import BytesIO
 import shutil
+from io import BytesIO
+from typing import ClassVar
+from fsspec import AbstractFileSystem
+from databricks.sdk import WorkspaceClient
+
 
 class DatabricksFs(AbstractFileSystem):
     protocol: ClassVar[str | tuple[str, ...]] = "dbc"
@@ -20,7 +21,7 @@ class DatabricksFs(AbstractFileSystem):
         return path in self._list_items(self.folder_url)
 
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
-        resp = self.workspace.files.download(path) 
+        resp = self.workspace.files.download(path)
         f = BytesIO()
         shutil.copyfileobj(resp.contents, f)
         f.seek(0)
@@ -29,7 +30,7 @@ class DatabricksFs(AbstractFileSystem):
     def mkdir(self, path, create_parents=True, **kwargs):
         if not create_parents:
             raise NotImplementedError
-        self.workspace.files.create_directory(path)              
+        self.workspace.files.create_directory(path)
 
     def put(
         self,
@@ -41,7 +42,7 @@ class DatabricksFs(AbstractFileSystem):
     ):
         for item in os.listdir(lpath):
             abs_item = os.path.join(lpath, item)
-            if(os.path.isfile(abs_item)):  
+            if os.path.isfile(abs_item):
                 dest = os.path.join(rpath, item)
                 file = open(abs_item, "rb")
                 self.workspace.files.upload(dest, BytesIO(file.read()), overwrite=True)
@@ -50,5 +51,5 @@ class DatabricksFs(AbstractFileSystem):
         dir_contents = list(self.workspace.files.list_directory_contents(path))
         all_items = []
         for item in dir_contents:
-                all_items.append(item.name)
-        return all_items           
+            all_items.append(item.name)
+        return all_items

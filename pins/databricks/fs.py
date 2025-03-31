@@ -13,11 +13,11 @@ class DatabricksFs(AbstractFileSystem):
         self.workspace = w = WorkspaceClient()
 
     def ls(self, path, details=False, **kwargs):
-        return self._list_folders(path)
+        return self._list_items(path)
 
     def exists(self, path: str, **kwargs):
         path = os.path.basename(path)
-        return path in self._list_folders(self.folder_url)
+        return path in self._list_items(self.folder_url)
 
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
         resp = self.workspace.files.download(path) 
@@ -26,10 +26,9 @@ class DatabricksFs(AbstractFileSystem):
         f.seek(0)
         return f
 
-    def _list_folders(self, path):
+    def _list_items(self, path):
         dir_contents = list(self.workspace.files.list_directory_contents(path))
-        all_folders = []
+        all_items = []
         for item in dir_contents:
-            if(item.is_directory):
-                all_folders.append(item.name)
-        return all_folders                 
+                all_items.append(item.name)
+        return all_items                 

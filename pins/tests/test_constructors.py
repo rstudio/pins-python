@@ -41,6 +41,8 @@ def construct_from_board(board):
 
     if fs_name in ["file", ("file", "local")]:
         board = c.board_folder(board.board)
+    elif fs_name == "dbc":
+        board = c.board_databricks(board.board)
     elif fs_name == "rsc":
         board = c.board_rsconnect(
             server_url=board.fs.api.server_url, api_key=board.fs.api.api_key

@@ -10,7 +10,6 @@ class DatabricksFs(AbstractFileSystem):
     protocol: ClassVar[str | tuple[str, ...]] = "dbc"
 
     def __init__(self, folder_url, **kwargs):
-        self.folder_url = folder_url
         self.workspace = WorkspaceClient()
 
     def ls(self, path, details=False, **kwargs):

@@ -41,6 +41,7 @@ check = [
     "pyright==1.1.372", # Pinned; manually sync with .github/workflows/code-checks.yml
     "types-appdirs",
 ]
+databricks = ["databricks-sdk"]
 doc = [
     "ipykernel",
     "ipython<=8.12",
@@ -85,6 +86,7 @@ markers = [
     "fs_gcs: mark test to only run on Google Cloud Storage bucket filesystem",
     "fs_abfs: mark test to only run on Azure Datalake filesystem",
     "fs_rsc: mark test to only run on Posit Connect filesystem",
+    "fs_dbc: mark test to only run on Databricks Volume filesystem",
     "skip_on_github: skip this test if running on GitHub",
 ]
 testpaths = ["pins"]

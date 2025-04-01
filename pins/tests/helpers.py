@@ -26,6 +26,7 @@ BOARD_CONFIG = {
     "gcs": {"path": ["PINS_TEST_GCS__PATH", "pins-python"]},
     "abfs": {"path": ["PINS_TEST_AZURE__PATH", "ci-pins"]},
     "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},
+    "dbc": {"path": ["PINS_TEST_DBC__PATH", "DATABRICKS_VOLUME"]},
 }
 
 # TODO: Backend initialization should be independent of helpers, but these
@@ -170,8 +171,7 @@ class RscBoardBuilder(BoardBuilder):
     def create_tmp_board(self, src_board=None, versioned=True):
         from pins.rsconnect.fs import PinBundleManifest  # noqa
 
-        board = BoardRsConnect("", rsc_fs_from_key("derek"), versioned=versioned)
-
+        board = BaseBoard(path, fs, versioned=versioned) 
         if src_board is None:
             return board
 
@@ -201,6 +201,48 @@ class RscBoardBuilder(BoardBuilder):
 
     def teardown(self):
         self.teardown_board(self.create_tmp_board())
+
+class DbcBoardBuilder(BoardBuilder):
+    def create_tmp_board(self, src_board=None, versioned=True) -> BaseBoard:
+        if self.fs_name == "gcs":
+            opts = {"cache_timeout": 0}
+        else:
+            opts = {"use_listings_cache": False}
+
+        fs = filesystem(self.fs_name, **opts)
+        temp_name = str(uuid.uuid4())
+
+        if isinstance(self.path, TemporaryDirectory):
+            path_name = self.path.name
+        else:
+            path_name = self.path
+
+        board_name = f"{path_name}/{temp_name}"
+
+        if src_board is not None:
+            fs.put(src_board, board_name, recursive=True)
+        else:
+            fs.mkdir(board_name)
+
+        self.board_path_registry.append(board_name)
+        return BaseBoard(board_name, fs=fs, versioned=versioned)
+
+    def teardown_board(self, board):
+        board.fs.rm(board.board, recursive=True)
+
+    def teardown(self):
+        # cleanup all temporary boards
+        fs = filesystem(self.fs_name)
+
+        for board_path in self.board_path_registry:
+            print(board_path)
+            if fs.exists(board_path):
+                fs.rm(board_path, recursive=True)
+
+        # only delete the base directory if it is explicitly temporary
+        if isinstance(self.path, TemporaryDirectory):
+            self.path.cleanup()
+
 
 
 # Snapshot ====================================================================

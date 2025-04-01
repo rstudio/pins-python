@@ -10,7 +10,7 @@ from collections.abc import Mapping, Sequence
 from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Protocol
 
 from importlib_resources import files
 from importlib_resources.abc import Traversable
@@ -697,8 +697,6 @@ class BaseBoard:
         created: datetime | None = None,
         object_name: str | list[str] | None = None,
     ):
-        x = create_adaptor(x)
-
         meta = self._create_meta(
             pin_dir_path,
             x,
@@ -720,7 +718,7 @@ class BaseBoard:
     def _create_meta(
         self,
         pin_dir_path,
-        x: Adaptor,
+        x: Adaptor | Any,
         name: str | None = None,
         type: str | None = None,
         title: str | None = None,
@@ -737,7 +735,7 @@ class BaseBoard:
             raise NotImplementedError("Type argument is required.")
 
         if title is None:
-            title = x.default_title(name)
+            title = create_adaptor(x).default_title(name)
 
         # create metadata from object on disk ---------------------------------
         # save all pin data to a temporary folder (including data.txt), so we
@@ -1203,8 +1201,6 @@ class BoardRsConnect(BaseBoard):
         return self.fs.api.get_user()["username"]
 
     def prepare_pin_version(self, pin_dir_path, x, name: str | None, *args, **kwargs):
-        adaptor = create_adaptor(x)
-
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
         # the <name> part.
@@ -1212,7 +1208,7 @@ class BoardRsConnect(BaseBoard):
 
         # TODO(compat): py pins always uses the short name, R pins uses w/e the
         # user passed, but guessing people want the long name?
-        meta = super()._create_meta(pin_dir_path, adaptor, short_name, *args, **kwargs)
+        meta = super()._create_meta(pin_dir_path, x, short_name, *args, **kwargs)
         meta.name = name
 
         # copy in files needed by index.html ----------------------------------
@@ -1238,7 +1234,7 @@ class BoardRsConnect(BaseBoard):
             "pin_files": pin_files,
             "pin_metadata": meta,
             "board_deparse": board_deparse(self),
-            "data_preview": adaptor.data_preview,
+            "data_preview": create_adaptor(x).data_preview,
         }
 
         # do not show r code if not round-trip friendly

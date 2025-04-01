@@ -148,5 +148,7 @@ def create_adaptor(obj: Any) -> Adaptor: ...
 def create_adaptor(obj: Any | DataFrame) -> Adaptor | DFAdaptor:
     if isinstance(obj, AbstractPandasFrame):
         return PandasAdaptor(obj)
+    elif isinstance(obj, Adaptor):
+        return obj
     else:
         return Adaptor(obj)

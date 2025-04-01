@@ -27,6 +27,12 @@ class TestCreateAdaptor:
         assert not isinstance(adaptor, PandasAdaptor)
         assert not isinstance(adaptor, DFAdaptor)
 
+    def test_already_adaptor(self):
+        df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
+        adaptor = create_adaptor(df)
+        assert isinstance(adaptor, PandasAdaptor)
+        assert create_adaptor(adaptor) is adaptor
+
 
 class TestAdaptor:
     def test_write_json(self, tmp_path: Path):

@@ -753,7 +753,7 @@ class BaseBoard:
         else:
             p_obj = str(Path(pin_dir_path) / object_name)
         # file is saved locally in order to hash, calc size
-        file_names = save_data(x._d, p_obj, type, apply_suffix)
+        file_names = save_data(x, p_obj, type, apply_suffix)
 
         meta = self.meta_factory.create(
             pin_dir_path,

@@ -21,8 +21,6 @@ AbstractDF: TypeAlias = AbstractPandasFrame
 
 
 class Adaptor:
-    _d: ClassVar[Any]
-
     def __init__(self, data: Any) -> None:
         self._d = data
 

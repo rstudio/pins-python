@@ -40,6 +40,7 @@ azure = ["adlfs"]
 check = [
     "pre-commit",
     "pyright==1.1.372", # Pinned; manually sync with .github/workflows/code-checks.yml
+    "ruff==0.5.4", # Pinned; manually sync with pre-commit-config.yaml
     "types-appdirs",
 ]
 doc = [

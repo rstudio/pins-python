@@ -107,11 +107,11 @@ class TestPandasAdaptor:
         assert isinstance(adaptor.head(1), PandasAdaptor)
         assert_frame_equal(adaptor.head(1)._d, expected._d)
 
-    def test_write_json(self):
+    def test_to_json(self):
         df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
         adaptor = PandasAdaptor(df)
         assert isinstance(adaptor, DFAdaptor)
-        assert adaptor.write_json() == """[{"a":1,"b":4},{"a":2,"b":5},{"a":3,"b":6}]"""
+        assert adaptor.to_json() == """[{"a":1,"b":4},{"a":2,"b":5},{"a":3,"b":6}]"""
 
     def test_write_csv(self, tmp_path: Path):
         df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})

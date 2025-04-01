@@ -24,21 +24,14 @@ class Adaptor:
     def __init__(self, data: Any) -> None:
         self._d = data
 
-    @overload
-    def write_json(self, file: str) -> None: ...
-    @overload
-    def write_json(self, file: None = ...) -> str: ...
-    def write_json(self, file: str | None = None) -> str | None:
-        if file is None:
-            msg = (
-                f"Writing to JSON string rather than file is not supported for "
-                f"{type(self._d)}"
-            )
-            raise NotImplementedError(msg)
+    def write_json(self, file: str) -> None:
+        with open(file, "w") as f:
+            f.write(self.to_json())
 
+    def to_json(self) -> str:
         import json
 
-        json.dump(self._d, open(file, mode="w"))
+        return json.dumps(self._d)
 
     def write_joblib(self, file: str) -> None:
         import joblib
@@ -101,7 +94,7 @@ class DFAdaptor(Adaptor):
     def data_preview(self) -> str:
         # TODO(compat) is 100 hard-coded?
         # Note that we go df -> json -> dict, to take advantage of type conversions in the dataframe library
-        data: list[dict[Any, Any]] = json.loads(self.head(100).write_json())
+        data: list[dict[Any, Any]] = json.loads(self.head(100).to_json())
         columns = [
             {"name": [col], "label": [col], "align": ["left"], "type": [""]}
             for col in self.columns
@@ -135,18 +128,7 @@ class PandasAdaptor(DFAdaptor):
     def head(self, n: int) -> PandasAdaptor:
         return PandasAdaptor(self._d.head(n))
 
-    @overload
-    def write_json(self, file: str) -> None: ...
-    @overload
-    def write_json(self, file: None) -> str: ...
-    def write_json(self, file: str | None = None) -> str | None:
-        if file is not None:
-            msg = (
-                f"Writing to file rather than JSON string is not supported for "
-                f"{type(self._d)}"
-            )
-            raise NotImplementedError(msg)
-
+    def to_json(self) -> str:
         return self._d.to_json(orient="records")
 
     def write_csv(self, file: str) -> None:

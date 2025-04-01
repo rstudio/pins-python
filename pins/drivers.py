@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from pins._adaptors import _create_adaptor
+from pins._adaptors import create_adaptor
 
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError
@@ -129,7 +129,7 @@ def save_data(
     #       as argument to board, and then type dispatchers for explicit cases
     #       of saving / loading objects different ways.
 
-    adaptor = _create_adaptor(obj)
+    adaptor = create_adaptor(obj)
 
     if apply_suffix:
         if pin_type == "file":
@@ -183,4 +183,4 @@ def save_data(
 
 def default_title(obj: Any, name: str) -> str:
     # Kept for backward compatibility only.
-    return _create_adaptor(obj).default_title(name)
+    return create_adaptor(obj).default_title(name)

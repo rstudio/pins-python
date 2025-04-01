@@ -15,7 +15,7 @@ from typing import Protocol
 from importlib_resources import files
 from importlib_resources.abc import Traversable
 
-from ._adaptors import _Adaptor, _create_adaptor
+from ._adaptors import Adaptor, create_adaptor
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
 from .drivers import REQUIRES_SINGLE_FILE, default_title, load_data, load_file, save_data
@@ -136,8 +136,7 @@ class BaseBoard:
             # ensure pin and version exist
             if not self.fs.exists(self.construct_path([pin_name, version])):
                 raise PinsError(
-                    f"Pin {name} either does not exist, "
-                    f"or is missing version: {version}."
+                    f"Pin {name} either does not exist, or is missing version: {version}."
                 )
 
             selected_version = guess_version(version)
@@ -698,7 +697,7 @@ class BaseBoard:
         created: datetime | None = None,
         object_name: str | list[str] | None = None,
     ):
-        x = _create_adaptor(x)
+        x = create_adaptor(x)
 
         meta = self._create_meta(
             pin_dir_path,
@@ -721,7 +720,7 @@ class BaseBoard:
     def _create_meta(
         self,
         pin_dir_path,
-        x: _Adaptor,
+        x: Adaptor,
         name: str | None = None,
         type: str | None = None,
         title: str | None = None,
@@ -1204,7 +1203,7 @@ class BoardRsConnect(BaseBoard):
         return self.fs.api.get_user()["username"]
 
     def prepare_pin_version(self, pin_dir_path, x, name: str | None, *args, **kwargs):
-        adaptor = _create_adaptor(x)
+        adaptor = create_adaptor(x)
 
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just

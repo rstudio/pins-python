@@ -9,18 +9,18 @@ from databackend import AbstractBackend
 if TYPE_CHECKING:
     import pandas as pd
 
-    _PandasDataFrame: TypeAlias = pd.DataFrame
-    _DataFrame: TypeAlias = _PandasDataFrame
+    PandasDataFrame: TypeAlias = pd.DataFrame
+    DataFrame: TypeAlias = PandasDataFrame
 
 
-class _AbstractPandasFrame(AbstractBackend):
+class AbstractPandasFrame(AbstractBackend):
     _backends = [("pandas", "DataFrame")]
 
 
-_AbstractDF: TypeAlias = _AbstractPandasFrame
+AbstractDF: TypeAlias = AbstractPandasFrame
 
 
-class _Adaptor:
+class Adaptor:
     _d: ClassVar[Any]
 
     def __init__(self, data: Any) -> None:
@@ -77,10 +77,10 @@ class _Adaptor:
         return f"{type(self._d).__qualname__} object"
 
 
-class _DFAdaptor(_Adaptor):
-    _d: ClassVar[_DataFrame]
+class DFAdaptor(Adaptor):
+    _d: ClassVar[DataFrame]
 
-    def __init__(self, data: _DataFrame) -> None:
+    def __init__(self, data: DataFrame) -> None:
         super().__init__(data)
 
     @property
@@ -97,7 +97,7 @@ class _DFAdaptor(_Adaptor):
     def shape(self) -> tuple[int, int]: ...
 
     @abstractmethod
-    def head(self, n: int) -> _DFAdaptor: ...
+    def head(self, n: int) -> DFAdaptor: ...
 
     @property
     def data_preview(self) -> str:
@@ -120,10 +120,10 @@ class _DFAdaptor(_Adaptor):
         return f"{row} x {col} {self.df_type}"
 
 
-class _PandasAdaptor(_DFAdaptor):
-    _d: ClassVar[_PandasDataFrame]
+class PandasAdaptor(DFAdaptor):
+    _d: ClassVar[PandasDataFrame]
 
-    def __init__(self, data: _AbstractPandasFrame) -> None:
+    def __init__(self, data: AbstractPandasFrame) -> None:
         super().__init__(data)
 
     @property
@@ -134,8 +134,8 @@ class _PandasAdaptor(_DFAdaptor):
     def shape(self) -> tuple[int, int]:
         return self._d.shape
 
-    def head(self, n: int) -> _PandasAdaptor:
-        return _PandasAdaptor(self._d.head(n))
+    def head(self, n: int) -> PandasAdaptor:
+        return PandasAdaptor(self._d.head(n))
 
     @overload
     def write_json(self, file: str) -> None: ...
@@ -162,11 +162,11 @@ class _PandasAdaptor(_DFAdaptor):
 
 
 @overload
-def _create_adaptor(obj: _DataFrame) -> _DFAdaptor: ...
+def create_adaptor(obj: DataFrame) -> DFAdaptor: ...
 @overload
-def _create_adaptor(obj: Any) -> _Adaptor: ...
-def _create_adaptor(obj: Any | _DataFrame) -> _Adaptor | _DFAdaptor:
-    if isinstance(obj, _AbstractPandasFrame):
-        return _PandasAdaptor(obj)
+def create_adaptor(obj: Any) -> Adaptor: ...
+def create_adaptor(obj: Any | DataFrame) -> Adaptor | DFAdaptor:
+    if isinstance(obj, AbstractPandasFrame):
+        return PandasAdaptor(obj)
     else:
-        return _Adaptor(obj)
+        return Adaptor(obj)

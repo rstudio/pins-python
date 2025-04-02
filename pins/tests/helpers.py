@@ -207,19 +207,25 @@ class DbcBoardBuilder(BoardBuilder):
     def __init__(self, fs_name, path=None, *args, **kwargs):
         self.fs_name = fs_name
         self.path = None
+        self.current_board = ""
 
     def create_tmp_board(self, src_board=None, versioned=True):
         db_vol  = os.environ.get("DATABRICKS_VOLUME")
-        board_name = os.path.join(db_vol, "pinstest")
+        temp_name = str(uuid.uuid4())
+        board_name = os.path.join(db_vol, temp_name)
         board = board_databricks(board_name)
+        if src_board is not None:
+            board.fs.put(src_board, board_name, recursive=True)
+        self.current_board = temp_name
         return board
 
     def teardown_board(self, board):
         board.fs.rm(board.board)
 
     def teardown(self):
-        board = self.create_tmp_board()
-        self.teardown_board(board.board)
+        db_vol  = os.environ.get("DATABRICKS_VOLUME")
+        board = board_databricks(db_vol)
+        board.fs.rm(db_vol + "/" + self.current_board)
 
 # Snapshot ====================================================================
 

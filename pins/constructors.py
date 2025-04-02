@@ -115,12 +115,20 @@ def board(
                 mapper=PinsRscCacheMapper,
             )
         elif protocol == "dbc":
-            None
+            board_cache = prefix_cache(fs, path)      
+            cache_dir = os.path.join(base_cache_dir, board_cache)    
+
+            fs = fsspec.implementations.cached.SimpleCacheFileSystem(
+                cache_storage=cache_dir, 
+                fs=fs, 
+                hash_prefix=path,
+                 same_names=True
+            )                    
         else:
             # ensures each subdir path is its own cache directory
             board_cache = prefix_cache(fs, path)
             cache_dir = os.path.join(base_cache_dir, board_cache)
-
+            
             fs = PinsCache(
                 cache_storage=cache_dir, fs=fs, hash_prefix=path, same_names=True
             )

@@ -40,7 +40,7 @@ def board_unversioned(backend):
 @fixture
 def board_with_cache(backend):
     from pins.constructors import board as board_constructor
-    from pins.constructors import board_rsconnect
+    from pins.constructors import board_rsconnect, board_databricks
 
     board = backend.create_tmp_board()
 
@@ -50,6 +50,8 @@ def board_with_cache(backend):
         # board behavior. As a result, we need to pass the credentials directly in.
         server_url, api_key = board.fs.api.server_url, board.fs.api.api_key
         board_with_cache = board_rsconnect(server_url=server_url, api_key=api_key)
+    elif backend.fs_name == "dbc":
+        board_with_cache = board_databricks(board.board)
     else:
         board_with_cache = board_constructor(backend.fs_name, board.board)
 

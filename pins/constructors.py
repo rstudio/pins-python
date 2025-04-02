@@ -603,10 +603,7 @@ def board_databricks(folder_url, versioned=True, cache=DEFAULT, allow_pickle_rea
 
     Notes
     -----
-    The Databricks board uses the fsspec library (dbutils) to handle interacting with
-    Databricks Volumes. Currently, its default mode of authentication is supported.
-
-    See <https://github.com/webwareforpython/dbutils>
+    The Databricks board uses...
     """
 
     kwargs = dict(folder_url=folder_url)

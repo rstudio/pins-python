@@ -324,3 +324,5 @@ def cache_prune(days=30, cache_root=None, prompt=True):
 
 # TODO: swap to use entrypoint
 register_implementation("pinscache", PinsCache)
+from .tests.helpers import DbcBoardBuilder
+register_implementation("dbc", DbcBoardBuilder)

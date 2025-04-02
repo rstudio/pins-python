@@ -6,7 +6,7 @@ import pytest
 from importlib_resources import files
 from pytest import mark as m
 
-from pins.tests.helpers import BoardBuilder, RscBoardBuilder, Snapshot, rm_env
+from pins.tests.helpers import BoardBuilder, RscBoardBuilder, DbcBoardBuilder, Snapshot, rm_env
 
 EXAMPLE_REL_PATH = "pins/tests/pins-compat"
 PATH_TO_EXAMPLE_BOARD = files("pins") / "tests/pins-compat"
@@ -25,8 +25,9 @@ params_safe = [
 
 # rsc should only be used once, because users are created at docker setup time
 param_rsc = pytest.param(lambda: RscBoardBuilder("rsc"), id="rsc", marks=m.fs_rsc)
+param_dbc = pytest.param(lambda: DbcBoardBuilder("dbc"), id="dbc", marks=m.fs_dbc)
 
-params_backend = [*params_safe, param_rsc]
+params_backend = [*params_safe, param_rsc, param_dbc]
 
 
 @pytest.fixture(params=params_backend, scope="session")

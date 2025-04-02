@@ -13,6 +13,7 @@ from fsspec import filesystem
 from importlib_resources import files
 
 from pins.boards import BaseBoard, BoardRsConnect
+from pins.constructors import board_databricks
 
 DEFAULT_CREATION_DATE = datetime(2020, 1, 13, 23, 58, 59)
 
@@ -203,47 +204,22 @@ class RscBoardBuilder(BoardBuilder):
         self.teardown_board(self.create_tmp_board())
 
 class DbcBoardBuilder(BoardBuilder):
-    def create_tmp_board(self, src_board=None, versioned=True) -> BaseBoard:
-        if self.fs_name == "gcs":
-            opts = {"cache_timeout": 0}
-        else:
-            opts = {"use_listings_cache": False}
+    def __init__(self, fs_name, path=None, *args, **kwargs):
+        self.fs_name = fs_name
+        self.path = None
 
-        fs = filesystem(self.fs_name, **opts)
-        temp_name = str(uuid.uuid4())
-
-        if isinstance(self.path, TemporaryDirectory):
-            path_name = self.path.name
-        else:
-            path_name = self.path
-
-        board_name = f"{path_name}/{temp_name}"
-
-        if src_board is not None:
-            fs.put(src_board, board_name, recursive=True)
-        else:
-            fs.mkdir(board_name)
-
-        self.board_path_registry.append(board_name)
-        return BaseBoard(board_name, fs=fs, versioned=versioned)
+    def create_tmp_board(self, src_board=None, versioned=True):
+        db_vol  = os.environ.get("DATABRICKS_VOLUME")
+        board_name = os.path.join(db_vol, "pinstest")
+        board = board_databricks(board_name)
+        return board
 
     def teardown_board(self, board):
-        board.fs.rm(board.board, recursive=True)
+        board.fs.rm(board.board)
 
     def teardown(self):
-        # cleanup all temporary boards
-        fs = filesystem(self.fs_name)
-
-        for board_path in self.board_path_registry:
-            print(board_path)
-            if fs.exists(board_path):
-                fs.rm(board_path, recursive=True)
-
-        # only delete the base directory if it is explicitly temporary
-        if isinstance(self.path, TemporaryDirectory):
-            self.path.cleanup()
-
-
+        board = self.create_tmp_board()
+        self.teardown_board(board.board)
 
 # Snapshot ====================================================================
 

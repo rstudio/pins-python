@@ -65,16 +65,24 @@ class DatabricksFs(AbstractFileSystem):
                 self.workspace.files.upload(dest, BytesIO(file.read()), overwrite=True)
 
     def rm(self, path, recursive=True, maxdepth=None) -> None:
-        lev1 = self._list_dir(path)
-        for item1 in lev1:
-            if item1.get("is_directory"):
-                lev2 = self._list_dir(item1.get("path"), "path")
-                for item2 in lev2:
-                    self.workspace.files.delete(item2)
-                self.workspace.files.delete_directory(item1.get("path"))
-            else:
-                self.workspace.files.delete(item1.get("path"))
-        self.workspace.files.delete_directory(path)
+        exists  = self.exists(path) 
+        if(exists):
+            lev1 = self._list_dir(path)
+            for item1 in lev1:
+                if item1.get("is_directory"):
+                    lev2 = self._list_dir(item1.get("path"))
+                    for item2 in lev2:
+                        if item1.get("is_directory"):       
+                            lev3 = self._list_dir(item2.get("path"), "path")
+                            for item3 in lev3:
+                                self.workspace.files.delete(item3)
+                            self.workspace.files.delete_directory(item2.get("path"))
+                        else:
+                            self.workspace.files.delete(item2.get("path"))                         
+                    self.workspace.files.delete_directory(item1.get("path"))
+                else:
+                    self.workspace.files.delete(item1.get("path"))
+            self.workspace.files.delete_directory(path)
 
     def _map_details(self, item):
         details = {

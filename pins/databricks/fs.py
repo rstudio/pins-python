@@ -12,8 +12,15 @@ class DatabricksFs(AbstractFileSystem):
     def __init__(self, folder_url, **kwargs):
         self.workspace = WorkspaceClient()
 
-    def ls(self, path, details=False, **kwargs):
-        return self._list_dir(path, "name")
+    def ls(self, path, detail=False, **kwargs):
+        files = self._list_dir(path, "name")
+        if(detail):
+            all_files = []
+            for file in files:
+                all_files.append(dict(name = file, size = None, type = "file"))    
+            return all_files 
+        else:
+            return files
 
     def exists(self, path: str, **kwargs):
         file_exists = True

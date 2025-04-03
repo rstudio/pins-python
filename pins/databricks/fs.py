@@ -12,15 +12,20 @@ class DatabricksFs(AbstractFileSystem):
     def __init__(self, folder_url, **kwargs):
         self.workspace = WorkspaceClient()
 
-    def ls(self, path, detail=False, **kwargs):
-        files = self._list_dir(path, "name")
-        if(detail):
-            all_files = []
-            for file in files:
-                all_files.append(dict(name = file, size = None, type = "file"))    
-            return all_files 
-        else:
-            return files
+    def ls(self, path, detail=False, **kwargs):        
+        files = _map_folder(path=path, recurse=False)
+        items = []
+        for file in files:
+            name = file.get("name")
+            if(detail):
+                if(file.get("is_directory")):
+                    type = "directory"
+                else:
+                    type = "file"
+                items.append(dict(name = name, size = None, type = type)) 
+            else:
+                items.append(name)
+        return items
 
     def exists(self, path: str, **kwargs):
         file_exists = True
@@ -84,17 +89,10 @@ class DatabricksFs(AbstractFileSystem):
                     self.workspace.files.delete(item1.get("path"))
             self.workspace.files.delete_directory(path)
 
-    def _map_details(self, item):
-        details = {
-            "path": item.path,
-            "name": item.name,
-            "is_directory": item.is_directory,
-        }
-        return details
 
     def _list_dir(self, path, field="all"):
         dir_contents = list(self.workspace.files.list_directory_contents(path))
-        details = list(map(self._map_details, dir_contents))
+        details = list(map(_map_details, dir_contents))
         if field != "all":
             items = []
             for item in details:
@@ -102,3 +100,33 @@ class DatabricksFs(AbstractFileSystem):
         else:
             items = details
         return items
+
+def _map_folder(path, recurse=True, include_folders=True, include_files=True):
+    w = WorkspaceClient()
+    dir_contents = list(w.files.list_directory_contents(path))
+    details = list(map(_map_details, dir_contents))
+    items = []
+    for item in details:        
+        if(item.get("is_directory")):
+            if(include_folders):
+                items = items + [item]
+            if(recurse):
+                more_details = _map_folder(
+                    path = item.get("path"), 
+                    recurse=True, 
+                    include_folders=include_folders,
+                    include_files=include_files
+                    )
+                items = items + more_details
+        else:
+            if(include_files):
+                items = items + [item]
+    return items
+
+def _map_details(item):
+    details = {
+        "path": item.path,
+        "name": item.name,
+        "is_directory": item.is_directory,
+    }
+    return details

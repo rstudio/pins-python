@@ -25,7 +25,7 @@ def board(backend):
 def board_manifest(backend):
     # skip on rsconnect, since it can't add a manifest and the pin names
     # are too short for use to upload (rsc requires names > 3 characters)
-    if backend.fs_name == "rsc" | backend.fs_name == "dbc":
+    if backend.fs_name in ["rsc", "dbc"]:
         pytest.skip()
 
     board = backend.create_tmp_board(str(PATH_TO_MANIFEST_BOARD.absolute()))

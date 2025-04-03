@@ -62,12 +62,7 @@ class DatabricksFs(AbstractFileSystem):
         maxdepth=None,
         **kwargs,
     ):
-        for item in os.listdir(lpath):
-            abs_item = os.path.join(lpath, item)
-            if os.path.isfile(abs_item):
-                dest = os.path.join(rpath, item)
-                file = open(abs_item, "rb")
-                self.workspace.files.upload(dest, BytesIO(file.read()), overwrite=True)
+        _map_put(lpath, rpath)
 
     def rm(self, path, recursive=True, maxdepth=None) -> None:
         exists  = self.exists(path) 
@@ -100,6 +95,25 @@ class DatabricksFs(AbstractFileSystem):
         else:
             items = details
         return items
+
+def _map_put(lpath, rpath):
+    w = WorkspaceClient()
+    path = os.path.abspath(lpath)
+    items = []
+    orig_path = path
+    def test(path):
+        contents = os.listdir(path)
+        for item in contents:        
+            abs_path = os.path.join(path, item)
+            is_file = os.path.isfile(abs_path)
+            rel_path = os.path.relpath(abs_path, orig_path)
+            db_path = os.path.join(rpath, rel_path)
+            if(is_file == False):     
+                test(abs_path)
+                w.files.create_directory(db_path)
+            else:
+                file = open(abs_path, "rb")
+                w.files.upload(db_path, BytesIO(file.read()), overwrite=True)    
 
 def _map_folder(path, recurse=True, include_folders=True, include_files=True):
     w = WorkspaceClient()

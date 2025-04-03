@@ -13,6 +13,7 @@ from fsspec import filesystem
 from importlib_resources import files
 
 from pins.boards import BaseBoard, BoardRsConnect
+
 from pins.constructors import board_databricks
 
 DEFAULT_CREATION_DATE = datetime(2020, 1, 13, 23, 58, 59)
@@ -214,9 +215,9 @@ class DbcBoardBuilder(BoardBuilder):
         temp_name = str(uuid.uuid4())
         board_name = os.path.join(db_vol, temp_name)
         board = board_databricks(board_name)
-        if src_board is not None:
-            board.fs.put(src_board, board_name, recursive=True)
         self.current_board = temp_name
+        if src_board is not None:
+            board.fs.put(src_board, board_name)          
         return board
 
     def teardown_board(self, board):

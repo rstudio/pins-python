@@ -101,19 +101,19 @@ def _map_put(lpath, rpath):
     path = os.path.abspath(lpath)
     items = []
     orig_path = path
-    def test(path):
+    def _upload_files(path):
         contents = os.listdir(path)
         for item in contents:        
             abs_path = os.path.join(path, item)
             is_file = os.path.isfile(abs_path)
             rel_path = os.path.relpath(abs_path, orig_path)
             db_path = os.path.join(rpath, rel_path)
-            if(is_file == False):     
-                test(abs_path)
-                w.files.create_directory(db_path)
-            else:
+            if(is_file):     
                 file = open(abs_path, "rb")
-                w.files.upload(db_path, BytesIO(file.read()), overwrite=True)    
+                w.files.upload(db_path, BytesIO(file.read()), overwrite=True)
+            else:
+                _upload_files(abs_path)
+    _upload_files(path)
 
 def _map_folder(path, recurse=True, include_folders=True, include_files=True):
     w = WorkspaceClient()

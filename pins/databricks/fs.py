@@ -9,23 +9,8 @@ from databricks.sdk import WorkspaceClient
 class DatabricksFs(AbstractFileSystem):
     protocol: ClassVar[str | tuple[str, ...]] = "dbc"
 
-    def __init__(self, folder_url, **kwargs):
-        self.workspace = WorkspaceClient()
-
     def ls(self, path, detail=False, **kwargs):        
-        files = _map_folder(path=path, recurse=False)
-        items = []
-        for file in files:
-            name = file.get("name")
-            if(detail):
-                if(file.get("is_directory")):
-                    type = "directory"
-                else:
-                    type = "file"
-                items.append(dict(name = name, size = None, type = type)) 
-            else:
-                items.append(name)
-        return items
+        return _databricks_ls(path, detail)
 
     def exists(self, path: str, **kwargs):
         return _databricks_exists(path)
@@ -38,7 +23,7 @@ class DatabricksFs(AbstractFileSystem):
     def mkdir(self, path, create_parents=True, **kwargs):
         if not create_parents:
             raise NotImplementedError
-        self.workspace.files.create_directory(path)
+        _databricks_mkdir(path)
 
     def put(
         self,
@@ -55,36 +40,12 @@ class DatabricksFs(AbstractFileSystem):
         _databricks_put(lpath, rpath)
 
     def rm(self, path, recursive=True, maxdepth=None) -> None:
-        exists  = self.exists(path) 
-        if(exists):
-            lev1 = self._list_dir(path)
-            for item1 in lev1:
-                if item1.get("is_directory"):
-                    lev2 = self._list_dir(item1.get("path"))
-                    for item2 in lev2:
-                        if item1.get("is_directory"):       
-                            lev3 = self._list_dir(item2.get("path"), "path")
-                            for item3 in lev3:
-                                self.workspace.files.delete(item3)
-                            self.workspace.files.delete_directory(item2.get("path"))
-                        else:
-                            self.workspace.files.delete(item2.get("path"))                         
-                    self.workspace.files.delete_directory(item1.get("path"))
-                else:
-                    self.workspace.files.delete(item1.get("path"))
-            self.workspace.files.delete_directory(path)
-
-
-    def _list_dir(self, path, field="all"):
-        dir_contents = list(self.workspace.files.list_directory_contents(path))
-        details = list(map(_map_details, dir_contents))
-        if field != "all":
-            items = []
-            for item in details:
-                items.append(item.get(field))
-        else:
-            items = details
-        return items
+        if not recursive:
+            raise NotImplementedError
+        if maxdepth is not None:
+            raise NotImplementedError
+        if(_databricks_exists(path)):
+            _databricks_rm_dir(path)
 
 def _databricks_put(lpath, rpath):
     w = WorkspaceClient()
@@ -105,7 +66,7 @@ def _databricks_put(lpath, rpath):
                 _upload_files(abs_path)
     _upload_files(path)
 
-def _databricks_open(path):
+def _databricks_open(patbh):
     w = WorkspaceClient()
     resp = w.files.download(path)
     f = BytesIO()
@@ -133,7 +94,7 @@ def _databricks_ls(path, detail):
     contents = list(contents_raw)
     items = []
     for item in contents:
-        item = _map_details(item)
+        item = _databricks_content_details(item)
         name = item.get("name")
         if(detail):
             if(item.get("is_directory")):
@@ -145,29 +106,25 @@ def _databricks_ls(path, detail):
             items.append(name)
     return items
 
-def _map_folder(path, recurse=True, include_folders=True, include_files=True):
+def _databricks_rm_dir(path):
     w = WorkspaceClient()
-    dir_contents = list(w.files.list_directory_contents(path))
-    details = list(map(_map_details, dir_contents))
+    raw_contents = w.files.list_directory_contents(path)
+    contents = list(raw_contents)
+    details = list(map(_databricks_content_details, contents))
     items = []
-    for item in details:        
+    for item in details:     
+        item_path = item.get("path")   
         if(item.get("is_directory")):
-            if(include_folders):
-                items = items + [item]
-            if(recurse):
-                more_details = _map_folder(
-                    path = item.get("path"), 
-                    recurse=True, 
-                    include_folders=include_folders,
-                    include_files=include_files
-                    )
-                items = items + more_details
+            _databricks_rm_dir(item_path)      
         else:
-            if(include_files):
-                items = items + [item]
-    return items
+            w.files.delete(item_path)
+    w.files.delete_directory(path)
 
-def _map_details(item):
+def _databricks_mkdir(path):
+    w = WorkspaceClient()
+    w.files.create_directory(path)    
+
+def _databricks_content_details(item):
     details = {
         "path": item.path,
         "name": item.name,

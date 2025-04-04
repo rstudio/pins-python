@@ -122,7 +122,7 @@ def board(
                 cache_storage=cache_dir, 
                 fs=fs, 
                 hash_prefix=path,
-                 same_names=True
+                same_names=True
             )                    
         else:
             # ensures each subdir path is its own cache directory

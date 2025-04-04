@@ -66,7 +66,7 @@ def _databricks_put(lpath, rpath):
                 _upload_files(abs_path)
     _upload_files(path)
 
-def _databricks_open(patbh):
+def _databricks_open(path):
     w = WorkspaceClient()
     resp = w.files.download(path)
     f = BytesIO()

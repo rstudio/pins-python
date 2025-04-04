@@ -28,26 +28,12 @@ class DatabricksFs(AbstractFileSystem):
         return items
 
     def exists(self, path: str, **kwargs):
-        file_exists = True
-        try:
-            self.workspace.files.get_metadata(path)
-        except:
-            file_exists = False
-
-        dir_exists = True
-        try:
-            self.workspace.files.get_directory_metadata(path)
-        except:
-            dir_exists = False
-
-        return file_exists | dir_exists
+        return _databricks_exists(path)
 
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
-        resp = self.workspace.files.download(path)
-        f = BytesIO()
-        shutil.copyfileobj(resp.contents, f)
-        f.seek(0)
-        return f
+        if mode != "rb":
+            raise NotImplementedError        
+        return _databricks_open(path)
 
     def mkdir(self, path, create_parents=True, **kwargs):
         if not create_parents:
@@ -62,7 +48,11 @@ class DatabricksFs(AbstractFileSystem):
         maxdepth=None,
         **kwargs,
     ):
-        _map_put(lpath, rpath)
+        if not recursive:
+            raise NotImplementedError
+        if maxdepth is not None:
+            raise NotImplementedError
+        _databricks_put(lpath, rpath)
 
     def rm(self, path, recursive=True, maxdepth=None) -> None:
         exists  = self.exists(path) 
@@ -96,7 +86,7 @@ class DatabricksFs(AbstractFileSystem):
             items = details
         return items
 
-def _map_put(lpath, rpath):
+def _databricks_put(lpath, rpath):
     w = WorkspaceClient()
     path = os.path.abspath(lpath)
     items = []
@@ -114,6 +104,46 @@ def _map_put(lpath, rpath):
             else:
                 _upload_files(abs_path)
     _upload_files(path)
+
+def _databricks_open(path):
+    w = WorkspaceClient()
+    resp = w.files.download(path)
+    f = BytesIO()
+    shutil.copyfileobj(resp.contents, f)
+    f.seek(0)
+    return f
+
+def _databricks_exists(path: str):
+    w = WorkspaceClient()
+    try:
+        w.files.get_metadata(path)
+    except:
+        try:
+            w.files.get_directory_metadata(path) 
+        except: 
+            return False
+        else:
+            return True
+    else:
+        return True
+
+def _databricks_ls(path, detail):
+    w = WorkspaceClient()
+    contents_raw = w.files.list_directory_contents(path)
+    contents = list(contents_raw)
+    items = []
+    for item in contents:
+        item = _map_details(item)
+        name = item.get("name")
+        if(detail):
+            if(item.get("is_directory")):
+                type = "directory"
+            else:
+                type = "file"
+            items.append(dict(name = name, size = None, type = type)) 
+        else:
+            items.append(name)
+    return items
 
 def _map_folder(path, recurse=True, include_folders=True, include_files=True):
     w = WorkspaceClient()

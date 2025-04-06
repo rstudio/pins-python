@@ -155,10 +155,6 @@ class PinsDBCache(SimpleCacheFileSystem):
     def hash_name(self, path, *args, **kwargs):
         return self._mapper(path)
 
-    def _open(self, path, *args, **kwargs):
-        path = self._strip_protocol(path)
-        return super()._open(path, *args, **kwargs)
-
     # same as upstream, brought in to preserve backwards compatibility
     def _check_file(self, path):
         self._check_cache()

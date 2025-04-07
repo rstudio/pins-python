@@ -206,16 +206,16 @@ class RscBoardBuilder(BoardBuilder):
 
 class DbcBoardBuilder(BoardBuilder):
     def __init__(self, fs_name, path=None, *args, **kwargs):
-        self.fs_name = fs_name
-        self.path = None
-        self.current_board = ""
+        self.path = None        
+        self.fs_name = fs_name        
+        self.current_board = None
+        self.volume = os.environ.get("DATABRICKS_VOLUME")
 
     def create_tmp_board(self, src_board=None, versioned=True):
-        db_vol  = os.environ.get("DATABRICKS_VOLUME")
         temp_name = str(uuid.uuid4())
-        board_name = os.path.join(db_vol, temp_name)
-        board = board_databricks(board_name)
-        self.current_board = temp_name
+        board_name = os.path.join(self.volume, temp_name)
+        board = board_databricks(board_name, versioned=versioned)
+        self.current_board = board
         if src_board is not None:
             board.fs.put(src_board, board_name)          
         return board
@@ -224,9 +224,8 @@ class DbcBoardBuilder(BoardBuilder):
         board.fs.rm(board.board)
 
     def teardown(self):
-        db_vol  = os.environ.get("DATABRICKS_VOLUME")
-        board = board_databricks(db_vol)
-        board.fs.rm(db_vol + "/" + self.current_board)
+        board = board_databricks(self.volume)
+        board.fs.rm(self.current_board.board)
 
 # Snapshot ====================================================================
 

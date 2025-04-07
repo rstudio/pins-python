@@ -1,9 +1,0 @@
-api_version: 1
-created: 20250406T145752Z
-description: null
-file: data.csv
-file_size: 15
-pin_hash: c65b0e9785abaa60
-title: 'reviews3: a pinned str object'
-type: file
-user: {}

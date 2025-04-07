@@ -1,9 +1,0 @@
-api_version: 1
-created: 20250404T131317Z
-description: null
-file: data.csv
-file_size: 16
-pin_hash: a173cd6a53908980
-title: 'data: a pinned 3 x 2 DataFrame'
-type: csv
-user: {}

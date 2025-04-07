@@ -1,9 +1,0 @@
-api_version: 1
-created: 20250404T131344Z
-description: null
-file: reviews.csv
-file_size: 235
-pin_hash: 6cff20278541542e
-title: 'reviews: a pinned 3 x 1 DataFrame'
-type: csv
-user: {}

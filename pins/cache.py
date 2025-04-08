@@ -145,12 +145,21 @@ class PinsCache(SimpleCacheFileSystem):
             if os.path.exists(fn):
                 return fn
 
-class PinsDBCache(SimpleCacheFileSystem):
+class PinsDBCache(PinsCache):
     # Same as PinsCache, but removes _make_local_details
     def __init__(self, *args, hash_prefix=None, mapper=HashMapper, **kwargs):
         super().__init__(*args, **kwargs)
         self.hash_prefix = hash_prefix
         self._mapper = mapper(hash_prefix)
+
+    def _open(self, path, *args, **kwargs):
+        # For some reason, the open method of SimpleCacheFileSystem doesn't
+        # call _make_local_details, so we need to patch in here.
+        # Note that methods like .cat() do call it. Other Caches don't have this issue.
+        #path = self._strip_protocol(path)
+        self._make_local_details(path)
+
+        return super()._open(path, *args, **kwargs)
 
     def hash_name(self, path, *args, **kwargs):
         return self._mapper(path)

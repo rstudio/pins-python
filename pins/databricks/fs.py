@@ -120,20 +120,28 @@ def _databricks_is_type(path: str):
 
 def _databricks_ls(path, detail):
     w = WorkspaceClient()
+    
+    if(_databricks_is_type(path) == "file"):
+        if(detail):
+            return [dict(name = path, size = None, type = "file")]
+        else:
+            return path
+
     contents_raw = w.files.list_directory_contents(path)
     contents = list(contents_raw)
     items = []
     for item in contents:
         item = _databricks_content_details(item)
-        name = item.get("name")
-        if(detail):
+        item_path = item.get("path")
+        if(detail):            
             if(item.get("is_directory")):
                 type = "directory"
+                item_path = item_path.rstrip("/")
             else:
                 type = "file"
-            items.append(dict(name = name, size = None, type = type)) 
+            items.append(dict(name = item_path, size = None, type = type)) 
         else:
-            items.append(name)
+            items.append(item_path)
     return items
 
 def _databricks_rm_dir(path):

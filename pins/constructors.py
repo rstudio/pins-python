@@ -8,7 +8,7 @@ from typing import Callable
 import fsspec
 
 from .boards import BaseBoard, BoardManual, BoardRsConnect, board_deparse
-from .cache import PinsAccessTimeCache, PinsCache, PinsRscCacheMapper, prefix_cache, PinsDBCache
+from .cache import PinsAccessTimeCache, PinsCache, PinsRscCacheMapper, prefix_cache
 from .config import get_cache_dir, get_data_dir
 
 # Kept here for backward-compatibility reasons
@@ -113,14 +113,7 @@ def board(
                 hash_prefix=hash_prefix,
                 same_names=True,
                 mapper=PinsRscCacheMapper,
-            )
-        elif protocol == "dbc":
-            #Find me here
-            board_cache = prefix_cache(fs, path)      
-            cache_dir = os.path.join(base_cache_dir, board_cache)    
-            fs = PinsDBCache(
-                cache_storage=cache_dir, fs=fs, hash_prefix=path, same_names=True
-            )                
+            )            
         else:
             # ensures each subdir path is its own cache directory
             board_cache = prefix_cache(fs, path)

@@ -575,14 +575,14 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     opts = {"use_listings_cache": False}
     return board("abfs", path, versioned, cache, allow_pickle_read, storage_options=opts)
 
-def board_databricks(folder_url, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+def board_databricks(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     """Create a board to read and write pins from an Databricks Volume folder.
 
     Parameters
     ----------
-    folder_url:
+    path:
         The path to the target folder inside Unity Catalog. The path must include the 
-        catalog, schema, and volume names, preceded by 'Volumes/', like 
+        catalog, schema, and volume names, preceded by 'Volumes/', for example: 
         "/Volumes/my-catalog/my-schema/my-volume".
     versioned:
         Whether or not pins should be versioned.
@@ -601,8 +601,11 @@ def board_databricks(folder_url, versioned=True, cache=DEFAULT, allow_pickle_rea
 
     Notes
     -----
-    The Databricks board uses...
+    The Databricks board uses the `databricks-sdk` library to authenticate and interact 
+    with the Databricks Volume.
+
+    See <https://docs.databricks.com/aws/en/dev-tools/sdk-python>
+    
     """
 
-    kwargs = dict(folder_url=folder_url)
-    return board("dbc", folder_url, versioned, cache, allow_pickle_read, storage_options=kwargs)
+    return board("dbc", path, versioned, cache, allow_pickle_read)

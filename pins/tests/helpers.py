@@ -16,7 +16,6 @@ from pins.boards import BaseBoard, BoardRsConnect
 
 from pins.constructors import board_databricks
 
-from pins.databricks.fs import DatabricksFs
 
 DEFAULT_CREATION_DATE = datetime(2020, 1, 13, 23, 58, 59)
 
@@ -215,8 +214,9 @@ class DbcBoardBuilder(BoardBuilder):
 
     def create_tmp_board(self, src_board=None, versioned=True):
         temp_name = str(uuid.uuid4())
-        board_name = os.path.join(self.volume, temp_name)        
-        board = BaseBoard(board_name, fs=DatabricksFs(), versioned=versioned)
+        board_name = os.path.join(self.volume, temp_name)
+        db_board = board_databricks(board_name, cache=None)  
+        board = BaseBoard(board_name, fs=db_board.fs, versioned=versioned)
         self.current_board = board
         if src_board is not None:
             board.fs.put(src_board, board_name)          

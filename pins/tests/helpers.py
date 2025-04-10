@@ -175,7 +175,7 @@ class RscBoardBuilder(BoardBuilder):
     def create_tmp_board(self, src_board=None, versioned=True):
         from pins.rsconnect.fs import PinBundleManifest  # noqa
 
-        board = BaseBoard(path, fs, versioned=versioned) 
+        board = BoardRsConnect(path, fs, versioned=versioned) 
         if src_board is None:
             return board
 

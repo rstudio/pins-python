@@ -4,7 +4,7 @@ from io import BytesIO
 from typing import ClassVar
 from fsspec import AbstractFileSystem
 from databricks.sdk import WorkspaceClient
-
+from pins.errors import PinsError
 
 class DatabricksFs(AbstractFileSystem):
     protocol: ClassVar[str | tuple[str, ...]] = "dbc"
@@ -91,6 +91,8 @@ def _databricks_get(board, rpath, lpath, recursive = False, **kwargs):
     _get_files(rpath, recursive, **kwargs)
 
 def _databricks_open(path):
+    if(_databricks_exists(path) == False):
+        raise PinsError("File or directory does not exist")
     w = WorkspaceClient()
     resp = w.files.download(path)
     f = BytesIO()
@@ -119,8 +121,9 @@ def _databricks_is_type(path: str):
         return "file"        
 
 def _databricks_ls(path, detail):
+    if(_databricks_exists(path) == False):
+        raise PinsError("File or directory does not exist")    
     w = WorkspaceClient()
-    
     if(_databricks_is_type(path) == "file"):
         if(detail):
             return [dict(name = path, size = None, type = "file")]
@@ -133,10 +136,10 @@ def _databricks_ls(path, detail):
     for item in contents:
         item = _databricks_content_details(item)
         item_path = item.get("path")
+        item_path = item_path.rstrip("/")
         if(detail):            
             if(item.get("is_directory")):
-                type = "directory"
-                item_path = item_path.rstrip("/")
+                type = "directory"                
             else:
                 type = "file"
             items.append(dict(name = item_path, size = None, type = type)) 

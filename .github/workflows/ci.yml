@@ -64,7 +64,7 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          pytest pins -m 'not fs_rsc and not skip_on_github' $PYTEST_OPTS
+          pytest pins -m 'not fs_rsc and not skip_on_github and not fs_dbc' $PYTEST_OPTS
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

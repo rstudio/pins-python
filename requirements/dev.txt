@@ -92,6 +92,8 @@ cryptography==44.0.0
     #   azure-storage-blob
     #   msal
     #   pyjwt
+databricks-sdk==0.49.0
+    # via pins (pyproject.toml)    
 debugpy==1.8.11
     # via ipykernel
 decopatch==1.4.10

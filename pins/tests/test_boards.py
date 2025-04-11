@@ -40,7 +40,7 @@ def board_unversioned(backend):
 @fixture
 def board_with_cache(backend):
     from pins.constructors import board as board_constructor
-    from pins.constructors import board_rsconnect, board_databricks
+    from pins.constructors import board_databricks, board_rsconnect
 
     board = backend.create_tmp_board()
 

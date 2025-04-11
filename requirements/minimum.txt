@@ -7,3 +7,4 @@ importlib-metadata==4.4
 importlib-resources==1.3
 appdirs<2.0.0
 humanize==1.0.0
+databricks-sdk==0.49.0

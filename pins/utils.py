@@ -7,6 +7,7 @@ from warnings import warn
 
 from .config import pins_options
 
+
 def inform(log, msg):
     if log is not None:
         log.info(msg)

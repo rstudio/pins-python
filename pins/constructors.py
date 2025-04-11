@@ -87,8 +87,8 @@ def board(
 
         fs = RsConnectFs(**storage_options)
 
-    elif protocol == "dbc" :
-        from pins.databricks.fs import DatabricksFs        
+    elif protocol == "dbc":
+        from pins.databricks.fs import DatabricksFs
 
         fs = DatabricksFs(**storage_options)
 
@@ -113,12 +113,12 @@ def board(
                 hash_prefix=hash_prefix,
                 same_names=True,
                 mapper=PinsRscCacheMapper,
-            )            
+            )
         else:
             # ensures each subdir path is its own cache directory
             board_cache = prefix_cache(fs, path)
             cache_dir = os.path.join(base_cache_dir, board_cache)
-            
+
             fs = PinsCache(
                 cache_storage=cache_dir, fs=fs, hash_prefix=path, same_names=True
             )
@@ -134,7 +134,7 @@ def board(
     if board_factory is not None:
         board = board_factory(path, fs, versioned, **pickle_kwargs)
     elif protocol == "rsc":
-        board = BoardRsConnect(path, fs, versioned, **pickle_kwargs) 
+        board = BoardRsConnect(path, fs, versioned, **pickle_kwargs)
     else:
         board = BaseBoard(path, fs, versioned, **pickle_kwargs)
     return board
@@ -575,14 +575,15 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     opts = {"use_listings_cache": False}
     return board("abfs", path, versioned, cache, allow_pickle_read, storage_options=opts)
 
+
 def board_databricks(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
     """Create a board to read and write pins from an Databricks Volume folder.
 
     Parameters
     ----------
     path:
-        The path to the target folder inside Unity Catalog. The path must include the 
-        catalog, schema, and volume names, preceded by 'Volumes/', for example: 
+        The path to the target folder inside Unity Catalog. The path must include the
+        catalog, schema, and volume names, preceded by 'Volumes/', for example:
         "/Volumes/my-catalog/my-schema/my-volume".
     versioned:
         Whether or not pins should be versioned.
@@ -601,11 +602,11 @@ def board_databricks(path, versioned=True, cache=DEFAULT, allow_pickle_read=None
 
     Notes
     -----
-    The Databricks board uses the `databricks-sdk` library to authenticate and interact 
+    The Databricks board uses the `databricks-sdk` library to authenticate and interact
     with the Databricks Volume.
 
     See <https://docs.databricks.com/aws/en/dev-tools/sdk-python>
-    
+
     """
 
     return board("dbc", path, versioned, cache, allow_pickle_read)

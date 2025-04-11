@@ -22,7 +22,7 @@ from .constructors import (
     board_azure,
     board_s3,
     board_gcs,
-    board_databricks, 
+    board_databricks,
     board,
 )
 from .boards import board_deparse

@@ -869,7 +869,7 @@ def board_deparse(board: BaseBoard):
     elif prot == "http":
         return f"board_url({repr(board.board)}, {board.pin_paths}{allow_pickle})"
     elif prot == "dbc":
-        return f"board_databricks({repr(board.board)}{allow_pickle})"        
+        return f"board_databricks({repr(board.board)}{allow_pickle})"
     else:
         raise NotImplementedError(
             f"board deparsing currently not supported for protocol: {prot}"

@@ -7,7 +7,6 @@ from databricks.sdk import WorkspaceClient
 from pins.errors import PinsError
 
 class DatabricksFs(AbstractFileSystem):
-    protocol: ClassVar[str | tuple[str, ...]] = "dbc"
 
     def ls(self, path, detail=False, **kwargs):        
         return _databricks_ls(path, detail)

@@ -30,7 +30,7 @@ def load_path(filename: str, path_to_version, pin_type=None):
         filename = "data.csv"
 
     if path_to_version is not None:
-        if(isinstance(path_to_version), str):
+        if(isinstance(path_to_version, str)):
             path_to_version = path_to_version.rstrip("/")
         path_to_file = f"{path_to_version}/{filename}"
     else:

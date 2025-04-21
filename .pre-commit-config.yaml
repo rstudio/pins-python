@@ -1,3 +1,4 @@
+exclude: "(.*\\.csv)|(^pins/tests/_snapshots)"
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.4.0
@@ -5,13 +6,13 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-        args: [--unsafe]
+        args: ["--unsafe"]
       - id: check-added-large-files
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.5.4   # Sync with pyproject.toml
+    rev: "v0.5.4" # Sync with pyproject.toml
     hooks:
       - id: ruff
-        args: [--fix]
+        args: ["--fix"]
       - id: ruff-format
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
@@ -19,4 +20,3 @@ repos:
       - id: codespell
         additional_dependencies:
           - tomli
-exclude: (.*\.csv)|(^pins/tests/_snapshots)

@@ -335,7 +335,7 @@ class RsConnectApi:
         Note that this method returns None if successful. Otherwise, it raises an error.
         """
 
-        # if deletion is sucessful, then it will return an empty body, so we
+        # if deletion is successful, then it will return an empty body, so we
         # need to check the response manually.
         r = self.query_v1(f"content/{guid}", "DELETE", return_request=True)
 

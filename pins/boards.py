@@ -133,8 +133,7 @@ class BaseBoard:
             # ensure pin and version exist
             if not self.fs.exists(self.construct_path([pin_name, version])):
                 raise PinsError(
-                    f"Pin {name} either does not exist, "
-                    f"or is missing version: {version}."
+                    f"Pin {name} either does not exist, or is missing version: {version}."
                 )
 
             selected_version = guess_version(version)
@@ -197,7 +196,7 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
+            compared against the `pin_hash` field retrieved by [](`~pins.boards.BaseBoard.pin_meta`).
 
         """
         meta = self.pin_fetch(name, version)
@@ -261,7 +260,7 @@ class BaseBoard:
 
         pin_name = self.path_to_pin(name)
 
-        # Pre-emptively fetch the most recent pin's meta if it exists - this is used
+        # Preemptively fetch the most recent pin's meta if it exists - this is used
         # for the force_identical_write check
         abort_if_identical = not force_identical_write and self.pin_exists(name)
         if abort_if_identical:
@@ -416,7 +415,7 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
+            compared against the `pin_hash` field retrieved by [](`~pins.boards.BaseBoard.pin_meta`).
 
         """
 

@@ -99,7 +99,7 @@ def _databricks_get(board, rpath, lpath, recursive=False, **kwargs):
 
 def _databricks_open(path):
     if not _databricks_exists(path):
-        raise PinsError("File or directory does not exist")
+        raise PinsError(f"File or directory does not exist: {path}")
     w = WorkspaceClient()
     resp = w.files.download(path)
     f = BytesIO()

@@ -1,6 +1,6 @@
-import os
 import shutil
 from io import BytesIO
+from pathlib import Path, PurePath
 
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.errors import NotFound
@@ -10,6 +10,8 @@ from pins.errors import PinsError
 
 
 class DatabricksFs(AbstractFileSystem):
+    protocol = "dbc"
+
     def ls(self, path, detail=False, **kwargs):
         return _databricks_ls(path, detail)
 
@@ -54,19 +56,19 @@ class DatabricksFs(AbstractFileSystem):
 
 def _databricks_put(lpath, rpath):
     w = WorkspaceClient()
-    path = os.path.abspath(lpath)
+    path = Path(lpath).absolute()
     orig_path = path
 
     def _upload_files(path):
-        contents = os.listdir(path)
-        for item in contents:
-            abs_path = os.path.join(path, item)
-            is_file = os.path.isfile(abs_path)
+        contents = Path(path)
+        for item in contents.iterdir():
+            abs_path = PurePath(path).joinpath(item)
+            is_file = Path(abs_path).is_file()
             if is_file:
-                rel_path = os.path.relpath(abs_path, orig_path)
-                db_path = os.path.join(rpath, rel_path)
-                with open(abs_path, "rb") as file:
-                w.files.upload(db_path, BytesIO(file.read()), overwrite=True)
+                rel_path = abs_path.relative_to(orig_path)
+                db_path = PurePath(rpath).joinpath(rel_path)
+                file = open(abs_path, "rb")
+                w.files.upload(str(db_path), BytesIO(file.read()), overwrite=True)
             else:
                 _upload_files(abs_path)
 
@@ -90,16 +92,16 @@ def _databricks_get(board, rpath, lpath, recursive=False, **kwargs):
                 if recursive:
                     _get_files(item_path, recursive=recursive, **kwargs)
             else:
-                rel_path = os.path.relpath(item_path, rpath)
-                target_path = os.path.join(lpath, rel_path)
-                board.fs.get(item_path, target_path)
+                rel_path = PurePath(item_path).relative_to(rpath)
+                target_path = PurePath(lpath).joinpath(rel_path)
+                board.fs.get(item_path, str(target_path))
 
     _get_files(rpath, recursive, **kwargs)
 
 
 def _databricks_open(path):
     if not _databricks_exists(path):
-        raise PinsError(f"File or directory does not exist: {path}")
+        raise PinsError("File or directory does not exist")
     w = WorkspaceClient()
     resp = w.files.download(path)
     f = BytesIO()
@@ -132,7 +134,7 @@ def _databricks_is_type(path: str):
 
 def _databricks_ls(path, detail):
     if not _databricks_exists(path):
-        raise PinsError(f"File or directory does not exist: {path}")
+        raise PinsError("File or directory does not exist")
     w = WorkspaceClient()
     if _databricks_is_type(path) == "file":
         if detail:

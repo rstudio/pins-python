@@ -65,7 +65,7 @@ def _databricks_put(lpath, rpath):
             if is_file:
                 rel_path = os.path.relpath(abs_path, orig_path)
                 db_path = os.path.join(rpath, rel_path)
-                file = open(abs_path, "rb")
+                with open(abs_path, "rb") as file:
                 w.files.upload(db_path, BytesIO(file.read()), overwrite=True)
             else:
                 _upload_files(abs_path)

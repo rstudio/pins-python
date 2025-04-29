@@ -133,8 +133,7 @@ class BaseBoard:
             # ensure pin and version exist
             if not self.fs.exists(self.construct_path([pin_name, version])):
                 raise PinsError(
-                    f"Pin {name} either does not exist, "
-                    f"or is missing version: {version}."
+                    f"Pin {name} either does not exist, or is missing version: {version}."
                 )
 
             selected_version = guess_version(version)
@@ -882,7 +881,7 @@ class BoardManual(BaseBoard):
     >>> import fsspec
     >>> import os
     >>> fs = fsspec.filesystem("github", org = "rstudio", repo = "pins-python")
-    >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad/"}
+    >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad"}
     >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
 
     >>> board.pin_list()

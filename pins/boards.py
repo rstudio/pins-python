@@ -883,9 +883,10 @@ class BoardManual(BaseBoard):
     --------
     >>> import fsspec
     >>> import os
-    >>> fs = fsspec.filesystem("github", org = "rstudio", repo = "pins-python")
+    >>> fs = fsspec.filesystem("http", block_size=0)
     >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad/"}
-    >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
+    >>> url = "https://raw.githubusercontent.com/rstudio/pins-python/main/pins/tests/pins-compat"
+    >>> board = BoardManual(url, fs, pin_paths=pin_paths)
 
     >>> board.pin_list()
     ['df_csv']
@@ -986,7 +987,6 @@ class BoardManual(BaseBoard):
             return "/".join(pre_components + [pin_path])
         elif len(others) == 2:
             version, meta = others
-
             return "/".join(pre_components + [stripped, meta])
 
         raise NotImplementedError(

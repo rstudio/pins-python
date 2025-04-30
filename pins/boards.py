@@ -881,7 +881,7 @@ class BoardManual(BaseBoard):
     >>> import fsspec
     >>> import os
     >>> fs = fsspec.filesystem("github", org = "rstudio", repo = "pins-python")
-    >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad"}
+    >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad/"}
     >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
 
     >>> board.pin_list()
@@ -983,8 +983,7 @@ class BoardManual(BaseBoard):
             return "/".join(pre_components + [pin_path])
         elif len(others) == 2:
             version, meta = others
-
-            return "/".join(pre_components + [stripped, meta])
+            return str(Path(*pre_components, stripped, meta))
 
         raise NotImplementedError(
             f"Unable to construct path from these elements: {elements}"

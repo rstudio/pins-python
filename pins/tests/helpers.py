@@ -13,6 +13,7 @@ from fsspec import filesystem
 from importlib_resources import files
 
 from pins.boards import BaseBoard, BoardRsConnect
+from pins.constructors import board_databricks
 
 DEFAULT_CREATION_DATE = datetime(2020, 1, 13, 23, 58, 59)
 
@@ -26,6 +27,7 @@ BOARD_CONFIG = {
     "gcs": {"path": ["PINS_TEST_GCS__PATH", "pins-python"]},
     "abfs": {"path": ["PINS_TEST_AZURE__PATH", "ci-pins"]},
     "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},
+    "dbc": {"path": ["PINS_TEST_DBC__PATH", "DATABRICKS_VOLUME"]},
 }
 
 # TODO: Backend initialization should be independent of helpers, but these
@@ -171,7 +173,6 @@ class RscBoardBuilder(BoardBuilder):
         from pins.rsconnect.fs import PinBundleManifest  # noqa
 
         board = BoardRsConnect("", rsc_fs_from_key("derek"), versioned=versioned)
-
         if src_board is None:
             return board
 
@@ -201,6 +202,31 @@ class RscBoardBuilder(BoardBuilder):
 
     def teardown(self):
         self.teardown_board(self.create_tmp_board())
+
+
+class DbcBoardBuilder(BoardBuilder):
+    def __init__(self, fs_name, path=None, *args, **kwargs):
+        self.path = None
+        self.fs_name = fs_name
+        self.current_board = None
+        self.volume = os.environ.get("DATABRICKS_VOLUME")
+
+    def create_tmp_board(self, src_board=None, versioned=True):
+        temp_name = str(uuid.uuid4())
+        board_name = os.path.join(self.volume, temp_name)
+        db_board = board_databricks(board_name, cache=None)
+        board = BaseBoard(board_name, fs=db_board.fs, versioned=versioned)
+        self.current_board = board
+        if src_board is not None:
+            board.fs.put(src_board, board_name)
+        return board
+
+    def teardown_board(self, board):
+        board.fs.rm(board.board)
+
+    def teardown(self):
+        board = board_databricks(self.volume)
+        board.fs.rm(self.current_board.board)
 
 
 # Snapshot ====================================================================

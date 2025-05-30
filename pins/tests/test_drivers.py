@@ -6,6 +6,7 @@ import fsspec
 import pandas as pd
 import pytest
 
+from pins._adaptors import create_adaptor
 from pins.config import PINS_ENV_INSECURE_READ
 from pins.drivers import default_title, load_data, load_path, save_data
 from pins.errors import PinsInsecureReadError
@@ -161,6 +162,23 @@ def test_driver_apply_suffix_false(tmp_path: Path):
     res_fname = save_data(df, p_obj, type_, apply_suffix=False)
 
     assert Path(res_fname).name == "some_df"
+
+
+class TestSaveData:
+    def test_accepts_pandas_df(self, tmp_path: Path):
+        import pandas as pd
+
+        df = pd.DataFrame({"x": [1, 2, 3]})
+        result = save_data(df, tmp_path / "some_df", "csv")
+        assert Path(result) == tmp_path / "some_df.csv"
+
+    def test_accepts_adaptor(self, tmp_path: Path):
+        import pandas as pd
+
+        df = pd.DataFrame({"x": [1, 2, 3]})
+        adaptor = create_adaptor(df)
+        result = save_data(adaptor, tmp_path / "some_df", "csv")
+        assert Path(result) == tmp_path / "some_df.csv"
 
 
 class TestLoadFile:

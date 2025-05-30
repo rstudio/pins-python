@@ -3,7 +3,7 @@ title: Create consistent metadata for pins
 jupyter: python3
 ---
 
-The `metadata` argument in pins is flexible and can hold any kind of metadata that you can formulate as a `dict` (convertable to JSON).
+The `metadata` argument in pins is flexible and can hold any kind of metadata that you can formulate as a `dict` (convertible to JSON).
 In some situations, you may want to read and write with _consistent_ customized metadata;
 you can create functions to wrap [](`~pins.boards.BaseBoard.pin_write`) and [](`~pins.boards.BaseBoard.pin_read`) for your particular use case.
 

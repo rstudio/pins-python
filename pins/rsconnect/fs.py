@@ -26,7 +26,7 @@ from .api import (
 
 def _not_impl_args_kwargs(args, kwargs):
     return NotImplementedError(
-        "Additional args and kwargs not supported." f"\nArgs: {args}\nKwargs: {kwargs}"
+        f"Additional args and kwargs not supported.\nArgs: {args}\nKwargs: {kwargs}"
     )
 
 
@@ -209,7 +209,7 @@ class RsConnectFs(AbstractFileSystem):
 
         if not (Path(lpath) / "manifest.json").exists():
             # TODO(question): does R pins copy content to tmp directory, or
-            # insert mainfest.json into the source directory?
+            # insert manifest.json into the source directory?
             cls_manifest.add_manifest_to_directory(lpath)
 
         bundle = self.api.post_content_bundle(content["guid"], lpath)

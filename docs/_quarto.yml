@@ -49,6 +49,8 @@ website:
             href: reference/board_gcs.qmd
           - text: "`board_azure`"
             href: reference/board_azure.qmd
+          - text: "`board_databricks`"
+            href: reference/board_databricks.qmd
           - text: "`board_connect`"
             href: reference/board_connect.qmd
           - text: "`board_url`"

@@ -84,7 +84,7 @@ universal = 1
 [tool.pytest.ini_options]
 markers = [
     "fs_file: mark test to only run on local filesystem",
-    "fs_s3: mark test to only run on AWS S3 bucket filesytem",
+    "fs_s3: mark test to only run on AWS S3 bucket filesystem",
     "fs_gcs: mark test to only run on Google Cloud Storage bucket filesystem",
     "fs_abfs: mark test to only run on Azure Datalake filesystem",
     "fs_rsc: mark test to only run on Posit Connect filesystem",
@@ -131,3 +131,6 @@ ignore = [
     "E501", # Line too long
     "A002", # The pins interface includes builtin names in args, e.g. hash, id, etc.
 ]
+
+[tool.codespell]
+skip = ["*.js"]

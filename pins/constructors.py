@@ -10,6 +10,7 @@ import fsspec
 from .boards import BaseBoard, BoardManual, BoardRsConnect, board_deparse
 from .cache import PinsAccessTimeCache, PinsCache, PinsRscCacheMapper, prefix_cache
 from .config import get_cache_dir, get_data_dir
+from .errors import PinsError
 
 # Kept here for backward-compatibility reasons
 # Note that this is not a constructor, but a function to represent them.
@@ -625,5 +626,10 @@ def board_databricks(path, versioned=True, cache=DEFAULT, allow_pickle_read=None
     0  1  a  3
     1  2  b  4
     """
-
+    try:
+        import databricks.sdk  # noqa: F401
+    except ModuleNotFoundError:
+        raise PinsError(
+            "Install the `databricks-sdk` package for Databricks board support."
+        )
     return board("dbc", path, versioned, cache, allow_pickle_read)

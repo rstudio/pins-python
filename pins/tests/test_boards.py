@@ -15,7 +15,7 @@ from pytest_cases import fixture, parametrize
 from pins.config import PINS_ENV_INSECURE_READ
 from pins.errors import PinsError, PinsInsecureReadError, PinsVersionError
 from pins.meta import MetaRaw
-from pins.tests.helpers import DEFAULT_CREATION_DATE, rm_env
+from pins.tests.helpers import DEFAULT_CREATION_DATE, rm_env, skip_if_dbc
 
 
 @fixture
@@ -40,7 +40,7 @@ def board_unversioned(backend):
 @fixture
 def board_with_cache(backend):
     from pins.constructors import board as board_constructor
-    from pins.constructors import board_databricks, board_rsconnect
+    from pins.constructors import board_rsconnect
 
     board = backend.create_tmp_board()
 
@@ -50,8 +50,6 @@ def board_with_cache(backend):
         # board behavior. As a result, we need to pass the credentials directly in.
         server_url, api_key = board.fs.api.server_url, board.fs.api.api_key
         board_with_cache = board_rsconnect(server_url=server_url, api_key=api_key)
-    elif backend.fs_name == "dbc":
-        board_with_cache = board_databricks(board.board)
     else:
         board_with_cache = board_constructor(backend.fs_name, board.board)
 
@@ -73,12 +71,14 @@ def test_board_validate_pin_name_root(board):
 # pin_write ===================================================================
 
 
+@skip_if_dbc
 def test_board_pin_write_default_title(board):
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
     meta = board.pin_write(df, "df_csv", title=None, type="csv")
     assert meta.title == "df_csv: a pinned 3 x 2 DataFrame"
 
 
+@skip_if_dbc
 def test_board_pin_write_prepare_pin(board, tmp_path: Path):
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
@@ -89,6 +89,7 @@ def test_board_pin_write_prepare_pin(board, tmp_path: Path):
     assert not (tmp_path / "df_csv.csv").is_dir()
 
 
+@skip_if_dbc
 def test_board_pin_write_roundtrip(board):
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
@@ -102,6 +103,7 @@ def test_board_pin_write_roundtrip(board):
     assert loaded_df.equals(df)
 
 
+@skip_if_dbc
 def test_board_pin_write_type_not_specified_error(board):
     class C:
         pass
@@ -110,6 +112,7 @@ def test_board_pin_write_type_not_specified_error(board):
         board.pin_write(C(), "cool_pin")
 
 
+@skip_if_dbc
 def test_board_pin_write_type_error(board):
     class C:
         pass
@@ -120,6 +123,7 @@ def test_board_pin_write_type_error(board):
     assert "MY_TYPE" in exc_info.value.args[0]
 
 
+@skip_if_dbc
 def test_board_pin_write_feather_deprecated(board):
     df = pd.DataFrame({"x": [1, 2, 3]})
 
@@ -127,6 +131,7 @@ def test_board_pin_write_feather_deprecated(board):
         board.pin_write(df, "cool_pin", type="feather")
 
 
+@skip_if_dbc
 def test_board_pin_write_file_raises_error(board, tmp_path):
     df = pd.DataFrame({"x": [1, 2, 3]})
 
@@ -138,6 +143,7 @@ def test_board_pin_write_file_raises_error(board, tmp_path):
         board.pin_write(path, "cool_pin", type="file")
 
 
+@skip_if_dbc
 @pytest.mark.parametrize("force_identical_write", [True, False])
 def test_board_pin_write_force_identical_write_pincount(board, force_identical_write):
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -155,6 +161,7 @@ def test_board_pin_write_force_identical_write_pincount(board, force_identical_w
         assert len(versions) == 1
 
 
+@skip_if_dbc
 def test_board_pin_write_force_identical_write_msg(
     board, capfd: pytest.CaptureFixture[str]
 ):
@@ -172,6 +179,7 @@ def test_board_pin_write_force_identical_write_msg(
     assert len(versions) == 1
 
 
+@skip_if_dbc
 def test_board_pin_download(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -190,6 +198,7 @@ def test_board_pin_download(board_with_cache, tmp_path):
         board_with_cache.pin_read("cool_pin")
 
 
+@skip_if_dbc
 def test_board_pin_download_filename_many_suffixes(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -206,6 +215,7 @@ def test_board_pin_download_filename_many_suffixes(board_with_cache, tmp_path):
     assert df.x.tolist() == [1, 2, 3]
 
 
+@skip_if_dbc
 def test_board_pin_download_filename_no_suffixes(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -222,6 +232,7 @@ def test_board_pin_download_filename_no_suffixes(board_with_cache, tmp_path):
     assert df.x.tolist() == [1, 2, 3]
 
 
+@skip_if_dbc
 def test_board_pin_download_filename(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -237,6 +248,7 @@ def test_board_pin_download_filename(board_with_cache, tmp_path):
     assert Path(pin_path).name == "data.csv"
 
 
+@skip_if_dbc
 def test_board_pin_download_no_cache_error(board, tmp_path):
     df = pd.DataFrame({"x": [1, 2, 3]})
     path = tmp_path / "data.csv"
@@ -255,6 +267,7 @@ def test_board_pin_download_no_cache_error(board, tmp_path):
         (pin_path,) = board.pin_download("cool_pin")
 
 
+@skip_if_dbc
 def test_board_pin_upload_path_list(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -268,6 +281,7 @@ def test_board_pin_upload_path_list(board_with_cache, tmp_path):
     (pin_path,) = board_with_cache.pin_download("cool_pin")
 
 
+@skip_if_dbc
 def test_board_pin_download_filename_multifile(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -312,6 +326,7 @@ def test_board_pin_write_rsc_index_html(board, tmp_path: Path, snapshot):
 # pin_write against different types -------------------------------------------
 
 
+@skip_if_dbc
 @parametrize(
     "obj, type_",
     [
@@ -335,6 +350,7 @@ def test_board_pin_write_type(board, obj, type_, request):
         obj == dst_obj
 
 
+@skip_if_dbc
 def test_board_pin_read_insecure_fail_default(board):
     board.pin_write({"a": 1}, "test_pin", type="joblib", title="some title")
     with pytest.raises(PinsInsecureReadError) as exc_info:
@@ -343,6 +359,7 @@ def test_board_pin_read_insecure_fail_default(board):
     assert "joblib" in exc_info.value.args[0]
 
 
+@skip_if_dbc
 def test_board_pin_read_insecure_fail_board_flag(board):
     # board flag prioritized over env var
     with rm_env(PINS_ENV_INSECURE_READ):
@@ -353,6 +370,7 @@ def test_board_pin_read_insecure_fail_board_flag(board):
             board.pin_read("test_pin")
 
 
+@skip_if_dbc
 def test_board_pin_read_insecure_succeed_board_flag(board):
     # board flag prioritized over env var
     with rm_env(PINS_ENV_INSECURE_READ):
@@ -365,6 +383,7 @@ def test_board_pin_read_insecure_succeed_board_flag(board):
 # pin_write with unversioned boards ===========================================
 
 
+@skip_if_dbc
 @pytest.mark.parametrize("versioned", [None, False])
 def test_board_unversioned_pin_write_unversioned_force_identical_write(
     versioned, board_unversioned
@@ -391,6 +410,7 @@ def test_board_unversioned_pin_write_unversioned_force_identical_write(
     assert board_unversioned.pin_read("test_pin") == {"a": 2}
 
 
+@skip_if_dbc
 @pytest.mark.parametrize("versioned", [None, False])
 def test_board_unversioned_pin_write_unversioned(versioned, board_unversioned):
     board_unversioned.pin_write({"a": 1}, "test_pin", type="json", versioned=versioned)
@@ -400,6 +420,7 @@ def test_board_unversioned_pin_write_unversioned(versioned, board_unversioned):
     assert board_unversioned.pin_read("test_pin") == {"a": 2}
 
 
+@skip_if_dbc
 def test_board_unversioned_pin_write_versioned(board_unversioned):
     board_unversioned.pin_write({"a": 1}, "test_pin", type="json", versioned=False)
     board_unversioned.pin_write({"a": 2}, "test_pin", type="json", versioned=True)
@@ -407,6 +428,7 @@ def test_board_unversioned_pin_write_versioned(board_unversioned):
     assert len(board_unversioned.pin_versions("test_pin")) == 2
 
 
+@skip_if_dbc
 def test_board_versioned_pin_write_unversioned(board):
     # should fall back to the versioned setting of the board
     board.pin_write({"a": 1}, "test_pin", type="json")
@@ -428,6 +450,9 @@ def pin_name():
 
 @pytest.fixture
 def pin_del(board, df, pin_name):
+    # TODO: update when dbc boards no longer read-only
+    if board.fs.protocol == "dbc":
+        pytest.skip()
     # 1min ago to avoid name collision
     one_min_ago = datetime.now() - timedelta(minutes=1)
     meta_old = board.pin_write(
@@ -445,6 +470,9 @@ def pin_del(board, df, pin_name):
 
 @pytest.fixture
 def pin_prune(board, df, pin_name):
+    # TODO: update when dbc boards no longer read-only
+    if board.fs.protocol == "dbc":
+        pytest.skip()
     today = datetime.now()
     day_ago = today - timedelta(days=1, minutes=1)
     two_days_ago = today - timedelta(days=2, minutes=1)
@@ -538,6 +566,7 @@ def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
     assert len(new_versions) == days
 
 
+@skip_if_dbc
 def test_board_pin_versions_prune_days_protect_most_recent(board, pin_name):
     """To address https://github.com/rstudio/pins-python/issues/297"""
     # Posit cannot handle days, since it involves pulling metadata
@@ -581,6 +610,7 @@ def test_board_pin_versions_prune_days_protect_most_recent(board, pin_name):
         ("the-title", ["x-pin-1", "x-pin-2", "y-pin-1", "y-z"]),
     ],
 )
+@skip_if_dbc
 def test_board_pin_search_name(board, df, search, matches):
     if board.fs.protocol == "rsc":
         matches = ["derek/" + m for m in matches]

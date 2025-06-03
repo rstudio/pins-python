@@ -607,6 +607,23 @@ def board_databricks(path, versioned=True, cache=DEFAULT, allow_pickle_read=None
 
     See <https://docs.databricks.com/aws/en/dev-tools/sdk-python>
 
+
+    Examples
+    --------
+
+    >>> import pytest; pytest.skip()
+
+    >>> import pins
+    >>> from dotenv import load_dotenv
+    >>> load_dotenv() # eg, for a .env file with DATABRICKS_HOST and DATABRICKS_TOKEN set
+    >>> board = pins.board_databricks("/Volumes/examples/my-board/test-volume")
+    >>> board.pin_list()
+    ['df_csv']
+
+    >>> board.pin_read("df_csv")
+       x  y  z
+    0  1  a  3
+    1  2  b  4
     """
 
     return board("dbc", path, versioned, cache, allow_pickle_read)

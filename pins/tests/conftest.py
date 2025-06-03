@@ -16,6 +16,7 @@ from pins.tests.helpers import (
 
 EXAMPLE_REL_PATH = "pins/tests/pins-compat"
 PATH_TO_EXAMPLE_BOARD = files("pins") / "tests/pins-compat"
+PATH_TO_EXAMPLE_BOARD_DBC = "/Volumes/workshops/my-board/my-volume/test"
 PATH_TO_EXAMPLE_VERSION = PATH_TO_EXAMPLE_BOARD / "df_csv/20220214T163720Z-9bfad/"
 EXAMPLE_PIN_NAME = "df_csv"
 
@@ -27,13 +28,13 @@ params_safe = [
     pytest.param(lambda: BoardBuilder("s3"), id="s3", marks=m.fs_s3),
     pytest.param(lambda: BoardBuilder("gcs"), id="gcs", marks=m.fs_gcs),
     pytest.param(lambda: BoardBuilder("abfs"), id="abfs", marks=m.fs_abfs),
+    pytest.param(lambda: DbcBoardBuilder("dbc"), id="dbc", marks=m.fs_dbc)
 ]
 
 # rsc should only be used once, because users are created at docker setup time
 param_rsc = pytest.param(lambda: RscBoardBuilder("rsc"), id="rsc", marks=m.fs_rsc)
-param_dbc = pytest.param(lambda: DbcBoardBuilder("dbc"), id="dbc", marks=m.fs_dbc)
 
-params_backend = [*params_safe, param_rsc, param_dbc]
+params_backend = [*params_safe, param_rsc]
 
 
 @pytest.fixture(params=params_backend, scope="session")

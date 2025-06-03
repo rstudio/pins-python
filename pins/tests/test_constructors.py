@@ -11,7 +11,7 @@ from pins.tests.conftest import (
     PATH_TO_EXAMPLE_BOARD,
     PATH_TO_EXAMPLE_VERSION,
 )
-from pins.tests.helpers import rm_env
+from pins.tests.helpers import rm_env, skip_if_dbc
 
 
 @pytest.fixture
@@ -190,6 +190,10 @@ def test_constructor_boards(board, df_csv, tmp_cache):
     df = board.pin_read("df_csv")
 
     # check data
+    # TODO: update when dbc boards are not read-only
+    if board.fs.protocol == "dbc":
+        df_csv = pd.DataFrame({'x': [1, 2, 3], 'y': [4, 5, 6]})
+
     assert_frame_equal(df, df_csv)
 
     # check the cache structure -----------------------------------------------
@@ -232,6 +236,7 @@ def board2(backend):
     backend.teardown_board(board2)
 
 
+@skip_if_dbc
 def test_constructor_boards_multi_user(board2, df_csv, tmp_cache):
     prot = board2.fs.protocol
     fs_name = prot if isinstance(prot, str) else prot[0]

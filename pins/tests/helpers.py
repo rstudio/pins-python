@@ -1,4 +1,5 @@
 import contextlib
+import functools
 import json
 import os
 import shutil
@@ -21,18 +22,52 @@ RSC_SERVER_URL = "http://localhost:3939"
 # TODO: should use pkg_resources for this path?
 RSC_KEYS_FNAME = "pins/tests/rsconnect_api_keys.json"
 
+DATABRICKS_VOLUME = "/Volumes/workshops/my-board/my-volume/test"
+
 BOARD_CONFIG = {
     "file": {"path": ["PINS_TEST_FILE__PATH", None]},
     "s3": {"path": ["PINS_TEST_S3__PATH", "ci-pins"]},
     "gcs": {"path": ["PINS_TEST_GCS__PATH", "pins-python"]},
     "abfs": {"path": ["PINS_TEST_AZURE__PATH", "ci-pins"]},
     "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},
-    "dbc": {"path": ["PINS_TEST_DBC__PATH", "DATABRICKS_VOLUME"]},
+    "dbc": {"path": ["PINS_TEST_DBC__PATH", DATABRICKS_VOLUME]},
 }
 
 # TODO: Backend initialization should be independent of helpers, but these
 #       high-level initializers are super handy.
 #       putting imports inside rsconnect particulars for now
+
+
+def skip_if_dbc(func):
+    """Decorator to skip test if board protocol is 'dbc'"""
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        import inspect
+        board = None
+
+        # Get function signature to map args to parameter names.
+        # We have to do this since parameterized pytest runs passes in
+        # args in different orders
+        sig = inspect.signature(func)
+        bound_args = sig.bind_partial(*args, **kwargs)
+        all_args = {**bound_args.arguments, **kwargs}
+
+        if 'board' in all_args:
+            board = all_args['board']
+        elif 'board_with_cache' in all_args:
+            board = all_args['board_with_cache']
+        else:
+            # Check all arguments for something that looks like a board
+            for arg_value in all_args.values():
+                if hasattr(arg_value, 'fs') and hasattr(arg_value.fs, 'protocol'):
+                    board = arg_value
+                    break
+
+        if board and board.fs.protocol == "dbc":
+            pytest.skip("All Databricks tests must be read only")
+
+        return func(*args, **kwargs)
+    return wrapper
 
 
 def rsc_from_key(name):
@@ -209,24 +244,32 @@ class DbcBoardBuilder(BoardBuilder):
         self.path = None
         self.fs_name = fs_name
         self.current_board = None
-        self.volume = os.environ.get("DATABRICKS_VOLUME")
+        self.volume = DATABRICKS_VOLUME
 
     def create_tmp_board(self, src_board=None, versioned=True):
-        temp_name = str(uuid.uuid4())
-        board_name = os.path.join(self.volume, temp_name)
-        db_board = board_databricks(board_name, cache=None)
-        board = BaseBoard(board_name, fs=db_board.fs, versioned=versioned)
+        # TODO: use temp boards when boards are not read-only
+        # temp_name = str(uuid.uuid4())
+        # board_name = os.path.join(self.volume, temp_name)
+        # db_board = board_databricks(board_name, cache=None)
+        # board = BaseBoard(board_name, fs=db_board.fs, versioned=versioned)
+        # if src_board is not None:
+        #     board.fs.put(src_board, board_name)
+
+        db_board = board_databricks(self.volume, cache=None)
+        board = BaseBoard(self.volume, fs=db_board.fs, versioned=versioned)
         self.current_board = board
-        if src_board is not None:
-            board.fs.put(src_board, board_name)
         return board
 
     def teardown_board(self, board):
-        board.fs.rm(board.board)
+        pass
+        # TODO: update when board not read-only
+        # board.fs.rm(board.board)
 
     def teardown(self):
-        board = board_databricks(self.volume)
-        board.fs.rm(self.current_board.board)
+        pass
+        # TODO: update when board not read-only
+        # board = board_databricks(self.volume)
+        # board.fs.rm(self.current_board.board)
 
 
 # Snapshot ====================================================================

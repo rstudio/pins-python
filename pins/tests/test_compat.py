@@ -117,7 +117,7 @@ def test_compat_pin_meta(board):
     elif board.fs.protocol == "dbc":
         assert meta.title == "df_csv: a pinned 3 x 2 DataFrame"
         assert meta.description is None
-        assert meta.created == "20220214T163720Z"
+        assert meta.created == "20250410T083026Z"
         assert meta.file == "df_csv.csv"
         assert meta.file_size == 16
         assert meta.pin_hash == "a173cd6a53908980"
@@ -186,7 +186,7 @@ def test_compat_pin_read(board):
 
     # TODO: update when dbc boards are not read-only
     if board.fs.protocol == "dbc":
-        dst_df = pd.DataFrame({'x': [1, 2, 3], 'y': [4, 5, 6]})
+        dst_df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
     else:
         dst_df = pd.read_csv(p_data)
 

@@ -28,7 +28,7 @@ params_safe = [
     pytest.param(lambda: BoardBuilder("s3"), id="s3", marks=m.fs_s3),
     pytest.param(lambda: BoardBuilder("gcs"), id="gcs", marks=m.fs_gcs),
     pytest.param(lambda: BoardBuilder("abfs"), id="abfs", marks=m.fs_abfs),
-    pytest.param(lambda: DbcBoardBuilder("dbc"), id="dbc", marks=m.fs_dbc)
+    pytest.param(lambda: DbcBoardBuilder("dbc"), id="dbc", marks=m.fs_dbc),
 ]
 
 # rsc should only be used once, because users are created at docker setup time

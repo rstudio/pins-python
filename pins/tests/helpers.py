@@ -40,9 +40,11 @@ BOARD_CONFIG = {
 
 def skip_if_dbc(func):
     """Decorator to skip test if board protocol is 'dbc'"""
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         import inspect
+
         board = None
 
         # Get function signature to map args to parameter names.
@@ -52,14 +54,14 @@ def skip_if_dbc(func):
         bound_args = sig.bind_partial(*args, **kwargs)
         all_args = {**bound_args.arguments, **kwargs}
 
-        if 'board' in all_args:
-            board = all_args['board']
-        elif 'board_with_cache' in all_args:
-            board = all_args['board_with_cache']
+        if "board" in all_args:
+            board = all_args["board"]
+        elif "board_with_cache" in all_args:
+            board = all_args["board_with_cache"]
         else:
             # Check all arguments for something that looks like a board
             for arg_value in all_args.values():
-                if hasattr(arg_value, 'fs') and hasattr(arg_value.fs, 'protocol'):
+                if hasattr(arg_value, "fs") and hasattr(arg_value.fs, "protocol"):
                     board = arg_value
                     break
 
@@ -67,6 +69,7 @@ def skip_if_dbc(func):
             pytest.skip("All Databricks tests must be read only")
 
         return func(*args, **kwargs)
+
     return wrapper
 
 

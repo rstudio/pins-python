@@ -2,8 +2,6 @@ import shutil
 from io import BytesIO
 from pathlib import Path, PurePath
 
-from databricks.sdk import WorkspaceClient
-from databricks.sdk.errors import NotFound
 from fsspec import AbstractFileSystem
 
 from pins.errors import PinsError
@@ -13,18 +11,18 @@ class DatabricksFs(AbstractFileSystem):
     protocol = "dbc"
 
     def ls(self, path, detail=False, **kwargs):
-        return self._databricks_ls(self, path, detail)
+        return self._databricks_ls(path, detail)
 
     def exists(self, path: str, **kwargs):
-        return self._databricks_exists(self, path)
+        return self._databricks_exists(path)
 
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
         if mode != "rb":
             raise NotImplementedError
-        return self._databricks_open(self, path)
+        return self._databricks_open(path)
 
     def get(self, rpath, lpath, recursive=False, **kwargs):
-        self._databricks_get(self, rpath, lpath, recursive, **kwargs)
+        self._databricks_get(rpath, lpath, recursive, **kwargs)
 
     def mkdir(self, path, create_parents=True, **kwargs):
         if not create_parents:
@@ -50,11 +48,18 @@ class DatabricksFs(AbstractFileSystem):
             raise NotImplementedError
         if maxdepth is not None:
             raise NotImplementedError
-        if self._databricks_exists(self, path):
-            self._databricks_rm_dir(self, path)
+        if self._databricks_exists(path):
+            self._databricks_rm_dir(path)
 
     @staticmethod
     def _databricks_put(lpath, rpath):
+        try:
+            from databricks.sdk import WorkspaceClient
+        except ModuleNotFoundError:
+            raise PinsError(
+                "Install the `databricks-sdk` package for Databricks board support."
+            )
+
         w = WorkspaceClient()
         path = Path(lpath).absolute()
         orig_path = path
@@ -74,15 +79,21 @@ class DatabricksFs(AbstractFileSystem):
 
         _upload_files(path)
 
-    @staticmethod
     def _databricks_get(self, board, rpath, lpath, recursive=False, **kwargs):
+        try:
+            from databricks.sdk import WorkspaceClient
+        except ModuleNotFoundError:
+            raise PinsError(
+                "Install the `databricks-sdk` package for Databricks board support."
+            )
+
         w = WorkspaceClient()
         file_type = self._databricks_is_type(rpath)
         if file_type == "file":
             board.fs.get(rpath, lpath, **kwargs)
             return
 
-        def _get_files(self, path, recursive, **kwargs):
+        def _get_files(path, recursive, **kwargs):
             raw_contents = w.files.list_directory_contents(path)
             contents = list(raw_contents)
             details = list(map(self._databricks_content_details, contents))
@@ -96,11 +107,17 @@ class DatabricksFs(AbstractFileSystem):
                     target_path = PurePath(lpath).joinpath(rel_path)
                     board.fs.get(item_path, str(target_path))
 
-        _get_files(self, rpath, recursive, **kwargs)
+        _get_files(rpath, recursive, **kwargs)
 
-    @staticmethod
     def _databricks_open(self, path):
-        if not self._databricks_exists(self, path):
+        try:
+            from databricks.sdk import WorkspaceClient
+        except ModuleNotFoundError:
+            raise PinsError(
+                "Install the `databricks-sdk` package for Databricks board support."
+            )
+
+        if not self._databricks_exists(path):
             raise PinsError("File or directory does not exist")
         w = WorkspaceClient()
         resp = w.files.download(path)
@@ -109,7 +126,6 @@ class DatabricksFs(AbstractFileSystem):
         f.seek(0)
         return f
 
-    @staticmethod
     def _databricks_exists(self, path: str):
         if self._databricks_is_type(path) == "nothing":
             return False
@@ -118,6 +134,14 @@ class DatabricksFs(AbstractFileSystem):
 
     @staticmethod
     def _databricks_is_type(path: str):
+        try:
+            from databricks.sdk import WorkspaceClient
+            from databricks.sdk.errors import NotFound
+        except ModuleNotFoundError:
+            raise PinsError(
+                "Install the `databricks-sdk` package for Databricks board support."
+            )
+
         w = WorkspaceClient()
         try:
             w.files.get_metadata(path)
@@ -131,9 +155,15 @@ class DatabricksFs(AbstractFileSystem):
         else:
             return "file"
 
-    @staticmethod
     def _databricks_ls(self, path, detail):
-        if not self._databricks_exists(self, path):
+        try:
+            from databricks.sdk import WorkspaceClient
+        except ModuleNotFoundError:
+            raise PinsError(
+                "Install the `databricks-sdk` package for Databricks board support."
+            )
+
+        if not self._databricks_exists(path):
             raise PinsError("File or directory does not exist")
         w = WorkspaceClient()
         if self._databricks_is_type(path) == "file":
@@ -159,8 +189,14 @@ class DatabricksFs(AbstractFileSystem):
                 items.append(item_path)
         return items
 
-    @staticmethod
     def _databricks_rm_dir(self, path):
+        try:
+            from databricks.sdk import WorkspaceClient
+        except ModuleNotFoundError:
+            raise PinsError(
+                "Install the `databricks-sdk` package for Databricks board support."
+            )
+
         w = WorkspaceClient()
         raw_contents = w.files.list_directory_contents(path)
         contents = list(raw_contents)
@@ -168,13 +204,20 @@ class DatabricksFs(AbstractFileSystem):
         for item in details:
             item_path = item.get("path")
             if item.get("is_directory"):
-                self._databricks_rm_dir(self, item_path)
+                self._databricks_rm_dir(item_path)
             else:
                 w.files.delete(item_path)
         w.files.delete_directory(path)
 
     @staticmethod
     def _databricks_mkdir(path):
+        try:
+            from databricks.sdk import WorkspaceClient
+        except ModuleNotFoundError:
+            raise PinsError(
+                "Install the `databricks-sdk` package for Databricks board support."
+            )
+
         w = WorkspaceClient()
         w.files.create_directory(path)
 

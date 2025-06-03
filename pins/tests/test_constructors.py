@@ -192,7 +192,7 @@ def test_constructor_boards(board, df_csv, tmp_cache):
     # check data
     # TODO: update when dbc boards are not read-only
     if board.fs.protocol == "dbc":
-        df_csv = pd.DataFrame({'x': [1, 2, 3], 'y': [4, 5, 6]})
+        df_csv = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
     assert_frame_equal(df, df_csv)
 

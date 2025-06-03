@@ -71,6 +71,8 @@ jobs:
           AWS_REGION: "us-east-1"
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_ACCOUNT_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           PYTEST_OPTS: ${{ matrix.pytest_opts }}
           REQUIREMENTS: ${{ matrix.requirements }}
           ACTION_OS: ${{ matrix.os }}

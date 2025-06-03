@@ -40,6 +40,7 @@ check = [
     "pre-commit",
     "pyright==1.1.372", # Pinned; manually sync with .github/workflows/code-checks.yml
     "types-appdirs",
+    "databricks-sdk"
 ]
 databricks = ["databricks-sdk"]
 doc = [

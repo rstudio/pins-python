@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, overload
+from typing import TYPE_CHECKING, Any, ClassVar, overload
 
 from databackend import AbstractBackend
+from typing_extensions import TypeAlias
 
 if TYPE_CHECKING:
     import pandas as pd

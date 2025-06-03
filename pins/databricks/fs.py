@@ -118,7 +118,7 @@ class DatabricksFs(AbstractFileSystem):
             )
 
         if not self._databricks_exists(path):
-            raise PinsError("File or directory does not exist")
+            raise PinsError(f"File or directory does not exist at path: {path}")
         w = WorkspaceClient()
         resp = w.files.download(path)
         f = BytesIO()
@@ -164,7 +164,7 @@ class DatabricksFs(AbstractFileSystem):
             )
 
         if not self._databricks_exists(path):
-            raise PinsError("File or directory does not exist")
+            raise PinsError(f"File or directory does not exist at path: {path}")
         w = WorkspaceClient()
         if self._databricks_is_type(path) == "file":
             if detail:

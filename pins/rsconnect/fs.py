@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from typing import Sequence
+from typing import ClassVar
 
 from fsspec import AbstractFileSystem
 
@@ -33,7 +36,7 @@ def _not_impl_args_kwargs(args, kwargs):
 @dataclass
 class PinBundleManifestMetadata:
     appmode: str = "static"
-    primary_rmd: "str|None" = None
+    primary_rmd: str | None = None
     primary_html: str = "index.html"
     content_category: str = "pin"
     has_parameters: bool = False
@@ -59,7 +62,7 @@ class PinBundleManifest:
         return cls(files=flat_rel_files)
 
     @classmethod
-    def add_manifest_to_directory(cls, dir_name: "str | Path", **kwargs) -> None:
+    def add_manifest_to_directory(cls, dir_name: str | Path, **kwargs) -> None:
         import json
 
         # TODO(question): R lib uses RSCONNECT_TAR env variable
@@ -105,7 +108,7 @@ class BundleFilePath(BundlePath):
 
 
 class RsConnectFs(AbstractFileSystem):
-    protocol: str = "rsc"
+    protocol: ClassVar[str | tuple[str, ...]] = "rsc"
 
     def __init__(self, server_url, **kwargs):
         if isinstance(server_url, RsConnectApi):
@@ -116,8 +119,8 @@ class RsConnectFs(AbstractFileSystem):
         self._user_name_cache = {}
         self._content_name_cache = {}
 
-    def ls(self, path, details=False, **kwargs) -> "Sequence[BaseEntity] | Sequence[str]":
-        """List contents of Rstudio Connect Server.
+    def ls(self, path, details=False, **kwargs) -> Sequence[BaseEntity] | Sequence[str]:
+        """List contents of Posit Connect Server.
 
         Parameters
         ----------
@@ -163,7 +166,7 @@ class RsConnectFs(AbstractFileSystem):
         cls_manifest=PinBundleManifest,
         **kwargs,
     ) -> None:
-        """Put a bundle onto Rstudio Connect.
+        """Put a bundle onto Posit Connect.
 
         Parameters
         ----------
@@ -224,7 +227,7 @@ class RsConnectFs(AbstractFileSystem):
         return f"{rpath}/{bundle['id']}"
 
     def open(self, path: str, mode: str = "rb", *args, **kwargs):
-        """Open a file inside an RStudio Connect bundle."""
+        """Open a file inside an Posit Connect bundle."""
 
         if mode != "rb":
             raise NotImplementedError()
@@ -253,7 +256,7 @@ class RsConnectFs(AbstractFileSystem):
         return f
 
     def get(self, rpath, lpath, recursive=False, *args, **kwargs) -> None:
-        """Fetch a bundle or file from RStudio Connect."""
+        """Fetch a bundle or file from Posit Connect."""
         parsed = self.parse_path(rpath)
 
         if recursive:
@@ -303,7 +306,7 @@ class RsConnectFs(AbstractFileSystem):
         # TODO: could implement and call makedirs, but seems overkill
         self.api.post_content_item(parsed.content, access_type, **kwargs)
 
-    def info(self, path, **kwargs) -> "User | Content | Bundle":
+    def info(self, path, **kwargs) -> User | Content | Bundle:
         # TODO: source of fsspec info uses self._parent to check cache?
         # S3 encodes refresh (for local cache) and version_id arguments
 

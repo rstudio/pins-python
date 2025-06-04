@@ -136,6 +136,40 @@ def test_board_pin_write_file_raises_error(board, tmp_path):
         board.pin_write(path, "cool_pin", type="file")
 
 
+@pytest.mark.parametrize("force_identical_write", [True, False])
+def test_board_pin_write_force_identical_write_pincount(board, force_identical_write):
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    # 1min ago to avoid name collision
+    one_min_ago = datetime.now() - timedelta(minutes=1)
+    board.pin_write(df, "cool_pin", type="csv", created=one_min_ago)
+    board.pin_write(
+        df, "cool_pin", type="csv", force_identical_write=force_identical_write
+    )
+    versions = board.pin_versions("cool_pin")
+    if force_identical_write:
+        assert len(versions) == 2
+    else:
+        assert len(versions) == 1
+
+
+def test_board_pin_write_force_identical_write_msg(
+    board, capfd: pytest.CaptureFixture[str]
+):
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    # 1min ago to avoid name collision
+    one_min_ago = datetime.now() - timedelta(minutes=1)
+    board.pin_write(df, "cool_pin", type="csv", created=one_min_ago)
+    board.pin_write(df, "cool_pin", type="csv")
+    versions = board.pin_versions("cool_pin")
+
+    _, err = capfd.readouterr()
+    msg = 'The hash of pin "cool_pin" has not changed. Your pin will not be stored.'
+    assert msg in err
+    assert len(versions) == 1
+
+
 def test_board_pin_download(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})
@@ -232,6 +266,26 @@ def test_board_pin_upload_path_list(board_with_cache, tmp_path):
     (pin_path,) = board_with_cache.pin_download("cool_pin")
 
 
+def test_board_pin_download_filename_multifile(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path1, path2 = tmp_path / "data1.csv", tmp_path / "data2.csv"
+    df.to_csv(path1, index=False)
+    df.to_csv(path2, index=False)
+
+    meta = board_with_cache.pin_upload([path1, path2], "cool_pin")
+
+    assert meta.type == "file"
+    assert meta.file == ["data1.csv", "data2.csv"]
+
+    pin_path = board_with_cache.pin_download("cool_pin")
+
+    assert len(pin_path) == 2
+    assert Path(pin_path[0]).name == "data1.csv"
+    assert Path(pin_path[1]).name == "data2.csv"
+
+
 def test_board_pin_write_rsc_index_html(board, tmp_path: Path, snapshot):
     if board.fs.protocol != "rsc":
         pytest.skip()
@@ -310,6 +364,32 @@ def test_board_pin_read_insecure_succeed_board_flag(board):
 
 
 @pytest.mark.parametrize("versioned", [None, False])
+def test_board_unversioned_pin_write_unversioned_force_identical_write(
+    versioned, board_unversioned
+):
+    # 1min ago to avoid name collision
+    one_min_ago = datetime.now() - timedelta(minutes=1)
+    board_unversioned.pin_write(
+        {"a": 1},
+        "test_pin",
+        type="json",
+        versioned=versioned,
+        created=one_min_ago,
+        force_identical_write=True,
+    )
+    board_unversioned.pin_write(
+        {"a": 2},
+        "test_pin",
+        type="json",
+        versioned=versioned,
+        force_identical_write=True,
+    )
+
+    assert len(board_unversioned.pin_versions("test_pin")) == 1
+    assert board_unversioned.pin_read("test_pin") == {"a": 2}
+
+
+@pytest.mark.parametrize("versioned", [None, False])
 def test_board_unversioned_pin_write_unversioned(versioned, board_unversioned):
     board_unversioned.pin_write({"a": 1}, "test_pin", type="json", versioned=versioned)
     board_unversioned.pin_write({"a": 2}, "test_pin", type="json", versioned=versioned)
@@ -346,9 +426,14 @@ def pin_name():
 
 @pytest.fixture
 def pin_del(board, df, pin_name):
-    meta_old = board.pin_write(df, pin_name, type="csv", title="some title")
-    sleep(1)
-    meta_new = board.pin_write(df, pin_name, type="csv", title="some title")
+    # 1min ago to avoid name collision
+    one_min_ago = datetime.now() - timedelta(minutes=1)
+    meta_old = board.pin_write(
+        df, pin_name, type="csv", title="some title", created=one_min_ago
+    )
+    meta_new = board.pin_write(
+        df, pin_name, type="csv", title="some title", force_identical_write=True
+    )
 
     assert len(board.pin_versions(pin_name)) == 2
     assert meta_old.version.version != meta_new.version.version
@@ -363,8 +448,22 @@ def pin_prune(board, df, pin_name):
     two_days_ago = today - timedelta(days=2, minutes=1)
 
     board.pin_write(df, pin_name, type="csv", title="some title", created=today)
-    board.pin_write(df, pin_name, type="csv", title="some title", created=day_ago)
-    board.pin_write(df, pin_name, type="csv", title="some title", created=two_days_ago)
+    board.pin_write(
+        df,
+        pin_name,
+        type="csv",
+        title="some title",
+        created=day_ago,
+        force_identical_write=True,
+    )
+    board.pin_write(
+        df,
+        pin_name,
+        type="csv",
+        title="some title",
+        created=two_days_ago,
+        force_identical_write=True,
+    )
 
     versions = board.pin_versions(pin_name, as_df=False)
     assert len(versions) == 3
@@ -423,7 +522,7 @@ def test_board_pin_versions_prune_n(board, pin_prune, pin_name, n):
 
 @pytest.mark.parametrize("days", [1, 2])
 def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
-    # RStudio cannot handle days, since it involves pulling metadata
+    # Posit cannot handle days, since it involves pulling metadata
     if board.fs.protocol == "rsc":
         with pytest.raises(NotImplementedError):
             board.pin_versions_prune(pin_name, days=days)
@@ -435,6 +534,33 @@ def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
 
     # each of the 3 versions adds an 1 more day + 1 min
     assert len(new_versions) == days
+
+
+def test_board_pin_versions_prune_days_protect_most_recent(board, pin_name):
+    """To address https://github.com/rstudio/pins-python/issues/297"""
+    # Posit cannot handle days, since it involves pulling metadata
+    if board.fs.protocol == "rsc":
+        with pytest.raises(NotImplementedError):
+            board.pin_versions_prune(pin_name, days=5)
+        return
+
+    today = datetime.now()
+    two_days_ago = today - timedelta(days=2, minutes=1)
+    three_days_ago = today - timedelta(days=3, minutes=1)
+
+    # Note, we are _not_ going to write a pin for today, otherwise we wouldn't be
+    # properly testing the protection of the most recent version - it would be trivially
+    # protected because it would always lie in the last day / fraction of a day.
+    board.pin_write({"a": 1}, pin_name, type="json", created=two_days_ago)
+    assert len(board.pin_versions(pin_name, as_df=False)) == 1
+    board.pin_write({"a": 2}, pin_name, type="json", created=three_days_ago)
+
+    # prune the versions, keeping only the most recent
+    board.pin_versions_prune(pin_name, days=1)
+
+    # check that only the most recent version remains
+    versions = board.pin_versions(pin_name, as_df=False)
+    assert len(versions) == 1
 
 
 # pin_search ==================================================================
@@ -502,7 +628,7 @@ def test_board_base_pin_meta_cache_touch(tmp_path: Path, df):
     assert orig_access < new_access
 
 
-# RStudio Connect specific ====================================================
+# Posit Connect specific ====================================================
 
 # import fixture that builds / tearsdown user "susan"
 from pins.tests.test_rsconnect_api import (  # noqa
@@ -546,7 +672,9 @@ def test_board_pin_search_admin_user(df, board_short, fs_admin):  # noqa
 @pytest.mark.fs_rsc
 def test_board_rsc_pin_write_title_update(df, board_short):
     board_short.pin_write(df, "susan/some_df", type="csv", title="title a")
-    board_short.pin_write(df, "susan/some_df", type="csv", title="title b")
+    board_short.pin_write(
+        df, "susan/some_df", type="csv", title="title b", force_identical_write=True
+    )
 
     content = board_short.fs.info("susan/some_df")
     assert content["title"] == "title b"

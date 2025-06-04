@@ -5,6 +5,7 @@ import pytest
 from requests.exceptions import HTTPError
 
 from pins.rsconnect.api import (
+    RsConnectApi,
     RsConnectApiMissingContentError,
     RsConnectApiRequestError,
 )
@@ -66,6 +67,13 @@ def fs_short(rsc_short):
 
 def test_rsconnect_api_get_user(rsc_admin):
     me = rsc_admin.get_user()
+    assert me["username"] == "admin"
+
+
+def test_rsconnect_api_get_user_guid(rsc_admin: RsConnectApi):
+    guid = rsc_admin.get_user().get_id()
+    me = rsc_admin.get_user(guid=guid)
+    assert me.get_id() == guid
     assert me["username"] == "admin"
 
 
@@ -220,7 +228,10 @@ def test_rsconnect_api_get_content_bundle_archive(rsc_short):
     bundle = create_content_bundle(rsc_short, content["guid"])
 
     # create temporary directories for content source and dest to download to ----
-    with tempfile.TemporaryDirectory() as tmp_src, tempfile.TemporaryDirectory() as tmp_dst:
+    with (
+        tempfile.TemporaryDirectory() as tmp_src,
+        tempfile.TemporaryDirectory() as tmp_dst,
+    ):
         create_content_bundle(rsc_short, content["guid"], tmp_src)
 
         # download .tar.gz archive to a temporary file and unzip ----

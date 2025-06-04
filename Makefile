@@ -7,14 +7,14 @@ RSC_API_KEYS=pins/tests/rsconnect_api_keys.json
 dev: pins/tests/rsconnect_api_keys.json
 
 dev-start:
-	docker-compose up -d
-	docker-compose exec -T rsconnect bash < script/setup-rsconnect/add-users.sh
+	docker compose up -d
+	docker compose exec -T rsconnect bash < script/setup-rsconnect/add-users.sh
 	# curl fails with error 52 without a short sleep....
 	sleep 5
 	curl -s --retry 10 --retry-connrefused http://localhost:3939
 
 dev-stop:
-	docker-compose down
+	docker compose down
 	rm -f $(RSC_API_KEYS)
 
 $(RSC_API_KEYS): dev-start
@@ -38,10 +38,10 @@ docs-build:
 docs-clean:
 	rm -rf docs/_build docs/api/api_card
 
-requirements/dev.txt: setup.cfg
+requirements/dev.txt: pyproject.toml
 	@# allows you to do this...
 	@# make requirements | tee > requirements/some_file.txt
-	@pip-compile setup.cfg --rebuild --extra doc --extra test --extra check --output-file=- > $@
+	@pip-compile pyproject.toml --rebuild --extra doc --extra test --extra check --output-file=- > $@
 
 binder/requirements.txt: requirements/dev.txt
 	cp $< $@

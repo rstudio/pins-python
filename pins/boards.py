@@ -1,19 +1,23 @@
+from __future__ import annotations
+
 import functools
 import inspect
 import logging
 import re
 import shutil
 import tempfile
+from collections.abc import Mapping, Sequence
 from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
-from typing import Mapping, Optional, Protocol, Sequence
+from typing import Protocol
 
 from importlib_resources import files
+from importlib_resources.abc import Traversable
 
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
-from .drivers import default_title, load_data, load_file, save_data
+from .drivers import REQUIRES_SINGLE_FILE, default_title, load_data, load_file, save_data
 from .errors import PinsError, PinsVersionError
 from .meta import Meta, MetaFactory, MetaRaw
 from .utils import ExtendMethodDoc, inform, warn_deprecated
@@ -23,7 +27,7 @@ _log = logging.getLogger(__name__)
 
 
 class IFileSystem(Protocol):
-    protocol: "str | list"
+    protocol: str | list
 
     def ls(self, path: str) -> Sequence[str]: ...
 
@@ -47,11 +51,11 @@ class BaseBoard:
 
     def __init__(
         self,
-        board: "str | Path",
+        board: str | Path,
         fs: IFileSystem,
         versioned=True,
         meta_factory=MetaFactory(),
-        allow_pickle_read: "bool | None" = None,
+        allow_pickle_read: bool | None = None,
     ):
         self.board = str(board)
         self.fs = fs
@@ -81,7 +85,7 @@ class BaseBoard:
         """
 
         if not self.pin_exists(name):
-            raise PinsError("Cannot check version, since pin %s does not exist" % name)
+            raise PinsError(f"Cannot check version, since pin {name} does not exist")
 
         detail = isinstance(self, BoardRsConnect)
 
@@ -170,7 +174,7 @@ class BaseBoard:
 
         return [name for name in pin_names if name not in self.reserved_pin_names]
 
-    def pin_fetch(self, name: str, version: Optional[str] = None) -> Meta:
+    def pin_fetch(self, name: str, version: str | None = None) -> Meta:
         meta = self.pin_meta(name, version)
 
         # TODO: sanity check caching (since R pins does a cache touch here)
@@ -182,7 +186,7 @@ class BaseBoard:
         #       so they could pin_fetch and then examine the result, a la pin_download
         return meta
 
-    def pin_read(self, name, version: Optional[str] = None, hash: Optional[str] = None):
+    def pin_read(self, name, version: str | None = None, hash: str | None = None):
         """Return the data stored in a pin.
 
         Parameters
@@ -216,43 +220,62 @@ class BaseBoard:
     def _pin_store(
         self,
         x,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Mapping] = None,
-        versioned: Optional[bool] = None,
-        created: Optional[datetime] = None,
+        name: str | None = None,
+        type: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        metadata: Mapping | None = None,
+        versioned: bool | None = None,
+        created: datetime | None = None,
+        *,
+        force_identical_write: bool = False,
     ) -> Meta:
-        if type == "feather":
+        _type = type
+        if _type == "feather":
             warn_deprecated(
                 'Writing pin type "feather" is unsupported. Switching type to "arrow".'
                 " This produces the exact same behavior, and also works with R pins."
                 ' Please switch to pin_write using type="arrow".'
             )
-            type = "arrow"
+            _type = "arrow"
 
-        if type == "file":
+        if _type == "file":
             # the file type makes the name of the data the exact filename, rather
             # than the pin name + a suffix (e.g. my_pin.csv).
             if isinstance(x, (tuple, list)) and len(x) == 1:
                 x = x[0]
 
-            _p = Path(x)
-            _base_len = len(_p.name) - len("".join(_p.suffixes))
-            object_name = _p.name[:_base_len]
+            if not isinstance(x, (list, tuple)):
+                _p = Path(x)
+                _base_len = len(_p.name) - len("".join(_p.suffixes))
+                object_name = _p.name[:_base_len]
+            else:
+                # multifile upload, keep list of filenames
+                object_name = []
+                for file in x:
+                    _p = Path(file)
+                    # _base_len = len(_p.name) - len("".join(_p.suffixes))
+                    object_name.append(_p.name)  # [:_base_len])
         else:
             object_name = None
 
         pin_name = self.path_to_pin(name)
 
+        # Pre-emptively fetch the most recent pin's meta if it exists - this is used
+        # for the force_identical_write check
+        abort_if_identical = not force_identical_write and self.pin_exists(name)
+        if abort_if_identical:
+            last_meta = self.pin_meta(name)
+
         with tempfile.TemporaryDirectory() as tmp_dir:
-            # create all pin data (e.g. data.txt, save object)
+            # create all pin data (e.g. data.txt, save object) to get the metadata.
+            # For unversioned boards, this also will delete the most recent pin version,
+            # ready for it to be replaced with a new one.
             meta = self.prepare_pin_version(
                 tmp_dir,
                 x,
                 pin_name,
-                type,
+                _type,
                 title,
                 description,
                 metadata,
@@ -260,6 +283,18 @@ class BaseBoard:
                 created,
                 object_name=object_name,
             )
+
+            # force_identical_write check
+            if abort_if_identical:
+                last_hash = last_meta.pin_hash
+
+                if last_hash == meta.pin_hash:
+                    msg = (
+                        f'The hash of pin "{name}" has not changed. Your pin will not '
+                        f"be stored.",
+                    )
+                    inform(log=_log, msg=msg)
+                    return last_meta
 
             # move pin to destination ----
             # create pin version folder
@@ -301,13 +336,15 @@ class BaseBoard:
     def pin_write(
         self,
         x,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Mapping] = None,
-        versioned: Optional[bool] = None,
-        created: Optional[datetime] = None,
+        name: str | None = None,
+        type: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        metadata: Mapping | None = None,
+        versioned: bool | None = None,
+        created: datetime | None = None,
+        *,
+        force_identical_write: bool = False,
     ) -> Meta:
         """Write a pin object to the board.
 
@@ -334,6 +371,17 @@ class BaseBoard:
         created:
             A date to store in the Meta.created field. This field may be used as
             part of the pin version name.
+        force_identical_write:
+            Store the pin even if the pin contents are identical to the last version
+            (compared using the hash). Only the pin contents are compared, not the pin
+            metadata. Defaults to False.
+
+        Returns
+        -------
+        Meta:
+            Metadata about the stored pin. If `force_identical_write` is False and the
+            pin contents are identical to the last version, the last version's metadata
+            is returned.
         """
 
         if type == "file":
@@ -343,7 +391,15 @@ class BaseBoard:
             )
 
         return self._pin_store(
-            x, name, type, title, description, metadata, versioned, created
+            x,
+            name,
+            type,
+            title,
+            description,
+            metadata,
+            versioned,
+            created,
+            force_identical_write=force_identical_write,
         )
 
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
@@ -369,24 +425,36 @@ class BaseBoard:
         if hash is not None:
             raise NotImplementedError("TODO: validate hash")
 
+        fnames = [meta.file] if isinstance(meta.file, str) else meta.file
+        pin_type = meta.type
+
+        if len(fnames) > 1 and pin_type in REQUIRES_SINGLE_FILE:
+            raise ValueError("Cannot load data when more than 1 file")
+
         pin_name = self.path_to_pin(name)
+        files = []
 
-        # TODO: raise for multiple files
-        # fetch file
-        with load_file(
-            meta, self.fs, self.construct_path([pin_name, meta.version.version])
-        ) as f:
-            # could also check whether f isinstance of PinCache
-            fname = getattr(f, "name", None)
+        for fname in fnames:
+            # fetch file
+            with load_file(
+                fname,
+                self.fs,
+                self.construct_path([pin_name, meta.version.version]),
+                pin_type,
+            ) as f:
+                # could also check whether f isinstance of PinCache
+                fname = getattr(f, "name", None)
 
-            if fname is None:
-                raise PinsError("pin_download requires a cache.")
+                if fname is None:
+                    raise PinsError("pin_download requires a cache.")
 
-            return [str(Path(fname).absolute())]
+                files.append(str(Path(fname).absolute()))
+
+        return files
 
     def pin_upload(
         self,
-        paths: "str | list[str]",
+        paths: str | list[str],
         name=None,
         title=None,
         description=None,
@@ -415,6 +483,12 @@ class BaseBoard:
             This gets stored on the Meta.user field.
         """
 
+        if isinstance(paths, (list, tuple)):
+            # check if all paths exist
+            for path in paths:
+                if not Path(path).is_file():
+                    raise PinsError(f"Path is not a valid file: {path}")
+
         return self._pin_store(
             paths,
             name,
@@ -440,7 +514,7 @@ class BaseBoard:
         pin_version_path = self.construct_path([pin_name, version])
         self.fs.rm(pin_version_path, recursive=True)
 
-    def pin_versions_prune(self, name, n: "int | None" = None, days: "int | None" = None):
+    def pin_versions_prune(self, name, n: int | None = None, days: int | None = None):
         """Delete old versions of a pin.
 
         Parameters
@@ -473,7 +547,8 @@ class BaseBoard:
                 raise ValueError("Argument days is {days}, but must be greater than 0.")
 
             date_cutoff = datetime.today() - timedelta(days=days)
-            to_delete = [v for v in versions if v.created < date_cutoff]
+            # Avoid deleting the most recent version
+            to_delete = [v for v in versions[:-1] if v.created < date_cutoff]
 
         # message user about deletions ----
         # TODO(question): how to pin_inform? Log or warning?
@@ -534,7 +609,7 @@ class BaseBoard:
         #               looks with meta objects in it.
         return res
 
-    def pin_delete(self, names: "str | Sequence[str]"):
+    def pin_delete(self, names: str | Sequence[str]):
         """Delete a pin (or pins), removing it from the board.
 
         Parameters
@@ -548,7 +623,7 @@ class BaseBoard:
 
         for name in names:
             if not self.pin_exists(name):
-                raise PinsError("Cannot delete pin, since pin %s does not exist" % name)
+                raise PinsError(f"Cannot delete pin, since pin {name} does not exist")
 
             path_to_pin = self.construct_path([self.path_to_pin(name)])
             self.fs.rm(path_to_pin, recursive=True)
@@ -611,14 +686,14 @@ class BaseBoard:
         self,
         pin_dir_path,
         x,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Mapping] = None,
-        versioned: Optional[bool] = None,
-        created: Optional[datetime] = None,
-        object_name: Optional[str] = None,
+        name: str | None = None,
+        type: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        metadata: Mapping | None = None,
+        versioned: bool | None = None,
+        created: datetime | None = None,
+        object_name: str | list[str] | None = None,
     ):
         meta = self._create_meta(
             pin_dir_path,
@@ -642,14 +717,14 @@ class BaseBoard:
         self,
         pin_dir_path,
         x,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Mapping] = None,
-        versioned: Optional[bool] = None,
-        created: Optional[datetime] = None,
-        object_name: Optional[str] = None,
+        name: str | None = None,
+        type: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        metadata: Mapping | None = None,
+        versioned: bool | None = None,
+        created: datetime | None = None,
+        object_name: str | None = None,
     ):
         if name is None:
             raise NotImplementedError("Name must be specified.")
@@ -663,14 +738,18 @@ class BaseBoard:
         # create metadata from object on disk ---------------------------------
         # save all pin data to a temporary folder (including data.txt), so we
         # can fs.put it all straight onto the backend filesystem
-
-        if object_name is None:
-            p_obj = Path(pin_dir_path) / name
+        apply_suffix = True
+        if isinstance(object_name, (list, tuple)):
+            apply_suffix = False
+            p_obj = []
+            for obj in object_name:
+                p_obj.append(str(Path(pin_dir_path) / obj))
+        elif object_name is None:
+            p_obj = str(Path(pin_dir_path) / name)
         else:
-            p_obj = Path(pin_dir_path) / object_name
-
+            p_obj = str(Path(pin_dir_path) / object_name)
         # file is saved locally in order to hash, calc size
-        file_names = save_data(x, str(p_obj), type)
+        file_names = save_data(x, p_obj, type, apply_suffix)
 
         meta = self.meta_factory.create(
             pin_dir_path,
@@ -863,7 +942,7 @@ class BoardManual(BaseBoard):
         meta = self.pin_meta(name, version)
 
         if isinstance(meta, MetaRaw):
-            f = load_file(meta, self.fs, None)
+            f = load_file(meta.file, self.fs, None, meta.type)
         else:
             raise NotImplementedError(
                 "TODO: pin_download currently can only read a url to a single file."
@@ -917,14 +996,14 @@ class BoardRsConnect(BaseBoard):
     # TODO: note that board is unused in this class (e.g. it's not in construct_path())
 
     # TODO: should read template dynamically, not at class def'n time
-    html_assets_dir: Path = files("pins") / "rsconnect/html"
-    html_template: Path = files("pins") / "rsconnect/html/index.html"
+    html_assets_dir: Traversable = files("pins") / "rsconnect/html"
+    html_template: Traversable = files("pins") / "rsconnect/html/index.html"
 
     # defaults work ----
 
     @ExtendMethodDoc
     def pin_list(self):
-        # lists all pin content on RStudio Connect server
+        # lists all pin content on Posit Connect server
         # we can't use fs.ls, because it will list *all content*
         paged_res = self.fs.api.misc_get_applications("content_type:pin")
         results = paged_res.results
@@ -933,9 +1012,7 @@ class BoardRsConnect(BaseBoard):
         return names
 
     @ExtendMethodDoc
-    def pin_write(
-        self, *args, access_type=None, versioned: Optional[bool] = None, **kwargs
-    ):
+    def pin_write(self, *args, access_type=None, versioned: bool | None = None, **kwargs):
         """Write a pin.
 
         Extends parent method in the following ways:
@@ -1051,14 +1128,14 @@ class BoardRsConnect(BaseBoard):
             if e.args[0]["code"] != 75:
                 raise e
 
-            raise PinsError("RStudio Connect cannot delete the latest pin version.")
+            raise PinsError("Posit Connect cannot delete the latest pin version.")
 
     @ExtendMethodDoc
     def pin_versions_prune(self, *args, **kwargs):
         sig = inspect.signature(super().pin_versions_prune)
         if sig.bind(*args, **kwargs).arguments.get("days") is not None:
             raise NotImplementedError(
-                "RStudio Connect board cannot prune versions using days."
+                "Posit Connect board cannot prune versions using days."
             )
         super().pin_versions_prune(*args, **kwargs)
 
@@ -1085,7 +1162,7 @@ class BoardRsConnect(BaseBoard):
         if not get_allow_rsc_short_name() and name.count("/") != 1:
             raise ValueError(
                 f"Invalid pin name: {name}"
-                "\nRStudio Connect pin names must include user name. E.g. "
+                "\nPosit Connect pin names must include user name. E.g. "
                 "\nsome_user/mtcars, for the user some_user."
             )
 
@@ -1121,7 +1198,7 @@ class BoardRsConnect(BaseBoard):
     def user_name(self):
         return self.fs.api.get_user()["username"]
 
-    def prepare_pin_version(self, pin_dir_path, x, name: "str | None", *args, **kwargs):
+    def prepare_pin_version(self, pin_dir_path, x, name: str | None, *args, **kwargs):
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
         # the <name> part.

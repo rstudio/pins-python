@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import os
 import tempfile
 import warnings
+from typing import Callable
 
 import fsspec
 
@@ -8,8 +11,9 @@ from .boards import BaseBoard, BoardManual, BoardRsConnect, board_deparse
 from .cache import PinsAccessTimeCache, PinsCache, PinsRscCacheMapper, prefix_cache
 from .config import get_cache_dir, get_data_dir
 
-# Kept here for backward-compatibility reasons.
-board_deparse  # Note that this is not a constructor, but a function to represent them.
+# Kept here for backward-compatibility reasons
+# Note that this is not a constructor, but a function to represent them.
+board_deparse  # pyright: ignore[reportUnusedExpression]
 
 
 class DEFAULT:
@@ -25,10 +29,10 @@ def board(
     protocol: str,
     path: str = "",
     versioned: bool = True,
-    cache: "type[DEFAULT] | None" = DEFAULT,
+    cache: type[DEFAULT] | None = DEFAULT,
     allow_pickle_read=None,
-    storage_options: "dict | None" = None,
-    board_factory: "callable | type[BaseBoard] | None" = None,
+    storage_options: dict | None = None,
+    board_factory: Callable | type[BaseBoard] | None = None,
 ):
     """General function for constructing a pins board.
 

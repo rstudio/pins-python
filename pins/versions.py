@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import logging
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import datetime
-from typing import Mapping, Sequence, Union
+from pathlib import Path
 
 from xxhash import xxh64
 
@@ -54,9 +57,7 @@ class Version(_VersionBase):
     def hash_file(f: IOBase, block_size: int = -1) -> str:
         # TODO: what kind of things implement the "buffer API"?
         hasher = xxh64()
-
         buf = f.read(block_size)
-
         while len(buf) > 0:
             hasher.update(buf)
             buf = f.read(block_size)
@@ -64,12 +65,12 @@ class Version(_VersionBase):
         return hasher.hexdigest()
 
     @classmethod
-    def from_string(cls, version: str) -> "Version":
+    def from_string(cls, version: str) -> Version:
         parts = version.split("-")
 
         if len(parts) != 2:
             raise PinsVersionError(
-                "version string can only have 1 '-', but contains %s" % len(parts)
+                f"version string can only have 1 '-', but contains {len(parts) - 1}"
             )
 
         dt_string, hash_ = parts
@@ -79,7 +80,7 @@ class Version(_VersionBase):
         try:
             created = cls.parse_created(dt_string)
         except ValueError:
-            raise PinsVersionError("Invalid date part of version: " % dt_string)
+            raise PinsVersionError(f"Invalid date part of version: {dt_string}")
 
         obj = cls(created, hash_)
 
@@ -93,18 +94,22 @@ class Version(_VersionBase):
 
     @classmethod
     def from_files(
-        cls, files: Sequence[StrOrFile], created: Union[datetime, None] = None
-    ) -> "Version":
+        cls, files: Sequence[StrOrFile], created: datetime | None = None
+    ) -> Version:
         hashes = []
         for f in files:
-            hash_ = cls.hash_file(open(f, "rb") if isinstance(f, str) else f)
+            hash_ = cls.hash_file(open(f, "rb") if isinstance(f, (str, Path)) else f)
             hashes.append(hash_)
 
         if created is None:
             created = datetime.now()
 
         if len(hashes) > 1:
-            raise NotImplementedError("Only 1 file may be currently be hashed")
+            # Combine the hashes into a single string
+            combined_hashes = "".join(hashes)
+
+            # Create an xxh64 hash of the combined string
+            hashes = [xxh64(combined_hashes).hexdigest()]
 
         return cls(created, hashes[0])
 

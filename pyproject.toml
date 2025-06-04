@@ -10,14 +10,14 @@ maintainers = [{ name = "Isabel Zimmerman", email = "isabel.zimmerman@posit.co" 
 keywords = ["data", "tidyverse"]
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: MIT License",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dynamic = ["version"]
 dependencies = [
     "appdirs<2",                # Using appdirs rather than platformdirs is deliberate, see https://github.com/rstudio/pins-python/pull/239
@@ -61,6 +61,7 @@ test = [
     "pytest-parallel",
     "s3fs",
     "geopandas>=0.8.0", # At 0.8.0, the GeoParquet format was introduced.
+    "rdata",
 ]
 
 [build-system]
@@ -100,26 +101,30 @@ pythonPlatform = "Linux"
 
 # Tracking compliance with these rules at https://github.com/rstudio/pins-python/issues/272
 reportArgumentType = false
-reportAssignmentType = false
 reportAttributeAccessIssue = false
 reportCallIssue = false
-reportGeneralTypeIssues = false
 reportIncompatibleMethodOverride = false
-reportIncompatibleVariableOverride = false
-reportIndexIssue = false
-reportMissingImports = false
 reportMissingTypeStubs = false
-reportOptionalIterable = false
 reportOptionalMemberAccess = false
 reportOptionalSubscript = false
 reportPossiblyUnboundVariable = false
 reportReturnType = false
-reportUnusedExpression = false
 
 [tool.ruff]
 line-length = 90
 extend-exclude = ["docs"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "W"]
-ignore = ["E501"]
+select = [
+    "E",  # Style
+    "F",  # Errors
+    "FA", # Use from __future__ import annotations for cleaner type hints
+    "I",  # Import sorting
+    "UP", # Upgrade to latest supported Python syntax
+    "W",  # Style
+    "A",  # Don't shadow built-ins
+]
+ignore = [
+    "E501", # Line too long
+    "A002", # The pins interface includes builtin names in args, e.g. hash, id, etc.
+]

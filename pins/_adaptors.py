@@ -1,8 +1,14 @@
 from __future__ import annotations
 
 import json
+import sys
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, overload
+from typing import TYPE_CHECKING, Any, ClassVar, overload
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 from databackend import AbstractBackend
 

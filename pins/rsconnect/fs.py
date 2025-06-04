@@ -26,7 +26,7 @@ from .api import (
 
 def _not_impl_args_kwargs(args, kwargs):
     return NotImplementedError(
-        "Additional args and kwargs not supported." f"\nArgs: {args}\nKwargs: {kwargs}"
+        f"Additional args and kwargs not supported.\nArgs: {args}\nKwargs: {kwargs}"
     )
 
 

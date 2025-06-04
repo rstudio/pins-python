@@ -19,7 +19,7 @@ def _interpret_int(env_var_name):
         env_int = int(env_var)
     except ValueError:
         raise ValueError(
-            f"{env_var_name} must be '0' or '1', but was set to " f"{repr(env_var)}."
+            f"{env_var_name} must be '0' or '1', but was set to {repr(env_var)}."
         )
 
     flag = bool(env_int)

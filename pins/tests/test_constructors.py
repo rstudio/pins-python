@@ -178,6 +178,7 @@ def board(backend):
     backend.teardown_board(board)
 
 
+@skip_if_dbc  # passes, but skipping since this cannot clean itself up properly
 def test_constructor_boards(board, df_csv, tmp_cache):
     # TODO: would be nice to have fixtures for each board constructor
     # doesn't need to copy over pins-compat content

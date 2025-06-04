@@ -1,5 +1,8 @@
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
+
+from pins._adaptors import Adaptor, create_adaptor
 
 from .config import PINS_ENV_INSECURE_READ, get_allow_pickle_read
 from .errors import PinsInsecureReadError
@@ -13,25 +16,6 @@ UNSAFE_TYPES = frozenset(["joblib"])
 REQUIRES_SINGLE_FILE = frozenset(["csv", "joblib"])
 
 
-def _assert_is_pandas_df(x, file_type: str) -> None:
-    import pandas as pd
-
-    if not isinstance(x, pd.DataFrame):
-        raise NotImplementedError(
-            f"Currently only pandas.DataFrame can be saved as type {file_type!r}."
-        )
-
-
-def _assert_is_geopandas_df(x):
-    # Assume we have already protected against uninstalled geopandas
-    import geopandas as gpd
-
-    if not isinstance(x, gpd.GeoDataFrame):
-        raise NotImplementedError(
-            "Currently only geopandas.GeoDataFrame can be saved to a GeoParquet."
-        )
-
-
 def load_path(filename: str, path_to_version, pin_type=None):
     # file path creation ------------------------------------------------------
     if pin_type == "table":
@@ -40,6 +24,8 @@ def load_path(filename: str, path_to_version, pin_type=None):
         filename = "data.csv"
 
     if path_to_version is not None:
+        if isinstance(path_to_version, str):
+            path_to_version = path_to_version.rstrip("/")
         path_to_file = f"{path_to_version}/{filename}"
     else:
         # BoardUrl doesn't have versions, and the file is the full url
@@ -146,7 +132,7 @@ def load_data(
 
 
 def save_data(
-    obj, fname, pin_type=None, apply_suffix: bool = True
+    obj: "Adaptor | Any", fname, pin_type=None, apply_suffix: bool = True
 ) -> "str | Sequence[str]":
     # TODO: extensible saving with deferred importing
     # TODO: how to encode arguments to saving / loading drivers?
@@ -154,6 +140,11 @@ def save_data(
     # TODO: would be useful to have singledispatch func for a "default saver"
     #       as argument to board, and then type dispatchers for explicit cases
     #       of saving / loading objects different ways.
+
+    if isinstance(obj, Adaptor):
+        adaptor, obj = obj, obj._d
+    else:
+        adaptor = create_adaptor(obj)
 
     if apply_suffix:
         if pin_type == "file":
@@ -171,44 +162,22 @@ def save_data(
         final_name = f"{fname}{suffix}"
 
     if pin_type == "csv":
-        _assert_is_pandas_df(obj, file_type=type)
-
-        obj.to_csv(final_name, index=False)
-
+        adaptor.write_csv(final_name)
     elif pin_type == "arrow":
         # NOTE: R pins accepts the type arrow, and saves it as feather.
         #       we allow reading this type, but raise an error for writing.
-        _assert_is_pandas_df(obj, file_type=type)
-
-        obj.to_feather(final_name)
-
+        adaptor.write_feather(final_name)
     elif pin_type == "feather":
-        _assert_is_pandas_df(obj, file_type=type)
-
-        raise NotImplementedError(
+        msg = (
             'Saving data as type "feather" no longer supported. Use type "arrow" instead.'
         )
-
+        raise NotImplementedError(msg)
     elif pin_type == "parquet":
-        _assert_is_pandas_df(obj, file_type=type)
-
-        obj.to_parquet(final_name)
-
-    elif pin_type == "geoparquet":
-        _assert_is_geopandas_df(obj)
-
-        obj.to_parquet(final_name)
-
+        adaptor.write_parquet(final_name)
     elif pin_type == "joblib":
-        import joblib
-
-        joblib.dump(obj, final_name)
-
+        adaptor.write_joblib(final_name)
     elif pin_type == "json":
-        import json
-
-        json.dump(obj, open(final_name, "w"))
-
+        adaptor.write_json(final_name)
     elif pin_type == "file":
         import contextlib
         import shutil
@@ -229,24 +198,6 @@ def save_data(
     return final_name
 
 
-def default_title(obj, name):
-    import pandas as pd
-
-    if isinstance(obj, pd.DataFrame):
-        try:
-            import geopandas as gpd
-        except ModuleNotFoundError:
-            obj_name = "DataFrame"
-        else:
-            if isinstance(obj, gpd.GeoDataFrame):
-                obj_name = "GeoDataFrame"
-            else:
-                obj_name = "DataFrame"
-
-        # TODO(compat): title says CSV rather than data.frame
-        # see https://github.com/machow/pins-python/issues/5
-        shape_str = " x ".join(map(str, obj.shape))
-        return f"{name}: a pinned {shape_str} {obj_name}"
-    else:
-        obj_name = type(obj).__qualname__
-        return f"{name}: a pinned {obj_name} object"
+def default_title(obj: Any, name: str) -> str:
+    # Kept for backward compatibility only.
+    return create_adaptor(obj).default_title(name)

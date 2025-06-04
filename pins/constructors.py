@@ -10,6 +10,7 @@ import fsspec
 from .boards import BaseBoard, BoardManual, BoardRsConnect, board_deparse
 from .cache import PinsAccessTimeCache, PinsCache, PinsRscCacheMapper, prefix_cache
 from .config import get_cache_dir, get_data_dir
+from .errors import PinsError
 
 # Kept here for backward-compatibility reasons
 # Note that this is not a constructor, but a function to represent them.
@@ -86,6 +87,11 @@ def board(
         from pins.rsconnect.fs import RsConnectFs
 
         fs = RsConnectFs(**storage_options)
+
+    elif protocol == "dbc":
+        from pins.databricks.fs import DatabricksFs
+
+        fs = DatabricksFs(**storage_options)
 
     else:
         fs = fsspec.filesystem(protocol, **storage_options)
@@ -569,3 +575,61 @@ def board_azure(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
 
     opts = {"use_listings_cache": False}
     return board("abfs", path, versioned, cache, allow_pickle_read, storage_options=opts)
+
+
+def board_databricks(path, versioned=True, cache=DEFAULT, allow_pickle_read=None):
+    """Create a board to read and write pins from an Databricks Volume folder.
+
+    Parameters
+    ----------
+    path:
+        The path to the target folder inside Unity Catalog. The path must include the
+        catalog, schema, and volume names, preceded by 'Volumes/', for example:
+        "/Volumes/my-catalog/my-schema/my-volume".
+    versioned:
+        Whether or not pins should be versioned.
+    cache:
+        Whether to use a cache. By default, pins attempts to select the right cache
+        directory, given your filesystem. If `None` is passed, then no cache will be
+        used. You can set the cache using the `PINS_CACHE_DIR` environment variable.
+    allow_pickle_read: optional, bool
+        Whether to allow reading pins that use the pickle protocol. Pickles are unsafe,
+        and can execute arbitrary code. Only allow reading pickles if you trust the
+        board to execute Python code on your computer.
+
+        You can enable reading pickles by setting this to `True`, or by setting the
+        environment variable `PINS_ALLOW_PICKLE_READ`. If both are set, this argument
+        takes precedence.
+
+    Notes
+    -----
+    The Databricks board uses the `databricks-sdk` library to authenticate and interact
+    with the Databricks Volume.
+
+    See <https://docs.databricks.com/aws/en/dev-tools/sdk-python>
+
+
+    Examples
+    --------
+
+    >>> import pytest; pytest.skip()
+
+    >>> import pins
+    >>> from dotenv import load_dotenv
+    >>> load_dotenv() # eg, for a .env file with DATABRICKS_HOST and DATABRICKS_TOKEN set
+    >>> board = pins.board_databricks("/Volumes/examples/my-board/test-volume")
+    >>> board.pin_list()
+    ['df_csv']
+
+    >>> board.pin_read("df_csv")
+       x  y  z
+    0  1  a  3
+    1  2  b  4
+    """
+    try:
+        import databricks.sdk  # noqa: F401
+    except ModuleNotFoundError:
+        raise PinsError(
+            "Install the `databricks-sdk` package for Databricks board support."
+        )
+    return board("dbc", path, versioned, cache, allow_pickle_read)

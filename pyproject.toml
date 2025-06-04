@@ -31,6 +31,8 @@ dependencies = [
     "pyyaml>=3.13",
     "requests",
     "xxhash>=1",
+    "databackend>=0.0.3",
+    "typing_extensions"
 ]
 
 [project.optional-dependencies]
@@ -39,8 +41,11 @@ azure = ["adlfs"]
 check = [
     "pre-commit",
     "pyright==1.1.372", # Pinned; manually sync with .github/workflows/code-checks.yml
+    "ruff==0.5.4", # Pinned; manually sync with pre-commit-config.yaml
     "types-appdirs",
+    "databricks-sdk"
 ]
+databricks = ["databricks-sdk"]
 doc = [
     "ipykernel",
     "ipython<=8.12",
@@ -62,6 +67,7 @@ test = [
     "s3fs",
     "geopandas>=0.8.0", # At 0.8.0, the GeoParquet format was introduced.
     "rdata",
+    "databricks-sdk",
 ]
 
 [build-system]
@@ -82,10 +88,11 @@ universal = 1
 [tool.pytest.ini_options]
 markers = [
     "fs_file: mark test to only run on local filesystem",
-    "fs_s3: mark test to only run on AWS S3 bucket filesytem",
+    "fs_s3: mark test to only run on AWS S3 bucket filesystem",
     "fs_gcs: mark test to only run on Google Cloud Storage bucket filesystem",
     "fs_abfs: mark test to only run on Azure Datalake filesystem",
     "fs_rsc: mark test to only run on Posit Connect filesystem",
+    "fs_dbc: mark test to only run on Databricks Volume filesystem",
     "skip_on_github: skip this test if running on GitHub",
 ]
 testpaths = ["pins"]
@@ -128,3 +135,6 @@ ignore = [
     "E501", # Line too long
     "A002", # The pins interface includes builtin names in args, e.g. hash, id, etc.
 ]
+
+[tool.codespell]
+skip = ["*.js"]

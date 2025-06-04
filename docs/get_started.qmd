@@ -16,7 +16,7 @@ Google Cloud Storage, Azure, and more.
 This vignette will introduce you to the basics of pins.
 
 ```{python}
-from pins import board_local, board_folder, board_temp, board_url
+from pins import board, board_local, board_folder, board_temp, board_url
 ```
 
 ## Getting started
@@ -36,6 +36,7 @@ Here are a few options:
 board = board_local() # share data across R sessions on the same computer
 board = board_folder("~/Dropbox") # share data with others using dropbox
 board = board_folder("Z:\\my-team\pins") # share data using a shared network drive
+board = board("file", "Z:\\my-team\pins") # share data using a shared network drive with caching
 board = board_connect() # share data with Posit Connect
 ```
 

@@ -10,11 +10,12 @@ from collections.abc import Mapping, Sequence
 from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Protocol
 
 from importlib_resources import files
 from importlib_resources.abc import Traversable
 
+from ._adaptors import Adaptor, create_adaptor
 from .cache import PinsCache
 from .config import get_allow_rsc_short_name
 from .drivers import REQUIRES_SINGLE_FILE, default_title, load_data, load_file, save_data
@@ -24,6 +25,8 @@ from .utils import ExtendMethodDoc, inform, warn_deprecated
 from .versions import VersionRaw, guess_version, version_setup
 
 _log = logging.getLogger(__name__)
+
+_ = default_title  # Keep this import for backward compatibility
 
 
 class IFileSystem(Protocol):
@@ -133,8 +136,7 @@ class BaseBoard:
             # ensure pin and version exist
             if not self.fs.exists(self.construct_path([pin_name, version])):
                 raise PinsError(
-                    f"Pin {name} either does not exist, "
-                    f"or is missing version: {version}."
+                    f"Pin {name} either does not exist, or is missing version: {version}."
                 )
 
             selected_version = guess_version(version)
@@ -197,7 +199,7 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
+            compared against the `pin_hash` field retrieved by [](`~pins.boards.BaseBoard.pin_meta`).
 
         """
         meta = self.pin_fetch(name, version)
@@ -261,7 +263,7 @@ class BaseBoard:
 
         pin_name = self.path_to_pin(name)
 
-        # Pre-emptively fetch the most recent pin's meta if it exists - this is used
+        # Preemptively fetch the most recent pin's meta if it exists - this is used
         # for the force_identical_write check
         abort_if_identical = not force_identical_write and self.pin_exists(name)
         if abort_if_identical:
@@ -416,7 +418,7 @@ class BaseBoard:
             A specific pin version to retrieve.
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
-            compared against the `pin_hash` field retrived by [](`~pins.boards.BaseBoard.pin_meta`).
+            compared against the `pin_hash` field retrieved by [](`~pins.boards.BaseBoard.pin_meta`).
 
         """
 
@@ -716,7 +718,7 @@ class BaseBoard:
     def _create_meta(
         self,
         pin_dir_path,
-        x,
+        x: Adaptor | Any,
         name: str | None = None,
         type: str | None = None,
         title: str | None = None,
@@ -733,7 +735,7 @@ class BaseBoard:
             raise NotImplementedError("Type argument is required.")
 
         if title is None:
-            title = default_title(x, name)
+            title = create_adaptor(x).default_title(name)
 
         # create metadata from object on disk ---------------------------------
         # save all pin data to a temporary folder (including data.txt), so we
@@ -868,6 +870,8 @@ def board_deparse(board: BaseBoard):
         return f"board_gcs({repr(board.board)}{allow_pickle})"
     elif prot == "http":
         return f"board_url({repr(board.board)}, {board.pin_paths}{allow_pickle})"
+    elif prot == "dbc":
+        return f"board_databricks({repr(board.board)}{allow_pickle})"
     else:
         raise NotImplementedError(
             f"board deparsing currently not supported for protocol: {prot}"
@@ -881,9 +885,10 @@ class BoardManual(BaseBoard):
     --------
     >>> import fsspec
     >>> import os
-    >>> fs = fsspec.filesystem("github", org = "rstudio", repo = "pins-python")
+    >>> fs = fsspec.filesystem("http", block_size=0)
     >>> pin_paths = {"df_csv": "df_csv/20220214T163720Z-9bfad/"}
-    >>> board = BoardManual("pins/tests/pins-compat", fs, pin_paths=pin_paths)
+    >>> url = "https://raw.githubusercontent.com/rstudio/pins-python/main/pins/tests/pins-compat"
+    >>> board = BoardManual(url, fs, pin_paths=pin_paths)
 
     >>> board.pin_list()
     ['df_csv']
@@ -984,7 +989,6 @@ class BoardManual(BaseBoard):
             return "/".join(pre_components + [pin_path])
         elif len(others) == 2:
             version, meta = others
-
             return "/".join(pre_components + [stripped, meta])
 
         raise NotImplementedError(
@@ -1224,7 +1228,7 @@ class BoardRsConnect(BaseBoard):
         # render index.html ------------------------------------------------
 
         all_files = [meta.file] if isinstance(meta.file, str) else meta.file
-        pin_files = ", ".join(f"""<a href="{x}">{x}</a>""" for x in all_files)
+        pin_files = ", ".join(f"""<a href="{file}">{file}</a>""" for file in all_files)
 
         context = {
             "date": meta.version.created.replace(microsecond=0),
@@ -1232,37 +1236,8 @@ class BoardRsConnect(BaseBoard):
             "pin_files": pin_files,
             "pin_metadata": meta,
             "board_deparse": board_deparse(self),
+            "data_preview": create_adaptor(x).data_preview,
         }
-
-        # data preview ----
-
-        # TODO: move out data_preview logic? Can we draw some limits here?
-        #       note that the R library uses jsonlite::toJSON
-
-        import json
-
-        import pandas as pd
-
-        if isinstance(x, pd.DataFrame):
-            # TODO(compat) is 100 hard-coded?
-            # Note that we go df -> json -> dict, to take advantage of pandas type conversions
-            data = json.loads(x.head(100).to_json(orient="records"))
-            columns = [
-                {"name": [col], "label": [col], "align": ["left"], "type": [""]}
-                for col in x
-            ]
-
-            # this reproduces R pins behavior, by omitting entries that would be null
-            data_no_nulls = [
-                {k: v for k, v in row.items() if v is not None} for row in data
-            ]
-
-            context["data_preview"] = json.dumps(
-                {"data": data_no_nulls, "columns": columns}
-            )
-        else:
-            # TODO(compat): set display none in index.html
-            context["data_preview"] = json.dumps({})
 
         # do not show r code if not round-trip friendly
         if meta.type in ["joblib"]:

@@ -11,7 +11,7 @@ from pins.tests.conftest import (
     PATH_TO_EXAMPLE_BOARD,
     PATH_TO_EXAMPLE_VERSION,
 )
-from pins.tests.helpers import rm_env
+from pins.tests.helpers import rm_env, skip_if_dbc
 
 
 @pytest.fixture
@@ -41,6 +41,8 @@ def construct_from_board(board):
 
     if fs_name in ["file", ("file", "local")]:
         board = c.board_folder(board.board)
+    elif fs_name == "dbc":
+        board = c.board_databricks(board.board)
     elif fs_name == "rsc":
         board = c.board_rsconnect(
             server_url=board.fs.api.server_url, api_key=board.fs.api.api_key
@@ -176,6 +178,7 @@ def board(backend):
     backend.teardown_board(board)
 
 
+@skip_if_dbc  # passes, but skipping since this cannot clean itself up properly
 def test_constructor_boards(board, df_csv, tmp_cache):
     # TODO: would be nice to have fixtures for each board constructor
     # doesn't need to copy over pins-compat content
@@ -188,7 +191,11 @@ def test_constructor_boards(board, df_csv, tmp_cache):
     df = board.pin_read("df_csv")
 
     # check data
-    assert_frame_equal(df, df_csv)
+    # TODO: update when dbc boards are not read-only
+    if board.fs.protocol == "dbc":
+        pass
+    else:
+        assert_frame_equal(df, df_csv)
 
     # check the cache structure -----------------------------------------------
 
@@ -230,6 +237,7 @@ def board2(backend):
     backend.teardown_board(board2)
 
 
+@skip_if_dbc
 def test_constructor_boards_multi_user(board2, df_csv, tmp_cache):
     prot = board2.fs.protocol
     fs_name = prot if isinstance(prot, str) else prot[0]

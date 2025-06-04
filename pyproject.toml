@@ -43,7 +43,9 @@ check = [
     "pyright==1.1.372", # Pinned; manually sync with .github/workflows/code-checks.yml
     "ruff==0.5.4", # Pinned; manually sync with pre-commit-config.yaml
     "types-appdirs",
+    "databricks-sdk"
 ]
+databricks = ["databricks-sdk"]
 doc = [
     "ipykernel",
     "ipython<=8.12",
@@ -64,6 +66,7 @@ test = [
     "pytest-parallel",
     "s3fs",
     "rdata",
+    "databricks-sdk",
 ]
 
 [build-system]
@@ -88,6 +91,7 @@ markers = [
     "fs_gcs: mark test to only run on Google Cloud Storage bucket filesystem",
     "fs_abfs: mark test to only run on Azure Datalake filesystem",
     "fs_rsc: mark test to only run on Posit Connect filesystem",
+    "fs_dbc: mark test to only run on Databricks Volume filesystem",
     "skip_on_github: skip this test if running on GitHub",
 ]
 testpaths = ["pins"]

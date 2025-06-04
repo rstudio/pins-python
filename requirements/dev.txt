@@ -62,6 +62,8 @@ cachetools==5.5.2
     # via google-auth
 certifi==2025.4.26
     # via
+    #   pyogrio
+    #   pyproj
     #   requests
     #   sphobjinv
 cffi==1.17.1
@@ -124,6 +126,8 @@ fsspec==2025.5.1
     #   s3fs
 gcsfs==2025.5.1
     # via pins (pyproject.toml)
+geopandas==1.0.1
+    # via pins (setup.cfg)
 google-api-core==2.25.0
     # via
     #   google-cloud-core
@@ -247,8 +251,12 @@ nodeenv==1.9.1
 numpy==2.2.6
     # via
     #   fastparquet
+    #   geopandas
     #   pandas
+    #   pyarrow
+    #   pyogrio
     #   rdata
+    #   shapely
     #   xarray
 oauthlib==3.2.2
     # via requests-oauthlib
@@ -257,13 +265,16 @@ packaging==25.0
     #   black
     #   build
     #   fastparquet
+    #   geopandas
     #   ipykernel
+    #   pyogrio
     #   pytest
     #   pytest-cases
     #   xarray
 pandas==2.2.3
     # via
     #   fastparquet
+    #   geopandas
     #   pins (pyproject.toml)
     #   rdata
     #   xarray
@@ -331,6 +342,10 @@ pyjwt==2.10.1
     # via
     #   msal
     #   pyjwt
+pyogrio==0.9.0
+    # via geopandas
+pyproj==3.6.1
+    # via geopandas
 pyproject-hooks==1.2.0
     # via
     #   build
@@ -401,6 +416,8 @@ ruff==0.5.4
     # via pins (pyproject.toml)
 s3fs==2025.5.1
     # via pins (pyproject.toml)
+shapely==2.0.5
+    # via geopandas
 six==1.17.0
     # via
     #   azure-core

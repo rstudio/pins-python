@@ -77,6 +77,7 @@ Above, we saved the data as a CSV, but you can choose another option depending o
 -   `type = "arrow"` uses `to_feather()` from pandas to create an Arrow/Feather file.
 -   `type = "joblib"` uses `joblib.dump()` to create a binary Python data file, such as for storing a trained model. See the [joblib docs](https://joblib.readthedocs.io/en/latest/) for more information.
 -   `type = "json"` uses `json.dump()` to create a JSON file. Pretty much every programming language can read JSON files, but they only work well for nested lists.
+-   `type = "geoparquet"` uses `to_parquet()` from [geopandas](https://github.com/geopandas/geopandas) to create a [GeoParquet](https://github.com/opengeospatial/geoparquet) file, which is a specialized Parquet format for geospatial data.
 
 Note that when the data lives elsewhere, pins takes care of downloading and caching so that it's only re-downloaded when needed.
 That said, most boards transmit pins over HTTP, and this is going to be slow and possibly unreliable for very large pins.

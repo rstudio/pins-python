@@ -43,7 +43,8 @@ check = [
     "pyright==1.1.372", # Pinned; manually sync with .github/workflows/code-checks.yml
     "ruff==0.5.4", # Pinned; manually sync with pre-commit-config.yaml
     "types-appdirs",
-    "databricks-sdk"
+    "databricks-sdk",
+    "geopandas",
 ]
 databricks = ["databricks-sdk"]
 doc = [
@@ -65,6 +66,7 @@ test = [
     "pytest-dotenv",
     "pytest-parallel",
     "s3fs",
+    "geopandas>=0.8.0", # At 0.8.0, the GeoParquet format was introduced.
     "rdata",
     "databricks-sdk",
 ]

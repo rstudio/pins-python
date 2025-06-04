@@ -92,6 +92,16 @@ def load_data(
 
             return pd.read_csv(f)
 
+        elif meta.type == "geoparquet":
+            try:
+                import geopandas as gpd
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError(
+                    'The "geopandas" package is required to read "geoparquet" type files.'
+                ) from None
+
+            return gpd.read_parquet(f)
+
         elif meta.type == "joblib":
             import joblib
 
@@ -139,6 +149,8 @@ def save_data(
     if apply_suffix:
         if pin_type == "file":
             suffix = "".join(Path(obj).suffixes)
+        elif pin_type == "geoparquet":
+            suffix = ".parquet"
         else:
             suffix = f".{pin_type}"
     else:
@@ -161,6 +173,8 @@ def save_data(
         )
         raise NotImplementedError(msg)
     elif pin_type == "parquet":
+        adaptor.write_parquet(final_name)
+    elif pin_type == "geoparquet":
         adaptor.write_parquet(final_name)
     elif pin_type == "joblib":
         adaptor.write_joblib(final_name)

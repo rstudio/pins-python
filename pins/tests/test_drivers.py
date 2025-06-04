@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import fsspec
+import geopandas as gpd
 import pandas as pd
 import pytest
 
@@ -37,6 +38,10 @@ class ExC:
     [
         (pd.DataFrame({"x": [1, 2]}), "somename: a pinned 2 x 1 DataFrame"),
         (pd.DataFrame({"x": [1], "y": [2]}), "somename: a pinned 1 x 2 DataFrame"),
+        (
+            gpd.GeoDataFrame({"x": [1], "geometry": [None]}),
+            "somename: a pinned 1 x 2 GeoDataFrame",
+        ),
         (ExC(), "somename: a pinned ExC object"),
         (ExC().D(), "somename: a pinned ExC.D object"),
         ([1, 2, 3], "somename: a pinned list object"),
@@ -77,6 +82,27 @@ def test_driver_roundtrip(tmp_path: Path, type_):
     obj = load_data(meta, fsspec.filesystem("file"), tmp_path, allow_pickle_read=True)
 
     assert df.equals(obj)
+
+
+def test_driver_geoparquet_roundtrip(tmp_path):
+    import geopandas as gpd
+
+    gdf = gpd.GeoDataFrame(
+        {"x": [1, 2, 3], "geometry": gpd.points_from_xy([1, 2, 3], [1, 2, 3])}
+    )
+
+    fname = "some_gdf"
+    full_file = f"{fname}.parquet"
+
+    p_obj = tmp_path / fname
+    res_fname = save_data(gdf, p_obj, "geoparquet")
+
+    assert Path(res_fname).name == full_file
+
+    meta = MetaRaw(full_file, "geoparquet", "my_pin")
+    obj = load_data(meta, fsspec.filesystem("file"), tmp_path, allow_pickle_read=True)
+
+    assert gdf.equals(obj)
 
 
 @pytest.mark.parametrize(

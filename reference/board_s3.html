@@ -178,19 +178,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="pins.board_s3" class="level1">
 <h1>board_s3</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>board_s3(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    path,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    versioned<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    cache<span class="op">=</span>DEFAULT,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    allow_pickle_read<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>storage_options,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>board_s3(path, versioned=True, cache=DEFAULT, allow_pickle_read=None, **storage_options)</code></p>
 <p>Create a board to read and write pins from an AWS S3 bucket folder.</p>
-<section id="parameters" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 4%">
+<col style="width: 5%">
 <col style="width: 1%">
 <col style="width: 90%">
 <col style="width: 2%">
@@ -205,31 +199,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td>path</td>
+<td><code>path</code></td>
 <td></td>
 <td>Path of form <code>&lt;bucket_name&gt;/&lt;optional&gt;/&lt;subdirectory&gt;</code>.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td>versioned</td>
+<td><code>versioned</code></td>
 <td></td>
 <td>Whether or not pins should be versioned.</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
-<td>cache</td>
+<td><code>cache</code></td>
 <td></td>
 <td>Whether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If <code>None</code> is passed, then no cache will be used. You can set the cache using the <code>PINS_CACHE_DIR</code> environment variable.</td>
 <td><code>DEFAULT</code></td>
 </tr>
 <tr class="even">
-<td>allow_pickle_read</td>
+<td><code>allow_pickle_read</code></td>
 <td></td>
 <td>Whether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to <code>True</code>, or by setting the environment variable <code>PINS_ALLOW_PICKLE_READ</code>. If both are set, this argument takes precedence.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td>storage_options</td>
+<td><code>storage_options</code></td>
 <td></td>
 <td>Additional keyword arguments to be passed to the underlying fsspec S3FileSystem.</td>
 <td><code>{}</code></td>
@@ -237,19 +231,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="notes" class="level2 doc-section doc-section-notes">
-<h2 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h2>
+<section id="notes" class="level2">
+<h2 class="anchored" data-anchor-id="notes">Notes</h2>
 <p>The s3 board uses the fsspec library (s3fs) to handle interacting with AWS S3. In order to authenticate, set the <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, and (optionally) <code>AWS_REGION</code> environment variables. If you are using an s3-compatible storage service that is not from AWS, you can pass in the necessary credentials to the <code>storage_options</code> dictionary, such as <code>endpoint_url</code>, <code>key</code>, and <code>secret</code>. We recommend setting these as environment variables. An example using Backblaze B2 would look like:</p>
 </section>
-<section id="examples" class="level2 doc-section doc-section-examples">
-<h2 class="doc-section doc-section-examples anchored" data-anchor-id="examples">Examples</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> pins</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> board <span class="op">=</span> pins.board_s3(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>...     <span class="st">"pins-test"</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>...     endpoint_url<span class="op">=</span>os.getenv(<span class="st">"FSSPEC_S3_ENDPOINT_URL"</span>),</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>...     key<span class="op">=</span>os.getenv(<span class="st">"FSSPEC_S3_KEY"</span>),</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>...     secret<span class="op">=</span>os.getenv(<span class="st">"FSSPEC_S3_SECRET"</span>),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>... )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> pins</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> board <span class="op">=</span> pins.board_s3(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>...     <span class="st">"pins-test"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>...     endpoint_url<span class="op">=</span>os.getenv(<span class="st">"FSSPEC_S3_ENDPOINT_URL"</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>...     key<span class="op">=</span>os.getenv(<span class="st">"FSSPEC_S3_KEY"</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>...     secret<span class="op">=</span>os.getenv(<span class="st">"FSSPEC_S3_SECRET"</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>... )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>See <a href="https://github.com/fsspec/s3fs" class="uri">https://github.com/fsspec/s3fs</a></p>
 
 

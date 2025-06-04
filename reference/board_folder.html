@@ -20,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -177,13 +142,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="pins.board_folder" class="level1">
 <h1>board_folder</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>board_folder(path, versioned<span class="op">=</span><span class="va">True</span>, allow_pickle_read<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>board_folder(path, versioned=True, allow_pickle_read=None)</code></p>
 <p>Use a local folder as a board.</p>
-<section id="parameters" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 4%">
+<col style="width: 5%">
 <col style="width: 1%">
 <col style="width: 90%">
 <col style="width: 2%">
@@ -198,19 +163,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td>path</td>
+<td><code>path</code></td>
 <td>str</td>
 <td>The folder that will hold the board.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td>versioned</td>
+<td><code>versioned</code></td>
 <td></td>
 <td>Whether or not pins should be versioned.</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
-<td>allow_pickle_read</td>
+<td><code>allow_pickle_read</code></td>
 <td></td>
 <td>Whether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to <code>True</code>, or by setting the environment variable <code>PINS_ALLOW_PICKLE_READ</code>. If both are set, this argument takes precedence.</td>
 <td><code>None</code></td>

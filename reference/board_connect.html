@@ -178,19 +178,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="pins.board_connect" class="level1">
 <h1>board_connect</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>board_connect(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    server_url<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    versioned<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    api_key<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    cache<span class="op">=</span>DEFAULT,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    allow_pickle_read<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>board_connect(server_url=None, versioned=True, api_key=None, cache=DEFAULT, allow_pickle_read=None)</code></p>
 <p>Create a board to read and write pins from a Posit Connect server.</p>
-<section id="parameters" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 4%">
+<col style="width: 5%">
 <col style="width: 1%">
 <col style="width: 90%">
 <col style="width: 2%">
@@ -205,31 +199,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td>server_url</td>
+<td><code>server_url</code></td>
 <td></td>
 <td>URL to the Posit Connect server.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
-<td>versioned</td>
+<td><code>versioned</code></td>
 <td></td>
 <td>Whether or not pins should be versioned.</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
-<td>api_key</td>
+<td><code>api_key</code></td>
 <td></td>
 <td>API key for server. If not specified, pins will attempt to read it from <code>CONNECT_API_KEY</code> environment variable.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
-<td>cache</td>
+<td><code>cache</code></td>
 <td></td>
 <td>Whether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If <code>None</code> is passed, then no cache will be used. You can set the cache using the <code>PINS_CACHE_DIR</code> environment variable.</td>
 <td><code>DEFAULT</code></td>
 </tr>
 <tr class="odd">
-<td>allow_pickle_read</td>
+<td><code>allow_pickle_read</code></td>
 <td></td>
 <td>Whether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to <code>True</code>, or by setting the environment variable <code>PINS_ALLOW_PICKLE_READ</code>. If both are set, this argument takes precedence.</td>
 <td><code>None</code></td>
@@ -237,29 +231,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="examples" class="level2 doc-section doc-section-examples">
-<h2 class="doc-section doc-section-examples anchored" data-anchor-id="examples">Examples</h2>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <p>Pins will automatically look for the <code>CONNECT_SERVER</code> and <code>CONNECT_API_KEY</code> environment variables:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># where environment vars CONNECT_SERVER and CONNECT_API_KEY are set</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># where environment vars CONNECT_SERVER and CONNECT_API_KEY are set</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Or use the <a href="https://saurabh-kumar.com/python-dotenv/">dotenv</a> package to load other environment variable names from a <code>.env</code> file:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv, find_dotenv</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>load_dotenv(find_dotenv())</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>api_key <span class="op">=</span> os.getenv(<span class="st">"MY_API_KEY"</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>server_url <span class="op">=</span> os.getenv(<span class="st">"MY_CONNECT_URL"</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect(server_url<span class="op">=</span>server_url, api_key<span class="op">=</span>api_key)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv, find_dotenv</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>load_dotenv(find_dotenv())</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>api_key <span class="op">=</span> os.getenv(<span class="st">"MY_API_KEY"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>server_url <span class="op">=</span> os.getenv(<span class="st">"MY_CONNECT_URL"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect(server_url<span class="op">=</span>server_url, api_key<span class="op">=</span>api_key)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>In order to read a public pin, use <code>board_url()</code> with the public pin URL:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for a pin at https://connect.rstudioservices.com/content/3004/</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_url(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://connect.rstudioservices.com/content"</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"my_df"</span>: <span class="st">"3004/"</span>}</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"my_df"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for a pin at https://connect.rstudioservices.com/content/3004/</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_url(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://connect.rstudioservices.com/content"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"my_df"</span>: <span class="st">"3004/"</span>}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"my_df"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="see-also" class="level2 doc-section doc-section-see-also">
-<h2 class="doc-section doc-section-see-also anchored" data-anchor-id="see-also">See Also</h2>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
 <p><a href="../reference/board_url.html#pins.board_url"><code>board_url</code></a> : Board for connecting to individual pins, using a URL or path.</p>
 
 

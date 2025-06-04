@@ -8,17 +8,23 @@ from databackend import AbstractBackend
 from typing_extensions import TypeAlias
 
 if TYPE_CHECKING:
+    import geopandas as gpd
     import pandas as pd
 
     PandasDataFrame: TypeAlias = pd.DataFrame
-    DataFrame: TypeAlias = PandasDataFrame
+    GeoPandasGeoDataFrame: TypeAlias = gpd.GeoDataFrame
+    DataFrame: TypeAlias = PandasDataFrame | GeoPandasGeoDataFrame
 
 
 class AbstractPandasFrame(AbstractBackend):
     _backends = [("pandas", "DataFrame")]
 
 
-AbstractDF: TypeAlias = AbstractPandasFrame
+class AbstractGeoPandasFrame(AbstractPandasFrame):
+    _backends = [("geopandas", "GeoDataFrame")]
+
+
+AbstractDF: TypeAlias = AbstractPandasFrame | AbstractGeoPandasFrame
 
 
 class Adaptor:
@@ -142,12 +148,29 @@ class PandasAdaptor(DFAdaptor):
         self._d.to_feather(file)
 
 
+class GeoPandasAdaptor(PandasAdaptor):
+    _d: ClassVar[GeoPandasGeoDataFrame]  # type: ignore[reportIncompatibleVariableOverride]
+
+    def __init__(self, data: AbstractGeoPandasFrame) -> None:
+        super().__init__(data)
+
+    @property
+    def df_type(self) -> str:
+        # Consider over-riding this for specialized dataframes
+        return "GeoDataFrame"
+
+    def head(self, n: int) -> GeoPandasAdaptor:
+        return GeoPandasAdaptor(self._d.head(n))
+
+
 @overload
 def create_adaptor(obj: DataFrame) -> DFAdaptor: ...
 @overload
 def create_adaptor(obj: Any) -> Adaptor: ...
 def create_adaptor(obj: Any | DataFrame) -> Adaptor | DFAdaptor:
-    if isinstance(obj, AbstractPandasFrame):
+    if isinstance(obj, AbstractGeoPandasFrame):
+        return GeoPandasAdaptor(obj)
+    elif isinstance(obj, AbstractPandasFrame):
         return PandasAdaptor(obj)
     elif isinstance(obj, Adaptor):
         return obj

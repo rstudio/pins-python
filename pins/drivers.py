@@ -174,6 +174,8 @@ def save_data(
         raise NotImplementedError(msg)
     elif pin_type == "parquet":
         adaptor.write_parquet(final_name)
+    elif pin_type == "geoparquet":
+        adaptor.write_parquet(final_name)
     elif pin_type == "joblib":
         adaptor.write_joblib(final_name)
     elif pin_type == "json":

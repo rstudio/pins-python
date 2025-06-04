@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -143,15 +178,26 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="pins.boards.BaseBoard.pin_write" class="level1">
 <h1>pin_write</h1>
-<p><code>boards.BaseBoard.pin_write(x, name=None, type=None, title=None, description=None, metadata=None, versioned=None, created=None, *, force_identical_write=False)</code></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>boards.BaseBoard.pin_write(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    x,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    metadata<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    versioned<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    created<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    force_identical_write<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Write a pin object to the board.</p>
-<section id="parameters" class="level2">
-<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<section id="parameters" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
+<col style="width: 9%">
 <col style="width: 7%">
-<col style="width: 77%">
+<col style="width: 78%">
 <col style="width: 4%">
 </colgroup>
 <thead>
@@ -164,55 +210,55 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>x</code></td>
+<td>x</td>
 <td></td>
 <td>An object (e.g.&nbsp;a pandas DataFrame) to pin.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>name</code></td>
+<td>name</td>
 <td>str | None</td>
 <td>Pin name.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td><code>type</code></td>
+<td>type</td>
 <td>str | None</td>
 <td>File type used to save <code>x</code> to disk. May be “csv”, “arrow”, “parquet”, “joblib”, or “json”.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
-<td><code>title</code></td>
+<td>title</td>
 <td>str | None</td>
 <td>A title for the pin; most important for shared boards so that others can understand what the pin contains. If omitted, a brief description of the contents will be automatically generated.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td><code>description</code></td>
+<td>description</td>
 <td>str | None</td>
 <td>A detailed description of the pin contents.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
-<td><code>metadata</code></td>
+<td>metadata</td>
 <td>Mapping | None</td>
 <td>A dictionary containing additional metadata to store with the pin. This gets stored on the Meta.user field.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td><code>versioned</code></td>
+<td>versioned</td>
 <td>bool | None</td>
 <td>Whether the pin should be versioned. Defaults to versioning.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
-<td><code>created</code></td>
+<td>created</td>
 <td>datetime | None</td>
 <td>A date to store in the Meta.created field. This field may be used as part of the pin version name.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td><code>force_identical_write</code></td>
+<td>force_identical_write</td>
 <td>bool</td>
 <td>Store the pin even if the pin contents are identical to the last version (compared using the hash). Only the pin contents are compared, not the pin metadata. Defaults to False.</td>
 <td><code>False</code></td>
@@ -220,21 +266,24 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="returns" class="level2">
-<h2 class="anchored" data-anchor-id="returns">Returns</h2>
+<section id="returns" class="level2 doc-section doc-section-returns">
+<h2 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 95%">
+<col style="width: 4%">
+<col style="width: 91%">
 </colgroup>
 <thead>
 <tr class="header">
+<th>Name</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>Meta</td>
 <td>Meta</td>
 <td>Metadata about the stored pin. If <code>force_identical_write</code> is False and the pin contents are identical to the last version, the last version’s metadata is returned.</td>
 </tr>

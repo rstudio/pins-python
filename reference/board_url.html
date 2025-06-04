@@ -178,13 +178,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="pins.board_url" class="level1">
 <h1>board_url</h1>
-<p><code>board_url(path, pin_paths, cache=DEFAULT, allow_pickle_read=None)</code></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>board_url(path, pin_paths, cache<span class="op">=</span>DEFAULT, allow_pickle_read<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Create a board from individual URLs.</p>
-<section id="parameters" class="level2">
-<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<section id="parameters" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 5%">
+<col style="width: 4%">
 <col style="width: 1%">
 <col style="width: 90%">
 <col style="width: 2%">
@@ -199,25 +199,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>path</code></td>
+<td>path</td>
 <td>str</td>
 <td>A base URL to prefix all individual pin URLs with.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>pin_paths</code></td>
+<td>pin_paths</td>
 <td>dict</td>
 <td>A dictionary mapping pin name to pin URL.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
-<td><code>cache</code></td>
+<td>cache</td>
 <td></td>
 <td>Whether to use a cache. By default, pins attempts to select the right cache directory, given your filesystem. If <code>None</code> is passed, then no cache will be used. You can set the cache using the <code>PINS_CACHE_DIR</code> environment variable.</td>
 <td><code>DEFAULT</code></td>
 </tr>
 <tr class="even">
-<td><code>allow_pickle_read</code></td>
+<td>allow_pickle_read</td>
 <td></td>
 <td>Whether to allow reading pins that use the pickle protocol. Pickles are unsafe, and can execute arbitrary code. Only allow reading pickles if you trust the board to execute Python code on your computer. You can enable reading pickles by setting this to <code>True</code>, or by setting the environment variable <code>PINS_ALLOW_PICKLE_READ</code>. If both are set, this argument takes precedence.</td>
 <td><code>None</code></td>
@@ -225,15 +225,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="examples" class="level2">
-<h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>github_raw <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/rstudio/pins-python/main/pins/tests/pins-compat"</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pin_paths <span class="op">=</span> {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"df_csv"</span>: <span class="st">"df_csv/20220214T163720Z-9bfad/"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"df_arrow"</span>: <span class="st">"df_arrow/20220214T163720Z-ad0c1/"</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_url(github_raw, pin_paths)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>board.pin_list()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="examples" class="level2 doc-section doc-section-examples">
+<h2 class="doc-section doc-section-examples anchored" data-anchor-id="examples">Examples</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>github_raw <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/rstudio/pins-python/main/pins/tests/pins-compat"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pin_paths <span class="op">=</span> {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"df_csv"</span>: <span class="st">"df_csv/20220214T163720Z-9bfad/"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"df_arrow"</span>: <span class="st">"df_arrow/20220214T163720Z-ad0c1/"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_url(github_raw, pin_paths)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>board.pin_list()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <pre><code>['df_csv', 'df_arrow']</code></pre>
 
 

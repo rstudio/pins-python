@@ -18,4 +18,5 @@ api_keys = {
     "derek": get_api_key("derek", "derek", "derek@example.com"),
 }
 
-json.dump(api_keys, open(OUT_FILE, "w"))
+with open(OUT_FILE, "w") as f:
+    json.dump(api_keys, f)

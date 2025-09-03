@@ -28,7 +28,7 @@ class MetaRaw:
     """
 
     file: str | Sequence[str] | None
-    type: str
+    type: str | Sequence[str]
     name: str
 
 
@@ -53,7 +53,7 @@ class Meta:
     file_size:
         The total size of the files in the pin.
     type:
-        The type of pin data stored. This is used to determine how to read / write it.
+        The type(s) of pin data stored. This is used to determine how to read / write it.
     api_version:
         The internal version of the metadata format.
     name:
@@ -77,8 +77,7 @@ class Meta:
 
     file: str | Sequence[str]
     file_size: int
-    type: str
-
+    type: str | list[str]
     api_version: int
 
     # In the metadata yaml, the created field uses a custom format, so
@@ -86,7 +85,6 @@ class Meta:
     # the version here as "the thing that was used to create version_name,
     # pin_hash, created, etc.."
     version: VersionRaw
-
     tags: list[str] | None = None
     name: str | None = None
     user: Mapping = field(default_factory=dict)

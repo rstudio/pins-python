@@ -26,7 +26,7 @@ DATABRICKS_VOLUME = "/Volumes/workshops/my-board/my-volume/test"
 
 BOARD_CONFIG = {
     "file": {"path": ["PINS_TEST_FILE__PATH", None]},
-    "s3": {"path": ["PINS_TEST_S3__PATH", "ci-pins"]},
+    "s3": {"path": ["PINS_TEST_S3__PATH", "pins-test-hadley"]},
     "gcs": {"path": ["PINS_TEST_GCS__PATH", "pins-python"]},
     "abfs": {"path": ["PINS_TEST_AZURE__PATH", "ci-pins"]},
     "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},

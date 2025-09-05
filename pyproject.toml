@@ -21,7 +21,7 @@ requires-python = ">=3.9"
 dynamic = ["version"]
 dependencies = [
     "appdirs<2",                # Using appdirs rather than platformdirs is deliberate, see https://github.com/rstudio/pins-python/pull/239
-    "fsspec>=2022.2",
+    "fsspec>=2022.2,<2025.7",
     "humanize>=1",
     "importlib-metadata>=4.4",
     "importlib-resources>=1.3",

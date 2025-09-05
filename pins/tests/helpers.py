@@ -65,7 +65,7 @@ def skip_if_dbc(func):
                     board = arg_value
                     break
 
-        if board and board.fs.protocol == "dbc":
+        if board and board.fs.protocol == "dbc" or board.fs.fs.protocol == "dbc":
             pytest.skip("All Databricks tests must be read only")
 
         return func(*args, **kwargs)

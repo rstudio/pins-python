@@ -290,8 +290,8 @@ def test_board_pin_download_filename_multifile(board_with_cache, tmp_path):
     df.to_csv(path1, index=False)
     df.to_csv(path2, index=False)
 
-    meta = board_with_cache.pin_upload([path1, path2], "cool_pin")
     print(board_with_cache.fs.protocol)
+    meta = board_with_cache.pin_upload([path1, path2], "cool_pin")
 
     assert meta.type == "file"
     assert meta.file == ["data1.csv", "data2.csv"]

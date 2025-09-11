@@ -45,7 +45,7 @@ check = [
     "types-appdirs",
     "pins[databricks]"
 ]
-databricks = ["databricks-sdk<0.56.0"]
+databricks = ["databricks-sdk"]
 doc = [
     "ipykernel",
     "ipython<=8.12",

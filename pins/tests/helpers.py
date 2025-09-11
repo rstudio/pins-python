@@ -26,7 +26,7 @@ DATABRICKS_VOLUME = "/Volumes/workshops/my-board/my-volume/test"
 
 BOARD_CONFIG = {
     "file": {"path": ["PINS_TEST_FILE__PATH", None]},
-    "s3": {"path": ["PINS_TEST_S3__PATH", "ci-pins"]},
+    "s3": {"path": ["PINS_TEST_S3__PATH", "pins-test-hadley"]},
     "gcs": {"path": ["PINS_TEST_GCS__PATH", "pins-python"]},
     "abfs": {"path": ["PINS_TEST_AZURE__PATH", "ci-pins"]},
     "rsc": {"path": ["PINS_TEST_RSC__PATH", RSC_SERVER_URL]},
@@ -65,7 +65,10 @@ def skip_if_dbc(func):
                     board = arg_value
                     break
 
-        if board and board.fs.protocol == "dbc":
+        if board and (
+            board.fs.protocol == "dbc"
+            or (hasattr(board.fs, "fs") and board.fs.fs.protocol == "dbc")
+        ):
             pytest.skip("All Databricks tests must be read only")
 
         return func(*args, **kwargs)

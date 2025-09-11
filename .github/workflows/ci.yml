@@ -60,7 +60,6 @@ jobs:
           project_id: siuba-tests
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-
       - name: Run tests
         shell: bash
         run: |

@@ -24,6 +24,8 @@ website:
         menu:
           - text: "Create consistent metadata for pins"
             file: customize-pins-metadata.qmd
+          - text: "Configuring logging for pins"
+            file: logging-pins.qmd
           - text: "pins for R"
             href: https://pins.rstudio.com
             target: _blank

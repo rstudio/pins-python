@@ -1,0 +1,27 @@
+---
+title: Configuring logging for pins
+---
+
+
+The pins package includes detailed logging that tracks API calls made when reading from or writing to pins boards. This logging is invaluable for debugging connection issues, understanding data flow, and monitoring API usage. To enable and configure logging, you can use Python's built-in `logging` module.
+
+
+```python
+import logging
+
+# Configure pins logger
+pins_logger = logging.getLogger('pins')
+pins_logger.setLevel(logging.DEBUG)
+
+# Create console handler
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+pins_logger.addHandler(handler)
+
+# Now use pins - all API calls will be logged
+import pins
+```
+
+With logging enabled, you'll see detailed information about every HTTP call made to your pins board. This includes the URL, HTTP method, headers, and response status, which can help you diagnose issues quickly.
+
+You can extend this logger to fit your needs by adding formatters or sending all the logs to a file. To learn more about loggers, see the [Python logging documentation](https://docs.python.org/3/library/logging.html).

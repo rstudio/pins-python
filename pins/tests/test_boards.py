@@ -351,6 +351,52 @@ def test_board_pin_write_type(board, obj, type_, request):
 
 
 @skip_if_dbc
+def test_board_pin_read_with_specified_type(board):
+    # Create a DataFrame
+    df = pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
+
+    # Write it as CSV
+    with rm_env(PINS_ENV_INSECURE_READ):
+        os.environ[PINS_ENV_INSECURE_READ] = "1"
+        meta = board.pin_write(
+            df, "test_read_pin_type", type="csv", title="test read with type"
+        )
+
+        # Read it normally
+        read_df = board.pin_read("test_read_pin_type")
+        assert meta.type == "csv"
+        assert read_df.equals(df)
+
+        # Read it with explicit type parameter
+        read_df_with_type = board.pin_read("test_read_pin_type", type="csv")
+        assert read_df_with_type.equals(df)
+
+
+@skip_if_dbc
+def test_board_pin_write_multiple_types(board):
+    # Create a DataFrame
+    df = pd.DataFrame({"x": [1, 2, 3], "y": ["a", "b", "c"]})
+
+    # Write it with multiple types
+    with rm_env(PINS_ENV_INSECURE_READ):
+        os.environ[PINS_ENV_INSECURE_READ] = "1"
+        meta = board.pin_write(
+            df, "test_multi_type", type=["csv", "parquet"], title="multi-type pin"
+        )
+
+        # Verify the primary type is set to the first type in the list
+        assert meta.type == ["csv", "parquet"]
+
+        # Read with default type (should use primary type)
+        read_df = board.pin_read("test_multi_type")
+        assert read_df.equals(df)
+
+        # Read with explicit type parameter
+        read_df_parquet = board.pin_read("test_multi_type", type="parquet")
+        assert read_df_parquet.equals(df)
+
+
+@skip_if_dbc
 def test_board_pin_read_insecure_fail_default(board):
     board.pin_write({"a": 1}, "test_pin", type="joblib", title="some title")
     with pytest.raises(PinsInsecureReadError) as exc_info:

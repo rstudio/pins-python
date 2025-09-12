@@ -98,7 +98,11 @@ class Version(_VersionBase):
     ) -> Version:
         hashes = []
         for f in files:
-            hash_ = cls.hash_file(open(f, "rb") if isinstance(f, (str, Path)) else f)
+            if isinstance(f, (str, Path)):
+                with open(f, "rb") as f:
+                    hash_ = cls.hash_file(f)
+            else:
+                hash_ = cls.hash_file(f)
             hashes.append(hash_)
 
         if created is None:

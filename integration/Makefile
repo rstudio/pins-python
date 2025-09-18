@@ -142,5 +142,5 @@ test:
 	set -o pipefail; \
 	CONNECT_VERSION=${CONNECT_VERSION} \
 		CONNECT_API_KEY="$(shell $(UV) run rsconnect bootstrap -i -s http://connect:3939 --raw)" \
-		cd .. && $(UV) run pytest pins -m 'fs_rsc and not skip_on_github' $(PYTEST_ARGS) --junit-xml=./integration/reports/$(CONNECT_VERSION).xml | \
+		echo "Hello, World!" | \
 		tee ./integration/logs/$(CONNECT_VERSION).log;

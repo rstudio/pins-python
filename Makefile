@@ -41,7 +41,7 @@ docs-clean:
 requirements/dev.txt: pyproject.toml
 	@# allows you to do this...
 	@# make requirements | tee > requirements/some_file.txt
-	@pip-compile pyproject.toml --rebuild --extra doc --extra test --extra check --output-file=- > $@
+	@uv pip compile pyproject.toml --extra doc --extra test --extra check --output-file $@
 
 binder/requirements.txt: requirements/dev.txt
 	cp $< $@

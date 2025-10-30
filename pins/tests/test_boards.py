@@ -180,6 +180,17 @@ def test_board_pin_write_force_identical_write_msg(
 
 
 @skip_if_dbc
+def test_board_pin_write_no_name(board, tmp_path):
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path.joinpath("data.csv")
+    df.to_csv(path, index=False)
+
+    with pytest.raises(ValueError, match=r"Pin name must be provided"):
+        board.pin_write(path)
+
+
+@skip_if_dbc
 def test_board_pin_download(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})

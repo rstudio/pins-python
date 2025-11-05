@@ -2,7 +2,7 @@ import json
 import os
 import sys
 
-from pins.rsconnect.api import LoginConnectApi, RsConnectApi, User
+from pins.rsconnect.api import LoginConnectApi, RsConnectApi
 
 OUT_FILE = sys.argv[1]
 

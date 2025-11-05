@@ -99,7 +99,8 @@ jobs:
         env:
           ALLOW_RSC_SHORT_NAME: 1
         with:
-          license: ${{ secrets.RSC_LICENSE }}
+          # License file is valid until 2026-11-05
+          license: ${{ secrets.CONNECT_LICENSE }}
           config-file: "script/setup-rsconnect/rstudio-connect.gcfg"
           command: |
             bash -c 'python script/setup-rsconnect/dump_api_keys.py pins/tests/rsconnect_api_keys.json && pytest pins -m "fs_rsc and not skip_on_github"'

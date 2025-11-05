@@ -18,7 +18,7 @@ from pins.constructors import board_databricks
 
 DEFAULT_CREATION_DATE = datetime(2020, 1, 13, 23, 58, 59)
 
-RSC_SERVER_URL = "http://localhost:3939"
+RSC_SERVER_URL = os.getenv("CONNECT_SERVER")
 # TODO: should use pkg_resources for this path?
 RSC_KEYS_FNAME = "pins/tests/rsconnect_api_keys.json"
 

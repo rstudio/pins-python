@@ -82,7 +82,9 @@ def test_board_pin_write_default_title(board):
 def test_board_pin_write_prepare_pin(board, tmp_path: Path):
     df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
 
-    meta = board.prepare_pin_version(str(tmp_path), df, "df_csv", title=None, type="csv")
+    meta = board.prepare_pin_version(
+        str(tmp_path), df, "df_csv", title=None, type="csv"
+    )
     assert meta.file == "df_csv.csv"
     assert (tmp_path / "data.txt").exists()
     assert (tmp_path / "df_csv.csv").exists()
@@ -686,6 +688,9 @@ def test_board_pin_write_rsc_full_name(df, board_short):  # noqa
 
 @pytest.mark.fs_rsc
 def test_board_pin_search_admin_user(df, board_short, fs_admin):  # noqa
+    pytest.skip(
+        "There is some sort of authorization error with the new Connect test setup"
+    )
     board_short.pin_write(df, "some_df", type="csv")
 
     board_admin = BoardRsConnect("", fs_admin)

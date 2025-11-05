@@ -137,8 +137,8 @@ class RsConnectApi:
 
     def __init__(
         self,
-        server_url: str | None,
-        api_key: str | None = None,
+        server_url: str | None = os.getenv("CONNECT_SERVER"),
+        api_key: str | None = os.getenv("CONNECT_API_KEY"),
         session: requests.Session | None = None,
     ):
         self.server_url = server_url
@@ -200,7 +200,9 @@ class RsConnectApi:
             self._validate_json_response(data)
 
             # this should never be triggered
-            raise ValueError(f"Unknown json returned by delete_content endpoint: {data}")
+            raise ValueError(
+                f"Unknown json returned by delete_content endpoint: {data}"
+            )
         except requests.JSONDecodeError:
             # fallback to at least raising status errors
             r.raise_for_status()
@@ -231,7 +233,6 @@ class RsConnectApi:
 
         _log.debug(f"RSConnect API {method}: {url} -- {kwargs}")
         r = self.session.request(method, url, headers=headers, **kwargs)
-
         if return_request:
             return r
         else:
@@ -294,9 +295,15 @@ class RsConnectApi:
             result = self.query_v1("users", params=params)
             return result
 
+    def create_user(self, **kwargs):
+        result = self.query_v1("users", "POST", json=kwargs)
+        return User(result)
+
     # content ----
 
-    def get_content(self, owner_guid: str = None, name: str = None) -> Sequence[Content]:
+    def get_content(
+        self, owner_guid: str = None, name: str = None
+    ) -> Sequence[Content]:
         params = self._get_params(locals())
 
         results = self.query_v1("content", params=params)
@@ -356,7 +363,9 @@ class RsConnectApi:
         result = self.query_v1(f"content/{guid}/bundles/{id}")
         return Bundle(result)
 
-    def get_content_bundle_archive(self, guid: str, id: str, f_obj: str | IOBase) -> None:
+    def get_content_bundle_archive(
+        self, guid: str, id: str, f_obj: str | IOBase
+    ) -> None:
         r = self.query_v1(
             f"content/{guid}/bundles/{id}/download", stream=True, return_request=True
         )
@@ -434,14 +443,19 @@ class RsConnectApi:
         )
 
 
-# ported from github.com/rstudio/connectapi
-# TODO: could just move these methods into RsConnectApi?
-class _HackyConnect(RsConnectApi):
-    """Handles logging in to connect, rather than using an API key.
+class LoginConnectApi(RsConnectApi):
+    """Handles logging in to Connect with username and password rather than API key."""
 
-    This class allows you to create users and generate API keys on a fresh
-    Posit Connect service.
-    """
+    def __init__(
+        self,
+        username: str,
+        password: str,
+        server_url: str = os.getenv("CONNECT_SERVER"),
+        session: requests.Session = requests.Session(),
+    ):
+        self.server_url = server_url
+        self.session = requests.Session() if session is None else session
+        self.login(username, password)
 
     def login(self, user, password):
         res = self.query(
@@ -452,11 +466,12 @@ class _HackyConnect(RsConnectApi):
         )
         return res
 
-    def create_first_admin(self, user, password, email, keyname="first-key"):
-        self.login(user, password)
+    def _get_api_key(self):
+        """Make sure we don't use an API key for authentication."""
+        return None
 
-        self.query("me")
+    def create_api_key(self, keyname="first-key"):
+        guid = self.get_user()["guid"]
+        api_key = self.query_v1(f"users/{guid}/keys", "POST", json=dict(name=keyname))
 
-        api_key = self.query("keys", "POST", json=dict(name=keyname))
-
-        return RsConnectApi(self.server_url, api_key=api_key["key"])
+        return api_key["key"]

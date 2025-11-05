@@ -214,7 +214,7 @@ jobs:
   publish-docs:
     name: "Publish Docs"
     runs-on: ubuntu-latest
-    needs: ["build-docs", "tests", "test-rsconnect"]
+    needs: ["build-docs", "tests", "test-connect"]
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/download-artifact@v4

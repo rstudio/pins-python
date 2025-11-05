@@ -200,9 +200,7 @@ class RsConnectApi:
             self._validate_json_response(data)
 
             # this should never be triggered
-            raise ValueError(
-                f"Unknown json returned by delete_content endpoint: {data}"
-            )
+            raise ValueError(f"Unknown json returned by delete_content endpoint: {data}")
         except requests.JSONDecodeError:
             # fallback to at least raising status errors
             r.raise_for_status()
@@ -301,9 +299,7 @@ class RsConnectApi:
 
     # content ----
 
-    def get_content(
-        self, owner_guid: str = None, name: str = None
-    ) -> Sequence[Content]:
+    def get_content(self, owner_guid: str = None, name: str = None) -> Sequence[Content]:
         params = self._get_params(locals())
 
         results = self.query_v1("content", params=params)
@@ -363,9 +359,7 @@ class RsConnectApi:
         result = self.query_v1(f"content/{guid}/bundles/{id}")
         return Bundle(result)
 
-    def get_content_bundle_archive(
-        self, guid: str, id: str, f_obj: str | IOBase
-    ) -> None:
+    def get_content_bundle_archive(self, guid: str, id: str, f_obj: str | IOBase) -> None:
         r = self.query_v1(
             f"content/{guid}/bundles/{id}/download", stream=True, return_request=True
         )

@@ -146,3 +146,5 @@ reference/
 src/
 
 /.luarc.json
+
+*.lic

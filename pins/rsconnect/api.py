@@ -437,6 +437,35 @@ class RsConnectApi:
         )
 
 
+# ported from github.com/rstudio/connectapi
+# TODO: no longer used here, only in other packages' test suites.
+# Remove once those are cleaned up.
+class _HackyConnect(RsConnectApi):
+    """Handles logging in to connect, rather than using an API key.
+
+    This class allows you to create users and generate API keys on a fresh
+    Posit Connect service.
+    """
+
+    def login(self, user, password):
+        res = self.query(
+            "__login__",
+            "POST",
+            return_request=True,
+            json={"username": user, "password": password},
+        )
+        return res
+
+    def create_first_admin(self, user, password, email, keyname="first-key"):
+        self.login(user, password)
+
+        self.query("me")
+
+        api_key = self.query("keys", "POST", json=dict(name=keyname))
+
+        return RsConnectApi(self.server_url, api_key=api_key["key"])
+
+
 class LoginConnectApi(RsConnectApi):
     """Handles logging in to Connect with username and password rather than API key."""
 

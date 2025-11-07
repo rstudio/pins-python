@@ -459,9 +459,8 @@ class _HackyConnect(RsConnectApi):
     def create_first_admin(self, user, password, email, keyname="first-key"):
         self.login(user, password)
 
-        self.query("me")
-
-        api_key = self.query("keys", "POST", json=dict(name=keyname))
+        guid = self.get_user()["guid"]
+        api_key = self.query_v1(f"users/{guid}/keys", "POST", json=dict(name=keyname))
 
         return RsConnectApi(self.server_url, api_key=api_key["key"])
 

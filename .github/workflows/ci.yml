@@ -101,10 +101,9 @@ jobs:
         with:
           # License file is valid until 2026-11-05
           license: ${{ secrets.CONNECT_LICENSE }}
-          env: CONNECT_SERVER_ALLOWCONFIRMEDUSERS=true
+          config-file: "script/setup-rsconnect/rstudio-connect.gcfg"
           command: |
-            python script/setup-rsconnect/dump_api_keys.py pins/tests/rsconnect_api_keys.json
-            pytest pins -m "fs_rsc and not skip_on_github"
+            bash -c 'python script/setup-rsconnect/dump_api_keys.py pins/tests/rsconnect_api_keys.json && pytest pins -m "fs_rsc and not skip_on_github"'
 
 
   test-fork:

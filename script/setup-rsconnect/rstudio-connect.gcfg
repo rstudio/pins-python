@@ -1,0 +1,21 @@
+[Server]
+DataDir = /data
+Address = http://localhost:3939
+AllowConfirmedUsers = true
+
+[HTTP]
+Listen = :3939
+
+[Authentication]
+Provider = password
+
+[Authorization]
+DefaultUserRole = publisher
+
+; Copied from the Docker image config in github.com/rstudio/rstudio-docker-products
+[Logging]
+ServiceLog = STDOUT
+ServiceLogFormat = TEXT    ; TEXT or JSON
+ServiceLogLevel = INFO     ; INFO, WARNING or ERROR
+AccessLog = STDOUT
+AccessLogFormat = COMMON   ; COMMON, COMBINED, or JSON

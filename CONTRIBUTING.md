@@ -79,13 +79,8 @@ There are two important details to note for testing:
 You can use the [`with-connect`](https://github.com/posit-dev/with-connect) tool to spin up a Docker container with Posit Connect for testing.
 
 ```
-uv tool install git+https://github.com/posit-dev/with-connect.git
+make test-connect
 ```
 
-Then run:
-
-```
-with-connect -- pytest -m 'fs_rsc' pins
-```
-
-This requires a valid Posit Connect license. If you have the file somewhere other than `./rstudio-connect.lic`, provide the path to it with the `--license` argument.
+will do everything you need to run the Posit Connect tests.
+This requires a valid Posit Connect license. If you have the file somewhere other than `./posit-connect.lic`, provide the path to it with the `--license` argument.

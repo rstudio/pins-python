@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.31">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
@@ -67,14 +67,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="./favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-75a8ef3dd8146ef79eeff788e86325cf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-472c5a19eb26a145a9e7cd454cd64706.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -102,7 +103,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -117,7 +118,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./logo.png" alt="" class="navbar-logo">
+    <img src="./logo.png" alt="" class="navbar-logo light-content">
+    <img src="./logo.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">pins for Python</span>
@@ -194,44 +196,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>The pins package helps you publish data sets, models, and other Python objects, making it easy to share them across projects and with your colleagues. You can pin objects to a variety of “boards”, including local folders (to share on a networked drive or with DropBox), Posit Connect, Amazon S3, Google Cloud Storage, Azure, and more. This vignette will introduce you to the basics of pins.</p>
-<div id="ed30a8cc" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins <span class="im">import</span> board, board_local, board_folder, board_temp, board_url</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="58410be4" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins <span class="im">import</span> board, board_local, board_folder, board_temp, board_url</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="getting-started" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
 <p>Every pin lives in a pin <em>board</em>, so you must start by creating a pin board. In this vignette I’ll use a temporary board which is automatically deleted when your Python session is over:</p>
-<div id="92d4c2b3" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_temp()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="50c4a1d1" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_temp()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>In real life, you’d pick a board depending on how you want to share the data. Here are a few options:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_local() <span class="co"># share data across R sessions on the same computer</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_local() <span class="co"># share data across R sessions on the same computer</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_folder(<span class="st">"~/Dropbox"</span>) <span class="co"># share data with others using dropbox</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_folder(<span class="st">"Z:</span><span class="ch">\\</span><span class="st">my-team</span><span class="er">\</span><span class="st">pins"</span>) <span class="co"># share data using a shared network drive</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board(<span class="st">"file"</span>, <span class="st">"Z:</span><span class="ch">\\</span><span class="st">my-team</span><span class="er">\</span><span class="st">pins"</span>) <span class="co"># share data using a shared network drive with caching</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect() <span class="co"># share data with Posit Connect</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> board_connect() <span class="co"># share data with Posit Connect</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="reading-and-writing-data" class="level2">
 <h2 class="anchored" data-anchor-id="reading-and-writing-data">Reading and writing data</h2>
 <p>Once you have a pin board, you can write data to it with the <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> method:</p>
-<div id="af90acfc" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins.data <span class="im">import</span> mtcars</span>
+<div id="24619cce" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins.data <span class="im">import</span> mtcars</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>meta <span class="op">=</span> board.pin_write(mtcars, <span class="st">"mtcars"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>meta <span class="op">=</span> board.pin_write(mtcars, <span class="st">"mtcars"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'mtcars'
-Version: 20250604T035528Z-3b134</code></pre>
+Version: 20251120T223814Z-3b134</code></pre>
 </div>
 </div>
 <p>The first argument is the object to save (usually a data frame, but it can be any Python object), and the second argument gives the “name” of the pin. The name is basically equivalent to a file name; you’ll use it when you later want to read the data from the pin. The only rule for a pin name is that it can’t contain slashes.</p>
 <p>After you’ve pinned an object, you can read it back with <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a>:</p>
-<div id="d8c1b479" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"mtcars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="d5277286" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"mtcars"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -250,7 +252,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>21.0</td>
 <td>6</td>
 <td>160.0</td>
@@ -264,7 +266,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>4</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>21.0</td>
 <td>6</td>
 <td>160.0</td>
@@ -278,7 +280,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>4</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>22.8</td>
 <td>4</td>
 <td>108.0</td>
@@ -292,7 +294,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>1</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>21.4</td>
 <td>6</td>
 <td>258.0</td>
@@ -306,7 +308,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>1</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>18.7</td>
 <td>8</td>
 <td>360.0</td>
@@ -320,7 +322,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>2</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">...</td>
+<th data-quarto-table-cell-role="th">...</th>
 <td>...</td>
 <td>...</td>
 <td>...</td>
@@ -334,7 +336,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>...</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">27</td>
+<th data-quarto-table-cell-role="th">27</th>
 <td>30.4</td>
 <td>4</td>
 <td>95.1</td>
@@ -348,7 +350,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>2</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">28</td>
+<th data-quarto-table-cell-role="th">28</th>
 <td>15.8</td>
 <td>8</td>
 <td>351.0</td>
@@ -362,7 +364,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>4</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">29</td>
+<th data-quarto-table-cell-role="th">29</th>
 <td>19.7</td>
 <td>6</td>
 <td>145.0</td>
@@ -376,7 +378,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>6</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">30</td>
+<th data-quarto-table-cell-role="th">30</th>
 <td>15.0</td>
 <td>8</td>
 <td>301.0</td>
@@ -390,7 +392,7 @@ Version: 20250604T035528Z-3b134</code></pre>
 <td>8</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">31</td>
+<th data-quarto-table-cell-role="th">31</th>
 <td>21.4</td>
 <td>4</td>
 <td>121.0</td>
@@ -445,10 +447,10 @@ Note
 <section id="metadata" class="level2">
 <h2 class="anchored" data-anchor-id="metadata">Metadata</h2>
 <p>Every pin is accompanied by some metadata that you can access with <a href="./reference/pin_meta.html#pins.boards.BaseBoard.pin_meta"><code>pin_meta</code></a>:</p>
-<div id="8b441f55" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>board.pin_meta(<span class="st">"mtcars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="899627c6" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>board.pin_meta(<span class="st">"mtcars"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>Meta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20250604T035528Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2025, 6, 4, 3, 55, 28), hash='3b134'), tags=None, name='mtcars', user={}, local={})</code></pre>
+<pre><code>Meta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20251120T223814Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2025, 11, 20, 22, 38, 14), hash='3b134'), tags=None, name='mtcars', user={}, local={})</code></pre>
 </div>
 </div>
 <p>This shows you the metadata that’s generated by default. This includes:</p>
@@ -460,8 +462,8 @@ Note
 <li>a unique <code>pin_hash</code> that you can supply to <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a> to ensure that you’re reading exactly the data that you expect.</li>
 </ul>
 <p>When creating the pin, you can override the default description or provide additional metadata that is stored with the data:</p>
-<div id="9ab406ab" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>board.pin_write(</span>
+<div id="48e34473" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>board.pin_write(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    mtcars,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"mtcars2"</span>,</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span><span class="st">"csv"</span>,</span>
@@ -469,20 +471,20 @@ Note
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    metadata <span class="op">=</span> {</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"source"</span>: <span class="st">"Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411."</span></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'mtcars2'
-Version: 20250604T035528Z-3b134</code></pre>
+Version: 20251120T223814Z-3b134</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>Meta(title='mtcars2: a pinned 32 x 11 DataFrame', description='Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).', created='20250604T035528Z', pin_hash='3b134bae183b50c9', file='mtcars2.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2025, 6, 4, 3, 55, 28, 865793), hash='3b134bae183b50c9'), tags=None, name='mtcars2', user={'source': 'Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.'}, local={})</code></pre>
+<pre><code>Meta(title='mtcars2: a pinned 32 x 11 DataFrame', description='Data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).', created='20251120T223814Z', pin_hash='3b134bae183b50c9', file='mtcars2.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2025, 11, 20, 22, 38, 14, 498534), hash='3b134bae183b50c9'), tags=None, name='mtcars2', user={'source': 'Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391–411.'}, local={})</code></pre>
 </div>
 </div>
-<div id="36af6573" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>board.pin_meta(<span class="st">"mtcars"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="09e0b74d" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>board.pin_meta(<span class="st">"mtcars"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>Meta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20250604T035528Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2025, 6, 4, 3, 55, 28), hash='3b134'), tags=None, name='mtcars', user={}, local={})</code></pre>
+<pre><code>Meta(title='mtcars: a pinned 32 x 11 DataFrame', description=None, created='20251120T223814Z', pin_hash='3b134bae183b50c9', file='mtcars.csv', file_size=1333, type='csv', api_version=1, version=Version(created=datetime.datetime(2025, 11, 20, 22, 38, 14), hash='3b134'), tags=None, name='mtcars', user={}, local={})</code></pre>
 </div>
 </div>
 <p>While we’ll do our best to keep the automatically generated metadata consistent over time, I’d recommend manually capturing anything you really care about in metadata.</p>
@@ -490,28 +492,28 @@ Version: 20250604T035528Z-3b134</code></pre>
 <section id="versioning" class="level2">
 <h2 class="anchored" data-anchor-id="versioning">Versioning</h2>
 <p>By default, calls to <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> will usually create a new version:</p>
-<div id="b6222bd9" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>board2 <span class="op">=</span> board_temp()</span>
+<div id="cc07bbea" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>board2 <span class="op">=</span> board_temp()</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>,<span class="dv">2</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>board2.pin_versions(<span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>board2.pin_versions(<span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'x'
-Version: 20250604T035528Z-2bc5d
+Version: 20251120T223814Z-2bc5d
 Writing pin:
 Name: 'x'
-Version: 20250604T035528Z-c24c0
+Version: 20251120T223814Z-c24c0
 Writing pin:
 Name: 'x'
-Version: 20250604T035528Z-91d9a</code></pre>
+Version: 20251120T223814Z-91d9a</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -522,22 +524,22 @@ Version: 20250604T035528Z-91d9a</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">0</th>
+<td>2025-11-20 22:38:14</td>
 <td>2bc5d</td>
-<td>20250604T035528Z-2bc5d</td>
+<td>20251120T223814Z-2bc5d</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">1</th>
+<td>2025-11-20 22:38:14</td>
 <td>91d9a</td>
-<td>20250604T035528Z-91d9a</td>
+<td>20251120T223814Z-91d9a</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">2</th>
+<td>2025-11-20 22:38:14</td>
 <td>c24c0</td>
-<td>20250604T035528Z-c24c0</td>
+<td>20251120T223814Z-c24c0</td>
 </tr>
 </tbody>
 </table>
@@ -546,24 +548,24 @@ Version: 20250604T035528Z-91d9a</code></pre>
 </div>
 </div>
 <p>The only exception is if the data is identical with the most recent version (compared via file hash):</p>
-<div id="04c102c5" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>)</span>
+<div id="92adc4aa" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">1.1</span>) <span class="co"># later, let's try and write a new version of the same data...</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>board2.pin_versions(<span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>board2.pin_versions(<span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'x'
-Version: 20250604T035528Z-60727
+Version: 20251120T223814Z-60727
 Writing pin:
 Name: 'x'
-Version: 20250604T035530Z-60727</code></pre>
+Version: 20251120T223815Z-60727</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -574,34 +576,34 @@ Version: 20250604T035530Z-60727</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">0</th>
+<td>2025-11-20 22:38:14</td>
 <td>2bc5d</td>
-<td>20250604T035528Z-2bc5d</td>
+<td>20251120T223814Z-2bc5d</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">1</th>
+<td>2025-11-20 22:38:14</td>
 <td>60727</td>
-<td>20250604T035528Z-60727</td>
+<td>20251120T223814Z-60727</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">2</th>
+<td>2025-11-20 22:38:14</td>
 <td>91d9a</td>
-<td>20250604T035528Z-91d9a</td>
+<td>20251120T223814Z-91d9a</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">3</th>
+<td>2025-11-20 22:38:14</td>
 <td>c24c0</td>
-<td>20250604T035528Z-c24c0</td>
+<td>20251120T223814Z-c24c0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
-<td>2025-06-04 03:55:30</td>
+<th data-quarto-table-cell-role="th">4</th>
+<td>2025-11-20 22:38:15</td>
 <td>60727</td>
-<td>20250604T035530Z-60727</td>
+<td>20251120T223815Z-60727</td>
 </tr>
 </tbody>
 </table>
@@ -610,20 +612,20 @@ Version: 20250604T035530Z-60727</code></pre>
 </div>
 </div>
 <p>However you can opt-out of this behaviour with <code>force_identical_write=True</code>:</p>
-<div id="0406a61a" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">1.1</span>) <span class="co"># try again...</span></span>
+<div id="3c7b0192" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="fl">1.1</span>) <span class="co"># try again...</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>board2.pin_write([<span class="dv">1</span>], name <span class="op">=</span> <span class="st">"x"</span>, <span class="bu">type</span> <span class="op">=</span> <span class="st">"json"</span>, force_identical_write<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>board2.pin_versions(<span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>board2.pin_versions(<span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'x'
-Version: 20250604T035531Z-60727</code></pre>
+Version: 20251120T223816Z-60727</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -634,40 +636,40 @@ Version: 20250604T035531Z-60727</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">0</th>
+<td>2025-11-20 22:38:14</td>
 <td>2bc5d</td>
-<td>20250604T035528Z-2bc5d</td>
+<td>20251120T223814Z-2bc5d</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">1</th>
+<td>2025-11-20 22:38:14</td>
 <td>60727</td>
-<td>20250604T035528Z-60727</td>
+<td>20251120T223814Z-60727</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">2</th>
+<td>2025-11-20 22:38:14</td>
 <td>91d9a</td>
-<td>20250604T035528Z-91d9a</td>
+<td>20251120T223814Z-91d9a</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>2025-06-04 03:55:28</td>
+<th data-quarto-table-cell-role="th">3</th>
+<td>2025-11-20 22:38:14</td>
 <td>c24c0</td>
-<td>20250604T035528Z-c24c0</td>
+<td>20251120T223814Z-c24c0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
-<td>2025-06-04 03:55:30</td>
+<th data-quarto-table-cell-role="th">4</th>
+<td>2025-11-20 22:38:15</td>
 <td>60727</td>
-<td>20250604T035530Z-60727</td>
+<td>20251120T223815Z-60727</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
-<td>2025-06-04 03:55:31</td>
+<th data-quarto-table-cell-role="th">5</th>
+<td>2025-11-20 22:38:16</td>
 <td>60727</td>
-<td>20250604T035531Z-60727</td>
+<td>20251120T223816Z-60727</td>
 </tr>
 </tbody>
 </table>
@@ -676,16 +678,16 @@ Version: 20250604T035531Z-60727</code></pre>
 </div>
 </div>
 <p>By default, <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a> will return the most recent version:</p>
-<div id="baaae5a7" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>board2.pin_read(<span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="87470809" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>board2.pin_read(<span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>[1]</code></pre>
 </div>
 </div>
 <p>But you can request an older version by supplying the <code>version</code> argument:</p>
-<div id="90de8947" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>version <span class="op">=</span> board2.pin_versions(<span class="st">"x"</span>).version[<span class="dv">1</span>]</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>board2.pin_read(<span class="st">"x"</span>, version <span class="op">=</span> version)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fc3ffe43" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>version <span class="op">=</span> board2.pin_versions(<span class="st">"x"</span>).version[<span class="dv">1</span>]</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>board2.pin_read(<span class="st">"x"</span>, version <span class="op">=</span> version)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>[1]</code></pre>
 </div>
@@ -708,28 +710,28 @@ Warning
 </div>
 <p>You can write a pin with <code>type="joblib"</code> to store arbitrary python objects, including fitted models from packages like <a href="https://scikit-learn.org/">scikit-learn</a>.</p>
 <p>For example, suppose you wanted to store a custom <code>namedtuple</code> object.</p>
-<div id="19ffaad4" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> namedtuple</span>
+<div id="84b1d32a" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> namedtuple</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>board3 <span class="op">=</span> board_temp(allow_pickle_read<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>Coords <span class="op">=</span> namedtuple(<span class="st">"Coords"</span>, [<span class="st">"x"</span>, <span class="st">"y"</span>])</span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> Coords(<span class="dv">1</span>, <span class="dv">2</span>)</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>coords</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>coords</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>Coords(x=1, y=2)</code></pre>
 </div>
 </div>
 <p>Using <code>type="joblib"</code> lets you store and read back the custom <code>coords</code> object.</p>
-<div id="28a262d0" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>board3.pin_write(coords, <span class="st">"my_coords"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"joblib"</span>)</span>
+<div id="e2b9a67f" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>board3.pin_write(coords, <span class="st">"my_coords"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"joblib"</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>board3.pin_read(<span class="st">"my_coords"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>board3.pin_read(<span class="st">"my_coords"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'my_coords'
-Version: 20250604T035531Z-d5e4a</code></pre>
+Version: 20251120T223817Z-d5e4a</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>Coords(x=1, y=2)</code></pre>
@@ -740,29 +742,29 @@ Version: 20250604T035531Z-d5e4a</code></pre>
 <h2 class="anchored" data-anchor-id="caching">Caching</h2>
 <p>The primary purpose of pins is to make it easy to share data. But pins is also designed to help you spend as little time as possible downloading data. <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a> and <a href="./reference/pin_download.html#pins.boards.BaseBoard.pin_download"><code>pin_download</code></a> automatically cache remote pins: they maintain a local copy of the data (so it’s fast) but always check that it’s up-to-date (so your analysis doesn’t use stale data).</p>
 <p>Wouldn’t it be nice if you could take advantage of this feature for any dataset on the internet? That’s the idea behind <a href="./reference/board_url.html#pins.board_url"><code>board_url</code></a>; you can assemble your own board from datasets, wherever they live on the internet. For example, this code creates a board containing a single pin, <code>penguins</code>, that refers to some fun data I found on GitHub:</p>
-<div id="2bb90e1e" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>my_data <span class="op">=</span> board_url(<span class="st">""</span>, {</span>
+<div id="39d4648b" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>my_data <span class="op">=</span> board_url(<span class="st">""</span>, {</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"penguins"</span>: <span class="st">"https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins_raw.csv"</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>You can read this data by combining <a href="./reference/pin_download.html#pins.boards.BaseBoard.pin_download"><code>pin_download</code></a> with <code>read_csv</code> from pandas:</p>
-<div id="de53adf2" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fname <span class="op">=</span> my_data.pin_download(<span class="st">"penguins"</span>)</span>
+<div id="651d79f9" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fname <span class="op">=</span> my_data.pin_download(<span class="st">"penguins"</span>)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>fname</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>fname</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <pre><code>['/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv']</code></pre>
 </div>
 </div>
-<div id="21ddd657" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<div id="0b855780" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>pd.read_csv(fname[<span class="dv">0</span>]).head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>pd.read_csv(fname[<span class="dv">0</span>]).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -787,7 +789,7 @@ Version: 20250604T035531Z-d5e4a</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>PAL0708</td>
 <td>1</td>
 <td>Adelie Penguin (Pygoscelis adeliae)</td>
@@ -807,7 +809,7 @@ Version: 20250604T035531Z-d5e4a</code></pre>
 <td>Not enough blood for isotopes.</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>PAL0708</td>
 <td>2</td>
 <td>Adelie Penguin (Pygoscelis adeliae)</td>
@@ -827,7 +829,7 @@ Version: 20250604T035531Z-d5e4a</code></pre>
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>PAL0708</td>
 <td>3</td>
 <td>Adelie Penguin (Pygoscelis adeliae)</td>
@@ -847,7 +849,7 @@ Version: 20250604T035531Z-d5e4a</code></pre>
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>PAL0708</td>
 <td>4</td>
 <td>Adelie Penguin (Pygoscelis adeliae)</td>
@@ -867,7 +869,7 @@ Version: 20250604T035531Z-d5e4a</code></pre>
 <td>Adult not sampled.</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>PAL0708</td>
 <td>5</td>
 <td>Adelie Penguin (Pygoscelis adeliae)</td>
@@ -892,8 +894,8 @@ Version: 20250604T035531Z-d5e4a</code></pre>
 </div>
 </div>
 </div>
-<div id="fd03affa" class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>my_data.pin_download(<span class="st">"penguins"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="a1dc98b4" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>my_data.pin_download(<span class="st">"penguins"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
 <pre><code>['/home/runner/.cache/pins-py/http_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/e6ac0d2da33fad7e72df6b900933a691b89ed7d54ec0e4a36fe45c32d7e2f67e_penguins_raw.csv']</code></pre>
 </div>
@@ -954,13 +956,14 @@ Version: 20250604T035531Z-d5e4a</code></pre>
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

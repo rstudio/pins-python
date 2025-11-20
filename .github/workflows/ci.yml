@@ -79,7 +79,7 @@ jobs:
           # https://github.com/browsertron/pytest-parallel/issues/93
           no_proxy: "*"
 
-  test-rsconnect:
+  test-connect:
     name: "Test Posit Connect"
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.head.repo.fork }}
@@ -94,18 +94,17 @@ jobs:
           python -m pip install -r requirements/dev.txt
           python -m pip install -e .
 
-      - name: run Posit Connect
-        run: |
-          docker compose up --build -d
-          make dev
-        env:
-          RSC_LICENSE: ${{ secrets.RSC_LICENSE }}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      # NOTE: edited to run checks for python package
       - name: Run tests
-        run: |
-          pytest pins -m 'fs_rsc and not skip_on_github'
+        uses: posit-dev/with-connect@main
+        env:
+          ALLOW_RSC_SHORT_NAME: 1
+        with:
+          # License file is valid until 2026-11-05
+          license: ${{ secrets.CONNECT_LICENSE }}
+          config-file: "script/setup-rsconnect/rstudio-connect.gcfg"
+          command: |
+            python script/setup-rsconnect/dump_api_keys.py pins/tests/rsconnect_api_keys.json
+            pytest pins -m "fs_rsc and not skip_on_github"
 
 
   test-fork:
@@ -217,7 +216,7 @@ jobs:
   publish-docs:
     name: "Publish Docs"
     runs-on: ubuntu-latest
-    needs: ["build-docs", "tests", "test-rsconnect"]
+    needs: ["build-docs", "tests", "test-connect"]
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/download-artifact@v4

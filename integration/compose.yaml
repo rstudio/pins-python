@@ -1,0 +1,46 @@
+services:
+  tests:
+    image: ${DOCKER_PROJECT_IMAGE_TAG}
+    # Run integration test suite.
+    #
+    # Target is relative to the ./integration directory, not the project root
+    # directory. The execution base directory is determined by the 'WORKDIR'
+    # in the Dockerfile.
+    command: make -C ./integration test
+    environment:
+        - CONNECT_BOOTSTRAP_SECRETKEY=${CONNECT_BOOTSTRAP_SECRETKEY}
+        # Port 3939 is the default port for Connect
+        - CONNECT_SERVER=http://connect:3939
+        - CONNECT_VERSION=${CONNECT_VERSION}
+        - PYTEST_ARGS=${PYTEST_ARGS}
+    volumes:
+      - .:/sdk/integration
+    depends_on:
+      connect:
+        condition: service_healthy
+    networks:
+      - test
+  connect:
+    image: ${DOCKER_CONNECT_IMAGE}:${DOCKER_CONNECT_IMAGE_TAG}
+    pull_policy: always
+    environment:
+      - CONNECT_BOOTSTRAP_ENABLED=true
+      - CONNECT_BOOTSTRAP_SECRETKEY=${CONNECT_BOOTSTRAP_SECRETKEY}
+      - CONNECT_APPLICATIONS_PACKAGEAUDITINGENABLED=true
+      - CONNECT_TENSORFLOW_ENABLED=false
+    networks:
+      - test
+    privileged: true
+    volumes:
+      - /var/lib/rstudio-connect
+      - ./license.lic:/var/lib/rstudio-connect/rstudio-connect.lic:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3939"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  test:
+    driver: bridge

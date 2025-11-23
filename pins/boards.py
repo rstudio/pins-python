@@ -392,6 +392,9 @@ class BaseBoard:
                 "Use .pin_upload() to save a file as a pin."
             )
 
+        if name is None:
+            raise ValueError("Pin name must be provided when writing a pin.")
+
         return self._pin_store(
             x,
             name,

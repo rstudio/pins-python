@@ -491,6 +491,30 @@ class BaseBoard:
                 if not Path(path).is_file():
                     raise PinsError(f"Path is not a valid file: {path}")
 
+        if title is None:
+            # Use the filename/s as the name.
+            # Otherwise, the title ends up being something like '...: a pinned str object'
+            # https://github.com/rstudio/pins-python/issues/346
+            if len(paths) == 1:
+                filename = Path(paths[0]).name
+                title = f"'{filename}': a pinned file"
+            else:
+                # Don't let the string get too long; if the number of characters is
+                # excessive, then just use ... to represent the rest of them
+                file_list_str = ""
+                for p in paths:
+                    filename = Path(p).name
+
+                    if len(file_list_str) > 30:
+                        file_list_str += ", ..."
+                        break
+
+                    if file_list_str:
+                        file_list_str += ", "
+                    file_list_str += f"'{filename}'"
+
+                title = f"{file_list_str}: {len(paths)} pinned files"
+
         return self._pin_store(
             paths,
             name,

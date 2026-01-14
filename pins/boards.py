@@ -188,7 +188,13 @@ class BaseBoard:
         #       so they could pin_fetch and then examine the result, a la pin_download
         return meta
 
-    def pin_read(self, name, version: str | None = None, hash: str | None = None):
+    def pin_read(
+        self,
+        name,
+        version: str | None = None,
+        hash: str | None = None,
+        type: str | None = None,
+    ):
         """Return the data stored in a pin.
 
         Parameters
@@ -200,7 +206,8 @@ class BaseBoard:
         hash:
             A hash used to validate the retrieved pin data. If specified, it is
             compared against the `pin_hash` field retrieved by [](`~pins.boards.BaseBoard.pin_meta`).
-
+        type:
+            A specific file type to read the pin as
         """
         meta = self.pin_fetch(name, version)
 
@@ -216,14 +223,14 @@ class BaseBoard:
         pin_name = self.path_to_pin(name)
 
         return self._load_data(
-            meta, self.construct_path([pin_name, meta.version.version])
+            meta, self.construct_path([pin_name, meta.version.version]), type=type
         )
 
     def _pin_store(
         self,
         x,
         name: str | None = None,
-        type: str | None = None,
+        type: str | list[str] | None = None,
         title: str | None = None,
         description: str | None = None,
         metadata: Mapping | None = None,
@@ -339,7 +346,7 @@ class BaseBoard:
         self,
         x,
         name: str | None = None,
-        type: str | None = None,
+        type: str | list[str] | None = None,
         title: str | None = None,
         description: str | None = None,
         metadata: Mapping | None = None,
@@ -357,8 +364,9 @@ class BaseBoard:
         name:
             Pin name.
         type:
-            File type used to save `x` to disk. May be "csv", "arrow", "parquet",
-            "joblib", or "json".
+            File type(s) used to save `x` to disk. May be a single string or a list of strings.
+            Supported types include "csv", "arrow", "parquet", "joblib", or "json".
+            When a list is provided, the object will be saved in each of the specified formats.
         title:
             A title for the pin; most important for shared boards so that others
             can understand what the pin contains. If omitted, a brief description
@@ -689,7 +697,7 @@ class BaseBoard:
         pin_dir_path,
         x,
         name: str | None = None,
-        type: str | None = None,
+        type: str | list[str] | None = None,
         title: str | None = None,
         description: str | None = None,
         metadata: Mapping | None = None,
@@ -720,7 +728,7 @@ class BaseBoard:
         pin_dir_path,
         x: Adaptor | Any,
         name: str | None = None,
-        type: str | None = None,
+        type: str | list[str] | None = None,
         title: str | None = None,
         description: str | None = None,
         metadata: Mapping | None = None,
@@ -750,13 +758,27 @@ class BaseBoard:
             p_obj = str(Path(pin_dir_path) / name)
         else:
             p_obj = str(Path(pin_dir_path) / object_name)
-        # file is saved locally in order to hash, calc size
-        file_names = save_data(x, p_obj, type, apply_suffix)
+
+        # Handle multiple types
+        type_value = [type] if isinstance(type, str) else type
+        file_names = []
+
+        # Save each type
+        for t in type_value:
+            # file is saved locally in order to hash, calc size
+            files = save_data(x, p_obj, t, apply_suffix)
+            # If save_data returns a list, extend file_names with it
+            if isinstance(files, list):
+                file_names.extend(files)
+            else:
+                file_names.append(files)
+
+        # Always use a list for the type value, even with a single type
 
         meta = self.meta_factory.create(
             pin_dir_path,
             file_names,
-            type,
+            type_value,
             title=title,
             description=description,
             user=metadata,
@@ -780,10 +802,14 @@ class BaseBoard:
 
     # data loading ------------------------------------------------------------
 
-    def _load_data(self, meta, pin_version_path):
+    def _load_data(self, meta, pin_version_path, type: str | None = None):
         """Return the data object stored by a pin (e.g. a DataFrame)."""
         return load_data(
-            meta, self.fs, pin_version_path, allow_pickle_read=self.allow_pickle_read
+            meta,
+            self.fs,
+            pin_version_path,
+            allow_pickle_read=self.allow_pickle_read,
+            type=type,
         )
 
     # filesystem and cache methods --------------------------------------------
@@ -1161,6 +1187,12 @@ class BoardRsConnect(BaseBoard):
         return f, local
 
     def validate_pin_name(self, name) -> None:
+        # Check if name is None or not a string
+        if name is None or not isinstance(name, str):
+            raise ValueError(
+                f"Pin name must be a string, got {type(name).__name__}: {name}"
+            )
+
         # this should be the default behavior, expecting a full pin name.
         # but because the tests use short names, we allow it to be disabled via config
         if not get_allow_rsc_short_name() and name.count("/") != 1:

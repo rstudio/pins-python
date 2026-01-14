@@ -790,16 +790,13 @@ class BaseBoard:
 
     @contextlib.contextmanager
     def _open_pin_meta(self, path):
-        f = self.fs.open(path)
-        try:
+        with self.fs.open(path) as f:
             self._touch_cache(path)
 
             # optional additional data to put in Meta.local
             local = {}
 
             yield f, local
-        finally:
-            self.fs.close(f)
 
     def _get_cache_path(self, pin_name, version=None, fname=None):
         version_part = [version] if version is not None else []
@@ -1149,8 +1146,7 @@ class BoardRsConnect(BaseBoard):
 
     @contextlib.contextmanager
     def _open_pin_meta(self, path):
-        f = self.fs.open(path)
-        try:
+        with self.fs.open(path) as f:
             self._touch_cache(path)
 
             # optional additional data to put in Meta.local
@@ -1165,8 +1161,6 @@ class BoardRsConnect(BaseBoard):
             }
 
             yield f, local
-        finally:
-            self.fs.close(f)
 
     def validate_pin_name(self, name) -> None:
         # this should be the default behavior, expecting a full pin name.

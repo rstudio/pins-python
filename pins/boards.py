@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import functools
 import inspect
 import logging
@@ -156,9 +157,8 @@ class BaseBoard:
         meta_name = self.meta_factory.get_meta_name(*components)
 
         path_meta = self.construct_path([*components, meta_name])
-        f, local = self._open_pin_meta(path_meta)
-
-        meta = self.meta_factory.read_pin_yaml(f, pin_name, selected_version, local=local)
+        with self._open_pin_meta(path_meta) as (f, local):
+            meta = self.meta_factory.read_pin_yaml(f, pin_name, selected_version, local=local)
 
         return meta
 
@@ -788,14 +788,18 @@ class BaseBoard:
 
     # filesystem and cache methods --------------------------------------------
 
+    @contextlib.contextmanager
     def _open_pin_meta(self, path):
         f = self.fs.open(path)
-        self._touch_cache(path)
+        try:
+            self._touch_cache(path)
 
-        # optional additional data to put in Meta.local
-        local = {}
+            # optional additional data to put in Meta.local
+            local = {}
 
-        return f, local
+            yield f, local
+        finally:
+            self.fs.close(f)
 
     def _get_cache_path(self, pin_name, version=None, fname=None):
         version_part = [version] if version is not None else []
@@ -934,8 +938,8 @@ class BoardManual(BaseBoard):
         # note that pins on this board should point to versions, so we use an
         # empty string to mark version (it ultimately is ignored)
         path_meta = self.construct_path([pin_name, "", meta_name])
-        f, local = self._open_pin_meta(path_meta)
-        meta = self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""), local=local)
+        with self._open_pin_meta(path_meta) as (f, local):
+            meta = self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""), local=local)
 
         # TODO(#59,#83): handle caching, and then re-enable pin_read.
         # self._touch_cache(path_meta)
@@ -1143,22 +1147,26 @@ class BoardRsConnect(BaseBoard):
             )
         super().pin_versions_prune(*args, **kwargs)
 
+    @contextlib.contextmanager
     def _open_pin_meta(self, path):
         f = self.fs.open(path)
-        self._touch_cache(path)
+        try:
+            self._touch_cache(path)
 
-        # optional additional data to put in Meta.local
-        user_name, content_name, bundle_id = str(path).split("/")[:3]
-        user_guid = self.fs._user_name_cache[user_name]
-        content_guid = self.fs._content_name_cache[(user_guid, content_name)]
+            # optional additional data to put in Meta.local
+            user_name, content_name, bundle_id = str(path).split("/")[:3]
+            user_guid = self.fs._user_name_cache[user_name]
+            content_guid = self.fs._content_name_cache[(user_guid, content_name)]
 
-        local = {
-            "content_id": content_guid,
-            "version": bundle_id,
-            "url": f"{self.fs.api.server_url}/content/{content_guid}/",
-        }
+            local = {
+                "content_id": content_guid,
+                "version": bundle_id,
+                "url": f"{self.fs.api.server_url}/content/{content_guid}/",
+            }
 
-        return f, local
+            yield f, local
+        finally:
+            self.fs.close(f)
 
     def validate_pin_name(self, name) -> None:
         # this should be the default behavior, expecting a full pin name.

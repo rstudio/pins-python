@@ -158,7 +158,9 @@ class BaseBoard:
 
         path_meta = self.construct_path([*components, meta_name])
         with self._open_pin_meta(path_meta) as (f, local):
-            meta = self.meta_factory.read_pin_yaml(f, pin_name, selected_version, local=local)
+            meta = self.meta_factory.read_pin_yaml(
+                f, pin_name, selected_version, local=local
+            )
 
         return meta
 
@@ -936,7 +938,9 @@ class BoardManual(BaseBoard):
         # empty string to mark version (it ultimately is ignored)
         path_meta = self.construct_path([pin_name, "", meta_name])
         with self._open_pin_meta(path_meta) as (f, local):
-            meta = self.meta_factory.read_pin_yaml(f, pin_name, VersionRaw(""), local=local)
+            meta = self.meta_factory.read_pin_yaml(
+                f, pin_name, VersionRaw(""), local=local
+            )
 
         # TODO(#59,#83): handle caching, and then re-enable pin_read.
         # self._touch_cache(path_meta)

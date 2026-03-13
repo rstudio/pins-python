@@ -38,7 +38,7 @@ jobs:
             # ignore doctests
             pytest_opts: "-k pins/tests"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.head.repo.fork }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.head.repo.fork }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
@@ -123,15 +123,15 @@ jobs:
           python -m pip install -e .[test]
       - name: Run tests
         run: |
-          # TODO: better way to disable all cloud backend tests?
-          pytest pins -m 'not fs_rsc and not fs_s3 and not fs_gcs and not fs_abfs and not skip_on_github'
+          # Skip all tests requiring credentials, which aren't available on fork PRs.
+          pytest pins -m 'not fs_rsc and not fs_s3 and not fs_gcs and not fs_abfs and not fs_dbc and not skip_on_github'
 
 
   build-docs:
     name: "Build Docs"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
@@ -234,7 +234,7 @@ jobs:
     if: github.event_name == 'release'
     needs: [build-docs, tests]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"

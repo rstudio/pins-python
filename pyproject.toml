@@ -87,6 +87,10 @@ universal = 1
 [tool.pytest.ini_options]
 markers = [
     "fs_file: mark test to only run on local filesystem",
+    # NOTE: if you add a new marker here for a backend that requires credentials,
+    # be sure to exclude it from the test command in .github/workflows/ci.yml
+    # in the "test-fork" job, to avoid failing tests where GitHub Actions
+    # secrets aren't available.
     "fs_s3: mark test to only run on AWS S3 bucket filesystem",
     "fs_gcs: mark test to only run on Google Cloud Storage bucket filesystem",
     "fs_abfs: mark test to only run on Azure Datalake filesystem",

@@ -123,8 +123,8 @@ jobs:
           python -m pip install -e .[test]
       - name: Run tests
         run: |
-          # TODO: better way to disable all cloud backend tests?
-          pytest pins -m 'not fs_rsc and not fs_s3 and not fs_gcs and not fs_abfs and not skip_on_github'
+          # Skip all tests requiring credentials, which aren't available on fork PRs.
+          pytest pins -m 'not fs_rsc and not fs_s3 and not fs_gcs and not fs_abfs and not fs_dbc and not skip_on_github'
 
 
   build-docs:

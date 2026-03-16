@@ -32,4 +32,5 @@ for user in extra_users:
         user["username"], user["password"]
     ).create_api_key()
 
-json.dump(api_keys, open(OUT_FILE, "w"))
+with open(OUT_FILE, "w") as f:
+    json.dump(api_keys, f)

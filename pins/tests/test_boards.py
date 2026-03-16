@@ -282,6 +282,50 @@ def test_board_pin_upload_path_list(board_with_cache, tmp_path):
 
 
 @skip_if_dbc
+def test_board_pin_upload_name(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path = tmp_path / "data.csv"
+    df.to_csv(path, index=False)
+
+    meta = board_with_cache.pin_upload([path], "cool_pin")
+
+    assert meta.title == "'data.csv': a pinned file"
+
+
+@skip_if_dbc
+def test_board_pin_upload_name_multiple_paths(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    path1 = tmp_path / "data1.csv"
+    path2 = tmp_path / "data2.csv"
+    df.to_csv(path1, index=False)
+    df.to_csv(path2, index=False)
+
+    meta = board_with_cache.pin_upload([path1, path2], "cool_pin")
+
+    assert meta.title == "'data1.csv', 'data2.csv': 2 pinned files"
+
+
+@skip_if_dbc
+def test_board_pin_upload_name_many_paths(board_with_cache, tmp_path):
+    # create and save data
+    df = pd.DataFrame({"x": [1, 2, 3]})
+
+    paths = []
+    for i in range(1, 4 + 1):
+        path = tmp_path / f"data{i}.csv"
+        df.to_csv(path, index=False)
+        paths.append(path)
+
+    meta = board_with_cache.pin_upload(paths, "cool_pin")
+
+    assert meta.title == "'data1.csv', 'data2.csv', 'data3.csv', ...: 4 pinned files"
+
+
+@skip_if_dbc
 def test_board_pin_download_filename_multifile(board_with_cache, tmp_path):
     # create and save data
     df = pd.DataFrame({"x": [1, 2, 3]})

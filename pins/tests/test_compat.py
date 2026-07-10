@@ -9,6 +9,7 @@ from pins.tests.conftest import (
     PATH_TO_MANIFEST_BOARD,
 )
 from pins.tests.helpers import skip_if_dbc, xfail_fs
+from pins.utils import fs_protocol
 
 NOT_A_PIN = "not_a_pin_abcdefg"
 PIN_CSV = "df_csv"
@@ -19,7 +20,7 @@ PIN_CSV = "df_csv"
 @pytest.fixture(scope="session")
 def board(backend):
     board = backend.create_tmp_board(str(PATH_TO_EXAMPLE_BOARD.absolute()))
-    if board.fs.protocol == "dbc":
+    if fs_protocol(board.fs) == "dbc":
         board = backend.create_tmp_board(str(PATH_TO_EXAMPLE_BOARD_DBC))
     yield board
 
@@ -47,10 +48,10 @@ def test_compat_pin_list(board):
     src_sorted = sorted(board.pin_list())
     dst_sorted = ["df_arrow", "df_csv", "df_rds", "df_unversioned"]
 
-    if board.fs.protocol == "rsc":
+    if fs_protocol(board.fs) == "rsc":
         # rsc backend uses <user_name>/<content_name> for full name
         dst_sorted = [f"{board.user_name}/{content}" for content in dst_sorted]
-    if board.fs.protocol == "dbc":
+    if fs_protocol(board.fs) == "dbc":
         # TODO: update to match when not read-only
         dst_sorted = [
             "cool_pin",
@@ -70,12 +71,12 @@ def test_compat_pin_list(board):
 
 
 def test_compat_pin_versions(board):
-    if board.fs.protocol == "rsc":
+    if fs_protocol(board.fs) == "rsc":
         pytest.skip("RSC uses bundle ids as pin versions")
     versions = board.pin_versions("df_csv", as_df=False)
     v_strings = list(v.version for v in versions)
     # TODO: update when dbc is not read-only
-    if board.fs.protocol == "dbc":
+    if fs_protocol(board.fs) == "dbc":
         v_strings == ["20250410T083026Z-a173c"]
     else:
         assert v_strings == ["20220214T163718Z-eceac", "20220214T163720Z-9bfad"]
@@ -109,12 +110,12 @@ def test_compat_pin_meta(board):
     # Note that this fetches the latest of 2 versions
     meta = board.pin_meta(PIN_CSV)
 
-    if board.fs.protocol == "rsc":
+    if fs_protocol(board.fs) == "rsc":
         # TODO: afaik the bundle id is largely non-deterministic, so not possible
         # to test, but should think a bit more about it.
         assert meta.name == "derek/df_csv"
     # TODO: update when dbc boards are not read-only
-    elif board.fs.protocol == "dbc":
+    elif fs_protocol(board.fs) == "dbc":
         assert meta.title == "df_csv: a pinned 3 x 2 DataFrame"
         assert meta.description is None
         assert meta.created == "20250410T083026Z"
@@ -154,7 +155,7 @@ def test_compat_pin_meta_pin_missing(board):
 def test_compat_pin_meta_version_arg(board):
     # note that in RSConnect the version is the bundle id
     # TODO: update when dbc is not read-only
-    if board.fs.protocol == "dbc":
+    if fs_protocol(board.fs) == "dbc":
         meta = board.pin_meta(PIN_CSV, "20250410T083026Z-a173c")
         assert meta.version.version == "20250410T083026Z-a173c"
         assert meta.version.hash == "a173c"
@@ -185,7 +186,7 @@ def test_compat_pin_read(board):
     src_df = board.pin_read("df_csv")
 
     # TODO: update when dbc boards are not read-only
-    if board.fs.protocol == "dbc":
+    if fs_protocol(board.fs) == "dbc":
         dst_df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
     else:
         dst_df = pd.read_csv(p_data)
@@ -210,7 +211,7 @@ def test_compat_pin_read_supported_rds(board):
 
 
 def test_board_pin_write_manifest_name_error(board_manifest):
-    if board_manifest.fs.protocol == "rsc":
+    if fs_protocol(board_manifest.fs) == "rsc":
         pytest.skip()
 
     with pytest.raises(ValueError) as exc_info:

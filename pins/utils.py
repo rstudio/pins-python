@@ -20,6 +20,17 @@ def warn_deprecated(msg):
     warn(msg, DeprecationWarning)
 
 
+def fs_protocol(fs):
+    """Return the protocol of a (possibly cache-wrapped) filesystem.
+
+    pins wraps a board's filesystem in a cache filesystem. Since fsspec 2025.9,
+    a cache filesystem reports its own protocol (e.g. "pinscache") rather than
+    delegating to the wrapped filesystem, so unwrap it to recover the board's
+    underlying protocol.
+    """
+    return getattr(fs, "fs", fs).protocol
+
+
 def hash_name(path, same_name):
     if same_name:
         _hash = os.path.basename(path)

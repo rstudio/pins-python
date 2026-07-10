@@ -12,6 +12,7 @@ from pins.tests.conftest import (
     PATH_TO_EXAMPLE_VERSION,
 )
 from pins.tests.helpers import rm_env, skip_if_dbc
+from pins.utils import fs_protocol
 
 
 @pytest.fixture
@@ -36,7 +37,7 @@ def check_cache_file_path(p_file, p_cache):
 
 
 def construct_from_board(board):
-    prot = board.fs.protocol
+    prot = fs_protocol(board.fs)
     fs_name = prot if isinstance(prot, str) else prot[0]
 
     if fs_name in ["file", ("file", "local")]:
@@ -192,7 +193,7 @@ def test_constructor_boards(board, df_csv, tmp_cache):
 
     # check data
     # TODO: update when dbc boards are not read-only
-    if board.fs.protocol == "dbc":
+    if fs_protocol(board.fs) == "dbc":
         pass
     else:
         assert_frame_equal(df, df_csv)
@@ -200,7 +201,7 @@ def test_constructor_boards(board, df_csv, tmp_cache):
     # check the cache structure -----------------------------------------------
 
     # check cache
-    if board.fs.protocol in ["file", ("file", "local")]:
+    if fs_protocol(board.fs) in ["file", ("file", "local")]:
         # no caching for local file boards
         pass
     else:
@@ -239,7 +240,7 @@ def board2(backend):
 
 @skip_if_dbc
 def test_constructor_boards_multi_user(board2, df_csv, tmp_cache):
-    prot = board2.fs.protocol
+    prot = fs_protocol(board2.fs)
     fs_name = prot if isinstance(prot, str) else prot[0]
 
     if fs_name == "rsc":
@@ -296,7 +297,7 @@ def test_board_constructor_folder(tmp_path: Path, df):
 
 
 def test_board_deparse(board):
-    prot = board.fs.protocol
+    prot = fs_protocol(board.fs)
 
     with rm_env("CONNECT_API_KEY"):
         if prot == "rsc":

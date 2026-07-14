@@ -15,6 +15,7 @@ from importlib_resources import files
 
 from pins.boards import BaseBoard, BoardRsConnect
 from pins.constructors import board_databricks
+from pins.utils import fs_protocol
 
 DEFAULT_CREATION_DATE = datetime(2020, 1, 13, 23, 58, 59)
 
@@ -65,10 +66,7 @@ def skip_if_dbc(func):
                     board = arg_value
                     break
 
-        if board and (
-            board.fs.protocol == "dbc"
-            or (hasattr(board.fs, "fs") and board.fs.fs.protocol == "dbc")
-        ):
+        if board and fs_protocol(board.fs) == "dbc":
             pytest.skip("All Databricks tests must be read only")
 
         return func(*args, **kwargs)
@@ -104,7 +102,7 @@ def xfail_fs(*names):
         # Assumes a fixture named board is passed to the test
         @wraps(f)
         def wrapper(board, *args, **kwargs):
-            if board.fs.protocol in names:
+            if fs_protocol(board.fs) in names:
                 pytest.xfail()
                 return f(board, *args, **kwargs)
             else:

@@ -22,7 +22,7 @@ from .config import get_allow_rsc_short_name
 from .drivers import REQUIRES_SINGLE_FILE, default_title, load_data, load_file, save_data
 from .errors import PinsError, PinsVersionError
 from .meta import Meta, MetaFactory, MetaRaw
-from .utils import ExtendMethodDoc, inform, warn_deprecated
+from .utils import ExtendMethodDoc, fs_protocol, inform, warn_deprecated
 from .versions import VersionRaw, guess_version, version_setup
 
 _log = logging.getLogger(__name__)
@@ -858,22 +858,23 @@ def board_deparse(board: BaseBoard):
     else:
         allow_pickle = ""
 
-    prot = board.fs.protocol
+    prot = fs_protocol(board.fs)
+    prots = {prot} if isinstance(prot, str) else set(prot)
 
-    if prot == "rsc":
+    if "rsc" in prots:
         url = board.fs.api.server_url
         return f"board_connect(server_url={repr(url)}{allow_pickle})"
-    elif prot in ["file", ("file", "local")]:
+    elif "file" in prots:
         return f"board_folder({repr(board.board)}{allow_pickle})"
-    elif set(prot) == {"s3", "s3a"}:
+    elif prots & {"s3", "s3a"}:
         return f"board_s3({repr(board.board)}{allow_pickle})"
-    elif prot == "abfs":
+    elif "abfs" in prots:
         return f"board_azure({repr(board.board)}{allow_pickle})"
-    elif set(prot) == {"gcs", "gs"} or prot == "gs":
+    elif prots & {"gcs", "gs"}:
         return f"board_gcs({repr(board.board)}{allow_pickle})"
-    elif prot == "http":
+    elif "http" in prots:
         return f"board_url({repr(board.board)}, {board.pin_paths}{allow_pickle})"
-    elif prot == "dbc":
+    elif "dbc" in prots:
         return f"board_databricks({repr(board.board)}{allow_pickle})"
     else:
         raise NotImplementedError(
@@ -930,7 +931,9 @@ class BoardManual(BaseBoard):
         # a file. here we need to create a stripped down form of metadata, since
         # a metadata file does not exist (and we can't pull files from a version dir).
         path_to_pin = self.construct_path([pin_name])
-        if self.fs.protocol == "http" and not path_to_pin.rstrip().endswith("/"):
+        prot = fs_protocol(self.fs)
+        is_http = prot == "http" or (not isinstance(prot, str) and "http" in prot)
+        if is_http and not path_to_pin.rstrip().endswith("/"):
             # create metadata, rather than read from a file
             return self.meta_factory.create_raw(path_to_pin, type="file", name=pin_name)
 

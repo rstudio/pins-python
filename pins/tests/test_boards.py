@@ -16,6 +16,7 @@ from pins.config import PINS_ENV_INSECURE_READ
 from pins.errors import PinsError, PinsInsecureReadError, PinsVersionError
 from pins.meta import MetaRaw
 from pins.tests.helpers import DEFAULT_CREATION_DATE, rm_env, skip_if_dbc
+from pins.utils import fs_protocol
 
 
 @fixture
@@ -259,7 +260,7 @@ def test_board_pin_download_no_cache_error(board, tmp_path):
     assert meta.type == "file"
 
     # file boards work okay, since the board directory itself is the cache
-    if board.fs.protocol in ["file", ("file", "local")]:
+    if fs_protocol(board.fs) in ["file", ("file", "local")]:
         pytest.skip()
 
     # uncached boards should fail, since nowhere to store the download
@@ -303,7 +304,7 @@ def test_board_pin_download_filename_multifile(board_with_cache, tmp_path):
 
 
 def test_board_pin_write_rsc_index_html(board, tmp_path: Path, snapshot):
-    if board.fs.protocol != "rsc":
+    if fs_protocol(board.fs) != "rsc":
         pytest.skip()
 
     df = pd.DataFrame({"x": [1, 2, None], "y": ["a", "b", "c"]})
@@ -451,7 +452,7 @@ def pin_name():
 @pytest.fixture
 def pin_del(board, df, pin_name):
     # TODO: update when dbc boards no longer read-only
-    if board.fs.protocol == "dbc":
+    if fs_protocol(board.fs) == "dbc":
         pytest.skip()
     # 1min ago to avoid name collision
     one_min_ago = datetime.now() - timedelta(minutes=1)
@@ -471,7 +472,7 @@ def pin_del(board, df, pin_name):
 @pytest.fixture
 def pin_prune(board, df, pin_name):
     # TODO: update when dbc boards no longer read-only
-    if board.fs.protocol == "dbc":
+    if fs_protocol(board.fs) == "dbc":
         pytest.skip()
     today = datetime.now()
     day_ago = today - timedelta(days=1, minutes=1)
@@ -521,7 +522,7 @@ def test_board_pin_version_delete_older(board, pin_name, pin_del):
 def test_board_pin_version_delete_latest(board, pin_name, pin_del):
     meta_old, meta_new = pin_del
 
-    if board.fs.protocol == "rsc":
+    if fs_protocol(board.fs) == "rsc":
         with pytest.raises(PinsError) as exc_info:
             board.pin_version_delete(pin_name, meta_new.version.version)
 
@@ -553,7 +554,7 @@ def test_board_pin_versions_prune_n(board, pin_prune, pin_name, n):
 @pytest.mark.parametrize("days", [1, 2])
 def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
     # Posit cannot handle days, since it involves pulling metadata
-    if board.fs.protocol == "rsc":
+    if fs_protocol(board.fs) == "rsc":
         with pytest.raises(NotImplementedError):
             board.pin_versions_prune(pin_name, days=days)
         return
@@ -570,7 +571,7 @@ def test_board_pin_versions_prune_days(board, pin_prune, pin_name, days):
 def test_board_pin_versions_prune_days_protect_most_recent(board, pin_name):
     """To address https://github.com/rstudio/pins-python/issues/297"""
     # Posit cannot handle days, since it involves pulling metadata
-    if board.fs.protocol == "rsc":
+    if fs_protocol(board.fs) == "rsc":
         with pytest.raises(NotImplementedError):
             board.pin_versions_prune(pin_name, days=5)
         return
@@ -612,7 +613,7 @@ def test_board_pin_versions_prune_days_protect_most_recent(board, pin_name):
 )
 @skip_if_dbc
 def test_board_pin_search_name(board, df, search, matches):
-    if board.fs.protocol == "rsc":
+    if fs_protocol(board.fs) == "rsc":
         matches = ["derek/" + m for m in matches]
 
         # rsc doesn't search by title

@@ -43,6 +43,7 @@ def load_data(
     fs,
     path_to_version: "str | None" = None,
     allow_pickle_read: "bool | None" = None,
+    type: "str | None" = None,
 ):
     """Return loaded data, based on meta type.
     Parameters
@@ -56,9 +57,20 @@ def load_data(
     """
 
     # TODO: extandable loading with deferred importing
-    if meta.type in UNSAFE_TYPES and not get_allow_pickle_read(allow_pickle_read):
+
+    # If a specific type is provided, use that
+    if type is not None:
+        pin_type = type
+    else:
+        # If meta.type is a list, use the first type in the list
+        if isinstance(meta.type, list):
+            pin_type = meta.type[0]
+        else:
+            pin_type = meta.type
+
+    if pin_type in UNSAFE_TYPES and not get_allow_pickle_read(allow_pickle_read):
         raise PinsInsecureReadError(
-            f"Reading pin type {meta.type} involves reading a pickle file, so is NOT secure."
+            f"Reading pin type {pin_type} involves reading a pickle file, so is NOT secure."
             f"Set the allow_pickle_read=True when creating the board, or the "
             f"{PINS_ENV_INSECURE_READ}=1 environment variable.\n"
             "See:\n"
@@ -66,49 +78,83 @@ def load_data(
             "  * https://scikit-learn.org/stable/modules/model_persistence.html#security-maintainability-limitations"
         )
 
-    with load_file(meta.file, fs, path_to_version, meta.type) as f:
-        if meta.type == "csv":
+    # If meta.file is a list, find the appropriate file for the requested type
+    if isinstance(meta.file, (list, tuple)):
+        # For each file type, expect the filename to end with the type extension
+        file_extension_map = {
+            "csv": ".csv",
+            "arrow": ".arrow",
+            "feather": ".feather",
+            "parquet": ".parquet",
+            "json": ".json",
+            "joblib": ".joblib",
+            "rds": ".rds",
+        }
+
+        # Look for a file with the correct extension
+        ext = file_extension_map.get(pin_type)
+        if ext:
+            matching_files = [f for f in meta.file if f.endswith(ext)]
+            if matching_files:
+                filename = matching_files[0]
+            else:
+                # If no exact match found, try to find a file containing the pin type in its name
+                matching_files = [f for f in meta.file if pin_type in f.lower()]
+                if matching_files:
+                    filename = matching_files[0]
+                else:
+                    raise ValueError(
+                        f"No file found for type {pin_type}. Available files: {meta.file}"
+                    )
+        else:
+            # Fall back to the first file if we don't know the extension mapping
+            filename = meta.file[0]
+    else:
+        filename = meta.file
+
+    with load_file(filename, fs, path_to_version, pin_type) as f:
+        if pin_type == "csv":
             import pandas as pd
 
             return pd.read_csv(f)
 
-        elif meta.type == "arrow":
+        elif pin_type == "arrow":
             import pandas as pd
 
             return pd.read_feather(f)
 
-        elif meta.type == "feather":
+        elif pin_type == "feather":
             import pandas as pd
 
             return pd.read_feather(f)
 
-        elif meta.type == "parquet":
+        elif pin_type == "parquet":
             import pandas as pd
 
             return pd.read_parquet(f)
 
-        elif meta.type == "table":
+        elif pin_type == "table":
             import pandas as pd
 
             return pd.read_csv(f)
 
-        elif meta.type == "joblib":
+        elif pin_type == "joblib":
             import joblib
 
             return joblib.load(f)
 
-        elif meta.type == "json":
+        elif pin_type == "json":
             import json
 
             return json.load(f)
 
-        elif meta.type == "file":
+        elif pin_type == "file":
             raise NotImplementedError(
                 "Methods like `.pin_read()` are not able to read 'file' type pins."
                 " Use `.pin_download()` to download the file."
             )
 
-        elif meta.type == "rds":
+        elif pin_type == "rds":
             try:
                 import rdata  # pyright: ignore[reportMissingImports]
 
@@ -118,7 +164,7 @@ def load_data(
                     "Install the 'rdata' package to attempt to convert 'rds' files into Python objects."
                 )
 
-    raise NotImplementedError(f"No driver for type {meta.type}")
+    raise NotImplementedError(f"No driver for type {pin_type}")
 
 
 def save_data(

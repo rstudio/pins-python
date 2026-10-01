@@ -51,3 +51,12 @@ def test_version_from_files(bytes_):
 
     assert v.hash == digest
     assert v.created == EXAMPLE_DATE
+
+
+def test_version_from_files_multiple():
+    files = [BytesIO(b"123"), BytesIO(b"456")]
+    v = Version.from_files(files, EXAMPLE_DATE)
+
+    combined = xxhash.xxh64(b"123").hexdigest() + xxhash.xxh64(b"456").hexdigest()
+    assert v.hash == xxhash.xxh64(combined.encode("utf-8")).hexdigest()
+    assert v.created == EXAMPLE_DATE

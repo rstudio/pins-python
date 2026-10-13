@@ -32,7 +32,7 @@ jobs:
             python: "3.10"
             # ignore doctests, as they involve calls to github, and all mac machines
             # use the same IP address
-            pytest_opts: "--workers 4 --tests-per-worker 1 -k pins/tests"
+            pytest_opts: "-k pins/tests"
           - os: "windows-latest"
             python: "3.10"
             # ignore doctests

@@ -2,17 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>pins for Python</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -67,15 +73,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="./favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-472c5a19eb26a145a9e7cd454cd64706.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-27846c8ea637142c255ecf45fbb3699e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -193,27 +198,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <p>To use the pins package, you must first create a pin board. A good place to start is <a href="./reference/board_folder.html#pins.board_folder"><code>board_folder</code></a>, which stores pins in a directory you specify. Here we’ll use a special version of <a href="./reference/board_folder.html#pins.board_folder"><code>board_folder</code></a> called <a href="./reference/board_temp.html#pins.board_temp"><code>board_temp</code></a> which creates a temporary board that’s automatically deleted when your Python script or notebook session ends. This is great for examples, but obviously you shouldn’t use it for real work!</p>
-<div id="9a3325ec" class="cell" data-execution_count="1">
+<div id="60adc520" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pins</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pins.data <span class="im">import</span> mtcars</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>board <span class="op">=</span> pins.board_temp()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>You can “pin” (save) data to a board with the <a href="./reference/pin_write.html#pins.boards.BaseBoard.pin_write"><code>pin_write</code></a> method. It requires three arguments: an object, a name, and a pin type:</p>
-<div id="d44fd16e" class="cell" data-execution_count="2">
+<div id="7a8e34c8" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>board.pin_write(mtcars.head(), <span class="st">"mtcars"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Writing pin:
 Name: 'mtcars'
-Version: 20251120T223801Z-120a5</code></pre>
+Version: 20261013T202024Z-120a5</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20251120T223801Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2025, 11, 20, 22, 38, 1, 549443), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})</code></pre>
+<pre><code>Meta(title='mtcars: a pinned 5 x 11 DataFrame', description=None, created='20261013T202024Z', pin_hash='120a54f7e0818041', file='mtcars.csv', file_size=249, type='csv', api_version=1, version=Version(created=datetime.datetime(2026, 10, 13, 20, 20, 24, 161537), hash='120a54f7e0818041'), tags=None, name='mtcars', user={}, local={})</code></pre>
 </div>
 </div>
 <p>Above, we saved the data as a CSV, but depending on what you’re saving and who else you want to read it, you might use the <code>type</code> argument to instead save it as a <code>joblib</code>, <code>parquet</code>, or <code>json</code> file.</p>
 <p>You can later retrieve the pinned data with <a href="./reference/pin_read.html#pins.boards.BaseBoard.pin_read"><code>pin_read</code></a>:</p>
-<div id="7ce0bbc7" class="cell" data-execution_count="3">
+<div id="fcb1f3c5" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>board.pin_read(<span class="st">"mtcars"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>

@@ -89,6 +89,44 @@ board.pin_read("hadley/sales-summary")
 You can easily control who gets to access the data using the Posit
 Connect permissions pane.
 
+By default, deployed content reads pins as the content owner, using
+`CONNECT_API_KEY`. To read as the viewer, exchange the viewer's session token for a
+visitor API key and pass it as `api_key`:
+
+```python
+import os
+
+from posit import connect
+from pins import board_connect
+from shiny import reactive
+from shiny.express import render, session
+
+
+@reactive.calc
+def visitor_board():
+    token = session.http_conn.headers.get("Posit-Connect-User-Session-Token")
+    client = connect.Client()
+    credentials = client.oauth.get_credentials(
+        token,
+        requested_token_type="urn:posit:connect:api-key",
+    )
+    return board_connect(
+        server_url=os.environ["CONNECT_SERVER"],
+        api_key=credentials["access_token"],
+        cache=None,
+    )
+
+
+@render.data_frame
+def sales():
+    return visitor_board().pin_read("hadley/sales-summary")
+```
+
+The `cache=None` argument keeps files that one viewer reads from being reused for
+another. For setup requirements, such as the Visitor API Key integration and
+`audience`, see the [Connect docs on visitor API
+keys](https://docs.posit.co/connect/user/oauth-integrations/#obtaining-a-visitor-api-key).
+
 The pins package also includes boards that allow you to share data on
 services like Amazon’s S3 ([](`~pins.board_s3`)), Google Cloud Storage ([](`~pins.board_gcs`)),
 and Azure blob storage ([](`~pins.board_azure`)).

@@ -36,6 +36,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+data-dict = ["data-dict-yaml>=0.0.3,<0.0.4", "pyarrow"]
 aws = ["s3fs"]
 azure = ["adlfs>=2024.4.1"]
 check = [

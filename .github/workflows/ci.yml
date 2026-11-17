@@ -79,6 +79,23 @@ jobs:
           # https://github.com/browsertron/pytest-parallel/issues/93
           no_proxy: "*"
 
+  test-data-dict:
+    name: "Test data dictionary CLI"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[data-dict]' pytest
+      - name: Run data dictionary tests
+        run: pytest pins/tests/test_data_dict.py
+        env:
+          PINS_REQUIRE_DATA_DICT_CLI: "1"
+
   test-connect:
     name: "Test Posit Connect"
     runs-on: ubuntu-latest

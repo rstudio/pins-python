@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import functools
 import inspect
+import json
 import logging
 import re
 import shutil
@@ -12,6 +13,7 @@ from datetime import datetime, timedelta
 from io import IOBase
 from pathlib import Path
 from typing import Any, Protocol
+from urllib.parse import quote
 
 from importlib_resources import files
 from importlib_resources.abc import Traversable
@@ -233,7 +235,11 @@ class BaseBoard:
         created: datetime | None = None,
         *,
         force_identical_write: bool = False,
+        data_dict: bool | str | Path | None = None,
     ) -> Meta:
+        from pins.data_dict import prepare_metadata
+
+        metadata = prepare_metadata(metadata, data_dict, x, upload=type == "file")
         _type = type
         if _type == "feather":
             warn_deprecated(
@@ -295,8 +301,13 @@ class BaseBoard:
                 if last_hash == meta.pin_hash:
                     msg = (
                         f'The hash of pin "{name}" has not changed. Your pin will not '
-                        f"be stored.",
+                        "be stored."
                     )
+                    if meta.user and "data_dict" in meta.user:
+                        msg += (
+                            " To save dictionary or metadata changes, use "
+                            "force_identical_write=True."
+                        )
                     inform(log=_log, msg=msg)
                     return last_meta
 
@@ -349,6 +360,7 @@ class BaseBoard:
         created: datetime | None = None,
         *,
         force_identical_write: bool = False,
+        data_dict: bool | str | Path | None = None,
     ) -> Meta:
         """Write a pin object to the board.
 
@@ -370,6 +382,11 @@ class BaseBoard:
         metadata:
             A dictionary containing additional metadata to store with the pin.
             This gets stored on the Meta.user field.
+        data_dict:
+            Optional YAML file path, or True to draft a dictionary from a DataFrame.
+            Stores YAML in metadata["data_dict"]. For Connect, the publisher renders
+            dictionary.html and index.html keeps the pin overview and dictionary view.
+            Requires the optional data-dict CLI for drafting and rendering.
         versioned:
             Whether the pin should be versioned. Defaults to versioning.
         created:
@@ -404,6 +421,7 @@ class BaseBoard:
             versioned,
             created,
             force_identical_write=force_identical_write,
+            data_dict=data_dict,
         )
 
     def pin_download(self, name, version=None, hash=None) -> Sequence[str]:
@@ -463,6 +481,9 @@ class BaseBoard:
         title=None,
         description=None,
         metadata=None,
+        *,
+        data_dict: bool | str | Path | None = None,
+        force_identical_write: bool = False,
     ):
         """Write a pin based on paths to one or more files.
 
@@ -485,6 +506,12 @@ class BaseBoard:
         metadata:
             A dictionary containing additional metadata to store with the pin.
             This gets stored on the Meta.user field.
+        data_dict:
+            Optional YAML file path, or True to draft from Parquet files.
+            For Connect, the publisher renders dictionary.html; index.html keeps
+            the pin overview and adds the dictionary view.
+        force_identical_write:
+            Store a new version even when only the metadata changes.
         """
 
         if isinstance(paths, (list, tuple)):
@@ -500,6 +527,8 @@ class BaseBoard:
             title=title,
             description=description,
             metadata=metadata,
+            data_dict=data_dict,
+            force_identical_write=force_identical_write,
         )
 
     def pin_version_delete(self, name: str, version: str):
@@ -754,6 +783,13 @@ class BaseBoard:
             p_obj = str(Path(pin_dir_path) / object_name)
         # file is saved locally in order to hash, calc size
         file_names = save_data(x, p_obj, type, apply_suffix)
+
+        metadata_name = self.meta_factory.get_meta_name()
+        payloads = [file_names] if isinstance(file_names, str) else file_names
+        if any(
+            Path(file).name.casefold() == metadata_name.casefold() for file in payloads
+        ):
+            raise PinsError(f"Generating pin metadata would overwrite {metadata_name}.")
 
         meta = self.meta_factory.create(
             pin_dir_path,
@@ -1222,46 +1258,56 @@ class BoardRsConnect(BaseBoard):
         meta = super()._create_meta(pin_dir_path, x, short_name, *args, **kwargs)
         meta.name = name
 
-        # copy in files needed by index.html ----------------------------------
-        crnt_files = set([meta.file] if isinstance(meta.file, str) else meta.file)
-        to_add = [str(p) for p in self.html_assets_dir.rglob("*")]
-        overlap = set(to_add) & crnt_files
+        has_dictionary = bool(meta.user and "data_dict" in meta.user)
+        all_files = [meta.file] if isinstance(meta.file, str) else meta.file
+        reserved = {
+            str(path.relative_to(self.html_assets_dir))
+            for path in self.html_assets_dir.rglob("*")
+        }
+        reserved.update({"data.txt", "manifest.json"})
+        if has_dictionary:
+            reserved.add("dictionary.html")
+        reserved = {file.casefold() for file in reserved}
+        overlap = {file for file in all_files if file.casefold() in reserved}
         if overlap:
             raise PinsError(
-                f"Generating an index.html would overwrite these files: {overlap}"
+                f"Generating a pin preview would overwrite these files: {overlap}"
             )
+        if has_dictionary:
+            from pins.data_dict import render
 
-        # recursively copy all assets into prepped pin version dir
+            render(
+                meta.user["data_dict"],
+                pin_dir_path,
+                meta.file,
+                filename="dictionary.html",
+            )
         shutil.copytree(self.html_assets_dir, pin_dir_path, dirs_exist_ok=True)
 
-        # render index.html ------------------------------------------------
-
-        all_files = [meta.file] if isinstance(meta.file, str) else meta.file
-        pin_files = ", ".join(f"""<a href="{file}">{file}</a>""" for file in all_files)
-
+        preview = json.loads(create_adaptor(x).data_preview)
+        if preview.get("columns"):
+            preview["options"] = {
+                "rows": {"min": min(10, max(1, len(preview["data"]))), "max": 10}
+            }
         context = {
             "date": meta.version.created.replace(microsecond=0),
             "pin_name": self.path_to_pin(name),
-            "pin_files": pin_files,
+            "pin_name_literal": json.dumps(self.path_to_pin(name), ensure_ascii=False),
+            "pin_files": [
+                {"name": file, "url": quote(file, safe="")} for file in all_files
+            ],
             "pin_metadata": meta,
             "board_deparse": board_deparse(self),
-            "data_preview": create_adaptor(x).data_preview,
+            "data_preview": json.dumps(preview).replace("<", "\\u003c"),
+            "has_preview": bool(preview.get("columns")),
+            "has_dictionary": has_dictionary,
+            "show_r": meta.type not in ["joblib"],
+            "read_method": "pin_download" if meta.type == "file" else "pin_read",
         }
-
-        # do not show r code if not round-trip friendly
-        if meta.type in ["joblib"]:
-            context["show_r_style"] = "display:none"
-        else:
-            context["show_r_style"] = ""
-
-        # render html template ----
-
         from jinja2 import Environment
 
-        env = Environment()
+        env = Environment(autoescape=True, trim_blocks=True, lstrip_blocks=True)
         template = env.from_string(self.html_template.read_text())
-
         rendered = template.render(context)
-        (Path(pin_dir_path) / "index.html").write_text(rendered)
-
+        (Path(pin_dir_path) / "index.html").write_text(rendered, encoding="utf-8")
         return meta

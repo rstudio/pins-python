@@ -748,6 +748,13 @@ class BaseBoard:
         created: datetime | None = None,
         object_name: str | list[str] | None = None,
     ):
+        """Prepare a complete version for direct bundle creation.
+
+        Dictionary writes call `_create_meta` and `_finalize_pin_version`
+        separately so identical-data writes skip drafting and rendering.
+        Custom board implementations should extend those hooks to support
+        dictionary writes.
+        """
         meta = self._create_meta(
             pin_dir_path,
             x,

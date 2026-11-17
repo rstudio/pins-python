@@ -4,6 +4,7 @@ from html.parser import HTMLParser
 
 import pandas as pd
 import pytest
+import yaml
 
 from pins import board_connect, board_folder
 from pins import data_dict as dd
@@ -67,15 +68,21 @@ def test_incomplete_renderer_html_fails_and_removes_output(tmp_path, monkeypatch
 
 def test_real_cli_applies_policy_to_dictionary_prose(tmp_path):
     _require_cli()
-    text = DICTIONARY.replace(
-        "    columns:",
-        '    description: "[click](javascript:alert%281%29)"\n    columns:',
-    )
-    text = text.replace("type: integer", "type: string\n        examples: [sample]")
+    document = yaml.safe_load(DICTIONARY)
+    attack = "<script>window.__pins_injected=1</script><img src=x onerror=alert(1)>"
+    document["label"] = attack
+    document["description"] = attack
+    table = document["tables"][0]
+    table["description"] = attack + " [click](javascript:alert%281%29)"
+    column = table["columns"][0]
+    column.update(type="string", label=attack, description=attack, examples=[attack])
+    text = yaml.safe_dump(document)
     dd.render(text, tmp_path, filename="dictionary.html")
     html = (tmp_path / "dictionary.html").read_text()
     assert_policy(html)
     assert "MutationObserver" in html
+    assert "<script>window.__pins_injected=1</script>" not in html
+    assert "<img src=x onerror=alert(1)>" not in html
 
 
 def test_identical_write_does_not_draft_or_render(tmp_path, monkeypatch, capsys):

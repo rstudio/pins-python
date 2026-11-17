@@ -73,8 +73,9 @@ def test_standard_preview_preserves_data_and_escapes_content(tmp_path, monkeypat
         title="Sample & important pin",
         description="Publisher's & shared description",
     )
-    html = (tmp_path / "index.html").read_text()
+    html = (tmp_path / "index.html").read_text(encoding="utf-8")
     page = Preview(html)
+    assert " · Data pin</title>" in html
     assert "#metadata" in page.links
     assert "Download metadata" in page.panels["metadata"]
     assert "Download metadata" not in page.panels["overview"]
@@ -128,4 +129,4 @@ def test_preview_rejects_payload_collisions(tmp_path, monkeypatch, filename):
             metadata=metadata,
             object_name=[source.name],
         )
-    assert source.read_text() == "original payload"
+    assert source.read_text(encoding="utf-8") == "original payload"

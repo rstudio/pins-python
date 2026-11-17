@@ -99,8 +99,11 @@ def test_draft_and_connect_entrypoint(tmp_path):
     prepared = connect.prepare_pin_version(
         output, frame, "owner/data", type="csv", metadata=meta.user
     )
-    assert "Data dictionary" in (output / "index.html").read_text()
-    assert yaml.safe_load((output / "data.txt").read_text())["user"] == meta.user
+    assert "Data dictionary" in (output / "index.html").read_text(encoding="utf-8")
+    assert (
+        yaml.safe_load((output / "data.txt").read_text(encoding="utf-8"))["user"]
+        == meta.user
+    )
     pd.testing.assert_frame_equal(pd.read_csv(output / prepared.file), frame)
     assert not (output / "lib").exists()
     parquet = tmp_path / "upload.parquet"
@@ -125,7 +128,7 @@ def test_unsupported_generation_and_collision(tmp_path):
     index.write_text("publisher's original")
     with pytest.raises(PinsError, match="overwrite index.html"):
         dd.render(DICTIONARY, tmp_path)
-    assert index.read_text() == "publisher's original"
+    assert index.read_text(encoding="utf-8") == "publisher's original"
 
 
 def test_missing_cli(monkeypatch):
@@ -237,10 +240,10 @@ def test_connect_parquet_profiles(tmp_path):
     meta = connect.prepare_pin_version(
         output, frame, "owner/data", type="parquet", metadata=metadata
     )
-    overview = (output / "index.html").read_text()
+    overview = (output / "index.html").read_text(encoding="utf-8")
     assert 'src="dictionary.html"' in overview
     assert "Download metadata" in overview and "Use this data" in overview
-    html = (output / "dictionary.html").read_text()
+    html = (output / "dictionary.html").read_text(encoding="utf-8")
     assert '<script src="theme.js"></script>' in html
     assert "#theme-toggle{display:none}" in html
     embedded = json.loads(
@@ -258,7 +261,10 @@ def test_connect_parquet_profiles(tmp_path):
         {"value": "a", "count": 2},
         {"value": "b", "count": 1},
     ]
-    assert yaml.safe_load((output / "data.txt").read_text())["user"] == metadata
+    assert (
+        yaml.safe_load((output / "data.txt").read_text(encoding="utf-8"))["user"]
+        == metadata
+    )
     assert "source" not in yaml.safe_load(metadata["data_dict"])["tables"][0]
     assert not list(output.glob("*.yaml"))
     assert (output / "pin.css").exists() and (output / "pin.js").exists()

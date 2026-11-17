@@ -66,18 +66,20 @@ def main():
             metadata=meta.user,
         )
         PinBundleManifest.add_manifest_to_directory(output)
-        uploaded = yaml.safe_load((output / "data.txt").read_text())
+        uploaded = yaml.safe_load((output / "data.txt").read_text(encoding="utf-8"))
         if dictionary is None:
             assert "data_dict" not in uploaded["user"]
         else:
             assert uploaded["user"]["data_dict"] == dictionary
         pd.testing.assert_frame_equal(pd.read_parquet(output / prepared.file), data)
-        manifest = json.loads((output / "manifest.json").read_text())
+        manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
         assert manifest["metadata"]["primary_html"] == "index.html"
         if dictionary is not None:
-            assert "Data dictionary" in (output / "index.html").read_text()
+            assert "Data dictionary" in (output / "index.html").read_text(
+                encoding="utf-8"
+            )
         assert "unused-offline" not in "".join(
-            p.read_text() for p in output.glob("*.txt")
+            p.read_text(encoding="utf-8") for p in output.glob("*.txt")
         )
     print(output / "manifest.json")
 

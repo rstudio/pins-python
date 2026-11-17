@@ -1337,7 +1337,7 @@ class BoardRsConnect(BaseBoard):
         from jinja2 import Environment
 
         env = Environment(autoescape=True, trim_blocks=True, lstrip_blocks=True)
-        template = env.from_string(self.html_template.read_text())
+        template = env.from_string(self.html_template.read_text(encoding="utf-8"))
         rendered = template.render(context)
         (Path(pin_dir_path) / "index.html").write_text(rendered, encoding="utf-8")
         return meta

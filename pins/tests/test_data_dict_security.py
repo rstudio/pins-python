@@ -78,7 +78,7 @@ def test_real_cli_applies_policy_to_dictionary_prose(tmp_path):
     column.update(type="string", label=attack, description=attack, examples=[attack])
     text = yaml.safe_dump(document)
     dd.render(text, tmp_path, filename="dictionary.html")
-    html = (tmp_path / "dictionary.html").read_text()
+    html = (tmp_path / "dictionary.html").read_text(encoding="utf-8")
     assert_policy(html)
     assert "MutationObserver" in html
     assert "<script>window.__pins_injected=1</script>" not in html

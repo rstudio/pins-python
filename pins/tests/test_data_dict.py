@@ -59,7 +59,14 @@ def test_invalid_option(dictionary):
 
 
 @pytest.mark.parametrize(
-    "text", ["tables: [oops]", "tables: []", "!!python/object:bad {}", "[broken"]
+    "text",
+    [
+        "tables: [oops]",
+        "tables: []",
+        "!!python/object:bad {}",
+        "[broken",
+        "- not a mapping",
+    ],
 )
 def test_invalid_yaml(text):
     with pytest.raises(PinsError):
@@ -128,6 +135,89 @@ def test_missing_cli(monkeypatch):
     monkeypatch.setattr(dd, "distribution", missing)
     monkeypatch.setattr(dd.shutil, "which", lambda _: None)
     with pytest.raises(PinsError, match="Install pins"):
+        dd._cli()
+
+
+def test_cli_uses_executable_distribution_binary(tmp_path, monkeypatch):
+    binary = tmp_path / "data-dict"
+    binary.write_text("binary", encoding="utf-8")
+    binary.chmod(0o755)
+
+    class Package:
+        files = [Path("data-dict")]
+
+        def locate_file(self, _):
+            return binary
+
+    monkeypatch.setattr(dd, "distribution", lambda _: Package())
+    monkeypatch.setattr(
+        dd.shutil, "which", lambda _: pytest.fail("Unexpected PATH lookup")
+    )
+
+    assert dd._cli() == str(binary)
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX executable bits are required")
+def test_cli_repairs_non_executable_distribution_binary(tmp_path, monkeypatch):
+    binary = tmp_path / "data-dict"
+    binary.write_text("binary", encoding="utf-8")
+    binary.chmod(0o644)
+
+    class Package:
+        files = [Path("data-dict")]
+
+        def locate_file(self, _):
+            return binary
+
+    monkeypatch.setattr(dd, "distribution", lambda _: Package())
+    monkeypatch.setattr(dd.shutil, "which", lambda _: None)
+
+    assert dd._cli() == str(binary)
+    assert binary.stat().st_mode & 0o100
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX executable bits are required")
+def test_cli_falls_back_to_path_when_bundled_binary_is_not_executable(
+    tmp_path, monkeypatch
+):
+    binary = tmp_path / "data-dict"
+    binary.write_text("binary", encoding="utf-8")
+    binary.chmod(0o644)
+
+    class Package:
+        files = [Path("data-dict")]
+
+        def locate_file(self, _):
+            return binary
+
+    monkeypatch.setattr(dd, "distribution", lambda _: Package())
+    monkeypatch.setattr(dd.shutil, "which", lambda _: "/usr/local/bin/data-dict")
+
+    assert dd._cli() == "/usr/local/bin/data-dict"
+    assert binary.stat().st_mode & 0o100 == 0
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX executable bits are required")
+def test_cli_reports_failed_binary_repair(tmp_path, monkeypatch):
+    binary = tmp_path / "data-dict"
+    binary.write_text("binary", encoding="utf-8")
+    binary.chmod(0o644)
+
+    class Package:
+        files = [Path("data-dict")]
+
+        def locate_file(self, _):
+            return binary
+
+    monkeypatch.setattr(dd, "distribution", lambda _: Package())
+    monkeypatch.setattr(dd.shutil, "which", lambda _: None)
+    monkeypatch.setattr(
+        Path,
+        "chmod",
+        lambda *args, **kwargs: (_ for _ in ()).throw(PermissionError("denied")),
+    )
+
+    with pytest.raises(PinsError, match="data-dict.*execute permission"):
         dd._cli()
 
 
@@ -225,6 +315,40 @@ def test_draft_uses_absolute_uploaded_paths(tmp_path, monkeypatch):
     assert "source" not in yaml.safe_load(metadata["data_dict"])["tables"][0]
 
 
+def test_draft_accepts_multiple_uploaded_parquet_files(tmp_path, monkeypatch):
+    paths = [tmp_path / "one.parquet", tmp_path / "two.parquet"]
+    for path in paths:
+        path.touch()
+    arguments = []
+
+    def draft(args):
+        arguments.extend(args)
+        Path(args[-1]).write_text(DICTIONARY, encoding="utf-8")
+
+    monkeypatch.setattr(dd, "_run", draft)
+    metadata = dd.prepare_metadata(None, True, paths, upload=True)
+
+    assert arguments[0] == "draft"
+    assert arguments[1:3] == paths
+    assert "source" not in yaml.safe_load(metadata["data_dict"])["tables"][0]
+
+
+def test_run_rejects_unsupported_cli_version_before_command(monkeypatch):
+    calls = []
+    monkeypatch.setattr(dd, "_cli", lambda: "data-dict")
+
+    def run(args, **kwargs):
+        calls.append(args)
+        return dd.subprocess.CompletedProcess(args, 0, "data-dict 0.0.4\n", "")
+
+    monkeypatch.setattr(dd.subprocess, "run", run)
+
+    with pytest.raises(PinsError, match="requires data-dict 0.0.3"):
+        dd._run(["render"])
+
+    assert calls == [["data-dict", "--version"]]
+
+
 @pytest.mark.parametrize(
     "error",
     [OSError("not executable"), dd.subprocess.TimeoutExpired("data-dict", 300)],
@@ -287,7 +411,9 @@ def test_render_profiles_only_one_parquet_table(
 
     def render_cli(args):
         rendered["document"] = yaml.safe_load(Path(args[1]).read_text(encoding="utf-8"))
-        Path(args[3]).write_text("rendered", encoding="utf-8")
+        Path(args[3]).write_text(
+            "<html><head></head><body>rendered</body></html>", encoding="utf-8"
+        )
 
     monkeypatch.setattr(dd, "_run", render_cli)
     dd.render(dictionary, tmp_path, files)

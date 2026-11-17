@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import base64
+import hashlib
+import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -15,18 +19,41 @@ from pins.errors import PinsError
 
 
 def _cli():
+    bundled = None
     try:
         package = distribution("data-dict-yaml")
         for file in package.files or []:
             if file.name in ("data-dict", "data-dict.exe"):
                 binary = package.locate_file(file)
                 if binary.is_file():
-                    return str(binary)
+                    bundled = binary
+                    if os.access(binary, os.X_OK):
+                        return str(binary)
+                    break
     except PackageNotFoundError:
         pass
+
     binary = shutil.which("data-dict")
     if binary:
         return binary
+
+    if bundled is not None and os.name == "posix":
+        try:
+            bundled.chmod(bundled.stat().st_mode | 0o100)
+        except OSError as error:
+            raise PinsError(
+                f"The bundled data-dict CLI is not executable and its user "
+                f"execute permission could not be added: {error}. "
+                "Install a working data-dict CLI on PATH."
+            ) from error
+        if os.access(bundled, os.X_OK):
+            return str(bundled)
+
+    if bundled is not None:
+        raise PinsError(
+            "The bundled data-dict CLI is not executable. "
+            "Install a working data-dict CLI on PATH."
+        )
     raise PinsError(
         "Data dictionary support requires the data-dict CLI. "
         "Install pins[data-dict] or put data-dict on PATH."
@@ -34,9 +61,27 @@ def _cli():
 
 
 def _run(args):
+    cli = _cli()
     try:
+        version = (
+            subprocess.run(
+                [cli, "--version"],
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            .stdout.strip()
+            .split()
+        )
+        version = version[-1] if version else ""
+        if version != "0.0.3":
+            raise PinsError(
+                f"Unsupported data-dict version {version or 'unknown'}; "
+                "pins requires data-dict 0.0.3."
+            )
         subprocess.run(
-            [_cli(), *map(str, args)],
+            [cli, *map(str, args)],
             check=True,
             capture_output=True,
             text=True,
@@ -122,6 +167,34 @@ def prepare_metadata(metadata, data_dict, x, *, upload=False):
     return result
 
 
+def _secure_html(html, *, theme=False):
+    head = re.search(r"<head\b[^>]*>", html, re.I)
+    if head is None or "</head>" not in html:
+        raise PinsError("data-dict produced HTML without a complete head element.")
+    security = (Path(__file__).parent / "rsconnect/html/dictionary.js").read_text(
+        encoding="utf-8"
+    )
+    integration = f"<script>{security}</script>"
+    if theme:
+        integration += (
+            '<script src="theme.js"></script><style>#theme-toggle{display:none}</style>'
+        )
+    html = html.replace("</head>", integration + "</head>", 1)
+    hashes = [
+        "'sha256-"
+        + base64.b64encode(hashlib.sha256(script.encode("utf-8")).digest()).decode(
+            "ascii"
+        )
+        + "'"
+        for script in re.findall(r"<script\b[^>]*>(.*?)</script\s*>", html, re.I | re.S)
+    ]
+    policy = (
+        "script-src 'self' " + " ".join(hashes) + "; object-src 'none'; base-uri 'none'"
+    )
+    meta = '<meta http-equiv="Content-Security-Policy" content="' + policy + '">'
+    return html[: head.end()] + meta + html[head.end() :]
+
+
 def render(text, directory, files=(), *, filename="index.html"):
     """Render a self-contained index without bundling temporary YAML."""
     document = _parse_portable(text)
@@ -146,12 +219,10 @@ def render(text, directory, files=(), *, filename="index.html"):
         _run(["render", dictionary, "-o", index])
         if not index.is_file():
             raise PinsError(f"data-dict did not produce {filename}.")
-        if filename == "dictionary.html":
-            html = index.read_text(encoding="utf-8")
-            integration = '<script src="theme.js"></script><style>#theme-toggle{display:none}</style>'
-            index.write_text(
-                html.replace("</head>", integration + "</head>", 1), encoding="utf-8"
-            )
+        html = _secure_html(
+            index.read_text(encoding="utf-8"), theme=filename == "dictionary.html"
+        )
+        index.write_text(html, encoding="utf-8")
     except Exception:
         index.unlink(missing_ok=True)
         raise

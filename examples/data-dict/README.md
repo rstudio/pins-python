@@ -42,3 +42,9 @@ board.pin_write(data, name="username/pin-name", type="parquet", data_dict="data-
 
 Dictionary-only changes need `force_identical_write=True` because pins compares data hashes when deciding whether to write.
 Generated dictionaries contain `todo` notes for human decisions; review the draft before relying on it.
+
+The CLI is optional and the supported version is `0.0.3`.
+Ordinary pins do not require it.
+Generated dictionary pages block executable links and remove links with unsafe URL schemes.
+Dictionary-only edits require the force option; skipped writes do not draft or render a dictionary.
+Install the optional extra with `python -m pip install "pins[data-dict]"`, or provide an executable on `PATH`.

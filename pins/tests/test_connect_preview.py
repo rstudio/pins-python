@@ -60,13 +60,18 @@ class Preview(HTMLParser):
 def test_standard_preview_preserves_data_and_escapes_content(tmp_path, monkeypatch):
     monkeypatch.setattr(dd, "_cli", lambda: pytest.fail("Unexpected CLI lookup"))
     attack = '</script><script>alert("unexpected")</script>'
-    name = 'owner/data"<tag>'
+    name = "owner/data&'s dataset"
     frame = pd.DataFrame({"value": [attack]})
     connect = board_connect(
         server_url="https://connect.example.com", api_key="offline", cache=None
     )
     meta = connect.prepare_pin_version(
-        tmp_path, frame, name, type="csv", title="Sample pin", description=attack
+        tmp_path,
+        frame,
+        name,
+        type="csv",
+        title="Sample & important pin",
+        description="Publisher's & shared description",
     )
     html = (tmp_path / "index.html").read_text()
     page = Preview(html)
@@ -76,9 +81,10 @@ def test_standard_preview_preserves_data_and_escapes_content(tmp_path, monkeypat
     assert attack not in html
     assert "Data preview" in html and "Download metadata" in html
     assert "<details" not in html
-    assert "Sample pin" in html
+    assert "Sample &amp; important pin" in html
+    assert "Publisher&#39;s &amp; shared description" in html
     assert "data.txt" in page.links
-    assert "data%22%3Ctag%3E.csv" in page.links
+    assert "data%26%27s%20dataset.csv" in page.links
     assert page.codes["pin-python"].endswith(f"board.pin_read({json.dumps(name)})")
     assert page.codes["pin-r"].endswith(f"pin_read(board, {json.dumps(name)})")
     assert json.loads(page.preview)["data"][0]["value"] == attack

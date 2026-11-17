@@ -239,7 +239,13 @@ class BaseBoard:
     ) -> Meta:
         from pins.data_dict import prepare_metadata
 
-        metadata = prepare_metadata(metadata, data_dict, x, upload=type == "file")
+        if data_dict is True and metadata and "data_dict" in metadata:
+            raise PinsError("Supply data_dict or metadata['data_dict'], not both.")
+        if data_dict is not True:
+            metadata = prepare_metadata(metadata, data_dict, x, upload=type == "file")
+        dictionary_requested = data_dict is True or bool(
+            metadata and "data_dict" in metadata
+        )
         _type = type
         if _type == "feather":
             warn_deprecated(
@@ -281,7 +287,10 @@ class BaseBoard:
             # create all pin data (e.g. data.txt, save object) to get the metadata.
             # For unversioned boards, this also will delete the most recent pin version,
             # ready for it to be replaced with a new one.
-            meta = self.prepare_pin_version(
+            prepare = (
+                self._create_meta if dictionary_requested else self.prepare_pin_version
+            )
+            meta = prepare(
                 tmp_dir,
                 x,
                 pin_name,
@@ -303,13 +312,24 @@ class BaseBoard:
                         f'The hash of pin "{name}" has not changed. Your pin will not '
                         "be stored."
                     )
-                    if meta.user and "data_dict" in meta.user:
+                    if data_dict is True or (meta.user and "data_dict" in meta.user):
                         msg += (
                             " To save dictionary or metadata changes, use "
                             "force_identical_write=True."
                         )
                     inform(log=_log, msg=msg)
                     return last_meta
+
+            if data_dict is True:
+                meta.user = prepare_metadata(
+                    metadata, data_dict, x, upload=_type == "file"
+                )
+                with (Path(tmp_dir) / self.meta_factory.get_meta_name()).open(
+                    "w"
+                ) as stream:
+                    meta.to_pin_yaml(stream)
+            if dictionary_requested:
+                self._finalize_pin_version(tmp_dir, x, name, meta, versioned)
 
             # move pin to destination ----
             # create pin version folder
@@ -741,10 +761,11 @@ class BaseBoard:
             object_name,
         )
 
-        # handle unversioned boards
-        version_setup(self, name, meta.version, versioned)
-
+        self._finalize_pin_version(pin_dir_path, x, name, meta, versioned)
         return meta
+
+    def _finalize_pin_version(self, pin_dir_path, x, name, meta, versioned):
+        version_setup(self, name, meta.version, versioned)
 
     def _create_meta(
         self,
@@ -1247,7 +1268,7 @@ class BoardRsConnect(BaseBoard):
     def user_name(self):
         return self.fs.api.get_user()["username"]
 
-    def prepare_pin_version(self, pin_dir_path, x, name: str | None, *args, **kwargs):
+    def _create_meta(self, pin_dir_path, x, name: str | None, *args, **kwargs):
         # RSC pin names can have form <user_name>/<name>, but this will try to
         # create the object in a directory named <user_name>. So we grab just
         # the <name> part.
@@ -1257,7 +1278,9 @@ class BoardRsConnect(BaseBoard):
         # user passed, but guessing people want the long name?
         meta = super()._create_meta(pin_dir_path, x, short_name, *args, **kwargs)
         meta.name = name
+        return meta
 
+    def _finalize_pin_version(self, pin_dir_path, x, name, meta, versioned):
         has_dictionary = bool(meta.user and "data_dict" in meta.user)
         all_files = [meta.file] if isinstance(meta.file, str) else meta.file
         reserved = {

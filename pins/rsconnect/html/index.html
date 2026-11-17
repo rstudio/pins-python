@@ -1,83 +1,113 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="theme.js"></script>
+    <title>{{ pin_name }} · Data pin</title>
     <link rel="stylesheet" href="pagedtable-1.1/pagedtable.css">
-    <script language="javascript" src="pagedtable-1.1/pagedtable.js"></script>
+    <script src="pagedtable-1.1/pagedtable.js" defer></script>
     <link rel="stylesheet" href="highlight.js-9.15.9/qtcreator_light.css">
-    <script src="highlight.js-9.15.9/highlight.js"></script>
-    <style>
-      body {
-        font-size: 16px;
-        font-family: 'Lato', sans-serif;
-        color: #333;
-      }
-      section {
-        border-left: solid 6px #dddddd;
-        padding: 0.5em 0 0.5em 10px;
-        margin-bottom: 1em;
-      }
-      pre {
-        margin: 0;
-        padding: 1em;
-      }
-      h3 {
-        font-weight: normal;
-        color: #888;
-        margin: 0 0 0.5em 0;
-      }
-    </style>
+    <script src="highlight.js-9.15.9/highlight.js" defer></script>
+    <link rel="stylesheet" href="pin.css">
+    <script src="pin.js" defer></script>
   </head>
   <body>
-
-    <section>
-       <h3>{{pin_name}}</h3>
-       {% if pin_metadata %}
-       <p>
-         {% if date %}<b>Last updated from Python:</b> {{ date }} &bull;{% endif %}
-         <b>Format:</b> {{ pin_metadata.type }} &bull;
-         <b>API:</b> v{{ pin_metadata.api_version }}
-       </p>
-       <p>{{ pin_metadata.description }}</p>
-       <p>Download data: {{ pin_files }}</p>
-       <details>
-         <summary>Raw metadata</summary>
-         <pre>{{ pin_metadata.to_pin_yaml() }}</pre>
-       </details>
-       {% endif %}
-     </section>
-
-    <section>
-    <h3>Python Code</h3>
-
-    <pre id="pin-python" class="pin-code"><code class="python">from pins import board_connect
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M6 8L16 3l10 5v16l-10 5-10-5V8zM6 8l10 5 10-5M16 13v16M6 16l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          Posit Connect <small>Shared data</small>
+        </div>
+        <span class="badge">Data pin</span>
+      </div>
+    </header>
+    <main id="main">
+      <header class="hero">
+        <p class="eyebrow">Published from Python</p>
+        <h1>{{ pin_name }}</h1>
+        {% if pin_metadata.description %}<p class="description">{{ pin_metadata.description }}</p>{% endif %}
+        <dl class="facts">
+          <div><dt>Format</dt><dd>{{ pin_metadata.type }}</dd></div>
+          {% if date %}<div><dt>Last updated</dt><dd>{{ date }} UTC</dd></div>{% endif %}
+          <div><dt>Pin API</dt><dd>v{{ pin_metadata.api_version }}</dd></div>
+          <div><dt>Content hash</dt><dd>{{ pin_metadata.pin_hash }}</dd></div>
+        </dl>
+      </header>
+      <nav class="views" aria-label="Pin views">
+        <a href="#overview" data-pin-view="overview" aria-current="page">Overview</a>
+        <a href="#metadata" data-pin-view="metadata">Metadata</a>
+        {% if has_dictionary %}
+        <a href="#dictionary" data-pin-view="dictionary">Data dictionary</a>
+        {% endif %}
+      </nav>
+      <section id="overview" data-pin-panel aria-label="Pin overview">
+        <div class="overview-grid">
+          <div class="stack">
+            {% if has_preview %}
+            <section class="card">
+              <div class="card-head"><div><h2>Data preview</h2><p>Up to 100 rows from this version</p></div></div>
+              <div class="table-wrap">
+                <div data-pagedtable>
+                  <script data-pagedtable-source type="application/json">{{ data_preview | safe }}</script>
+                </div>
+              </div>
+            </section>
+            {% endif %}
+            <section class="card" aria-labelledby="use-data">
+              <div class="card-head"><div><h2 id="use-data">Use this data</h2><p>Connect with your account, then read the pin.</p></div></div>
+              <div class="code-block">
+                <div class="code-label"><h3>Python</h3><button class="copy" type="button" data-copy-code="pin-python" aria-label="Copy Python code" hidden>Copy</button></div>
+                <pre class="pin-code"><code id="pin-python" class="python">from pins import board_connect
 from dotenv import load_dotenv
 load_dotenv()
 
-board = {{board_deparse}}
-board.pin_read("{{pin_name}}")</code></pre>
+board = {{ board_deparse }}
+board.{{ read_method }}({{ pin_name_literal }})</code></pre>
+                {% if show_r %}
+                <div class="code-label"><h3>R</h3><button class="copy" type="button" data-copy-code="pin-r" aria-label="Copy R code" hidden>Copy</button></div>
+                <pre class="pin-code"><code id="pin-r" class="r">library(pins)
 
-    <script type="text/javascript">
-      hljs.registerLanguage("python", highlight_python);
-      hljs.registerLanguage("r", highlight_r);
-      hljs.initHighlightingOnLoad();
-    </script>
-    </section>
-
-    <section style="{{ show_r_style }}">
-      <h3>R Code</h3>
-        <pre id="pin-r" class="pin-code"><code class="r">library(pins)
-
-board <- board_connect(auth = "envvar")
-pin_read(board, "{{pin_name}}")</code></pre>
+board &lt;- board_connect(auth = "envvar")
+{{ read_method }}(board, {{ pin_name_literal }})</code></pre>
+                {% endif %}
+              </div>
+            </section>
+          </div>
+          <aside class="stack sidebar" aria-label="Files">
+            <section class="card">
+              <div class="card-head"><h2>Download files</h2></div>
+              <div class="card-body files">
+                {% for file in pin_files %}
+                <a class="file-link" href="{{ file.url }}" download><span>{{ file.name }}</span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v9m-4-4 4 4 4-4M4 13v4h12v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                {% endfor %}
+                {% if has_dictionary %}<a class="file-link" href="dictionary.html" target="_blank" rel="noopener"><span>Open data dictionary</span><span aria-hidden="true">↗</span></a>{% endif %}
+                <p class="helper">Files from this published version.</p>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+      <section id="metadata" class="stack" data-pin-panel aria-label="Pin metadata">
+        <section class="card">
+          <div class="card-head"><h2>Pin metadata</h2></div>
+          <div class="card-body"><p class="helper">{{ pin_metadata.title }}</p></div>
+          <div class="metadata"><pre>{{ pin_metadata.to_pin_yaml() }}</pre><p class="metadata-download"><a href="data.txt" download>Download metadata</a></p></div>
         </section>
-
-    <section style="{{ data_preview_style }}">
-      <h3>Preview <small>(up to 100 rows)</small></h3>
-      <div data-pagedtable style="height: 25em;">
-        <script data-pagedtable-source type="application/json">
-          {{ data_preview }}
-        </script>
-      </div>
-    </section>
+      </section>
+      {% if has_dictionary %}
+      <section id="dictionary" data-pin-panel aria-label="Data dictionary">
+        <div class="card">
+          <div class="dictionary-toolbar">
+            <div><h2>Data dictionary</h2><p>Explore column definitions, constraints, and available profiles.</p></div>
+            <a href="dictionary.html" target="_blank" rel="noopener">Open full page ↗</a>
+          </div>
+          <iframe class="dictionary-frame" src="dictionary.html" title="Data dictionary" loading="lazy"></iframe>
+        </div>
+      </section>
+      {% endif %}
+      <p class="footer">Published with pins for Python · Data and metadata stay together in this pin.</p>
+    </main>
   </body>
 </html>

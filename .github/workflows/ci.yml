@@ -89,12 +89,20 @@ jobs:
         connect-version:
           - "preview"
           - "release"
-          - "2025.09.0"
-          - "2025.03.0"
-          - "2024.09.0"
-          - "2024.03.0"
-          - "2023.09.0"
-          - "2023.03.0"
+          # Latest patches of the four preceding monthly releases.
+          - "2026.10.0"
+          - "2026.09.0"
+          - "2026.08.1"
+          - "2026.07.0"
+          # Six-month samples; use the preceding release if a month has none.
+          - "2026.01.1"
+          - "2025.07.0"
+          - "2025.01.0"
+          - "2024.06.0"
+          - "2024.01.0"
+          - "2023.07.0"
+          - "2023.01.1"
+          # with-connect's bootstrap authentication requires 2022.10.0 or newer.
           - "2022.10.0"
     steps:
       - uses: actions/checkout@v7

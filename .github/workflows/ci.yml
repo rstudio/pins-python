@@ -21,11 +21,11 @@ jobs:
       fail-fast: false
       matrix:
         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-        os: ["ubuntu-latest"]
+        os: ["ubuntu-24.04"]
         pytest_opts: ["--workers 4 --tests-per-worker 1"]
         requirements: [""]
         include:
-          - os: "ubuntu-latest"
+          - os: "ubuntu-24.04"
             python: "3.9"
             requirements: "requirements/minimum.txt"
           - os: "macos-latest"
@@ -124,6 +124,7 @@ jobs:
           license: ${{ secrets.CONNECT_LICENSE }}
           config-file: "script/setup-rsconnect/rstudio-connect.gcfg"
           command: |
+            set -e
             python script/setup-rsconnect/dump_api_keys.py pins/tests/rsconnect_api_keys.json
             pytest pins -m "fs_rsc and not skip_on_github"
 

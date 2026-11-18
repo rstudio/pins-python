@@ -67,8 +67,8 @@ class DatabricksFs(AbstractFileSystem):
                 if is_file:
                     rel_path = abs_path.relative_to(orig_path)
                     db_path = PurePath(rpath).joinpath(rel_path)
-                    file = open(abs_path, "rb")
-                    w.files.upload(str(db_path), BytesIO(file.read()), overwrite=True)
+                    with open(abs_path, "rb") as f:
+                        w.files.upload(str(db_path), BytesIO(f.read()), overwrite=True)
                 else:
                     _upload_files(abs_path)
 

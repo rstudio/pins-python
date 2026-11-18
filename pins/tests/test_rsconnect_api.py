@@ -242,9 +242,8 @@ def test_rsconnect_api_get_content_bundle_archive(rsc_short):
 
             tmp_file.file.close()
 
-            tar = tarfile.open(tmp_file.name, "r:gz")
-            tar.extractall(path=tmp_dst)
-            tar.close()
+            with tarfile.open(tmp_file.name, "r:gz") as tar:
+                tar.extractall(path=tmp_dst)
 
             # run checks inside context handler for easier de-bugging ----
             p_src = Path(tmp_src)
@@ -421,7 +420,8 @@ def test_rsconnect_fs_get_data(fs_short):
         fs_short.get(f"susan/test-content/{bund1['id']}/index.html", tmp.name)
 
         # TODO: make more robust
-        assert "yo" in open(tmp.name).read()
+        with open(tmp.name) as f:
+            assert "yo" in f.read()
 
 
 # fs.put ----

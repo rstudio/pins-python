@@ -494,6 +494,15 @@ class LoginConnectApi(RsConnectApi):
 
     def create_api_key(self, keyname="first-key"):
         guid = self.get_user()["guid"]
-        api_key = self.query_v1(f"users/{guid}/keys", "POST", json=dict(name=keyname))
+        response = self.query_v1(
+            f"users/{guid}/keys", "POST", return_request=True, json=dict(name=keyname)
+        )
+        if response.status_code == 404:
+            # Older Connect versions expose API-key creation only at /__api__/keys.
+            api_key = self.query("keys", "POST", json=dict(name=keyname))
+        else:
+            response.raise_for_status()
+            api_key = response.json()
+            self._validate_json_response(api_key)
 
         return api_key["key"]

@@ -20,26 +20,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         os: ["ubuntu-latest"]
         pytest_opts: ["--workers 4 --tests-per-worker 1"]
         requirements: [""]
         include:
-          - os: "ubuntu-latest"
+          - os: "ubuntu-24.04"
             python: "3.9"
             requirements: "requirements/minimum.txt"
           - os: "macos-latest"
-            python: "3.10"
+            python: "3.14"
             # ignore doctests, as they involve calls to github, and all mac machines
             # use the same IP address
             pytest_opts: "-k pins/tests"
           - os: "windows-latest"
-            python: "3.10"
+            python: "3.14"
             # ignore doctests
             pytest_opts: "-k pins/tests"
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -54,12 +54,14 @@ jobs:
 
           python -m pip install -e .[test]
 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v3
         with:
           project_id: siuba-tests
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
       - name: Run tests
         shell: bash
         run: |
@@ -80,12 +82,27 @@ jobs:
           no_proxy: "*"
 
   test-connect:
-    name: "Test Posit Connect"
+    name: "Test Posit Connect (${{ matrix.connect-version }})"
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.head.repo.fork }}
+    strategy:
+      fail-fast: false
+      matrix:
+        connect-version:
+          - "preview"
+          - "release"
+          # Six-month samples within the 18-month support window.
+          - "2026.07.0"
+          - "2026.01.1"
+          - "2025.07.0"
+          # One release per year outside the support window.
+          - "2024.06.0"
+          - "2023.07.0"
+          # with-connect's bootstrap authentication requires 2022.10.0 or newer.
+          - "2022.10.0"
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.10"
       - name: Install dependencies
@@ -95,14 +112,15 @@ jobs:
           python -m pip install -e .
 
       - name: Run tests
-        uses: posit-dev/with-connect@main
+        uses: posit-dev/with-connect@0783dabdd24e360e985a4588ce1239c3dc31c542 # main
         env:
           ALLOW_RSC_SHORT_NAME: 1
         with:
-          # License file is valid until 2026-11-05
+          version: ${{ matrix.connect-version }}
           license: ${{ secrets.CONNECT_LICENSE }}
           config-file: "script/setup-rsconnect/rstudio-connect.gcfg"
           command: |
+            set -e
             python script/setup-rsconnect/dump_api_keys.py pins/tests/rsconnect_api_keys.json
             pytest pins -m "fs_rsc and not skip_on_github"
 
@@ -112,8 +130,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.head.repo.fork }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.10"
       - name: Install dependencies
@@ -131,8 +149,8 @@ jobs:
     name: "Build Docs"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.10"
       - name: Install dependencies
@@ -148,7 +166,7 @@ jobs:
         run: |
           make docs-build
       - name: Save docs artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: docs-html
           path: docs/_site
@@ -160,7 +178,7 @@ jobs:
     if: "${{github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork }}"
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: docs-html
           path: docs/_site
@@ -177,14 +195,13 @@ jobs:
       # create deployment ----
 
       - name: Create Github Deployment
-        uses: bobheadxi/deployments@v0.4.3
+        uses: bobheadxi/deployments@v1
         id: deployment
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
           env: ${{ env.RELEASE_NAME }}
           ref: ${{ github.head_ref }}
-          transient: true
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
 
       # push docs ----
@@ -203,7 +220,7 @@ jobs:
       # update deployment ----
 
       - name: Update Github Deployment
-        uses: bobheadxi/deployments@v0.4.3
+        uses: bobheadxi/deployments@v1
         if: ${{ always() }}
         with:
           step: finish
@@ -219,11 +236,11 @@ jobs:
     needs: ["build-docs", "tests", "test-connect"]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: docs-html
           path: docs/_site
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/_site
@@ -234,8 +251,8 @@ jobs:
     if: github.event_name == 'release'
     needs: [build-docs, tests]
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.10"
       - name: "Build Package"

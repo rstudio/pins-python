@@ -22,7 +22,7 @@ jobs:
     name: "Check cross lib compatibility"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Install libcurl on Linux
       run: sudo apt-get update -y && sudo apt-get install -y libcurl4-openssl-dev
@@ -50,7 +50,7 @@ jobs:
 
     # python ---
 
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v7
       with:
         python-version: "3.10"
     - name: Install py dependencies

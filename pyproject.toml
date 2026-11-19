@@ -62,7 +62,7 @@ test = [
     "fastparquet",
     "pip-tools",
     "pyarrow",
-    "pytest==7.1.3",
+    "pytest>=8.4.2,<9", # pytest 9 requires Python 3.10.
     "pytest-cases",
     "pytest-dotenv",
     "pytest-parallel",

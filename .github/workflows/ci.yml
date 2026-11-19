@@ -20,8 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-        os: ["ubuntu-24.04"]
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        os: ["ubuntu-latest"]
         pytest_opts: ["--workers 4 --tests-per-worker 1"]
         requirements: [""]
         include:
@@ -29,17 +29,17 @@ jobs:
             python: "3.9"
             requirements: "requirements/minimum.txt"
           - os: "macos-latest"
-            python: "3.10"
+            python: "3.14"
             # ignore doctests, as they involve calls to github, and all mac machines
             # use the same IP address
             pytest_opts: "-k pins/tests"
           - os: "windows-latest"
-            python: "3.10"
+            python: "3.14"
             # ignore doctests
             pytest_opts: "-k pins/tests"
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -54,12 +54,14 @@ jobs:
 
           python -m pip install -e .[test]
 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v3
         with:
           project_id: siuba-tests
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
       - name: Run tests
         shell: bash
         run: |
@@ -89,19 +91,13 @@ jobs:
         connect-version:
           - "preview"
           - "release"
-          # Latest patches of the four preceding monthly releases.
-          - "2026.10.0"
-          - "2026.09.0"
-          - "2026.08.1"
+          # Six-month samples within the 18-month support window.
           - "2026.07.0"
-          # Six-month samples; use the preceding release if a month has none.
           - "2026.01.1"
           - "2025.07.0"
-          - "2025.01.0"
+          # One release per year outside the support window.
           - "2024.06.0"
-          - "2024.01.0"
           - "2023.07.0"
-          - "2023.01.1"
           # with-connect's bootstrap authentication requires 2022.10.0 or newer.
           - "2022.10.0"
     steps:
@@ -134,8 +130,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.head.repo.fork }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.10"
       - name: Install dependencies
@@ -153,8 +149,8 @@ jobs:
     name: "Build Docs"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.10"
       - name: Install dependencies
@@ -170,7 +166,7 @@ jobs:
         run: |
           make docs-build
       - name: Save docs artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: docs-html
           path: docs/_site
@@ -182,7 +178,7 @@ jobs:
     if: "${{github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork }}"
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: docs-html
           path: docs/_site
@@ -199,14 +195,13 @@ jobs:
       # create deployment ----
 
       - name: Create Github Deployment
-        uses: bobheadxi/deployments@v0.4.3
+        uses: bobheadxi/deployments@v1
         id: deployment
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
           env: ${{ env.RELEASE_NAME }}
           ref: ${{ github.head_ref }}
-          transient: true
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
 
       # push docs ----
@@ -225,7 +220,7 @@ jobs:
       # update deployment ----
 
       - name: Update Github Deployment
-        uses: bobheadxi/deployments@v0.4.3
+        uses: bobheadxi/deployments@v1
         if: ${{ always() }}
         with:
           step: finish
@@ -241,11 +236,11 @@ jobs:
     needs: ["build-docs", "tests", "test-connect"]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: docs-html
           path: docs/_site
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/_site
@@ -256,8 +251,8 @@ jobs:
     if: github.event_name == 'release'
     needs: [build-docs, tests]
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.10"
       - name: "Build Package"

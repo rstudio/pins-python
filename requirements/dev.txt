@@ -337,7 +337,7 @@ pyproject-hooks==1.2.0
     #   pip-tools
 pyright==1.1.372
     # via pins (pyproject.toml)
-pytest==7.1.3
+pytest==8.4.2
     # via
     #   pins (pyproject.toml)
     #   pytest-dotenv
